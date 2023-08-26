@@ -40,8 +40,8 @@ public class Member {
     @Column(nullable = true)
     private LocalDateTime deletedAt;
 
-    @Column(nullable = true)
-    private String roles;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles;
 
     @Column(nullable = false)
     private Long reputation = 0L;
