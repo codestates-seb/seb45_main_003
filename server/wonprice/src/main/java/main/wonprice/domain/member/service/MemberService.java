@@ -1,9 +1,11 @@
 package main.wonprice.domain.member.service;
 
+import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.MemberStatus;
 import main.wonprice.domain.member.repository.MemberRepository;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,10 +17,14 @@ import java.util.Optional;
 @Transactional
 public class MemberService {
 
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final CustomAuthorityUtils authorityUtils;
 
-    public MemberService(MemberRepository memberRepository) {
+    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, CustomAuthorityUtils authorityUtils) {
         this.memberRepository = memberRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.authorityUtils = authorityUtils;
     }
 
     public Member joinMember(Member member) {
@@ -26,6 +32,12 @@ public class MemberService {
         checkExistName(member.getName());
         checkExistEmail(member.getEmail());
         checkExistPhone(member.getPhone());
+
+        String encryptedPassword = passwordEncoder.encode(member.getPassword());
+        member.setPassword(encryptedPassword);
+
+        List<String> roles = authorityUtils.createRoles(member.getEmail());
+        member.setRoles(roles);
 
         return memberRepository.save(member);
     }
