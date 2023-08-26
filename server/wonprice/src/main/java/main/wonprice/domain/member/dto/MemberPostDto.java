@@ -2,6 +2,7 @@ package main.wonprice.domain.member.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.wonprice.domain.member.entity.LoginType;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -21,4 +22,6 @@ public class MemberPostDto {
 
     @NotBlank
     private String phone;
+
+    private LoginType loginType = LoginType.BASIC;
 }
