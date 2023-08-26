@@ -1,6 +1,8 @@
 package main.wonprice.config;
 
 import main.wonprice.auth.filter.JwtAuthenticationFilter;
+import main.wonprice.auth.handler.AuthenticationFailureHandlerImpl;
+import main.wonprice.auth.handler.AuthenticationSuccessHandlerImpl;
 import main.wonprice.auth.jwt.JwtTokenizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -77,6 +79,9 @@ public class SecurityConfig {
 
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer);
             jwtAuthenticationFilter.setFilterProcessesUrl("/members/login");
+
+            jwtAuthenticationFilter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandlerImpl());
+            jwtAuthenticationFilter.setAuthenticationFailureHandler(new AuthenticationFailureHandlerImpl());
 
             builder.addFilter(jwtAuthenticationFilter);
         }
