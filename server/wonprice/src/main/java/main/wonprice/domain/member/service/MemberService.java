@@ -30,10 +30,18 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
+//    로그인 구현 후 관리자일 경우 조회한 회원 상태에 상관없이 조회 가능하게 구현
     public Member findMember(Long memberId) {
-        return findVerifyMember(memberId);
+
+        Member findMember = findVerifyMember(memberId);
+
+        if (findMember.getStatus().equals(MemberStatus.ACTIVE)) {
+            return findMember;
+        }
+        else throw new RuntimeException("삭제된 회원 혹은 존재하지 않는 회원");
     }
 
+//    관리자용 전체 회원 목록
     public List<Member> findMembers(Pageable pageable) {
         return memberRepository.findAll(pageable).getContent();
     }
@@ -86,6 +94,7 @@ public class MemberService {
         }
     }
 
+//    해당 id의 회원이 있는지 확인 후 리턴
     public Member findVerifyMember(Long memberId) {
         return memberRepository.findById(memberId).orElseThrow();
     }
