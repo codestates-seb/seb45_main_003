@@ -19,26 +19,35 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String email;
 
+    @Column(nullable = true)
     private String password;
 
+    @Column(nullable = false)
     private String phone;
 
-    private String loginType;
+    @Column(nullable = false)
+    private LoginType loginType;
 
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(nullable = true)
     private LocalDateTime deletedAt;
 
-    private String roles;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles;
 
-    private Long reputation;
+    @Column(nullable = false)
+    private Long reputation = 0L;
 
-    @Column(name = "profile_image")
-    private String image;
+    @Column(nullable = true, name = "profile_image")
+    private String image = null;
 
     @Enumerated(EnumType.STRING)
     private MemberStatus status = MemberStatus.ACTIVE;
