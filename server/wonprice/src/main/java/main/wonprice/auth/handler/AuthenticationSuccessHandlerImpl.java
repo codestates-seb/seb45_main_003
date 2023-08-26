@@ -1,6 +1,5 @@
 package main.wonprice.auth.handler;
 
-import com.google.gson.Gson;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
