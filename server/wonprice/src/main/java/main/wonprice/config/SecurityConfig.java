@@ -1,11 +1,15 @@
 package main.wonprice.config;
 
 import main.wonprice.auth.filter.JwtAuthenticationFilter;
+import main.wonprice.auth.filter.JwtVerificationFilter;
+import main.wonprice.auth.handler.AccessDeniedHandlerImpl;
 import main.wonprice.auth.handler.AuthenticationFailureHandlerImpl;
 import main.wonprice.auth.handler.AuthenticationSuccessHandlerImpl;
 import main.wonprice.auth.jwt.JwtTokenizer;
+import main.wonprice.auth.utils.CustomAuthorityUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,9 +29,11 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     private final JwtTokenizer jwtTokenizer;
+    private final CustomAuthorityUtils authorityUtils;
 
-    public SecurityConfig(JwtTokenizer jwtTokenizer) {
+    public SecurityConfig(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils) {
         this.jwtTokenizer = jwtTokenizer;
+        this.authorityUtils = authorityUtils;
     }
 
     @Bean
@@ -44,7 +50,11 @@ public class SecurityConfig {
                 .httpBasic().disable() // 헤더에 id password를 실어 나르며 인증하는 방식 비활성화
                 .apply(new CustomFilterConfigurer())
                 .and()
+                .exceptionHandling()
+                .accessDeniedHandler(new AccessDeniedHandlerImpl())
+                .and()
                 .authorizeHttpRequests(authorize -> authorize
+                        .antMatchers(HttpMethod.GET, "/members/all").hasRole("ADMIN")
                         .anyRequest().permitAll());
 
         return http.build();
@@ -83,7 +93,10 @@ public class SecurityConfig {
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandlerImpl());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new AuthenticationFailureHandlerImpl());
 
+            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils);
+
             builder.addFilter(jwtAuthenticationFilter);
+            builder.addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class);
         }
     }
 }
