@@ -40,7 +40,7 @@ public class Member {
     @Column(nullable = true)
     private LocalDateTime deletedAt;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String roles;
 
     @Column(nullable = false)
