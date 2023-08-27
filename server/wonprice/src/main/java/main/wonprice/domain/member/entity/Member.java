@@ -32,6 +32,7 @@ public class Member {
     private String phone;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private LoginType loginType;
 
     @Column(nullable = false)
