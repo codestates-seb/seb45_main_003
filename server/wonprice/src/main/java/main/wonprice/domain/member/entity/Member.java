@@ -32,6 +32,7 @@ public class Member {
     private String phone;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private LoginType loginType;
 
     @Column(nullable = false)
@@ -41,7 +42,7 @@ public class Member {
     private LocalDateTime deletedAt;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> roles;
+    private List<String> roles = new ArrayList<>();
 
     @Column(nullable = false)
     private Long reputation = 0L;
