@@ -5,6 +5,7 @@ import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.MemberStatus;
 import main.wonprice.domain.member.repository.MemberRepository;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,12 +19,12 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final PasswordEncoder passwordEncoder;
     private final CustomAuthorityUtils authorityUtils;
 
-    public MemberService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, CustomAuthorityUtils authorityUtils) {
+    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+
+    public MemberService(MemberRepository memberRepository, CustomAuthorityUtils authorityUtils) {
         this.memberRepository = memberRepository;
-        this.passwordEncoder = passwordEncoder;
         this.authorityUtils = authorityUtils;
     }
 
@@ -50,7 +51,7 @@ public class MemberService {
         if (findMember.getStatus().equals(MemberStatus.ACTIVE)) {
             return findMember;
         }
-        else throw new RuntimeException("삭제된 회원 혹은 존재하지 않는 회원");
+        else throw new RuntimeException("삭제된 회원");
     }
 
 //    관리자용 전체 회원 목록
