@@ -1,6 +1,5 @@
 package main.wonprice.domain.member.controller;
 
-import lombok.extern.java.Log;
 import main.wonprice.domain.member.dto.MemberPatchDto;
 import main.wonprice.domain.member.dto.MemberPostDto;
 import main.wonprice.domain.member.dto.MemberResponseDto;
@@ -41,6 +40,15 @@ public class MemberController {
     @GetMapping
     public ResponseEntity getMember()
     */
+
+    @GetMapping("/myPage")
+    public ResponseEntity getLoginMember() {
+
+        Member loginMember = memberService.findLoginMember();
+        MemberResponseDto response = mapper.memberToResponseDto(loginMember);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
 
     @GetMapping("/{member-id}")
     public ResponseEntity getMember(@PathVariable("member-id") Long memberId) {
