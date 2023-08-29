@@ -1,6 +1,7 @@
 package main.wonprice.domain.member.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.picture.entity.Picture;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Getter @Setter
+@NoArgsConstructor
 public class Member {
 
     @Id
@@ -28,7 +30,7 @@ public class Member {
     @Column(nullable = true)
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String phone;
 
     @Column(nullable = false)
@@ -71,4 +73,8 @@ public class Member {
     @OneToMany(mappedBy = "seller")
     private List<ChatRoom> chatRooms = new ArrayList<>();
 
+    public Member(String name, String email) {
+        this.name = name;
+        this.email = email;
+    }
 }
