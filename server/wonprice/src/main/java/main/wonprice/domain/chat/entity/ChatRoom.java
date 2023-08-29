@@ -2,7 +2,6 @@ package main.wonprice.domain.chat.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import main.wonprice.domain.member.entity.Member;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -37,5 +36,5 @@ public class ChatRoom {
     private List<Message> messages;
 
     @OneToMany(mappedBy = "chatRoom")
-    private List<ChatParticipants> chatParticipants;
+    private List<ChatParticipant> chatParticipants;
 }
