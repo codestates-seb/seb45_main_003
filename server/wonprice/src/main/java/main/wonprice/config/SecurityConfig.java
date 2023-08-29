@@ -5,7 +5,6 @@ import main.wonprice.auth.filter.JwtVerificationFilter;
 import main.wonprice.auth.handler.CustomAccessDeniedHandler;
 import main.wonprice.auth.handler.CustomAuthenticationFailureHandler;
 import main.wonprice.auth.handler.CustomAuthenticationSuccessHandler;
-import main.wonprice.auth.handler.OAuth2SuccessHandler;
 import main.wonprice.auth.jwt.JwtTokenizer;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.member.service.MemberService;
@@ -15,7 +14,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -29,12 +27,10 @@ public class SecurityConfig {
 
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
-    private final MemberService memberService;
 
     public SecurityConfig(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, MemberService memberService) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
-        this.memberService = memberService;
     }
 
     @Bean
@@ -60,9 +56,6 @@ public class SecurityConfig {
 //                        .antMatchers(HttpMethod.PATCH, "/members/*").hasRole("USER")
 //                        .antMatchers(HttpMethod.DELETE, "/members/*").hasRole("USER")
                         .anyRequest().permitAll()
-                )
-                .oauth2Login(oauth -> oauth
-                        .successHandler(new OAuth2SuccessHandler(jwtTokenizer, authorityUtils, memberService))
                 );
 
         return http.build();
@@ -95,14 +88,13 @@ public class SecurityConfig {
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer);
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
-            jwtAuthenticationFilter.setFilterProcessesUrl("/login");
+            jwtAuthenticationFilter.setFilterProcessesUrl("/members/login");
 
             JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils);
 
             builder
                     .addFilter(jwtAuthenticationFilter)
-//                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class);
-                    .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class);
+                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class);
         }
     }
 }
