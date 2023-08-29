@@ -68,7 +68,7 @@ public class Member {
     @OneToMany(mappedBy = "seller")
     private List<Product> products = new ArrayList<>();
 
-    @OneToMany(mappedBy = "seller")
-    private List<ChatRoom> chatRooms = new ArrayList<>();
+//    @OneToMany(mappedBy = "seller")
+//    private List<ChatRoom> chatRooms = new ArrayList<>();
 
 }

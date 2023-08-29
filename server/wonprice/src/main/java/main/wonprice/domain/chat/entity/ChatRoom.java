@@ -16,23 +16,26 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatRoomId;
 
-    private Long buyerId;
+//    private Long buyerId;
 
     private Long productId;
 
     @Enumerated(EnumType.STRING)
     private RoomStatus status = RoomStatus.ACTIVE;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToOne
-    @JoinColumn(name = "deleted_id")
-    private ChatRoomDeleted chatRoomDeleted;
+//    @OneToOne
+//    @JoinColumn(name = "deleted_id")
+//    private ChatRoomDeleted chatRoomDeleted;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member seller;
+//    @ManyToOne
+//    @JoinColumn(name = "member_id")
+//    private Member seller;
 
     @OneToMany(mappedBy = "chatRoom")
     private List<Message> messages;
+
+    @OneToMany(mappedBy = "chatRoom")
+    private List<ChatParticipants> chatParticipants;
 }
