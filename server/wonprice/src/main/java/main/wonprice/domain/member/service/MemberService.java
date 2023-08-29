@@ -141,4 +141,10 @@ public class MemberService {
 
         return loginMember;
     }
+
+    public boolean validatePassword(String password) {
+        Member loginMember = findLoginMember();
+
+        return passwordEncoder.matches(password, loginMember.getPassword());
+    }
 }

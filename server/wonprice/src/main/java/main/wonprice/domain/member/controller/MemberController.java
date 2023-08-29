@@ -3,6 +3,7 @@ package main.wonprice.domain.member.controller;
 import main.wonprice.domain.member.dto.MemberPatchDto;
 import main.wonprice.domain.member.dto.MemberPostDto;
 import main.wonprice.domain.member.dto.MemberResponseDto;
+import main.wonprice.domain.member.dto.PasswordDto;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.mapper.MemberMapper;
 import main.wonprice.domain.member.service.MemberService;
@@ -35,11 +36,6 @@ public class MemberController {
 
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
-
-    /* 로그인한 회원 정보(마이페이지 정보) -> 로그인 구현 후 구현 예정
-    @GetMapping
-    public ResponseEntity getMember()
-    */
 
     @GetMapping("/myPage")
     public ResponseEntity getLoginMember() {
@@ -86,5 +82,15 @@ public class MemberController {
         memberService.deleteMember(memberId);
 
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/validatePassword")
+    public ResponseEntity checkPassword(@RequestBody PasswordDto passwordDto) {
+
+        boolean validated = memberService.validatePassword(passwordDto.getPassword());
+
+        return validated
+                ? new ResponseEntity<>("Valid password",HttpStatus.OK)
+                : new ResponseEntity("Invalid password", HttpStatus.UNAUTHORIZED);
     }
 }
