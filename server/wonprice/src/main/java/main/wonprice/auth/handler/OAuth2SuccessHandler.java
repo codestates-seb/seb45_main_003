@@ -1,5 +1,6 @@
 package main.wonprice.auth.handler;
 
+import lombok.extern.slf4j.Slf4j;
 import main.wonprice.auth.jwt.JwtTokenizer;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.member.entity.LoginType;
@@ -23,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenizer jwtTokenizer;
@@ -36,9 +38,13 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        FilterChain chain,
+                                        Authentication authentication) throws IOException, ServletException {
 
-        System.out.println("#######################################");
+        log.info("# onAuthenticationSuccess Method at OAuth2SuccessHandler called");
+
         var oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = String.valueOf(oAuth2User.getAttributes().get("email"));
         String name = String.valueOf(oAuth2User.getAttributes().get("name"));
@@ -88,8 +94,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     private String delegateRefreshToken(String username) {
 
-        Map<String, Object> claims = new HashMap<>();
-
         String subject = username;
         Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getRefreshTokenExpirationMinutes());
 
@@ -110,7 +114,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .newInstance()
                 .scheme("http")
                 .host("localhost")
-                .path("/index.html")
+                .path("/")
                 .queryParams(queryParams)
                 .build()
                 .toUri();
