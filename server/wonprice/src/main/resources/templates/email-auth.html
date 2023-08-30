@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>메일 테스트</title>
+</head>
+<body>
+<div>
+    <p>안녕하세요, <span th:text="${email}"></span>님</p>
+    <p>WonPrice 입니다.</p>
+    <p>아래 인증 코드를 입력해 주세요.</p>
+    <p> <span th:text="${authCode}"></span> </p>
+</div>
+</body>
+</html>
