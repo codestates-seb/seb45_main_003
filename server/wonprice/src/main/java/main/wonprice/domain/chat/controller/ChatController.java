@@ -38,7 +38,7 @@ public class ChatController {
     public ResponseEntity getChatRoom() {
         Member loginMember = memberService.findLoginMember();
 
-        List<ChatParticipant> findChatRooms = chatService.findChatRoom(loginMember.getMemberId());
+        List<ChatParticipant> findChatRooms = chatService.findMyChatRooms(loginMember.getMemberId());
 
         return new ResponseEntity(findChatRooms, HttpStatus.OK);
     }

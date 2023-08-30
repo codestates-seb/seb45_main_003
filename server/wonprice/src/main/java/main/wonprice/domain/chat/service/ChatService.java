@@ -31,7 +31,7 @@ public class ChatService {
         return saveChatRoom.getChatRoomId();
     }
 
-    public List<ChatParticipant> findChatRoom(Long memberId) {
+    public List<ChatParticipant> findMyChatRooms(Long memberId) {
         List<ChatParticipant> findChatRooms = chatParticipantRepository.findByMemberId(memberId);
 
 //        for (ChatParticipant findChatRoom : findChatRooms) {
@@ -41,19 +41,18 @@ public class ChatService {
         return findChatRooms;
     }
 
-    public ChatRoom chatRoom(Long chatRoomId) {
-        Optional<ChatRoom> findChatRoom = chatRoomRepository.findById(chatRoomId);
-
-        return findChatRoom.orElseThrow();
-    }
-
-
     @Transactional
     public void deleteChatRoom(Long chatRoomId, Long memberId) {
-        ChatRoom findChatRoom = chatRoom(chatRoomId);
+        ChatRoom findChatRoom = findChatRoom(chatRoomId);
 
         ChatParticipant deleteChatRoom = chatParticipantRepository.findByMemberIdAndChatRoom(memberId, findChatRoom);
 
         deleteChatRoom.setDeletedAt(LocalDateTime.now());
+    }
+
+    public ChatRoom findChatRoom(Long chatRoomId) {
+        Optional<ChatRoom> findChatRoom = chatRoomRepository.findById(chatRoomId);
+
+        return findChatRoom.orElseThrow();
     }
 }
