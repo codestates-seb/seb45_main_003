@@ -30,6 +30,7 @@ public class SecurityConfig {
     private final CustomAuthorityUtils authorityUtils;
     private final RefreshTokenService refreshTokenService;
 
+
     public SecurityConfig(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, MemberService memberService, RefreshTokenService refreshTokenService) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
