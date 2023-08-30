@@ -6,9 +6,11 @@ import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.chat.repository.ChatParticipantRepository;
 import main.wonprice.domain.chat.repository.ChatRoomRepository;
+import main.wonprice.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,5 +39,21 @@ public class ChatService {
 //        }
 
         return findChatRooms;
+    }
+
+    public ChatRoom chatRoom(Long chatRoomId) {
+        Optional<ChatRoom> findChatRoom = chatRoomRepository.findById(chatRoomId);
+
+        return findChatRoom.orElseThrow();
+    }
+
+
+    @Transactional
+    public void deleteChatRoom(Long chatRoomId, Long memberId) {
+        ChatRoom findChatRoom = chatRoom(chatRoomId);
+
+        ChatParticipant deleteChatRoom = chatParticipantRepository.findByMemberIdAndChatRoom(memberId, findChatRoom);
+
+        deleteChatRoom.setDeletedAt(LocalDateTime.now());
     }
 }

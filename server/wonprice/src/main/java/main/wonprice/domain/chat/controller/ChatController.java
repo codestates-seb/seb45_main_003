@@ -42,4 +42,11 @@ public class ChatController {
 
         return new ResponseEntity(findChatRooms, HttpStatus.OK);
     }
+
+    @DeleteMapping("/chat/{room-id}")
+    public void deleteChatRoom(@PathVariable("room-id") Long chatRoomId) {
+        Member loginMember = memberService.findLoginMember();
+
+        chatService.deleteChatRoom(chatRoomId, loginMember.getMemberId());
+    }
 }
