@@ -87,10 +87,8 @@ public class MemberController {
     @PostMapping("/validatePassword")
     public ResponseEntity checkPassword(@RequestBody PasswordDto passwordDto) {
 
-        boolean validated = memberService.validatePassword(passwordDto.getPassword());
+        memberService.validatePassword(passwordDto.getPassword());
 
-        return validated
-                ? new ResponseEntity<>("Valid password",HttpStatus.OK)
-                : new ResponseEntity("Invalid password", HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>("Valid password", HttpStatus.OK);
     }
 }
