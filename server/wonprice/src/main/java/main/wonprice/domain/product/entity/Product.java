@@ -8,7 +8,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 public class Product {
 
     @Id
@@ -48,4 +49,10 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member seller;
+
+    // 연관관계 편의 메서드
+    public void addProduct(Member seller) {
+        this.seller = seller;
+        seller.getProducts().add(this);
+    }
 }
