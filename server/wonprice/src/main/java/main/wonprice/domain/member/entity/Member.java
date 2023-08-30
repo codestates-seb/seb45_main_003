@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import main.wonprice.domain.chat.entity.ChatRoom;
+import main.wonprice.domain.email.entity.AuthEmail;
 import main.wonprice.domain.picture.entity.Picture;
 import main.wonprice.domain.product.entity.Product;
 
@@ -72,9 +73,4 @@ public class Member {
 
     @OneToMany(mappedBy = "seller")
     private List<ChatRoom> chatRooms = new ArrayList<>();
-
-    public Member(String name, String email) {
-        this.name = name;
-        this.email = email;
-    }
 }
