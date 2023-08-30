@@ -22,6 +22,4 @@ public class MemberPostDto {
 
     @NotBlank
     private String phone;
-
-    private LoginType loginType = LoginType.BASIC;
 }
