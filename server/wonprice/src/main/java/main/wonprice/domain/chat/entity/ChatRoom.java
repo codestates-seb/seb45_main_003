@@ -34,6 +34,7 @@ public class ChatRoom {
 //    private Member seller;
 
     @OneToMany(mappedBy = "chatRoom")
+    @JsonIgnore
     private List<Message> messages;
 
     @OneToMany(mappedBy = "chatRoom")

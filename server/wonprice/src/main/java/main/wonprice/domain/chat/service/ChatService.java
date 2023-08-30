@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
+import main.wonprice.domain.chat.entity.Message;
 import main.wonprice.domain.chat.repository.ChatParticipantRepository;
 import main.wonprice.domain.chat.repository.ChatRoomRepository;
+import main.wonprice.domain.chat.repository.MessageRepository;
 import main.wonprice.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatParticipantRepository chatParticipantRepository;
+    private final MessageRepository messageRepository;
 
     @Transactional
     public Long createChatRoom(ChatRoom chatRoom) {
@@ -48,6 +51,14 @@ public class ChatService {
         ChatParticipant deleteChatRoom = chatParticipantRepository.findByMemberIdAndChatRoom(memberId, findChatRoom);
 
         deleteChatRoom.setDeletedAt(LocalDateTime.now());
+    }
+
+    public List<Message> findMessages(Long chatRoomId) {
+        ChatRoom findChatRoom = findChatRoom(chatRoomId);
+
+        List<Message> findMessages = messageRepository.findByChatRoom(findChatRoom);
+
+        return findMessages;
     }
 
     public ChatRoom findChatRoom(Long chatRoomId) {

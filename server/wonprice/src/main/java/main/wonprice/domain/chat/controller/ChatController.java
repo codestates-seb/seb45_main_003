@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.chat.controller.dto.ChatPostRequest;
 import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
+import main.wonprice.domain.chat.entity.Message;
 import main.wonprice.domain.chat.mapper.ChatMapper;
 import main.wonprice.domain.chat.service.ChatService;
 import main.wonprice.domain.member.entity.Member;
@@ -41,6 +42,14 @@ public class ChatController {
         List<ChatParticipant> findChatRooms = chatService.findMyChatRooms(loginMember.getMemberId());
 
         return new ResponseEntity(findChatRooms, HttpStatus.OK);
+    }
+
+    @GetMapping("/chat/{room-id}")
+    public ResponseEntity getMessage(@PathVariable("room-id") Long chatRoomId) {
+
+        List<Message> findMessages = chatService.findMessages(chatRoomId);
+
+        return new ResponseEntity(findMessages, HttpStatus.OK);
     }
 
     @DeleteMapping("/chat/{room-id}")
