@@ -3,7 +3,6 @@ package main.wonprice.domain.email.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import main.wonprice.domain.member.entity.Member;
 
 import javax.persistence.*;
 
