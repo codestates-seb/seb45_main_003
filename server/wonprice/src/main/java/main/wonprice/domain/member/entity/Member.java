@@ -27,15 +27,11 @@ public class Member {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = true)
-    private String phone;
-
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private LoginType loginType;
+    private String phone;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -72,9 +68,4 @@ public class Member {
 
     @OneToMany(mappedBy = "seller")
     private List<ChatRoom> chatRooms = new ArrayList<>();
-
-    public Member(String name, String email) {
-        this.name = name;
-        this.email = email;
-    }
 }
