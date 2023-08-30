@@ -25,15 +25,11 @@ public class Member {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     private String phone;
-
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private LoginType loginType;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
