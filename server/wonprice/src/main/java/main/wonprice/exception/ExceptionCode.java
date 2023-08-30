@@ -9,7 +9,8 @@ public enum ExceptionCode {
     MEMBER_EMAIL_EXISTS(409, "Member Email exists"),
     MEMBER_PHONE_EXISTS(409, "Member Phone exists"),
     MEMBER_NOT_AUTHENTICATED(401, "Member not Authenticated"),
-    MEMBER_NOT_AUTHORIZED(403, "Member not Authorized");
+    MEMBER_NOT_AUTHORIZED(403, "Member not Authorized"),
+    INVALID_PASSWORD(403, "Invalid Password");
 
     private int status;
     private String message;
