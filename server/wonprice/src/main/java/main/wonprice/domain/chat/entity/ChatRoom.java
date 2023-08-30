@@ -1,5 +1,6 @@
 package main.wonprice.domain.chat.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,5 +37,6 @@ public class ChatRoom {
     private List<Message> messages;
 
     @OneToMany(mappedBy = "chatRoom")
+    @JsonIgnore
     private List<ChatParticipant> chatParticipants;
 }
