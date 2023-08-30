@@ -36,9 +36,10 @@ public class RefreshTokenService {
 
 //        refresh 토큰 유효시간 확인
         Date refreshExpiration = jwtTokenizer.getClaims(refreshToken, jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey())).getBody().getExpiration();
-        boolean valid = refreshExpiration.before(Calendar.getInstance().getTime());
+        boolean valid = refreshExpiration.after(Calendar.getInstance().getTime());
 
         if (refreshToken == null || !valid) throw new RuntimeException("Invalid Access");
+        if (!valid) refreshTokenRepository.deleteByToken(refreshToken);
 
         Member member = refreshTokenRepository.findByToken(refreshToken).getMember();
 
