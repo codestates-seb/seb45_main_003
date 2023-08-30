@@ -47,17 +47,11 @@ public class MemberService {
         return memberRepository.save(member);
     }
 
-//    로그인 구현 후 관리자일 경우 조회한 회원 상태에 상관없이 조회 가능하게 구현
+//    관리자일 경우 조회한 회원 상태에 상관없이 조회 가능
     public Member findMember(Long memberId) {
 
         Member findMember = findVerifyMember(memberId);
-
-        if (findLoginMember().getRoles().contains("ADMIN")) {
-            return findMember;
-        }
-        if (findMember.getStatus().equals(MemberStatus.ACTIVE)) {
-            return findMember;
-        } else throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+        return findMember;
     }
 
 //    관리자용 전체 회원 목록
@@ -100,8 +94,6 @@ public class MemberService {
         }
 
         Member findMember = findVerifyMember(memberId);
-
-        findMember.setStatus(MemberStatus.DELETE);
         findMember.setDeletedAt(LocalDateTime.now());
     }
 
@@ -131,9 +123,16 @@ public class MemberService {
 
 //    해당 id의 회원이 있는지 확인 후 리턴
     private Member findVerifyMember(Long memberId) {
+
+        Member loginMember = findLoginMember();
         Optional<Member> findMember = memberRepository.findById(memberId);
 
-        if (findMember.isEmpty()) throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+        if (findMember.isEmpty())
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+        if (loginMember.getRoles().contains("ADMIN"))
+            return findMember.get();
+        if (findMember.get().getDeletedAt() != null)
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
 
         return findMember.get();
     }
