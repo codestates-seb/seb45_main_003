@@ -10,7 +10,5 @@ public class MemberPatchDto {
 
     private String phone;
 
-    private String password;
-
     private String image;
 }
