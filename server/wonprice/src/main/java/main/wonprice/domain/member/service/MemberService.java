@@ -4,6 +4,8 @@ import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.MemberStatus;
 import main.wonprice.domain.member.repository.MemberRepository;
+import main.wonprice.exception.BusinessLogicException;
+import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,8 +57,7 @@ public class MemberService {
         }
         if (findMember.getStatus().equals(MemberStatus.ACTIVE)) {
             return findMember;
-        }
-        else throw new RuntimeException("삭제된 회원");
+        } else throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
     }
 
 //    관리자용 전체 회원 목록
@@ -69,7 +70,7 @@ public class MemberService {
         Member loginMember = findLoginMember();
 
         if (!loginMember.getMemberId().equals(member.getMemberId()) & !loginMember.getRoles().contains("ADMIN")) {
-            throw new RuntimeException("권한 없는 접근");
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
         }
 
         Member findMember = findVerifyMember(member.getMemberId());
@@ -95,7 +96,7 @@ public class MemberService {
         Member loginMember = findLoginMember();
 
         if (!loginMember.getMemberId().equals(memberId) & !loginMember.getRoles().contains("ADMIN")) {
-            throw new RuntimeException("권한 없는 접근");
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
         }
 
         Member findMember = findVerifyMember(memberId);
@@ -108,43 +109,55 @@ public class MemberService {
     private void checkExistName(String name) {
         Optional<Member> findByNameMember = memberRepository.findByName(name);
         if (findByNameMember.isPresent()) {
-            throw new RuntimeException("이미 존재하는 이름");
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NAME_EXISTS);
         }
     }
 
 //    입력한 이메일으로 가입한 회원이 있는지 확인
     private void checkExistEmail(String email) {
-        Optional<Member> findByNameMember = memberRepository.findByEmail(email);
-        if (findByNameMember.isPresent()) {
-            throw new RuntimeException("이미 존재하는 이메일");
+        Optional<Member> findByEmailMember = memberRepository.findByEmail(email);
+        if (findByEmailMember.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_EMAIL_EXISTS);
         }
     }
 
 //    입력한 번호로 가입한 회원이 있는지 확인
     private void checkExistPhone(String phone) {
-        Optional<Member> findByNameMember = memberRepository.findByPhone(phone);
-        if (findByNameMember.isPresent()) {
-            throw new RuntimeException("이미 존재하는 번호");
+        Optional<Member> findByPhoneMember = memberRepository.findByPhone(phone);
+        if (findByPhoneMember.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_PHONE_EXISTS);
         }
     }
 
 //    해당 id의 회원이 있는지 확인 후 리턴
     private Member findVerifyMember(Long memberId) {
-        return memberRepository.findById(memberId).orElseThrow();
+        Optional<Member> findMember = memberRepository.findById(memberId);
+
+        if (findMember.isEmpty()) throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+
+        return findMember.get();
     }
 
 //    로그인 중인 회원 정보 리턴
     public Member findLoginMember() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member loginMember = memberRepository.findByEmail(authentication.getName()).orElseThrow();
+        Optional<Member> loginMember = memberRepository.findByEmail(authentication.getName());
 
-        return loginMember;
+        if (loginMember.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHENTICATED);
+        }
+
+        return loginMember.get();
     }
 
-    public boolean validatePassword(String password) {
+    public void validatePassword(String password) {
         Member loginMember = findLoginMember();
 
-        return passwordEncoder.matches(password, loginMember.getPassword());
+        boolean result = passwordEncoder.matches(password, loginMember.getPassword());
+
+        if (!result) {
+            throw new BusinessLogicException(ExceptionCode.INVALID_PASSWORD);
+        }
     }
 }
