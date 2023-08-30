@@ -81,7 +81,7 @@ public class MemberController {
     public ResponseEntity deleteMember(@PathVariable("member-id") Long memberId) {
         memberService.deleteMember(memberId);
 
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity("Deleted Successfully", HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/validatePassword")
