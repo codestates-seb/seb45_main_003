@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.ResponseEntity.ok;
-
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class ProductController {
         Member loginMember = memberService.findLoginMember();
         Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember));
         ProductResponseDto productResponseDto = productMapper.fromEntity(product);
-        return ok(productResponseDto);
+        return ResponseEntity.ok(productResponseDto);
     }
 
     // 전체 상품 조회

@@ -19,11 +19,13 @@ public class ProductResponseDto {
 
     private String description;
 
-    private Long immediatelyBuyPrice; // 즉시 구매가
+    private Long immediatelyBuyPrice;
 
-    private ProductStatus productStatus; // 상품 상태
+    private ProductStatus productStatus;
 
     private Long views;
+
+    private Boolean auction;
 
     private LocalDateTime createAt;
 

@@ -14,4 +14,6 @@ public class ProductRequestDto {
     private String description; // 상품 정보
 
     private Long immediatelyBuyPrice; // 즉시 구매가
+
+    private Boolean auction; // 경매 여부
 }
