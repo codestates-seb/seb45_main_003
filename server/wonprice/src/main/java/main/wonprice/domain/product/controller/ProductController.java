@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.ResponseEntity.ok;
@@ -28,7 +27,7 @@ public class ProductController {
     private final MemberService memberService;
 
     // 상품 등록
-    @PostMapping("/post")
+    @PostMapping
     public ResponseEntity createProduct(@RequestBody ProductRequestDto productRequestDto) {
         Member loginMember = memberService.findLoginMember();
         Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember));
@@ -51,13 +50,8 @@ public class ProductController {
     // 특정 상품 조회
     @GetMapping("/{productId}")
     public ResponseEntity findOnProduct(@PathVariable Long productId) {
-        Optional<Product> product = productService.findOneById(productId);
-
-        if (product.isPresent()) {
-            ProductResponseDto productResponseDto = productMapper.fromEntity(product.get());
-            return ResponseEntity.ok(productResponseDto);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Product product = productService.findOneById(productId);
+        ProductResponseDto productResponseDto = productMapper.fromEntity(product);
+        return ResponseEntity.ok(productResponseDto);
     }
 }
