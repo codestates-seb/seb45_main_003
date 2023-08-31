@@ -35,7 +35,7 @@ const ImageInput = (props: ImageInputProps) => {
         accept="image/*"
         multiple
       />
-      {props.errors.image?.message && <p>{props.errors.image.message.toString()}</p>}
+      {props.errors.image?.message && <p>{props.errors.image.message}</p>}
     </div>
   );
 };
