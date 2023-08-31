@@ -64,7 +64,7 @@ const LogInForm = (): JSX.Element => {
           required: "이메일을 입력해주세요.",
         })}
       />
-      {errors ? <div>{errors.email?.message}</div> : null}
+      {errors.email && <div>{errors.email?.message}</div>}
       <label htmlFor="password"></label>
       <input
         id="password"
@@ -74,7 +74,7 @@ const LogInForm = (): JSX.Element => {
           required: "비밀번호를 입력해주세요.",
         })}
       />
-      {errors ? <div>{errors.password?.message}</div> : null}
+      {errors.password && <div>{errors.password?.message}</div>}
       <Button type={"submit"} disabled={isSubmitting} buttonText={"로그인"} />
     </StyledLoginForm>
   );
