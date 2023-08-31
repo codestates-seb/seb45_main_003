@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const MainTitle = styled.text`
+const MainTitle = styled.div`
   color: #222;
   text-align: center;
   font-family: Pretendard Variable;
@@ -12,6 +12,7 @@ const MainTitle = styled.text`
 
 const ContentBox = styled.div`
   display: flex;
+  justify-content: center;
 `;
 
 const Main = (): JSX.Element => {
@@ -19,7 +20,6 @@ const Main = (): JSX.Element => {
     <>
       <ContentBox>
         <MainTitle>THE PRICE YOU WANT</MainTitle>
-        <h1>Main</h1>
       </ContentBox>
     </>
   );

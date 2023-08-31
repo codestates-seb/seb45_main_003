@@ -17,8 +17,8 @@ const StyledHeader = styled.header`
     background: none;
   }
   .header-wrapper {
+    width: calc(100% - 3rem);
     padding: 1.25rem;
-    width: 100%;
     max-width: 90rem;
     margin: 0 auto;
     display: flex;
@@ -47,6 +47,10 @@ const StyledHeader = styled.header`
     position: absolute;
     top: 4.8125rem;
     right: 0;
+  }
+
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
   }
 `;
 
