@@ -23,6 +23,11 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Product save(Product product) {
+        // auction(경매여부): true 일 경우에만 경매 종료일, 시작가 등록 가능 ,, 아닐 경우 null
+        if (product.getAuction()) {
+            product.setClosedAt(product.getClosedAt());
+            product.setCurrentAuctionPrice(product.getCurrentAuctionPrice());
+        }
         product.setCreateAt(LocalDateTime.now());
         return productRepository.save(product);
     }
