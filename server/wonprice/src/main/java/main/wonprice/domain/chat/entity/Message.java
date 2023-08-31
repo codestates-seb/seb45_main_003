@@ -16,9 +16,9 @@ public class Message {
 
     private Long senderId;
 
-    private String message;
+    private String content;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "chat_room_id")
