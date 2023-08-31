@@ -12,6 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.ResponseEntity.ok;
+
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
@@ -27,6 +32,18 @@ public class ProductController {
         Member loginMember = memberService.findLoginMember();
         Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember));
         ProductResponseDto productResponseDto = productMapper.fromEntity(product);
-        return ResponseEntity.ok(productResponseDto);
+        return ok(productResponseDto);
+    }
+
+    // 전체 상품 조회
+    @GetMapping
+    public ResponseEntity<List<ProductResponseDto>> findAllProduct() {
+        List<ProductResponseDto> productResponseDtoList = productService
+                .findAll()
+                .stream()
+                .map(productMapper::fromEntity)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(productResponseDtoList);
     }
 }
