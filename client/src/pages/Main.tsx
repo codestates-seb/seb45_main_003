@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import CarouselApp from "../components/Swiper/Carousel";
 
 const MainTitle = styled.div`
   color: #222;
@@ -13,6 +14,7 @@ const MainTitle = styled.div`
 const ContentBox = styled.div`
   display: flex;
   justify-content: center;
+  flex-direction: column;
 `;
 
 const Main = (): JSX.Element => {
@@ -20,6 +22,7 @@ const Main = (): JSX.Element => {
     <>
       <ContentBox>
         <MainTitle>THE PRICE YOU WANT</MainTitle>
+        <CarouselApp />
       </ContentBox>
     </>
   );

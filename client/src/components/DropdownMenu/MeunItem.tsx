@@ -20,6 +20,9 @@ const ItemContainer = styled.div`
     width: 100%;
     size: fit;
   }
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
 
   /* background-color: red; */
 `;
@@ -37,6 +40,10 @@ const Title = styled.div`
   font-weight: 500;
   line-height: 2rem; /* 133.333% */
   letter-spacing: 0.2px;
+
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
 `;
 
 const ItemBox = styled.div`
@@ -83,6 +90,9 @@ const ItemBox = styled.div`
     line-height: 24px; /* 171.429% */
     letter-spacing: 0.2px;
   }
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
 `;
 const ListBox = styled.div`
   gap: 1.25rem;
@@ -91,6 +101,9 @@ const ListBox = styled.div`
   .ItemList {
     padding-bottom: 1rem;
     /* background: gold; */
+  }
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
   }
 `;
 
@@ -120,6 +133,9 @@ const CountBox = styled.div`
     font-weight: 600;
     line-height: 24px; /* 171.429% */
     letter-spacing: 0.2px;
+  }
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
   }
 `;
 interface ItemProps {
