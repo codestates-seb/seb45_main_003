@@ -20,6 +20,7 @@ public interface ProductMapper {
                 .auction(productRequestDto.getAuction())
                 .status(ProductStatus.BEFORE)
                 .views(0L)
+                .removed(false) // 게시글 삭제 여부 셋팅값은 false
                 .build();
     }
 
@@ -37,6 +38,7 @@ public interface ProductMapper {
                 .createAt(product.getCreateAt())
                 .modifiedAt(product.getModifiedAt())
                 .deletedAt(product.getDeletedAt())
+                .removed(product.getRemoved())
                 .build();
     }
 }
