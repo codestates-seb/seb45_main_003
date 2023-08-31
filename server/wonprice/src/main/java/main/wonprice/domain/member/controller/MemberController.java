@@ -1,9 +1,9 @@
 package main.wonprice.domain.member.controller;
 
-import lombok.extern.java.Log;
 import main.wonprice.domain.member.dto.MemberPatchDto;
 import main.wonprice.domain.member.dto.MemberPostDto;
 import main.wonprice.domain.member.dto.MemberResponseDto;
+import main.wonprice.domain.member.dto.PasswordDto;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.mapper.MemberMapper;
 import main.wonprice.domain.member.service.MemberService;
@@ -37,10 +37,14 @@ public class MemberController {
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
-    /* 로그인한 회원 정보(마이페이지 정보) -> 로그인 구현 후 구현 예정
-    @GetMapping
-    public ResponseEntity getMember()
-    */
+    @GetMapping("/myPage")
+    public ResponseEntity getLoginMember() {
+
+        Member loginMember = memberService.findLoginMember();
+        MemberResponseDto response = mapper.memberToResponseDto(loginMember);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
 
     @GetMapping("/{member-id}")
     public ResponseEntity getMember(@PathVariable("member-id") Long memberId) {
@@ -77,6 +81,14 @@ public class MemberController {
     public ResponseEntity deleteMember(@PathVariable("member-id") Long memberId) {
         memberService.deleteMember(memberId);
 
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity("Deleted Successfully", HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("/validatePassword")
+    public ResponseEntity checkPassword(@RequestBody PasswordDto passwordDto) {
+
+        memberService.validatePassword(passwordDto.getPassword());
+
+        return new ResponseEntity<>("Valid password", HttpStatus.OK);
     }
 }
