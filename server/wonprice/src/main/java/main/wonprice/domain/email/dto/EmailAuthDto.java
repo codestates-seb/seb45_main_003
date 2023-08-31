@@ -11,4 +11,6 @@ public class EmailAuthDto {
     @Email(message = "이메일을 정확히 입력해 주세요")
     @NotBlank(message = "이메일을 입력해 주세요")
     private String email;
+
+    private String authCode;
 }

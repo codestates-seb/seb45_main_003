@@ -17,6 +17,4 @@ public class MemberResponseDto {
     private String phone;
 
     private MemberStatus status;
-
-    private LoginType loginType;
 }
