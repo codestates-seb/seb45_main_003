@@ -16,7 +16,7 @@ public class Message {
 
     private Long senderId;
 
-    private String message;
+    private String content;
 
     private LocalDateTime createdAt;
 
