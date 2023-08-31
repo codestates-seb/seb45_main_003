@@ -26,7 +26,7 @@ public class Product {
 
     private Long immediatelyBuyPrice; // 즉시 구매가
 
-    private Long currentAuctionPrice; // 현재 경매가
+    private Long currentAuctionPrice; // 현재 입찰가 (시작가에서 증가되는 방식)
 
     private Boolean auction; // 경매 여부
 
@@ -52,12 +52,4 @@ public class Product {
     private Member seller; // 판매자
     
     private Boolean removed; // 글 삭제 여부 (게시글 삭제 시, 실제 DB에서 삭제되는 것 X true, false 로 명시)
-
-    @Builder
-    public Product(Member seller, String title, String description, Long immediatelyBuyPrice) {
-        this.seller = seller;
-        this.title = title;
-        this.description = description;
-        this.immediatelyBuyPrice = immediatelyBuyPrice;
-    }
 }
