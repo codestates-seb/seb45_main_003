@@ -27,6 +27,8 @@ public class ProductResponseDto {
 
     private Boolean auction;
 
+    private Boolean removed;
+
     private LocalDateTime createAt;
 
     private LocalDateTime modifiedAt;
