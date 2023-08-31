@@ -60,16 +60,4 @@ public class Product {
         this.description = description;
         this.immediatelyBuyPrice = immediatelyBuyPrice;
     }
-
-    // 상품 정보 등록 날짜 갱신 메서드
-    @PrePersist
-    public void prePersist() {
-        createAt = LocalDateTime.now();
-    }
-
-    // 상품 정보 수정 날짜 갱신 메서드
-    @PreUpdate
-    public void preUpdate() {
-        modifiedAt = LocalDateTime.now();
-    }
 }
