@@ -106,7 +106,7 @@ const SignupForm = (): JSX.Element => {
         <Button
           type={"button"}
           disabled={false}
-          buttonText={"인증요청"}
+          text={"인증요청"}
           onClick={() => reqConfirmCode(getValues("email"))}
         />
       </div>
@@ -124,7 +124,7 @@ const SignupForm = (): JSX.Element => {
         <Button
           type={"button"}
           disabled={false}
-          buttonText={"인증하기"}
+          text={"인증하기"}
           onClick={() => testConfirmCode(getValues())}
         />
       </div>
@@ -176,7 +176,7 @@ const SignupForm = (): JSX.Element => {
         })}
       />
       {errors.phone && <div>{errors.phone?.message}</div>}
-      <Button type={"submit"} disabled={isSubmitting} buttonText={"회원가입"} />
+      <Button type={"submit"} disabled={isSubmitting} text={"회원가입"} />
     </StyledSignupForm>
   );
 };

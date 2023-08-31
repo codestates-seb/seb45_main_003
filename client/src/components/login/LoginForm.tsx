@@ -75,7 +75,7 @@ const LogInForm = (): JSX.Element => {
         })}
       />
       {errors.password && <div>{errors.password?.message}</div>}
-      <Button type={"submit"} disabled={isSubmitting} buttonText={"로그인"} />
+      <Button type={"submit"} disabled={isSubmitting} text={"로그인"} />
     </StyledLoginForm>
   );
 };
