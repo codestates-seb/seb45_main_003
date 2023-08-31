@@ -1,8 +1,8 @@
-package main.wonprice.auth.service;
+package main.wonprice.auth.refreshToken.service;
 
-import main.wonprice.auth.entity.RefreshToken;
+import main.wonprice.auth.refreshToken.entity.RefreshToken;
 import main.wonprice.auth.jwt.JwtTokenizer;
-import main.wonprice.auth.repository.RefreshTokenRepository;
+import main.wonprice.auth.refreshToken.repository.RefreshTokenRepository;
 import main.wonprice.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 

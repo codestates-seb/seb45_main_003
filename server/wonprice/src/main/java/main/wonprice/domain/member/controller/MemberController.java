@@ -32,9 +32,9 @@ public class MemberController {
 
         Member member = mapper.postDtoToMember(postDto);
         Member createdMember = memberService.joinMember(member);
-        MemberResponseDto response = mapper.memberToResponseDto(createdMember);
+//        MemberResponseDto response = mapper.memberToResponseDto(createdMember);
 
-        return new ResponseEntity(response, HttpStatus.CREATED);
+        return new ResponseEntity("🌟🌟🌟 Success 🌟🌟🌟",HttpStatus.CREATED);
     }
 
     @GetMapping("/myPage")

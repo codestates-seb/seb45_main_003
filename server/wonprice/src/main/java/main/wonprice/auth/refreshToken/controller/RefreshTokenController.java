@@ -1,6 +1,6 @@
-package main.wonprice.auth.controller;
+package main.wonprice.auth.refreshToken.controller;
 
-import main.wonprice.auth.service.RefreshTokenService;
+import main.wonprice.auth.refreshToken.service.RefreshTokenService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
