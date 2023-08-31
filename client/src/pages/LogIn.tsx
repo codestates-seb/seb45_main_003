@@ -29,7 +29,6 @@ const PageContentContainer = styled.div`
   }
 
   .labelContainer {
-    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -72,7 +71,7 @@ const LogIn = (): JSX.Element => {
           <fieldset id="socialButton"></fieldset>
           <div className="guide">
             <div>서비스를 처음 방문하셨나요?</div>
-            <Button disabled={false} type={"button"} buttonText={"회원가입"} onClick={changeform} />
+            <Button disabled={false} type={"button"} text={"회원가입"} onClick={changeform} />
           </div>
         </PageContentContainer>
       ) : (
@@ -81,7 +80,7 @@ const LogIn = (): JSX.Element => {
           <SignupForm />
           <div className="guide">
             <div>이미 계정이 있으신가요?</div>
-            <Button disabled={false} type={"button"} buttonText={"로그인"} onClick={changeform} />
+            <Button disabled={false} type={"button"} text={"로그인"} onClick={changeform} />
           </div>
         </PageContentContainer>
       )}
