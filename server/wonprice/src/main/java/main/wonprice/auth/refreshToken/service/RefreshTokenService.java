@@ -1,12 +1,13 @@
-package main.wonprice.auth.service;
+package main.wonprice.auth.refreshToken.service;
 
-import main.wonprice.auth.entity.RefreshToken;
+import main.wonprice.auth.refreshToken.entity.RefreshToken;
 import main.wonprice.auth.jwt.JwtTokenizer;
-import main.wonprice.auth.repository.RefreshTokenRepository;
+import main.wonprice.auth.refreshToken.repository.RefreshTokenRepository;
 import main.wonprice.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,12 @@ public class RefreshTokenService {
 
         String refreshToken = request.getHeader("Refresh");
 
-        if (refreshToken == null) throw new RuntimeException("Invalid Access");
+//        refresh 토큰 유효시간 확인
+        Date refreshExpiration = jwtTokenizer.getClaims(refreshToken, jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey())).getBody().getExpiration();
+        boolean valid = refreshExpiration.after(Calendar.getInstance().getTime());
+
+        if (refreshToken == null || !valid) throw new RuntimeException("Invalid Access");
+        if (!valid) refreshTokenRepository.deleteByToken(refreshToken);
 
         Member member = refreshTokenRepository.findByToken(refreshToken).getMember();
 
