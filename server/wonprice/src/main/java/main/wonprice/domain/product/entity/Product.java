@@ -28,7 +28,7 @@ public class Product {
 
     private Long currentAuctionPrice;
 
-    private Boolean auction = false;
+    private Boolean auction;
 
     private LocalDateTime createAt;
 
@@ -37,7 +37,7 @@ public class Product {
     private LocalDateTime modifiedAt;
 
     @Enumerated(EnumType.STRING)
-    private ProductStatus status = ProductStatus.BEFORE;
+    private ProductStatus status;
 
     private Long views;
 
