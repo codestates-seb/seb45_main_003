@@ -32,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product findOneById(Long productId) {
         Product product = findExistsProduct(productId);
-        product.setViews(product.getViews() + 1); // 조회수 카운팅
+        product.setViews(product.getViews() + 1); // 조회수 카운팅 (메서드 추가!)
         return productRepository.save(product);
     }
 
@@ -41,5 +41,12 @@ public class ProductServiceImpl implements ProductService {
     public Product findExistsProduct(Long productId) {
         Optional<Product> product = productRepository.findById(productId);
         return product.orElseThrow();
+    }
+
+    @Override
+    public Product deleteOneById(Long productId) {
+        Product product = findOneById(productId);
+        product.setRemoved(true);
+        return productRepository.save(product);
     }
 }
