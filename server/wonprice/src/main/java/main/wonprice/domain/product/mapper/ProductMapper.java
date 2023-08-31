@@ -15,6 +15,7 @@ public interface ProductMapper {
                 .title(productRequestDto.getTitle())
                 .description(productRequestDto.getDescription())
                 .immediatelyBuyPrice(productRequestDto.getImmediatelyBuyPrice())
+                .views(0L)
                 .build();
     }
 
