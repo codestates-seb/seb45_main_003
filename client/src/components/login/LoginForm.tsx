@@ -2,12 +2,13 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import Button from "../common/Button";
 import { styled } from "styled-components";
-
+//폼에서 사용하는 데이터
 interface LoginForm {
   email: string;
   password: string;
   formError: string;
 }
+//실제로 보내는 데이터
 interface LoginData {
   email: string;
   password: string;
@@ -29,13 +30,26 @@ const LogInForm = (): JSX.Element => {
     formState: { errors, isSubmitting },
     setError,
   } = useForm<LoginForm>();
-
-  const submitLogin = async (data: LoginData) => {
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/members/login`, data);
+  //로그인 시도 함수
+  const submitLogin = async (body: LoginData) => {
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/members/login`, body);
     if (!response) {
       setError("formError", {
         message: "이메일 또는 비밀번호가 잘못 작성되었습니다.",
       });
+    } else {
+      try {
+        const headers = response.headers;
+        const getToken = async () => {
+          const accessToken = headers["Authorization"].toString();
+          const refreshToken = headers["Refresh"].toString();
+          localStorage.setItem("accessToekn", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
+        };
+        getToken();
+      } catch (error) {
+        console.log(`Error: ${error}`);
+      }
     }
   };
 
