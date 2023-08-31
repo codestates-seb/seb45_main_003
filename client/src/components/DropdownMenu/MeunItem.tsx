@@ -72,9 +72,8 @@ const ItemBox = styled.div`
   }
   .count {
     /* background-color: #b0ee35; */
-    width: 30%;
+    width: 10%;
     text-align: end;
-    margin-right: 0.625rem;
 
     color: var(--second-text-color, #737373);
     font-family: Pretendard Variable;
@@ -95,6 +94,34 @@ const ListBox = styled.div`
   }
 `;
 
+const CountBox = styled.div`
+  height: 1.625rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  color: var(--text-color, #252b42);
+  font-family: Pretendard Variable;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 171.429% */
+  letter-spacing: 0.2px;
+
+  .count {
+    /* background-color: #b0ee35; */
+    width: 10%;
+    text-align: end;
+
+    color: var(--second-text-color, #737373);
+    font-family: Pretendard Variable;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: 0.2px;
+  }
+`;
 interface ItemProps {
   categories?: string;
   count?: string;
@@ -145,8 +172,10 @@ const MenuItem: React.FunctionComponent<ItemProps> = (props) => {
             </li>
           </ul>
           <div className="ViewAll">
-            <div>View all</div>
-            <div className="count">{props.allCount}</div>
+            <CountBox>
+              <div>View all</div>
+              <div className="count">{props.allCount}0</div>
+            </CountBox>
           </div>
         </ListBox>
       </ItemContainer>
