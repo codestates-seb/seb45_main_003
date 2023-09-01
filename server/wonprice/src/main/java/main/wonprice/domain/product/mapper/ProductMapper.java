@@ -1,11 +1,14 @@
 package main.wonprice.domain.product.mapper;
 
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.product.dto.ProductMypageResponseDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.entity.ProductStatus;
 import org.mapstruct.Mapper;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
@@ -39,4 +42,6 @@ public interface ProductMapper {
                 .deletedAt(product.getDeletedAt())
                 .build();
     }
+
+    List<ProductMypageResponseDto> toMypageProduct(List<Product> products);
 }

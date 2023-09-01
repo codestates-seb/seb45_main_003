@@ -31,10 +31,16 @@ public class ErrorResponse {
 //    BusinessLogic Exception 응답을 위한 필드
     private int status;
     private String message;
+    private String exceptionName;
 
     private ErrorResponse(int status, String message) {
         this.status = status;
         this.message = message;
+    }
+    private ErrorResponse(int status, String message, String exceptionName) {
+        this.status = status;
+        this.message = message;
+        this.exceptionName = exceptionName;
     }
 
     private ErrorResponse(List<FieldError> fieldErrors, List<ConstraintViolationError> violationErrors) {
@@ -42,8 +48,8 @@ public class ErrorResponse {
         this.violationErrors = violationErrors;
     }
 
-    public static ErrorResponse of(HttpStatus httpStatus) {
-        return new ErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase());
+    public static ErrorResponse of(HttpStatus httpStatus, String exceptionName) {
+        return new ErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase(), exceptionName);
     }
 
 //    BindingResult에 대한 ErrorResponse 객체 생성
