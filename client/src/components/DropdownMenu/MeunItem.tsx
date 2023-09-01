@@ -9,7 +9,6 @@ const ItemContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
-  /* background: gold; */
   max-width: 22rem;
   width: 100%;
   display: flex;
@@ -23,8 +22,6 @@ const ItemContainer = styled.div`
   @media (max-width: 64rem) {
     width: calc(100% - 2rem);
   }
-
-  /* background-color: red; */
 `;
 
 const Title = styled.div`

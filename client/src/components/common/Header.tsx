@@ -3,14 +3,16 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
 import { dropDownState } from "../../atoms/atoms";
-import MenuItem from "../DropdownMenu/MeunItem";
+import MenuItem from "../dropdownMenu/MeunItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import React, { useEffect, useRef } from "react";
 
+// 최 상단 헤더 Bottom 라인
 const StyledBorder = styled.div`
   border-bottom: 1px solid #e0e0e0;
 `;
 
+// 헤더 컨텐츠 영역
 const StyledHeader = styled.header`
   .ButtonStyle {
     border: none;
@@ -33,7 +35,9 @@ const StyledHeader = styled.header`
     gap: 2.25rem;
   }
 
+  // 최 상단으로 배치 z-index: 2;
   .sidebar {
+    z-index: 2;
     border-radius: 6px;
     /* border: 1px solid var(--cool-gray-20, #dde1e6); */
     background: #ffffff;
@@ -42,7 +46,6 @@ const StyledHeader = styled.header`
     width: 25%;
     display: flex;
     justify-content: center;
-    /* padding: 3rem 2.125rem 4.9375rem 2.1875rem; */
 
     position: absolute;
     top: 4.8125rem;
@@ -54,6 +57,7 @@ const StyledHeader = styled.header`
   }
 `;
 
+// Header 컴포넌트 반환 영역
 const Header = (): JSX.Element => {
   const [dropdown, setDropdown] = useRecoilState(dropDownState);
   const sidebarRef = useRef<HTMLElement | null>(null); // HTML Element의 타입을 명시

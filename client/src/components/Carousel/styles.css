@@ -51,3 +51,24 @@ body {
 
 
 }
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  display: none;
+}
+
+.swiper-button-next {
+  background: url(../../assets/images/ButtonR.svg) no-repeat;
+  background-size: 100% auto;
+  background-position: center;
+  margin-right: 16.5rem;
+}
+
+.swiper-button-prev {
+  background: url(../../assets/images/ButtonL.svg) no-repeat;
+  background-size: 100% auto;
+  background-position: center;
+  margin-left: 16.5rem;
+
+
+}

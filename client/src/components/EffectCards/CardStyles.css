@@ -1,6 +1,6 @@
-#app {
+/* #app {
   height: 100%
-}
+} */
 
 html,
 body {
@@ -32,17 +32,17 @@ body {
   height: 100%;
 }
 
-#app {
+/* #app {
   display: flex;
   justify-content: center;
   align-items: center;
-}
+} */
 
-.swiper {
+/* .swiper {
   width: 240px;
   height: 320px;
 
-}
+} */
 
 .swiper-slide {
   display: flex;
@@ -52,8 +52,6 @@ body {
   font-size: 22px;
   font-weight: bold;
   color: #fff;
-  border-radius: 18px;
-
 
 }
 
@@ -102,6 +100,4 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-
-
 }
