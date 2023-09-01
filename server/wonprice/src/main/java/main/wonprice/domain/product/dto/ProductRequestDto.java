@@ -19,7 +19,7 @@ public class ProductRequestDto {
 
     private Long currentAuctionPrice; // 시작가 --> 현재 입찰가
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime closedAt; // 경매 종료 시간
 
     private Boolean auction; // 판매 방식 (경매:true or 즉시 구매:false)

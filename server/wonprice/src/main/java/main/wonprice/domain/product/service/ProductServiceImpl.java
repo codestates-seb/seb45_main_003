@@ -52,14 +52,12 @@ public class ProductServiceImpl implements ProductService {
 
     /*
         상품 게시글 삭제
-        - removed(삭제여부): false (0) -> true (1)
         - deletedAt(삭제시간): now()
      */
     @Override
     public Product deleteOneById(Long productId) {
         Product product = findOneById(productId);
         product.setDeletedAt(LocalDateTime.now());
-        product.setRemoved(true);
         return productRepository.save(product);
     }
 
