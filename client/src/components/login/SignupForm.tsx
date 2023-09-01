@@ -47,6 +47,15 @@ const StyledSignupForm = styled.form`
   #confirmcode {
     flex: 1 0 21.875rem;
   }
+  .errormessage {
+    color: #f44336;
+  }
+  .successmessage {
+    color: #33a754;
+  }
+  .errorInput {
+    border-color: #f44336;
+  }
 `;
 const StyledModal = styled.div`
   width: 22.0625rem;
@@ -139,11 +148,12 @@ const SignupForm = (): JSX.Element => {
           id="name"
           type="text"
           placeholder="성함"
+          className={errors.name ? "errorInput" : "input"}
           {...register("name", {
             required: "성함을 작성해주세요.",
           })}
         />
-        {errors.name && <div>{errors.name?.message}</div>}
+        {errors.name && <div className="errormessage">{errors.name?.message}</div>}
         <label htmlFor="email">Email</label>
         <div className="withButton">
           <input
@@ -151,6 +161,7 @@ const SignupForm = (): JSX.Element => {
             type="email"
             placeholder="Email"
             readOnly={success.confirm}
+            className={errors.email ? "errorInput" : "input"}
             {...register("email", {
               required: "이메일을 작성해주세요.",
               pattern: {
@@ -167,8 +178,8 @@ const SignupForm = (): JSX.Element => {
             onClick={() => reqConfirmCode(getValues("email"))}
           />
         </div>
-        {errors.email && <div>{errors.email?.message}</div>}
-        {success.req && <div>인증코드를 전송했습니다.</div>}
+        {errors.email && <div className="errormessage">{errors.email?.message}</div>}
+        {success.req && <div className="successmessage">인증코드를 전송했습니다.</div>}
         <label htmlFor="confirmcode">인증코드</label>
         <div className="withButton">
           <input
@@ -176,6 +187,7 @@ const SignupForm = (): JSX.Element => {
             type="text"
             placeholder="인증코드"
             readOnly={success.confirm}
+            className={errors.confirmcode ? "errorInput" : "input"}
             {...register("confirmcode", {
               required: "이메일로 전송된 인증코드를 입력해주세요.",
             })}
@@ -187,13 +199,14 @@ const SignupForm = (): JSX.Element => {
             onClick={() => testConfirmCode(getValues())}
           />
         </div>
-        {errors.confirmcode && <div>{errors.confirmcode?.message}</div>}
-        {success.confirm && <div>인증되었습니다.</div>}
+        {errors.confirmcode && <div className="errormessage">{errors.confirmcode?.message}</div>}
+        {success.confirm && <div className="successmessage">인증되었습니다.</div>}
         <label htmlFor="password">비밀번호</label>
         <input
           id="password"
           type="password"
           placeholder="비밀번호는 8자리 이상의 숫자, 특수문자, 영문을 조합해주세요."
+          className={errors.password ? "errorInput" : "input"}
           {...register("password", {
             required: "비밀번호를 입력해주세요.",
             minLength: {
@@ -206,12 +219,13 @@ const SignupForm = (): JSX.Element => {
             },
           })}
         />
-        {errors.password && <div>{errors.password?.message}</div>}
+        {errors.password && <div className="errormessage">{errors.password?.message}</div>}
         <label htmlFor="chekcpassword">비밀번호 확인</label>
         <input
           id="checkpassword"
           type="password"
           placeholder="비밀번호 확인"
+          className={errors.checkpassword ? "errorInput" : "input"}
           {...register("checkpassword", {
             required: "비밀번호를 확인해주세요.",
             validate: (value: string) => {
@@ -221,12 +235,15 @@ const SignupForm = (): JSX.Element => {
             },
           })}
         />
-        {errors.checkpassword && <div>{errors.checkpassword?.message}</div>}
+        {errors.checkpassword && (
+          <div className="errormessage">{errors.checkpassword?.message}</div>
+        )}
         <label htmlFor="phone">핸드폰 번호</label>
         <input
           id="phone"
           type="text"
           placeholder="-를 제외한 번호를 입력해주세요."
+          className={errors.phone ? "errorInput" : "input"}
           {...register("phone", {
             required: "핸드폰 번호를 작성해주세요.",
             pattern: {
@@ -235,7 +252,7 @@ const SignupForm = (): JSX.Element => {
             },
           })}
         />
-        {errors.phone && <div>{errors.phone?.message}</div>}
+        {errors.phone && <div className="errormessage">{errors.phone?.message}</div>}
         <Button type={"submit"} disabled={isSubmitting} text={"회원가입"} />
       </StyledSignupForm>
       <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
