@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { ReactComponent as AddButton } from "../../assets/images/Add.svg";
-import myImage from "/Users/dahae/Desktop/GitHub/seb45_main_003/client/src/assets/images/Img1.png";
+import myImage from "../../assets/images/Img1.png";
 import { Link } from "react-router-dom";
 
 const ItemContainer = styled.div`
