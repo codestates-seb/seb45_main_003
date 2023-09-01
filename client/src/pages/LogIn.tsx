@@ -39,6 +39,14 @@ const PageContentContainer = styled.div`
     }
   }
 
+  #socialButtonContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
   .labelContainer {
     display: flex;
     justify-content: center;
@@ -72,29 +80,32 @@ const LogIn = (): JSX.Element => {
     <BackgroundContainer>
       {loginPageForm ? (
         <PageContentContainer>
-          <h1>로그인</h1>
+          <h2>로그인</h2>
           <LogInForm />
           <div className="labelContainer">
-            <label htmlFor="socialButton" className="socialLabel">
+            <label htmlFor="socialButtonContainer" className="socialLabel">
               소셜 로그인
             </label>
           </div>
-          <fieldset id="socialButton"></fieldset>
+          <div id="socialButtonContainer">
+            <Button type="button" text={"구글 로그인"} />
+            <Button type="button" text={"카카오 로그인"} />
+          </div>
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">서비스를 처음 방문하셨나요?</div>
-              <Button disabled={false} type={"button"} text={"회원가입"} onClick={changeform} />
+              <Button type={"button"} text={"회원가입"} onClick={changeform} />
             </div>
           </div>
         </PageContentContainer>
       ) : (
         <PageContentContainer>
-          <h1>회원가입</h1>
+          <h2>회원가입</h2>
           <SignupForm />
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">이미 계정이 있으신가요?</div>
-              <Button disabled={false} type={"button"} text={"로그인"} onClick={changeform} />
+              <Button type={"button"} text={"로그인"} onClick={changeform} />
             </div>
           </div>
         </PageContentContainer>

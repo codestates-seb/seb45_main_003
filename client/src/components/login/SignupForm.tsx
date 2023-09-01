@@ -136,10 +136,11 @@ const SignupForm = (): JSX.Element => {
   };
 
   const [loginPageForm, setloginPageForm] = useRecoilState(toSignup);
+  //로그인 컴포넌트로 변환하는 함수
   const changeform = () => {
     setloginPageForm(!loginPageForm);
   };
-  //Todo: 이메일이 인증되면 이메일을 바꿀 수 없게 email input 비활성화, buttonText를 buttontext로 수정
+
   return (
     <>
       <StyledSignupForm onSubmit={handleSubmit(submitSignup)}>
