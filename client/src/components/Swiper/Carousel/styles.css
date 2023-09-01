@@ -1,11 +1,10 @@
-#app {
+/* #app {
   height: 100%;
-}
+} */
 
 html,
 body {
   position: relative;
-  height: 100%;
 }
 
 body {
@@ -15,6 +14,8 @@ body {
   color: #000;
   margin: 0;
   padding: 0;
+
+
 }
 
 .swiper {
@@ -25,7 +26,9 @@ body {
 .swiper-slide {
   text-align: center;
   font-size: 18px;
-  background: #fff;
+  background: #c60d0d;
+  width: 50rem;
+  height: 18.75rem;
 
   /* Center slide text vertically */
   display: flex;
@@ -38,4 +41,13 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.swiper {
+
+  margin-top: 3.75rem;
+  flex-shrink: 0;
+  border-radius: 6px;
+
+
 }
