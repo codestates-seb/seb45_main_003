@@ -7,6 +7,10 @@ import main.wonprice.domain.member.dto.PasswordDto;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.mapper.MemberMapper;
 import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.product.dto.ProductResponseDto;
+import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.mapper.ProductMapper;
+import main.wonprice.domain.product.service.ProductService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +23,16 @@ import java.util.List;
 @RequestMapping("/members")
 public class MemberController {
 
-    private MemberService memberService;
-    private MemberMapper mapper;
+    private final MemberService memberService;
+    private final ProductService productService;
+    private final MemberMapper mapper;
+    private final ProductMapper productMapper;
 
-    public MemberController(MemberService memberService, MemberMapper mapper) {
+    public MemberController(MemberService memberService, ProductService productService, MemberMapper mapper, ProductMapper productMapper) {
         this.memberService = memberService;
+        this.productService = productService;
         this.mapper = mapper;
+        this.productMapper = productMapper;
     }
 
     @PostMapping
@@ -44,6 +52,18 @@ public class MemberController {
         MemberResponseDto response = mapper.memberToResponseDto(loginMember);
 
         return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    //    마이페이지용 로그인한 회원 게시물 목록 조회
+    @GetMapping("/myPage/products")
+    public ResponseEntity findLoginMembersProduct(Pageable pageable) {
+
+        Member loginMember = memberService.findLoginMember();
+
+        List<Product> products = productService.findLoginMembersProduct(pageable, loginMember);
+        List<ProductResponseDto> response = productMapper.toMypageProduct(products);
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{member-id}")
