@@ -110,7 +110,7 @@ public class MemberController {
 
         memberService.validatePassword(passwordDto.getPassword());
 
-        return new ResponseEntity<>("Valid password", HttpStatus.OK);
+        return new ResponseEntity<>("🌟🌟🌟 Success 🌟🌟🌟", HttpStatus.OK);
     }
 
     @PostMapping("/auth/name")
