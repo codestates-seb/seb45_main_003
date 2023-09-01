@@ -1,8 +1,6 @@
+import PostForm from "../components/post/PostForm";
+
 const CreatePost = (): JSX.Element => {
-  return (
-    <>
-      <h1>CreatePost</h1>
-    </>
-  );
+  return <PostForm />;
 };
 export default CreatePost;

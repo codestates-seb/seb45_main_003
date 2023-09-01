@@ -1,30 +1,32 @@
 import styled from "styled-components";
 import { ReactComponent as AddButton } from "../../assets/images/Add.svg";
+import myImage from "../../assets/images/Img1.png";
+import { Link } from "react-router-dom";
 
 const ItemContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  width: 21.5625rem;
   padding: 0.625rem;
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
-  border-radius: 5px;
-  background-color: red;
-`;
+  max-width: 22rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 
-const ItemImg = styled.img`
-  border-radius: 10px;
-  background:
-    url("client/src/assets/images/Img1.jpeg"),
-    lightgray 50% / cover no-repeat;
-  width: 21.5625rem;
-  height: 13rem;
+  .ItemImg {
+    border-radius: 10px;
+    width: 100%;
+    size: fit;
+  }
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
 `;
 
 const Title = styled.div`
   display: flex;
-  padding: 0rem 11.8125rem 0.375rem 0rem;
+  padding: 0px 189px 6px 0px;
   align-items: center;
   align-self: stretch;
 
@@ -35,45 +37,159 @@ const Title = styled.div`
   font-weight: 500;
   line-height: 2rem; /* 133.333% */
   letter-spacing: 0.2px;
+
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
 `;
 
 const ItemBox = styled.div`
-  height: 26px;
+  max-width: 20.3125rem;
+  height: 1.625rem;
   align-self: stretch;
-`;
-const ListBox = styled.div``;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  /* background-color: aqua; */
 
-const Item = (): JSX.Element => {
+  .Box {
+    /* background-color: #b118df; */
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: end;
+  }
+
+  .category {
+    justify-content: start;
+    width: 90%;
+    padding-left: 0.9375rem;
+    /* background-color: #237979; */
+
+    color: var(--second-text-color, #737373);
+    font-family: Pretendard Variable;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: 0.2px;
+  }
+  .count {
+    /* background-color: #b0ee35; */
+    width: 10%;
+    text-align: end;
+
+    color: var(--second-text-color, #737373);
+    font-family: Pretendard Variable;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: 0.2px;
+  }
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
+`;
+const ListBox = styled.div`
+  gap: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  .ItemList {
+    padding-bottom: 1rem;
+    /* background: gold; */
+  }
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
+`;
+
+const CountBox = styled.div`
+  height: 1.625rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  color: var(--text-color, #252b42);
+  font-family: Pretendard Variable;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px; /* 171.429% */
+  letter-spacing: 0.2px;
+
+  .count {
+    /* background-color: #b0ee35; */
+    width: 10%;
+    text-align: end;
+
+    color: var(--second-text-color, #737373);
+    font-family: Pretendard Variable;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: 0.2px;
+  }
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
+`;
+interface ItemProps {
+  categories?: string;
+  count?: string;
+  allCount?: string;
+}
+
+const Item: React.FunctionComponent<ItemProps> = (props) => {
   return (
     <>
       <ItemBox>
         <AddButton />
+        <div className="Box">
+          <div className="category">{props.categories}</div>
+          <div className="count">{props.count}</div>
+        </div>
       </ItemBox>
     </>
   );
 };
 
-const MenuItem = (): JSX.Element => {
+const MenuItem: React.FunctionComponent<ItemProps> = (props) => {
   return (
     <>
       <ItemContainer>
-        <ItemImg />
+        <img className="ItemImg" src={myImage} />
         <ListBox>
           <Title>Accessories</Title>
           <ul>
-            <li>
-              <Item />
+            <li className="ItemList">
+              <Link to="/product/{categories}">
+                <Item categories="Books" count="1" />
+              </Link>
             </li>
-            <li>
-              <Item />
+            <li className="ItemList">
+              <Link to="/product/{categories}">
+                <Item categories="Electronics " count="1" />
+              </Link>
             </li>
-            <li>
-              <Item />
+            <li className="ItemList">
+              <Link to="/product/{categories}">
+                <Item categories="Clothes" count="1" />
+              </Link>
             </li>
-            <li>
-              <Item />
+            <li className="ItemList">
+              <Link to="/product/{categories}">
+                <Item categories="Food" count="1" />
+              </Link>
             </li>
           </ul>
+          <div className="ViewAll">
+            <CountBox>
+              <div>View all</div>
+              <div className="count">{props.allCount}0</div>
+            </CountBox>
+          </div>
         </ListBox>
       </ItemContainer>
     </>

@@ -1,5 +1,8 @@
 package main.wonprice.auth.filter;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import main.wonprice.auth.jwt.JwtTokenizer;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class JwtVerificationFilter extends OncePerRequestFilter { // request 당 한 번만 실행되는 Security Filter
 
     private final JwtTokenizer jwtTokenizer;
@@ -31,8 +35,17 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // request 당
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        Map<String, Object> claims = verifyJws(request);
-        setAuthenticationToContext(claims);
+        try {
+            Map<String, Object> claims = verifyJws(request);
+            setAuthenticationToContext(claims);
+        } catch (SignatureException se) {
+            request.setAttribute("exception", se);
+        } catch (ExpiredJwtException ee) {
+            request.setAttribute("exception", ee);
+            log.info(request.getAttribute("exception").toString());
+        } catch (Exception e) {
+            request.setAttribute("exception", e);
+        }
 
         filterChain.doFilter(request, response);
     }

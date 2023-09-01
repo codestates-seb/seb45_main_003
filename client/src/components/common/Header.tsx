@@ -1,79 +1,107 @@
-import { styled } from "styled-components";
+import { Link } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
-import DropdownMenuButton from "../DropdownMenu/DropdownMenu";
+import { dropDownState } from "../../atoms/atoms";
+import MenuItem from "../dropdownMenu/MeunItem";
+import MenuIcon from "@mui/icons-material/Menu";
+import React, { useEffect, useRef } from "react";
 
-const Container = styled.div`
-  display: flex;
-  width: auto;
-  height: 91px;
-  padding: 0rem 15rem;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  margin: 0;
+// 최 상단 헤더 Bottom 라인
+const StyledBorder = styled.div`
   border-bottom: 1px solid #e0e0e0;
 `;
 
-const HeaderBox = styled.div`
-  padding-left: 0.75rem;
-  padding-right: 0.75rem;
+// 헤더 컨텐츠 영역
+const StyledHeader = styled.header`
+  .ButtonStyle {
+    border: none;
+    background: none;
+  }
+  .header-wrapper {
+    width: calc(100% - 3rem);
+    padding: 1.25rem;
+    max-width: 90rem;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* background: gray; */
+    position: relative;
+  }
 
-  width: 88.5rem;
-  height: 5.6875rem;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  background-color: aqua;
+  .header-right {
+    display: flex;
+    gap: 2.25rem;
+  }
+
+  // 최 상단으로 배치 z-index: 2;
+  .sidebar {
+    z-index: 2;
+    border-radius: 6px;
+    /* border: 1px solid var(--cool-gray-20, #dde1e6); */
+    background: #ffffff;
+    margin: 0.375rem;
+    max-width: 22rem;
+    width: 25%;
+    display: flex;
+    justify-content: center;
+
+    position: absolute;
+    top: 4.8125rem;
+    right: 0;
+  }
+
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
 `;
 
-const LogoBox = styled.div`
-  height: 2rem;
-  width: 14.0625rem;
-  flex: 1;
-`;
-
-const LogInButton = styled.div`
-  height: 1.5rem;
-  width: 7rem;
-  color: var(--text, #212121);
-  text-align: center;
-  font-family: Pretendard Variable;
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 1.5rem; /* 150% */
-  letter-spacing: 0.0125rem;
-`;
-
-const DropDown = styled.div`
-  width: 25.256px;
-  height: 24px;
-  flex-shrink: 0;
-  /* background-color: black; */
-  margin-right: 0.7338rem;
-  margin-left: 2.3125rem;
-`;
-
-const clickMe = () => {
-  document.location.href = "/login";
-};
-
+// Header 컴포넌트 반환 영역
 const Header = (): JSX.Element => {
+  const [dropdown, setDropdown] = useRecoilState(dropDownState);
+  const sidebarRef = useRef<HTMLElement | null>(null); // HTML Element의 타입을 명시
+
+  const onClickHandler = () => {
+    setDropdown(!dropdown);
+  };
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
+        setDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []); // 빈 의존성 배열
+
   return (
     <>
-      <Container>
-        <HeaderBox>
-          <LogoBox>
-            <Logo />
-          </LogoBox>
-          <LogInButton onClick={clickMe}>로그인/회원가입</LogInButton>
-          <DropDown>
-            <DropdownMenuButton />
-          </DropDown>
-        </HeaderBox>
-      </Container>
+      <StyledBorder>
+        <StyledHeader>
+          <div className="header-wrapper">
+            <Link to="/">
+              <Logo />
+            </Link>
+            <div className="header-right">
+              <Link to="/login">로그인 / 회원가입</Link>
+              <button className="ButtonStyle" onClick={onClickHandler}>
+                <MenuIcon />
+              </button>
+            </div>
+            {dropdown && (
+              <aside className="sidebar" ref={sidebarRef}>
+                <MenuItem />
+              </aside>
+            )}
+          </div>
+        </StyledHeader>
+      </StyledBorder>
     </>
   );
 };
