@@ -12,4 +12,6 @@ public interface ProductService {
     Product findOneById(Long productId);
 
     Product findExistsProduct(Long productId);
+
+    Product deleteOneById(Long productId);
 }
