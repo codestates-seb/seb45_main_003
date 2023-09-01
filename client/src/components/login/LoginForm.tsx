@@ -38,7 +38,6 @@ const LogInForm = (): JSX.Element => {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/members/login`, body);
       if (response.status === 200) {
         const headers = response.headers;
-        console.log(headers);
         const accessToken = headers["authorization"];
         const refreshToken = headers["refresh"];
         console.log(`access:${accessToken}`, `refresh:${refreshToken}`);

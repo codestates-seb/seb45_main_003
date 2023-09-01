@@ -20,12 +20,23 @@ const PageContentContainer = styled.div`
   align-items: stretch;
   gap: 1.5rem;
 
-  .guide {
+  .bottomContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+
+    .guide {
+      width: 224px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      gap: 0.75rem;
+      .guideTitle {
+        text-align: center;
+      }
+    }
   }
 
   .labelContainer {
@@ -69,18 +80,22 @@ const LogIn = (): JSX.Element => {
             </label>
           </div>
           <fieldset id="socialButton"></fieldset>
-          <div className="guide">
-            <div>서비스를 처음 방문하셨나요?</div>
-            <Button disabled={false} type={"button"} text={"회원가입"} onClick={changeform} />
+          <div className="bottomContainer">
+            <div className="guide">
+              <div className="guideTitle">서비스를 처음 방문하셨나요?</div>
+              <Button disabled={false} type={"button"} text={"회원가입"} onClick={changeform} />
+            </div>
           </div>
         </PageContentContainer>
       ) : (
         <PageContentContainer>
           <h1>회원가입</h1>
           <SignupForm />
-          <div className="guide">
-            <div>이미 계정이 있으신가요?</div>
-            <Button disabled={false} type={"button"} text={"로그인"} onClick={changeform} />
+          <div className="bottomContainer">
+            <div className="guide">
+              <div className="guideTitle">이미 계정이 있으신가요?</div>
+              <Button disabled={false} type={"button"} text={"로그인"} onClick={changeform} />
+            </div>
           </div>
         </PageContentContainer>
       )}
