@@ -56,7 +56,7 @@ public class ProductController {
         return ResponseEntity.ok(productResponseDto);
     }
 
-    //    마이페이지용 로그인한 회원 게시물 목록 조회
+    // 마이페이지용 로그인한 회원 게시물 목록 조회
     @GetMapping("/myPage")
     public ResponseEntity findLoginMembersProduct(Pageable pageable) {
 
