@@ -92,6 +92,7 @@ const SignupForm = (): JSX.Element => {
     });
     if (response.status === 200) {
       console.log("succsess");
+      //인증코드 전송시 안내문 제공
       setSuccess({ ...success, req: true });
     }
   };
@@ -105,6 +106,7 @@ const SignupForm = (): JSX.Element => {
     });
     if (response.status === 200) {
       console.log("succsess");
+      //인증성공시 인증코드 작성란과 이메일 작성란을 비활성화
       setSuccess({ ...success, confirm: true });
     }
   };
@@ -128,7 +130,7 @@ const SignupForm = (): JSX.Element => {
             id="email"
             type="email"
             placeholder="Email"
-            readOnly={success.req}
+            readOnly={success.confirm}
             {...register("email", {
               required: "이메일을 작성해주세요.",
               pattern: {
