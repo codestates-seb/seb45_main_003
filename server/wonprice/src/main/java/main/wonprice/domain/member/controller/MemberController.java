@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/members")
@@ -104,11 +105,29 @@ public class MemberController {
         return new ResponseEntity("Deleted Successfully", HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/validatePassword")
+    @PostMapping("/auth/password")
     public ResponseEntity checkPassword(@RequestBody PasswordDto passwordDto) {
 
         memberService.validatePassword(passwordDto.getPassword());
 
         return new ResponseEntity<>("Valid password", HttpStatus.OK);
+    }
+
+    @PostMapping("/auth/name")
+    public ResponseEntity checkName(@RequestBody Map<String, String> name) {
+
+        String inputName = name.get("name");
+        memberService.checkExistName(inputName);
+
+        return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
+    }
+
+    @PostMapping("/auth/phone")
+    public ResponseEntity checkPhone(@RequestBody Map<String, String> phone) {
+
+        String inputPhone = phone.get("phone");
+        memberService.checkExistPhone(inputPhone);
+
+        return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
 }
