@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { useState } from "react";
 import { useModal } from "../../hooks/useModal";
+import { useRecoilState } from "recoil";
+import { toSignup } from "../../atoms/atoms";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 
@@ -47,11 +49,25 @@ const StyledSignupForm = styled.form`
   }
 `;
 const StyledModal = styled.div`
-  padding: 1rem;
+  width: 22.0625rem;
+  height: 11.25rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 2.3125rem;
+  .modalTextContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+  }
+  .modalButtonContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+  }
 `;
 
 const SignupForm = (): JSX.Element => {
@@ -69,7 +85,6 @@ const SignupForm = (): JSX.Element => {
   });
   //폼에 작성된 데이터들을 서버로 전송하는 함수
   const submitSignup = async (data: SignupData) => {
-    toggleModal();
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/members`, data);
       if (response.status === 201) {
@@ -109,6 +124,11 @@ const SignupForm = (): JSX.Element => {
       //인증성공시 인증코드 작성란과 이메일 작성란을 비활성화
       setSuccess({ ...success, confirm: true });
     }
+  };
+
+  const [loginPageForm, setloginPageForm] = useRecoilState(toSignup);
+  const changeform = () => {
+    setloginPageForm(!loginPageForm);
   };
   //Todo: 이메일이 인증되면 이메일을 바꿀 수 없게 email input 비활성화, buttonText를 buttontext로 수정
   return (
@@ -219,7 +239,14 @@ const SignupForm = (): JSX.Element => {
         <Button type={"submit"} disabled={isSubmitting} text={"회원가입"} />
       </StyledSignupForm>
       <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
-        <StyledModal>어디?</StyledModal>
+        <StyledModal>
+          <div className="modalTextContainer">
+            <p>회원가입 되셨습니다!</p>
+          </div>
+          <div className="modalButtonContainer">
+            <Button type={"button"} disabled={false} text={"확인"} onClick={() => changeform()} />
+          </div>
+        </StyledModal>
       </Modal>
     </>
   );
