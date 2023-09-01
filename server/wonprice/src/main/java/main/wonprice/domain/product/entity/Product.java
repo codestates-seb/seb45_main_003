@@ -50,6 +50,4 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member seller; // 판매자
-    
-    private Boolean removed; // 글 삭제 여부 (게시글 삭제 시, 실제 DB 에서 삭제되는 것 X true, false 로 명시)
 }

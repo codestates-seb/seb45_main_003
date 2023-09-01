@@ -19,8 +19,7 @@ public interface ProductMapper {
                 .immediatelyBuyPrice(productRequestDto.getImmediatelyBuyPrice())
                 .auction(productRequestDto.getAuction())
                 .status(ProductStatus.BEFORE)
-                .views(0L)
-                .removed(false);
+                .views(0L);
 
         // auction이 true인 경우에만 추가 정보 설정
         if (productRequestDto.getAuction()) {
@@ -46,7 +45,6 @@ public interface ProductMapper {
                 .createAt(product.getCreateAt())
                 .modifiedAt(product.getModifiedAt())
                 .deletedAt(product.getDeletedAt())
-                .removed(product.getRemoved())
                 .currentAuctionPrice(product.getCurrentAuctionPrice())
                 .closedAt(product.getClosedAt())
                 .build();
