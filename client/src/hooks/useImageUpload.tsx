@@ -21,7 +21,7 @@ export const useImageUpload = ({ setError, clearErrors }: UseImageUpload) => {
       const imageArray = Array.from(event.target.files);
 
       if (event.target.files.length > MAX_IMAGE_COUNT) {
-        setError("image", {
+        setError("images", {
           type: "maxImageCount",
           message: `이미지는 최대 ${MAX_IMAGE_COUNT}장까지 선택 가능합니다.`,
         });
