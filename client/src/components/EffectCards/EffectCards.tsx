@@ -1,3 +1,4 @@
+// 이펙트 카드
 import SwiperCore from "swiper";
 import { EffectCards } from "swiper/modules";
 import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/react";

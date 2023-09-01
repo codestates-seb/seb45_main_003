@@ -1,7 +1,9 @@
+// 메인
 import styled from "styled-components";
-import { ReactComponent as MySvgBackground } from "../assets/images/Background.svg";
+// import { ReactComponent as MySvgBackground } from "../assets/images/Background.svg";
 import Carousel from "../components/carousel/Carousel";
 import EffectCard from "../components/effectCards/EffectCards";
+import Header from "../components/common/Header";
 // import FirstScreen from "../components/mainLayout/FirstScreen";
 
 // 전체 Main 컨텐츠 배츠 영역
@@ -63,21 +65,21 @@ const SecondTitle = styled.div`
   line-height: 80px; /* 166.667% */
 `;
 
-const Back = styled.div`
-  display: flex;
-  justify-content: center;
-`;
+// const Back = styled.div`
+//   display: flex;
+//   justify-content: center;
+//   background-position: 0 center;
+//   background-size: 100% 600px;
+// `;
 
 const Main = (): JSX.Element => {
   return (
     <>
+      <Header />
       <ContentBox>
         <MainTitle>THE PRICE YOU WANT</MainTitle>
         <SecondTitle>중고 경매 서비스 WonPrice</SecondTitle>
         {/* <FirstScreen /> */}
-        <Back>
-          <MySvgBackground style={{ position: "absolute", zIndex: -1, paddingTop: "18.75rem" }} />
-        </Back>
 
         <Carousel />
         <div className="CardBox">

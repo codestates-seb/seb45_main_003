@@ -1,4 +1,3 @@
-// 진주님이 주신 캐러셀 예제
 import SwiperCore from "swiper";
 import { Navigation, Pagination, EffectCoverflow } from "swiper/modules";
 import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/react";
