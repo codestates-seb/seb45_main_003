@@ -66,5 +66,11 @@ public class ProductController {
         List<ProductMypageResponseDto> response = productMapper.toMypageProduct(products);
 
         return ResponseEntity.ok(response);
+
+    // 상품 게시글 삭제
+    @DeleteMapping("/{productId}")
+    public ResponseEntity deleteProduct(@PathVariable Long productId){
+        productService.deleteOneById(productId);
+        return ResponseEntity.noContent().build();
     }
 }

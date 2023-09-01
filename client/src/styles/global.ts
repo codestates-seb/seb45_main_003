@@ -55,7 +55,13 @@ ul {
   list-style: none;
 }
 button,
-input,
+input {
+  height: 2.5rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  border-radius: 6px;
+  border: .0625rem solid #e0e0e0;
+}
 select {
   margin: 0;
   padding: 0;
