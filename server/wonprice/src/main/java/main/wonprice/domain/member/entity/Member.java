@@ -48,9 +48,6 @@ public class Member {
     @Column(nullable = true, name = "profile_image")
     private String image = null;
 
-    @Enumerated(EnumType.STRING)
-    private MemberStatus status = MemberStatus.ACTIVE;
-
     @OneToMany(mappedBy = "member")
     private List<Review> reviews = new ArrayList<>();
 

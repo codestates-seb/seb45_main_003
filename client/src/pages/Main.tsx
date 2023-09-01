@@ -4,6 +4,7 @@ import Carousel from "../components/carousel/Carousel";
 import EffectCard from "../components/effectCards/EffectCards";
 // import FirstScreen from "../components/mainLayout/FirstScreen";
 
+
 // 전체 Main 컨텐츠 배츠 영역
 const ContentBox = styled.div`
   display: flex;
