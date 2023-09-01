@@ -4,3 +4,8 @@ export const dropDownState = atom<boolean>({
   key: "dropDownState",
   default: false,
 });
+
+export const toSignup = atom<boolean>({
+  key: "toSignup",
+  default: true,
+});

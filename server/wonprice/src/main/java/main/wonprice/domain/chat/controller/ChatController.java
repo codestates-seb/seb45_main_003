@@ -3,6 +3,7 @@ package main.wonprice.domain.chat.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.chat.controller.dto.ChatPostRequest;
+import main.wonprice.domain.chat.controller.dto.MessageSendRequest;
 import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.chat.entity.Message;
@@ -12,6 +13,8 @@ import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -58,4 +61,5 @@ public class ChatController {
 
         chatService.deleteChatRoom(chatRoomId, loginMember.getMemberId());
     }
+
 }

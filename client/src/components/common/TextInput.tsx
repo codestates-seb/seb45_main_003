@@ -1,11 +1,18 @@
-import { FieldValues, RegisterOptions, UseFormRegister } from "react-hook-form";
+import {
+  DeepMap,
+  FieldError,
+  FieldValues,
+  RegisterOptions,
+  UseFormRegister,
+} from "react-hook-form";
 
 type TextInputProps = {
   register: UseFormRegister<FieldValues>;
   id: string;
-  type?: string;
   title: string;
+  type?: string;
   options?: RegisterOptions;
+  errors?: DeepMap<FieldValues, FieldError>;
 };
 
 const TextInput = (props: TextInputProps) => {
@@ -18,6 +25,7 @@ const TextInput = (props: TextInputProps) => {
       ) : (
         <input {...props.register(props.id, props.options)} id={props.id} type={props.type} />
       )}
+      {props.errors && props.errors[props.id]?.message && <p>{props.errors[props.id].message}</p>}
     </div>
   );
 };

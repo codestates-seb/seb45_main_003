@@ -1,0 +1,46 @@
+package main.wonprice.domain.product.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+import main.wonprice.domain.product.entity.ProductStatus;
+
+import java.time.LocalDateTime;
+
+// 상품 등록을 위한 응답 객체
+@Getter @Setter
+@Builder
+public class ProductResponseDto {
+    private Long productId;
+
+    private Long memberId;
+
+    private String title;
+
+    private String description;
+
+    private Long immediatelyBuyPrice;
+
+    private ProductStatus productStatus;
+
+    private Long views;
+
+    private Boolean auction;
+
+    private Boolean removed;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime createAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime modifiedAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime deletedAt;
+
+    private Long currentAuctionPrice; // 시작가 --> 현재 입찰가
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime closedAt; // 경매 종료 시간
+}

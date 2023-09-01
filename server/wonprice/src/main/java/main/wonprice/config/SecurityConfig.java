@@ -1,12 +1,13 @@
 package main.wonprice.config;
 
+import main.wonprice.auth.exception.CustomAuthenticationEntryPoint;
 import main.wonprice.auth.filter.JwtAuthenticationFilter;
 import main.wonprice.auth.filter.JwtVerificationFilter;
 import main.wonprice.auth.handler.CustomAccessDeniedHandler;
 import main.wonprice.auth.handler.CustomAuthenticationFailureHandler;
 import main.wonprice.auth.handler.CustomAuthenticationSuccessHandler;
 import main.wonprice.auth.jwt.JwtTokenizer;
-import main.wonprice.auth.service.RefreshTokenService;
+import main.wonprice.auth.refreshToken.service.RefreshTokenService;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.member.service.MemberService;
 import org.springframework.context.annotation.Bean;
@@ -51,6 +52,7 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .httpBasic().disable() // 헤더에 id password를 실어 나르며 인증하는 방식 비활성화
                 .exceptionHandling()
+                .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 .accessDeniedHandler(new CustomAccessDeniedHandler())
                 .and()
                 .apply(new CustomFilterConfigurer())
@@ -72,7 +74,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "http://wonprice-seb45-003.s3-website.ap-northeast-2.amazonaws.com"));
+                "http://wonprice-seb45-003.s3-website.ap-northeast-2.amazonaws.com", "*"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowedMethods(List.of("*"));
         configuration.addExposedHeader("Authorization");

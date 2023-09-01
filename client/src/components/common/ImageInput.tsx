@@ -1,18 +1,25 @@
-import { DeepMap, FieldError, FieldValues, UseFormRegister } from "react-hook-form";
+import {
+  DeepMap,
+  FieldError,
+  FieldValues,
+  RegisterOptions,
+  UseFormRegister,
+} from "react-hook-form";
 import { ReactComponent as UploadImageIcon } from "../../assets/images/uploadImage.svg";
 
 type ImageInputProps = {
   register: UseFormRegister<FieldValues>;
   handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   images: File[];
-  errors: DeepMap<FieldValues, FieldError>;
+  options?: RegisterOptions;
+  errors?: DeepMap<FieldValues, FieldError>;
 };
 
 const ImageInput = (props: ImageInputProps) => {
   return (
     <div className="box">
       <h4>이미지</h4>
-      <label htmlFor="image">
+      <label htmlFor="images">
         <UploadImageIcon />
         <p>이미지 등록</p>
       </label>
@@ -28,14 +35,14 @@ const ImageInput = (props: ImageInputProps) => {
           );
         })}
       <input
-        {...props.register("image")}
+        {...props.register("images")}
         onChange={props.handleChange}
-        id="image"
+        id="images"
         type="file"
         accept="image/*"
         multiple
       />
-      {props.errors.image?.message && <p>{props.errors.image.message}</p>}
+      {props.errors?.images?.message && <p>{props.errors.images.message}</p>}
     </div>
   );
 };
