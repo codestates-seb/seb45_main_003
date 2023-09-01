@@ -1,12 +1,17 @@
 package main.wonprice.domain.member.controller;
 
-import main.wonprice.domain.member.dto.MemberPatchDto;
-import main.wonprice.domain.member.dto.MemberPostDto;
-import main.wonprice.domain.member.dto.MemberResponseDto;
-import main.wonprice.domain.member.dto.PasswordDto;
+import lombok.AllArgsConstructor;
+import main.wonprice.domain.member.dto.*;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.member.entity.Review;
 import main.wonprice.domain.member.mapper.MemberMapper;
+import main.wonprice.domain.member.mapper.ReviewMapper;
 import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.member.service.ReviewService;
+import main.wonprice.domain.product.dto.ProductResponseDto;
+import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.mapper.ProductMapper;
+import main.wonprice.domain.product.service.ProductService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,18 +19,19 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/members")
+@AllArgsConstructor
 public class MemberController {
 
-    private MemberService memberService;
-    private MemberMapper mapper;
-
-    public MemberController(MemberService memberService, MemberMapper mapper) {
-        this.memberService = memberService;
-        this.mapper = mapper;
-    }
+    private final MemberService memberService;
+    private final ProductService productService;
+    private final ReviewService reviewService;
+    private final MemberMapper mapper;
+    private final ProductMapper productMapper;
+    private final ReviewMapper reviewMapper;
 
     @PostMapping
     public ResponseEntity postMember(@RequestBody @Valid MemberPostDto postDto) {
@@ -42,6 +48,42 @@ public class MemberController {
 
         Member loginMember = memberService.findLoginMember();
         MemberResponseDto response = mapper.memberToResponseDto(loginMember);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    //    마이페이지용 로그인한 회원 게시물 목록 조회
+    @GetMapping("/myPage/products")
+    public ResponseEntity findLoginMembersProduct(Pageable pageable) {
+
+        Member loginMember = memberService.findLoginMember();
+
+        List<Product> products = productService.findLoginMembersProduct(pageable, loginMember);
+        List<ProductResponseDto> response = productMapper.toMypageProduct(products);
+
+        return ResponseEntity.ok(response);
+    }
+
+    //    리뷰
+    @GetMapping("/myPage/reviews")
+    public ResponseEntity findLoginMembersReview(Pageable pageable) {
+
+        Member loginMember = memberService.findLoginMember();
+
+        List<Review> reviews = reviewService.findReviews(pageable, loginMember);
+        List<ReviewResponseDto> response = reviewMapper.reviewsToResponseDtos(reviews);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{member-id}/reviews")
+    public ResponseEntity findMembersReviews(Pageable pageable,
+                                             @PathVariable("member-id") Long memberId) {
+
+        Member findMember = memberService.findMember(memberId);
+
+        List<Review> reviews = reviewService.findReviews(pageable, findMember);
+        List<ReviewResponseDto> response = reviewMapper.reviewsToResponseDtos(reviews);
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
@@ -84,11 +126,29 @@ public class MemberController {
         return new ResponseEntity("Deleted Successfully", HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping("/validatePassword")
-    public ResponseEntity checkPassword(@RequestBody PasswordDto passwordDto) {
+    @PostMapping("/auth/password")
+    public ResponseEntity checkPassword(@RequestBody AuthPasswordDto passwordDto) {
 
         memberService.validatePassword(passwordDto.getPassword());
 
-        return new ResponseEntity<>("Valid password", HttpStatus.OK);
+        return new ResponseEntity<>("🌟🌟🌟 Success 🌟🌟🌟", HttpStatus.OK);
+    }
+
+    @PostMapping("/auth/name")
+    public ResponseEntity checkName(@RequestBody Map<String, String> name) {
+
+        String inputName = name.get("name");
+        memberService.checkExistName(inputName);
+
+        return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
+    }
+
+    @PostMapping("/auth/phone")
+    public ResponseEntity checkPhone(@RequestBody Map<String, String> phone) {
+
+        String inputPhone = phone.get("phone");
+        memberService.checkExistPhone(inputPhone);
+
+        return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
 }

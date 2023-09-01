@@ -34,10 +34,6 @@ public class MemberService {
 
     public Member joinMember(Member member) {
 
-        checkExistName(member.getName());
-        checkExistEmail(member.getEmail());
-        checkExistPhone(member.getPhone());
-
         String encryptedPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(encryptedPassword);
 
@@ -98,15 +94,15 @@ public class MemberService {
     }
 
 //    입력한 이름으로 가입한 회원이 있는지 확인
-    private void checkExistName(String name) {
+    public void checkExistName(String name) {
         Optional<Member> findByNameMember = memberRepository.findByName(name);
         if (findByNameMember.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NAME_EXISTS);
         }
     }
 
-//    입력한 이메일으로 가입한 회원이 있는지 확인
-    private void checkExistEmail(String email) {
+//    입력한 이메일으로 가입한 회원이 있는지 확인 -> 이메일로 인증 코드 요청 시 확인
+    public void checkExistEmail(String email) {
         Optional<Member> findByEmailMember = memberRepository.findByEmail(email);
         if (findByEmailMember.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_EMAIL_EXISTS);
@@ -114,7 +110,7 @@ public class MemberService {
     }
 
 //    입력한 번호로 가입한 회원이 있는지 확인
-    private void checkExistPhone(String phone) {
+    public void checkExistPhone(String phone) {
         Optional<Member> findByPhoneMember = memberRepository.findByPhone(phone);
         if (findByPhoneMember.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_PHONE_EXISTS);
