@@ -32,18 +32,6 @@ body {
   height: 100%;
 }
 
-/* #app {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
-
-/* .swiper {
-  width: 240px;
-  height: 320px;
-
-} */
-
 .swiper-slide {
   display: flex;
   align-items: center;

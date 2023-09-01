@@ -33,6 +33,8 @@ const StyledHeader = styled.header`
   .header-right {
     display: flex;
     gap: 2.25rem;
+    justify-content: center;
+    align-items: center;
   }
 
   // 최 상단으로 배치 z-index: 2;
