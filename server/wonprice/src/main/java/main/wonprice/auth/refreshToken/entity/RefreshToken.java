@@ -1,4 +1,4 @@
-package main.wonprice.auth.entity;
+package main.wonprice.auth.refreshToken.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

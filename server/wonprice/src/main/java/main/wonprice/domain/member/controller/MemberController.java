@@ -32,9 +32,9 @@ public class MemberController {
 
         Member member = mapper.postDtoToMember(postDto);
         Member createdMember = memberService.joinMember(member);
-        MemberResponseDto response = mapper.memberToResponseDto(createdMember);
+//        MemberResponseDto response = mapper.memberToResponseDto(createdMember);
 
-        return new ResponseEntity(response, HttpStatus.CREATED);
+        return new ResponseEntity("🌟🌟🌟 Success 🌟🌟🌟",HttpStatus.CREATED);
     }
 
     @GetMapping("/myPage")
@@ -81,16 +81,14 @@ public class MemberController {
     public ResponseEntity deleteMember(@PathVariable("member-id") Long memberId) {
         memberService.deleteMember(memberId);
 
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+        return new ResponseEntity("Deleted Successfully", HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/validatePassword")
     public ResponseEntity checkPassword(@RequestBody PasswordDto passwordDto) {
 
-        boolean validated = memberService.validatePassword(passwordDto.getPassword());
+        memberService.validatePassword(passwordDto.getPassword());
 
-        return validated
-                ? new ResponseEntity<>("Valid password",HttpStatus.OK)
-                : new ResponseEntity("Invalid password", HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>("Valid password", HttpStatus.OK);
     }
 }

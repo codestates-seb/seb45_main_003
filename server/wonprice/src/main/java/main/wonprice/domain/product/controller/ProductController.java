@@ -52,4 +52,11 @@ public class ProductController {
         ProductResponseDto productResponseDto = productMapper.fromEntity(product);
         return ResponseEntity.ok(productResponseDto);
     }
+
+    // 상품 게시글 삭제
+    @DeleteMapping("/{productId}")
+    public ResponseEntity deleteProduct(@PathVariable Long productId){
+        productService.deleteOneById(productId);
+        return ResponseEntity.noContent().build();
+    }
 }

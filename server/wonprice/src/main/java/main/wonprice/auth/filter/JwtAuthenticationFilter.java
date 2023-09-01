@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.auth.jwt.JwtTokenizer;
 import main.wonprice.auth.dto.LoginDto;
-import main.wonprice.auth.service.RefreshTokenService;
+import main.wonprice.auth.refreshToken.service.RefreshTokenService;
 import main.wonprice.domain.member.entity.Member;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
