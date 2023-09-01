@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { ReactComponent as MySvgBackground } from "../assets/images/Background.svg";
-import Carousel from "../components/Swiper/Carousel/Carousel";
+import Carousel from "../components/Carousel/Carousel";
+import EffectCard from "../components/EffectCards/EffectCards";
 
 const ContentBox = styled.div`
   display: flex;
@@ -42,6 +43,7 @@ const Main = (): JSX.Element => {
         <MainTitle>THE PRICE YOU WANT</MainTitle>
         <SecondTitle>중고 경매 서비스 WonPrice</SecondTitle>
         <Carousel />
+        <EffectCard />
         <Back>
           <MySvgBackground style={{ position: "absolute", zIndex: -1 }} />
         </Back>
