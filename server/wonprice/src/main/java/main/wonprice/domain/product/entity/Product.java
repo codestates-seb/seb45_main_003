@@ -2,9 +2,12 @@ package main.wonprice.domain.product.entity;
 
 import lombok.*;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.member.entity.Wish;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -50,6 +53,9 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member seller;
+
+    @OneToMany(mappedBy = "product")
+    private List<Wish> wish = new ArrayList<>();
 
     @Builder
     public Product(Member seller, String title, String description, Long immediatelyBuyPrice) {
