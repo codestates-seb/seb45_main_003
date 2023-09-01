@@ -1,9 +1,10 @@
 package main.wonprice.domain.product.service;
 
 import lombok.RequiredArgsConstructor;
-import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.repository.ProductRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -51,14 +52,12 @@ public class ProductServiceImpl implements ProductService {
 
     /*
         상품 게시글 삭제
-        - removed(삭제여부): false (0) -> true (1)
         - deletedAt(삭제시간): now()
      */
     @Override
     public Product deleteOneById(Long productId) {
         Product product = findOneById(productId);
         product.setDeletedAt(LocalDateTime.now());
-        product.setRemoved(true);
         return productRepository.save(product);
     }
 
@@ -67,5 +66,11 @@ public class ProductServiceImpl implements ProductService {
     public Product findExistsProduct(Long productId) {
         Optional<Product> product = productRepository.findById(productId);
         return product.orElseThrow();
+    }
+
+    @Override
+    public List<Product> findLoginMembersProduct(Pageable pageable, Member member) {
+
+        return productRepository.findAllBySeller(member, pageable).getContent();
     }
 }
