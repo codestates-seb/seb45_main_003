@@ -16,4 +16,6 @@ public interface ProductService {
     Product findExistsProduct(Long productId);
 
     List<Product> findLoginMembersProduct(Pageable pageable, Member member);
+
+    Product deleteOneById(Long productId);
 }

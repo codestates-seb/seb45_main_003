@@ -2,12 +2,9 @@ package main.wonprice.domain.product.entity;
 
 import lombok.*;
 import main.wonprice.domain.member.entity.Member;
-import main.wonprice.domain.member.entity.Wish;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -20,60 +17,37 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long productId;
 
-    private Long buyerId;
+    private Long buyerId; // 구매자
 
-    private String title;
+    private String title; // 글 제목
 
     @Lob
-    private String description;
+    private String description; // 내용
 
-    private Long immediatelyBuyPrice;
+    private Long immediatelyBuyPrice; // 즉시 구매가
 
-    private Long currentAuctionPrice;
+    private Long currentAuctionPrice; // 현재 입찰가 (시작가에서 증가되는 방식)
 
-    private Boolean auction;
+    private Boolean auction; // 경매 여부
 
-    private LocalDateTime createAt;
+    private LocalDateTime createAt; // 거래 시작 시간 (작성시간)
 
-    private LocalDateTime deletedAt;
+    private LocalDateTime deletedAt; // 글 삭제 시간
 
-    private LocalDateTime modifiedAt;
+    private LocalDateTime modifiedAt; // 글 수정 시간
 
     @Enumerated(EnumType.STRING)
-    private ProductStatus status;
+    private ProductStatus status; // 상품 거래 상태
 
-    private Long views;
+    private Long views; // 조회수
 
-    private LocalDateTime closedAt;
+    private LocalDateTime closedAt; // 경매 종료 시간
 
     @OneToOne
     @JoinColumn(name = "category_id")
-    private Category category;
+    private Category category; // 카테고리
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member seller;
-
-    @OneToMany(mappedBy = "product")
-    private List<Wish> wish = new ArrayList<>();
-
-    @Builder
-    public Product(Member seller, String title, String description, Long immediatelyBuyPrice) {
-        this.seller = seller;
-        this.title = title;
-        this.description = description;
-        this.immediatelyBuyPrice = immediatelyBuyPrice;
-    }
-
-    // 상품 정보 등록 날짜 갱신 메서드
-    @PrePersist
-    public void prePersist() {
-        createAt = LocalDateTime.now();
-    }
-
-    // 상품 정보 수정 날짜 갱신 메서드
-    @PreUpdate
-    public void preUpdate() {
-        modifiedAt = LocalDateTime.now();
-    }
+    private Member seller; // 판매자
 }

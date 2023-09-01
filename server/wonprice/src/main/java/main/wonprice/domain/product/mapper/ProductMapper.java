@@ -15,15 +15,23 @@ public interface ProductMapper {
 
     // DTO -> Entity
     default Product toEntity(ProductRequestDto productRequestDto, Member member) {
-        return Product.builder()
+        Product.ProductBuilder productBuilder = Product.builder()
                 .seller(member)
                 .title(productRequestDto.getTitle())
                 .description(productRequestDto.getDescription())
                 .immediatelyBuyPrice(productRequestDto.getImmediatelyBuyPrice())
                 .auction(productRequestDto.getAuction())
                 .status(ProductStatus.BEFORE)
-                .views(0L)
-                .build();
+                .views(0L);
+
+        // auction이 true인 경우에만 추가 정보 설정
+        if (productRequestDto.getAuction()) {
+            productBuilder
+                    .currentAuctionPrice(productRequestDto.getCurrentAuctionPrice())
+                    .closedAt(productRequestDto.getClosedAt());
+        }
+
+        return productBuilder.build();
     }
 
     // Entity -> DTO
@@ -40,6 +48,8 @@ public interface ProductMapper {
                 .createAt(product.getCreateAt())
                 .modifiedAt(product.getModifiedAt())
                 .deletedAt(product.getDeletedAt())
+                .currentAuctionPrice(product.getCurrentAuctionPrice())
+                .closedAt(product.getClosedAt())
                 .build();
     }
 
