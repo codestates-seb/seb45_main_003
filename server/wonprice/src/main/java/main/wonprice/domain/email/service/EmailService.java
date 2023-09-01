@@ -70,6 +70,12 @@ public class EmailService {
         mimeMessageHelper.setFrom("WonPrice");
         mimeMessageHelper.setText(message, true);
 
+        AuthEmail authEmail = emailAuthRepository.findByEmail(recipient);
+
+        if (authEmail != null) {
+            emailAuthRepository.deleteByEmail(recipient);
+        }
+
         emailAuthRepository.save(new AuthEmail(recipient, authCode));
 
         emailSender.send(mimeMessage);

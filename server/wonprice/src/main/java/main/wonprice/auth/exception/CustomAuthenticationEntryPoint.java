@@ -14,6 +14,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
 
         Exception exception = (Exception) request.getAttribute("exception");
-        ErrorResponder.sendErrorResponse(response, HttpStatus.UNAUTHORIZED);
+        String exceptionName = exception.getClass().getSimpleName();
+        ErrorResponder.sendErrorResponse(response, HttpStatus.UNAUTHORIZED, exceptionName);
     }
 }
