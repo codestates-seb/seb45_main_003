@@ -19,8 +19,27 @@ import "swiper/css/effect-cards";
 
 const Box = styled.div`
   /* height: 18.75rem; */
-  width: 14rem;
+  width: 18.75rem;
+  height: 31.25rem;
   border-radius: 0.375rem;
+  .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #fff;
+    height: 25rem;
+  }
+
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
 `;
 
 // 모듈 종류

@@ -2,6 +2,8 @@ import SwiperCore from "swiper";
 import { Navigation, Pagination, EffectCoverflow } from "swiper/modules";
 import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/react";
 
+import styled from "styled-components";
+
 // 이미지 파일의 경로
 import image1 from "../../assets/images/Carousel/unsplash1.jpg";
 import image2 from "../../assets/images/Carousel/unsplash2.jpg";
@@ -20,6 +22,38 @@ import "./styles.css";
 
 SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
 
+const Layout = styled.div`
+  display: flex;
+  justify-content: center;
+  /* background-color: blue; */
+  margin: 0 auto;
+  width: calc(100% - 3rem);
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
+`;
+const Box = styled.div`
+  justify-content: center;
+  /* background-color: red; */
+
+  .swiper {
+    width: 56.25rem;
+    height: 25rem;
+
+    padding: 0px 9.375rem;
+  }
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
+`;
 interface CustomSwiperProps extends ReactSwiperProps {
   slidesPerView?: number;
   spaceBetween?: number;
@@ -38,8 +72,8 @@ interface CustomSwiperProps extends ReactSwiperProps {
 
 const Carousel = (): JSX.Element => {
   const swiperProps: CustomSwiperProps = {
-    slidesPerView: 3,
-    spaceBetween: 50,
+    slidesPerView: 1,
+    spaceBetween: 250,
     pagination: {
       clickable: true,
     },
@@ -47,8 +81,8 @@ const Carousel = (): JSX.Element => {
     effect: "coverflow",
     coverflowEffect: {
       rotate: 0,
-      stretch: 1,
-      depth: 100,
+      stretch: 2,
+      depth: 80,
       modifier: 5,
       slideShadows: true,
     },
@@ -58,13 +92,17 @@ const Carousel = (): JSX.Element => {
   const imgList = [image1, image2, image3, image4, image5, image6, image7];
   return (
     <>
-      <Swiper {...swiperProps}>
-        {imgList.map((imgUrl, index) => (
-          <SwiperSlide key={index}>
-            <img src={imgUrl} alt={`Slide ${index + 1}`} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
+      <Layout>
+        <Box>
+          <Swiper {...swiperProps}>
+            {imgList.map((imgUrl, index) => (
+              <SwiperSlide key={index}>
+                <img src={imgUrl} alt={`Slide ${index + 1}`} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </Box>
+      </Layout>
     </>
   );
 };
