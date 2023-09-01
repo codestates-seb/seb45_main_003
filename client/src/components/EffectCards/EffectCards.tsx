@@ -17,10 +17,12 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 
 const Box = styled.div`
-  height: 300px;
-  width: 200px;
+  /* height: 18.75rem; */
+  width: 14rem;
   border-radius: 0.375rem;
 `;
+
+// 모듈 종류
 SwiperCore.use([EffectCards]);
 
 interface CustomSwiperProps extends ReactSwiperProps {

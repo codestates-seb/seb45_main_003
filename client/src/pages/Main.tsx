@@ -7,6 +7,11 @@ const ContentBox = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
+
+  .CardBox {
+    margin-left: 6.25rem;
+    padding-top: 11.25rem;
+  }
 `;
 
 const MainTitle = styled.div`
@@ -31,7 +36,6 @@ const SecondTitle = styled.div`
 `;
 
 const Back = styled.div`
-  padding-top: 74.25rem;
   display: flex;
   justify-content: center;
 `;
@@ -42,11 +46,14 @@ const Main = (): JSX.Element => {
       <ContentBox>
         <MainTitle>THE PRICE YOU WANT</MainTitle>
         <SecondTitle>중고 경매 서비스 WonPrice</SecondTitle>
-        <Carousel />
-        <EffectCard />
         <Back>
-          <MySvgBackground style={{ position: "absolute", zIndex: -1 }} />
+          <MySvgBackground style={{ position: "absolute", zIndex: -1, paddingTop: "18.75rem" }} />
         </Back>
+
+        <Carousel />
+        <div className="CardBox">
+          <EffectCard />
+        </div>
       </ContentBox>
     </>
   );
