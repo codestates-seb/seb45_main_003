@@ -5,6 +5,7 @@ import main.wonprice.auth.jwt.JwtTokenizer;
 import main.wonprice.auth.refreshToken.repository.RefreshTokenRepository;
 import main.wonprice.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Calendar;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
+@Transactional
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
@@ -25,6 +27,11 @@ public class RefreshTokenService {
 
     public RefreshToken saveRefreshToken(Member member, String stringToken) {
 
+        RefreshToken findToken = refreshTokenRepository.findByMemberMemberId(member.getMemberId());
+
+        if (findToken != null) {
+            refreshTokenRepository.deleteByTokenId(findToken.getTokenId());
+        }
         refreshTokenRepository.save(new RefreshToken(member, stringToken));
 
         return new RefreshToken();

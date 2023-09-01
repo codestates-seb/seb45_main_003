@@ -12,6 +12,7 @@ import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.member.service.MemberService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -61,6 +62,7 @@ public class SecurityConfig {
 //                        .antMatchers(HttpMethod.GET, "/members/all").hasRole("ADMIN")
 //                        .antMatchers(HttpMethod.PATCH, "/members/*").hasRole("USER")
 //                        .antMatchers(HttpMethod.DELETE, "/members/*").hasRole("USER")
+                        .antMatchers(HttpMethod.GET, "/members/myPage").hasRole("USER")
                         .anyRequest().permitAll()
                 );
 

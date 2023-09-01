@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface EmailAuthRepository extends JpaRepository<AuthEmail, Long> {
 
     AuthEmail findByEmail(String email);
+
+    void deleteByEmail(String email);
 }
