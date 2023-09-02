@@ -19,8 +19,8 @@ import "swiper/css/effect-cards";
 
 const Box = styled.div`
   /* height: 18.75rem; */
-  width: 18.75rem;
-  height: 31.25rem;
+  width: 28.125rem;
+  height: 37.5rem;
   border-radius: 0.375rem;
   .swiper-slide {
     display: flex;
@@ -30,7 +30,7 @@ const Box = styled.div`
     font-size: 22px;
     font-weight: bold;
     color: #fff;
-    height: 25rem;
+    height: 37.5rem;
   }
 
   .swiper-slide img {

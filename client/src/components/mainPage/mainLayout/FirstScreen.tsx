@@ -1,44 +1,24 @@
-import styled from "styled-components";
-import Carousel from "../carousel/Carousel";
-
-const MainBox = styled.div`
-  justify-content: center;
-  width: 1920px;
-  height: 849px;
-  flex-shrink: 0;
-`;
-
-// THE PRICE YOU WANT 타이틀 영역
-
-const MainTitle = styled.div`
-  margin-top: 3.625rem;
-  color: #222;
-  text-align: center;
-  font-family: Pretendard Variable;
-  font-size: 92px;
-  font-style: normal;
-  font-weight: 800;
-  line-height: 100px; /* 108.696% */
-  width: calc(100% - 3rem);
-`;
-const SecondTitle = styled.div`
-  color: #222;
-  font-family: Pretendard Variable;
-  text-align: center;
-  font-size: 48px;
-  font-style: normal;
-  font-weight: 800;
-  line-height: 80px; /* 166.667% */
-`;
+import { StyledMain } from "../../../pages/main/MainStyle";
+import EffectCard from "../effectCards/EffectCards";
 
 const FirstScreen = (): JSX.Element => {
   return (
     <>
-      <MainBox>
-        <MainTitle>THE PRICE YOU WANT</MainTitle>
-        <SecondTitle>중고 경매 서비스 WonPrice</SecondTitle>
-        <Carousel />
-      </MainBox>
+      <StyledMain>
+        <div className="EffectCard">
+          <EffectCard />
+          {/* 순차 적으로 컨텐츠 배치 : 캐러셀 하단 이펙트카드*/}
+          <div className="TextBox1">
+            <div className="GrandTitle">
+              원하는 상품을 <br /> Won하는 Price에
+            </div>
+            <div className="Text2">
+              뭐라 적어야 하긴 하는데 <br />
+              뭐라고 적어야 할지생각이 안남 <br /> 뭔가 엄청난 소개 문구
+            </div>
+          </div>
+        </div>
+      </StyledMain>
     </>
   );
 };
