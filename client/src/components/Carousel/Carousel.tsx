@@ -1,3 +1,4 @@
+//캐러셀 작업
 import SwiperCore from "swiper";
 import { Navigation, Pagination, EffectCoverflow } from "swiper/modules";
 import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/react";
