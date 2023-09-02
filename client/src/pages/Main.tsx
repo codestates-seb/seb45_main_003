@@ -1,8 +1,8 @@
 // 메인
 import styled from "styled-components";
 // import { ReactComponent as MySvgBackground } from "../assets/images/Background.svg";
-import Carousel from "../components/carousel/Carousel";
-import EffectCard from "../components/effectCards/EffectCards";
+import Carousel from "../components/mainPage/carousel/Carousel";
+import EffectCard from "../components/mainPage/effectCards/EffectCards";
 import Header from "../components/common/Header";
 // import FirstScreen from "../components/mainLayout/FirstScreen";
 

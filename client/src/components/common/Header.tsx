@@ -3,9 +3,9 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
 import { dropDownState } from "../../atoms/atoms";
-import MenuItem from "../dropdownMenu/MeunItem";
 import MenuIcon from "@mui/icons-material/Menu";
 import React, { useEffect, useRef } from "react";
+import MenuItem from "../mainPage/dropdownMenu/MeunItem";
 
 // 최 상단 헤더 Bottom 라인
 const StyledBorder = styled.div`
