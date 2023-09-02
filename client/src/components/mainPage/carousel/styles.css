@@ -8,6 +8,7 @@
   background-size: 100% auto;
   background-position: center;
   margin-right: 16.5rem;
+  position: fixed;
 }
 
 .swiper-button-prev {
@@ -15,6 +16,8 @@
   background-size: 100% auto;
   background-position: center;
   margin-left: 16.5rem;
+  position: fixed;
+
 
 
 }

@@ -26,22 +26,21 @@ SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
 const Layout = styled.div`
   display: flex;
   justify-content: center;
-  /* background-color: blue; */
+  background-color: blue;
   margin: 0 auto;
   width: calc(100% - 3rem);
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  }
-`;
-const Box = styled.div`
-  justify-content: center;
-  /* background-color: red; */
-
+  margin-bottom: 6.25rem;
   .swiper {
-    width: 56.25rem;
-    height: 25rem;
+    max-width: 89.4375rem;
+    max-height: 33.875rem;
 
-    padding: 0px 9.375rem;
+    margin: 0;
+    padding-left: 9.375rem;
+    padding-right: 9.375rem;
+  }
+  .swiper-slide {
+    width: 89.4375rem;
+    height: 33.875rem;
   }
   .swiper-slide img {
     display: block;
@@ -69,12 +68,15 @@ interface CustomSwiperProps extends ReactSwiperProps {
     slideShadows: boolean;
   };
   initialSlide?: number;
+  centeredSlides: boolean;
+  autoHeight: boolean;
+  freeMode: boolean;
 }
 
 const Carousel = (): JSX.Element => {
   const swiperProps: CustomSwiperProps = {
     slidesPerView: 1,
-    spaceBetween: 250,
+    spaceBetween: 350,
     pagination: {
       clickable: true,
     },
@@ -88,21 +90,22 @@ const Carousel = (): JSX.Element => {
       slideShadows: true,
     },
     initialSlide: 2,
+    centeredSlides: true,
+    autoHeight: true,
+    freeMode: true,
   };
 
   const imgList = [image1, image2, image3, image4, image5, image6, image7];
   return (
     <>
       <Layout>
-        <Box>
-          <Swiper {...swiperProps}>
-            {imgList.map((imgUrl, index) => (
-              <SwiperSlide key={index}>
-                <img src={imgUrl} alt={`Slide ${index + 1}`} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </Box>
+        <Swiper {...swiperProps}>
+          {imgList.map((imgUrl, index) => (
+            <SwiperSlide key={index}>
+              <img src={imgUrl} alt={`Slide ${index + 1}`} />
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </Layout>
     </>
   );
