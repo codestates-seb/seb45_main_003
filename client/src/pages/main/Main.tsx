@@ -7,7 +7,6 @@ import SecondScreen from "../../components/mainPage/mainLayout/SecondScreen";
 
 import Img1 from "../../assets/images/main/image-3.png";
 import ThirdScreen from "../../components/mainPage/mainLayout/ThirdScreen";
-import { Footer } from "../../components/common/Footer";
 
 const Main = (): JSX.Element => {
   return (
@@ -41,7 +40,6 @@ const Main = (): JSX.Element => {
           imgSrc={Img1}
         />
       </ContentBox>
-      <Footer />
     </>
   );
 };
