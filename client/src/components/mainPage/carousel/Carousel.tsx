@@ -26,7 +26,7 @@ SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
 const Layout = styled.div`
   display: flex;
   justify-content: center;
-  background-color: blue;
+  /* background-color: blue; */
   margin: 0 auto;
   width: calc(100% - 3rem);
   margin-bottom: 6.25rem;

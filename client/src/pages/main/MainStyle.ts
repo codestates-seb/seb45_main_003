@@ -1,5 +1,12 @@
 import styled from "styled-components";
 
+export const BackGround = styled.div`
+  justify-content: center;
+  align-items: center;
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
+  }
+`;
 export const StyledMain = styled.main`
   max-width: 1440px;
   width: calc(100% - 3rem);
@@ -11,19 +18,22 @@ export const StyledMain = styled.main`
 `;
 
 export const ContentBox = styled.div`
+  /* background-color: #616161; */
   display: flex;
   justify-content: center;
   flex-direction: column;
-
   margin: 0 auto;
   width: calc(100% - 3rem);
+  margin-bottom: 19.625rem;
+
+  background-image: image();
 
   /* 순차 적으로 컨텐츠 배치 : 캐러셀 하단 이펙트카드 */
 
   .EffectCard {
     display: flex;
     justify-content: center;
-    background-color: red;
+    /* background-color: red; */
     .TextBox1 {
       display: flex;
       flex-direction: column;
@@ -31,7 +41,7 @@ export const ContentBox = styled.div`
       margin: 0;
 
       .GrandTitle {
-        background-color: #616161;
+        /* background-color: #616161; */
 
         flex-direction: column;
         justify-content: start;
@@ -47,7 +57,7 @@ export const ContentBox = styled.div`
       }
 
       .Text2 {
-        background-color: #db3636;
+        /* background-color: #db3636; */
 
         margin-left: 12.9375rem;
 
@@ -66,7 +76,7 @@ export const ContentBox = styled.div`
   .Function1 {
     display: flex;
     justify-content: center;
-    background-color: blue;
+    /* background-color: blue; */
 
     margin-top: 18.125rem;
     .TextBox1 {
@@ -76,7 +86,7 @@ export const ContentBox = styled.div`
       margin: 0;
 
       .Text1 {
-        background-color: #616161;
+        /* background-color: #616161; */
 
         flex-direction: column;
         justify-content: start;
@@ -92,7 +102,7 @@ export const ContentBox = styled.div`
       }
 
       .Text2 {
-        background-color: #db3636;
+        /* background-color: #db3636; */
 
         margin-left: 11.25rem;
 
@@ -140,3 +150,14 @@ export const SecondTitle = styled.div`
   line-height: 80px;
   margin-bottom: 3.125rem;
 `;
+// export const wrapperStyle = {
+//   height: "auto",
+//   minHeight: "100%",
+//   paddingBottom: "YOUR_FOOTER_HEIGHT",
+// };
+
+// export const footerStyle = {
+//   height: "YOUR_FOOTER_HEIGHT",
+//   position: "relative",
+//   transform: "translateY(-100%)",
+// };
