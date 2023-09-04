@@ -7,7 +7,7 @@ import main.wonprice.auth.handler.CustomAccessDeniedHandler;
 import main.wonprice.auth.handler.CustomAuthenticationFailureHandler;
 import main.wonprice.auth.handler.CustomAuthenticationSuccessHandler;
 import main.wonprice.auth.jwt.JwtTokenizer;
-import main.wonprice.auth.refreshToken.service.RefreshTokenService;
+import main.wonprice.auth.jwt.service.JwtService;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.member.service.MemberService;
 import org.springframework.context.annotation.Bean;
@@ -30,13 +30,13 @@ public class SecurityConfig {
 
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
-    private final RefreshTokenService refreshTokenService;
+    private final JwtService jwtService;
 
 
-    public SecurityConfig(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, MemberService memberService, RefreshTokenService refreshTokenService) {
+    public SecurityConfig(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, MemberService memberService, JwtService jwtService) {
         this.jwtTokenizer = jwtTokenizer;
         this.authorityUtils = authorityUtils;
-        this.refreshTokenService = refreshTokenService;
+        this.jwtService = jwtService;
     }
 
     @Bean
@@ -76,11 +76,12 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "http://wonprice-seb45-003.s3-website.ap-northeast-2.amazonaws.com", "*"));
+                "http://wonprice-seb45-003.s3-website.ap-northeast-2.amazonaws.com"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedMethods(List.of("PUT", "POST", "GET", "PATCH", "DELETE", "OPTIONS"));
         configuration.addExposedHeader("Authorization");
         configuration.addExposedHeader("Refresh");
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -93,7 +94,7 @@ public class SecurityConfig {
 
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
-            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer, refreshTokenService);
+            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer, jwtService);
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
             jwtAuthenticationFilter.setFilterProcessesUrl("/members/login");

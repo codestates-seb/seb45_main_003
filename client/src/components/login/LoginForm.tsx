@@ -23,7 +23,7 @@ const StyledLoginForm = styled.form`
   align-items: stretch;
   gap: 0.5rem;
 `;
-
+//errormessage 빨간색
 const LogInForm = (): JSX.Element => {
   const {
     register,
@@ -76,7 +76,7 @@ const LogInForm = (): JSX.Element => {
         })}
       />
       {errors.password && <div>{errors.password?.message}</div>}
-      <Button type={"submit"} disabled={isSubmitting} text={"로그인"} />
+      <Button type="submit" disabled={isSubmitting} text="로그인" design="black" />
     </StyledLoginForm>
   );
 };
