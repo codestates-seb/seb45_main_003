@@ -6,6 +6,17 @@ export const toSignup = atom<boolean>({
   default: true,
 });
 
+
+export const profileTabState = atom<string>({
+  key: "profileTabState",
+  default: "profile",
+});
+
+export const loginState = atom<boolean>({
+  key: "loginState",
+  default: false,
+});
+
 export interface User {
   name: string;
   email: string;
@@ -29,3 +40,4 @@ export const userState = atom<User | null>({
 //   key: "dropDownState",
 //   default: false,
 // });
+
