@@ -14,3 +14,8 @@ export const profileTabState = atom<string>({
   key: "profileTabState",
   default: "profile",
 });
+
+export const loginState = atom<boolean>({
+  key: "loginState",
+  default: false,
+});

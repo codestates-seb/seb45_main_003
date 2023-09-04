@@ -5,6 +5,7 @@ import { GRAY_COLOR, COLOR } from "../../contstants/color";
 import { FONT_SIZE } from "../../contstants/font";
 
 const ProfileTabContainer = styled.ul`
+  flex: 0 0 14rem;
   width: 14rem;
   border-radius: 6px;
   border: 1px solid ${GRAY_COLOR.gray_300};

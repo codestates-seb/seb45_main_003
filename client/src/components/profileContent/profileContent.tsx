@@ -2,6 +2,7 @@ import { styled } from "styled-components";
 import { COLOR } from "../../contstants/color";
 import { FONT_SIZE } from "../../contstants/font";
 import Button from "../common/Button";
+import PostListTab from "./postListTab";
 
 const ProfileContentContainer = styled.div`
   padding: 2rem;
@@ -78,6 +79,7 @@ const ProfileContent = (): JSX.Element => {
           <li className="info">사용자 거래완료 횟수</li>
         </ul>
       </div>
+      <PostListTab />
     </ProfileContentContainer>
   );
 };
