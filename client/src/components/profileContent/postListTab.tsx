@@ -14,7 +14,7 @@ const PostListContainer = styled.div`
     justify-content: flex-start;
     align-items: center;
     .postlistTabMenu {
-      width: 15rem;
+      width: calc(100% / 3);
       border: 1px solid ${COLOR.gray_300};
       border-radius: 6px 6px 0 0;
       padding: 0.5rem 0.75rem;

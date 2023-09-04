@@ -10,6 +10,7 @@ const ProfileContentContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
+  width: calc(100% - 14rem);
   .topContainer {
     padding: 1.25rem 1rem;
     display: flex;
