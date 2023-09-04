@@ -1,8 +1,8 @@
-package main.wonprice.auth.refreshToken.service;
+package main.wonprice.auth.jwt.service;
 
-import main.wonprice.auth.refreshToken.entity.RefreshToken;
+import main.wonprice.auth.jwt.entity.RefreshToken;
 import main.wonprice.auth.jwt.JwtTokenizer;
-import main.wonprice.auth.refreshToken.repository.RefreshTokenRepository;
+import main.wonprice.auth.jwt.repository.RefreshTokenRepository;
 import main.wonprice.domain.member.entity.Member;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,12 +15,12 @@ import java.util.Map;
 
 @Service
 @Transactional
-public class RefreshTokenService {
+public class JwtService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenizer jwtTokenizer;
 
-    public RefreshTokenService(RefreshTokenRepository refreshTokenRepository, JwtTokenizer jwtTokenizer) {
+    public JwtService(RefreshTokenRepository refreshTokenRepository, JwtTokenizer jwtTokenizer) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.jwtTokenizer = jwtTokenizer;
     }
@@ -61,5 +61,14 @@ public class RefreshTokenService {
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
 
         return jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
+    }
+
+    public void verifyAccessToken(HttpServletRequest request) {
+
+        String jws = request.getHeader("Authorization").replace("Bearer ", "");
+        String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
+
+        /* JWT에서 Claims를 parsing 할 수 있다 -> 내부적으로 Signature 검증에 성공했다 */
+        Map<String, Object> claims = jwtTokenizer.getClaims(jws, base64EncodedSecretKey).getBody();
     }
 }

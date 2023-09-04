@@ -57,11 +57,7 @@ public class MemberService {
 
     public Member updateMember(Member member) {
 
-        Member loginMember = findLoginMember();
-
-        if (!loginMember.getMemberId().equals(member.getMemberId()) & !loginMember.getRoles().contains("ADMIN")) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
-        }
+        validateOwner(member.getMemberId());
 
         Member findMember = findVerifyMember(member.getMemberId());
 
@@ -83,11 +79,7 @@ public class MemberService {
 
     public void deleteMember(Long memberId) {
 
-        Member loginMember = findLoginMember();
-
-        if (!loginMember.getMemberId().equals(memberId) & !loginMember.getRoles().contains("ADMIN")) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
-        }
+        validateOwner(memberId);
 
         Member findMember = findVerifyMember(memberId);
         findMember.setDeletedAt(LocalDateTime.now());
@@ -153,6 +145,20 @@ public class MemberService {
 
         if (!result) {
             throw new BusinessLogicException(ExceptionCode.INVALID_PASSWORD);
+        }
+    }
+
+//    게시물, 리뷰, 찜 등 행위 주체와 요청을 보낸 회원이 동일한지 검증
+    public void validateOwner(Long memberId) {
+
+        Member loginMember = findLoginMember();
+        if (loginMember.getRoles().contains("ADMIN")) {
+            return;
+        }
+
+        boolean hasAuthority = loginMember.getMemberId().equals(memberId);
+        if (!hasAuthority) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHENTICATED);
         }
     }
 }

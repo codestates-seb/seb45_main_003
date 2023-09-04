@@ -1,5 +1,6 @@
 package main.wonprice.domain.member.mapper;
 
+import main.wonprice.domain.member.dto.ReviewPatchDto;
 import main.wonprice.domain.member.dto.ReviewPostDto;
 import main.wonprice.domain.member.dto.ReviewResponseDto;
 import main.wonprice.domain.member.entity.Review;
@@ -25,4 +26,6 @@ public interface ReviewMapper {
     }
 
     List<ReviewResponseDto> reviewsToResponseDtos(List<Review> reviews);
+
+    Review patchDtoToReview(ReviewPatchDto patchDto);
 }

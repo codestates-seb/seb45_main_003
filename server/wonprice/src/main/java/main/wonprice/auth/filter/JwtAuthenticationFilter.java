@@ -5,7 +5,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.auth.jwt.JwtTokenizer;
 import main.wonprice.auth.dto.LoginDto;
-import main.wonprice.auth.refreshToken.service.RefreshTokenService;
+import main.wonprice.auth.jwt.service.JwtService;
 import main.wonprice.domain.member.entity.Member;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,12 +27,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenizer jwtTokenizer;
-    private final RefreshTokenService refreshTokenService;
+    private final JwtService jwtService;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenizer jwtTokenizer, RefreshTokenService refreshTokenService) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtTokenizer jwtTokenizer, JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenizer = jwtTokenizer;
-        this.refreshTokenService = refreshTokenService;
+        this.jwtService = jwtService;
     }
 
     @SneakyThrows
@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         log.info("Authenticated memberId : {}", member.getMemberId());
 
-        refreshTokenService.saveRefreshToken(member, refreshToken);
+        jwtService.saveRefreshToken(member, refreshToken);
 
         response.setHeader("Authorization", "Bearer " + accessToken);
         response.setHeader("Refresh", refreshToken);
