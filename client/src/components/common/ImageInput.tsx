@@ -11,8 +11,8 @@ type ImageInputProps = {
 
 const ImageInput = (props: ImageInputProps) => {
   return (
-    <div className="box">
-      <h4>이미지</h4>
+    <div className="field">
+      <p>이미지</p>
       <label htmlFor="images">
         <UploadImageIcon />
         <p>이미지 등록</p>
