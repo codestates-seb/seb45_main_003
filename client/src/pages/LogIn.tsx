@@ -88,13 +88,13 @@ const LogIn = (): JSX.Element => {
             </label>
           </div>
           <div id="socialButtonContainer">
-            <Button type="button" text={"구글 로그인"} />
-            <Button type="button" text={"카카오 로그인"} />
+            <Button type="button" text={"구글 로그인"} design={"yellow"} />
+            <Button type="button" text={"카카오 로그인"} design={"yellow"} />
           </div>
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">서비스를 처음 방문하셨나요?</div>
-              <Button type={"button"} text={"회원가입"} onClick={changeform} />
+              <Button type={"button"} text={"회원가입"} onClick={changeform} design={"black"} />
             </div>
           </div>
         </PageContentContainer>
@@ -105,7 +105,7 @@ const LogIn = (): JSX.Element => {
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">이미 계정이 있으신가요?</div>
-              <Button type={"button"} text={"로그인"} onClick={changeform} />
+              <Button type={"button"} text={"로그인"} onClick={changeform} design={"black"} />
             </div>
           </div>
         </PageContentContainer>

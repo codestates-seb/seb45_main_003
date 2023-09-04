@@ -42,10 +42,10 @@ const StyledSignupForm = styled.form`
     gap: 0.6875rem;
   }
   #email {
-    flex: 1 0 21.875rem;
+    flex: 1 0 18.75rem;
   }
   #confirmcode {
-    flex: 1 0 21.875rem;
+    flex: 1 0 18.75rem;
   }
   .errormessage {
     color: #f44336;
@@ -177,6 +177,7 @@ const SignupForm = (): JSX.Element => {
             disabled={false}
             text={"인증요청"}
             onClick={() => reqConfirmCode(getValues("email"))}
+            design={"yellow"}
           />
         </div>
         {errors.email && <div className="errormessage">{errors.email?.message}</div>}
@@ -198,6 +199,7 @@ const SignupForm = (): JSX.Element => {
             disabled={false}
             text={"인증하기"}
             onClick={() => testConfirmCode(getValues())}
+            design={"yellow"}
           />
         </div>
         {errors.confirmcode && <div className="errormessage">{errors.confirmcode?.message}</div>}
@@ -254,7 +256,7 @@ const SignupForm = (): JSX.Element => {
           })}
         />
         {errors.phone && <div className="errormessage">{errors.phone?.message}</div>}
-        <Button type={"submit"} disabled={isSubmitting} text={"회원가입"} />
+        <Button type={"submit"} disabled={isSubmitting} text={"회원가입"} design={"black"} />
       </StyledSignupForm>
       <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
         <StyledModal>
@@ -262,7 +264,13 @@ const SignupForm = (): JSX.Element => {
             <p>회원가입 되셨습니다!</p>
           </div>
           <div className="modalButtonContainer">
-            <Button type={"button"} disabled={false} text={"확인"} onClick={() => changeform()} />
+            <Button
+              type={"button"}
+              disabled={false}
+              text={"확인"}
+              onClick={() => changeform()}
+              design={"black"}
+            />
           </div>
         </StyledModal>
       </Modal>

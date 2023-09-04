@@ -12,6 +12,9 @@ type ButtonProp = {
 };
 const StyledButton = styled.button<ButtonProp>`
   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   border-radius: 6px;
   font-weight: 600;
   transition: 0.3s;
