@@ -7,20 +7,25 @@ type TextInputProps = {
   type?: string;
   options?: RegisterOptions;
   formState?: FormState<FieldValues>;
+  placeholder?: string;
 };
 
 const TextInput = (props: TextInputProps) => {
-  const { register, id, title, type, options, formState } = props;
+  const { register, id, title, type, options, formState, placeholder } = props;
 
   return (
-    <div>
+    <div className="field">
       <p>{title}</p>
 
-      <input {...register(id, options)} id={id} type={type} />
+      <div className="input">
+        <input {...register(id, options)} id={id} type={type} placeholder={placeholder} />
 
-      {formState?.errors && formState.errors[id]?.message && (
-        <p>{formState?.errors[id]?.message?.toString()}</p>
-      )}
+        {id === "immediatelyBuyPrice" || id === "currentAuctionPrice" ? <span>원</span> : null}
+
+        {formState?.errors && formState.errors[id]?.message && (
+          <p>{formState?.errors[id]?.message?.toString()}</p>
+        )}
+      </div>
     </div>
   );
 };
