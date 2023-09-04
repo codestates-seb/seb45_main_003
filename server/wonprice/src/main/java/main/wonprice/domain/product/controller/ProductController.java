@@ -71,7 +71,17 @@ public class ProductController {
     // 상품 게시글 삭제
     @DeleteMapping("/{productId}")
     public ResponseEntity deleteProduct(@PathVariable Long productId) {
-        productService.deleteOneById(productId);
+        Member loginMember = memberService.findLoginMember();
+        Product product = productService.deleteOneById(productId, loginMember);
+
+        Long productOwnerId = product.getSeller().getMemberId();
+        Long loginMemberId = loginMember.getMemberId();
+
+        // 상품 판매자와 로그인 한 사용자가 다를 경우, 권한이 없음을 응답
+        if (!productOwnerId.equals(loginMemberId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         return ResponseEntity.noContent().build();
     }
 
