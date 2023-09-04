@@ -4,6 +4,8 @@ import { FieldValues, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import { API_PATHS } from "../../contstants/path";
+import { FAIL, REQUIRED, SUCCESS } from "../../contstants/systemMessage";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
@@ -14,21 +16,15 @@ const StyledUploadForm = styled.section`
   gap: 1rem;
 `;
 
-const UploadForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FieldValues>();
+const ReviewForm = () => {
+  const { register, handleSubmit, formState } = useForm<FieldValues>();
 
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
-  const mutation = useMutation((data: FieldValues) => axios.post("/api/test", data, {}));
+  const mutation = useMutation((data: FieldValues) => axios.post(API_PATHS.products(""), data, {}));
 
   const onSubmit = async (data: FieldValues) => {
-    //이미지를 같이 전송하기 위해 formData로 변환
-
     try {
       await mutation.mutateAsync(data);
       setSubmitResult(true);
@@ -57,21 +53,21 @@ const UploadForm = () => {
           <TextInput
             register={register}
             options={{
-              required: "제목은 필수입니다.",
+              required: REQUIRED.title,
             }}
             title="제목"
             id="title"
-            errors={errors}
+            formState={formState}
           />
 
           <TextInput
             register={register}
             options={{
-              required: "후기 내용은 필수입니다.",
+              required: REQUIRED.review,
             }}
             title="후기 내용"
             id="content"
-            errors={errors}
+            formState={formState}
           />
         </section>
 
@@ -83,19 +79,21 @@ const UploadForm = () => {
           {submitResult ? (
             <>
               <h4>등록 성공</h4>
-              <p>상품 등록에 성공하였습니다.</p>
+              <p>{SUCCESS.post}</p>
             </>
           ) : (
             <>
               <h4>등록 실패</h4>
-              <p>상품 등록에 실패하였습니다.</p>
+              <p>{FAIL.review}</p>
             </>
           )}
           <Button
+            size="big"
+            design="black"
             text="확인"
             type="button"
             onClick={() => {
-              submitResult ? navigate("/product") : null;
+              submitResult ? navigate("/product") : setIsOpen(!isOpen);
             }}
           />
         </>
@@ -104,4 +102,4 @@ const UploadForm = () => {
   );
 };
 
-export default UploadForm;
+export default ReviewForm;
