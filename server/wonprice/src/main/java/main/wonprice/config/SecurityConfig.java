@@ -76,11 +76,12 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(List.of(
                 "http://localhost:3000",
-                "http://wonprice-seb45-003.s3-website.ap-northeast-2.amazonaws.com", "*"));
+                "http://wonprice-seb45-003.s3-website.ap-northeast-2.amazonaws.com"));
         configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowedMethods(List.of("*"));
+        configuration.setAllowedMethods(List.of("PUT", "POST", "GET", "PATCH", "DELETE", "OPTIONS"));
         configuration.addExposedHeader("Authorization");
         configuration.addExposedHeader("Refresh");
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
