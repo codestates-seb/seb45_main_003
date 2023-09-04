@@ -1,14 +1,18 @@
 import axios from "axios";
+import { pickBy } from "lodash";
 import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
+import { API_PATHS } from "../../contstants/path";
+import { FAIL, REQUIRED, SUCCESS } from "../../contstants/systemMessage";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import ImageInput from "../common/ImageInput";
 import Modal from "../common/Modal";
+import TextArea from "../common/TextArea";
 import TextInput from "../common/TextInput";
 
 const StyledUploadForm = styled.section`
@@ -45,29 +49,31 @@ const StyledUploadForm = styled.section`
 `;
 
 const UploadForm = () => {
-  const {
-    register,
-    handleSubmit,
-    setError,
-    clearErrors,
-    formState: { errors },
-  } = useForm<FieldValues>();
-
+  const { register, handleSubmit, setError, clearErrors, formState } = useForm<FieldValues>();
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
-  const { images, handleChange } = useImageUpload({ setError, clearErrors });
+  const { images, base64Img, handleChange } = useImageUpload({ setError, clearErrors });
   const [isAuction, setIsAuction] = useState(true);
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
-
-  const mutation = useMutation((data: FieldValues) =>
-    axios.post("https://2ee0-110-15-44-64.ngrok-free.app/products", data, {}),
-  );
+  const mutation = useMutation((data: FieldValues) => axios.post(API_PATHS.products(""), data, {}));
 
   const onSubmit = async (data: FieldValues) => {
-    // const excludeEmptyData = pickBy(data, (el) => el.length > 0);
-
     try {
-      await mutation.mutateAsync(data);
+      //백엔드로 보낼 데이터 준비
+      data = {
+        ...data,
+        auction: isAuction,
+        images: base64Img,
+        closedAt: data.closingDate + " " + data.closingTime,
+      };
+      delete data.closingDate;
+      delete data.closingTime;
+
+      //값이 없는 필드 제거
+      const excludeEmptyData = pickBy(data, (value, key) => key === "auction" || value.length > 0);
+
+      //백엔드로 이미지 전송
+      await mutation.mutateAsync(excludeEmptyData);
       setSubmitResult(true);
     } catch (error) {
       setSubmitResult(false);
@@ -90,22 +96,22 @@ const UploadForm = () => {
           <ImageInput
             register={register}
             options={{
-              required: "이미지 등록은 필수입니다.",
+              required: REQUIRED.images,
             }}
             images={images}
             handleChange={handleChange}
-            errors={errors}
+            formState={formState}
           />
 
           <TextInput
             register={register}
             options={{
-              required: "제목은 필수입니다.",
+              required: REQUIRED.title,
             }}
             title="제목"
             id="title"
             type="text"
-            errors={errors}
+            formState={formState}
           />
         </section>
 
@@ -142,24 +148,23 @@ const UploadForm = () => {
             <TextInput
               register={register}
               options={{
-                required: "경매 시작가는 필수입니다.",
+                required: REQUIRED.currentAuctionPrice,
               }}
               title="경매시작가"
-              id="startingPrice"
+              id="currentAuctionPrice"
               type="number"
-              errors={errors}
             />
           )}
 
           <TextInput
             register={register}
             options={{
-              required: "즉시 구매가는 필수입니다.",
+              required: REQUIRED.immediatelyBuyPrice,
             }}
             title="즉시구매가"
-            id="buyItNowprice"
+            id="immediatelyBuyPrice"
             type="number"
-            errors={errors}
+            formState={formState}
           />
 
           {isAuction && (
@@ -167,18 +172,22 @@ const UploadForm = () => {
               <h4>경매 종료 시간</h4>
               <input
                 {...register("closingDate", {
-                  required: "경매 종료 날짜는 필수입니다",
+                  required: REQUIRED.closingDate,
                 })}
                 type="date"
               />
               <input
                 {...register("closingTime", {
-                  required: "경매 종료 시간은 필수입니다",
+                  required: REQUIRED.closingTime,
                 })}
                 type="time"
               />
-              {errors.closingDate?.message && <p>{errors.closingDate.message.toString()}</p>}
-              {errors.closingTime?.message && <p>{errors.closingTime.message.toString()}</p>}
+              {formState.errors.closingDate?.message && (
+                <p>{formState.errors.closingDate.message.toString()}</p>
+              )}
+              {formState.errors.closingTime?.message && (
+                <p>{formState.errors.closingTime.message.toString()}</p>
+              )}
             </div>
           )}
         </section>
@@ -189,38 +198,45 @@ const UploadForm = () => {
             <p>상품 상태 등 구매에 도움이 되는 정보를 입력합니다.</p>
           </div>
 
-          <TextInput
+          <TextArea
             register={register}
             options={{
-              required: "상품 설명은 필수입니다.",
+              required: REQUIRED.description,
             }}
             title="상품 설명"
-            id="content"
-            errors={errors}
+            id="description"
+            formState={formState}
           />
         </section>
 
-        <Button text="상품 등록" type="submit" onClick={handleSubmit(onSubmit)} />
+        <Button
+          size="big"
+          design="black"
+          text="상품 등록"
+          type="submit"
+          onClick={handleSubmit(onSubmit)}
+        />
       </StyledUploadForm>
 
       <Modal {...{ isOpen, setIsOpen, closeModal, toggleModal }}>
         <>
           {submitResult ? (
             <>
-              <h4>등록 성공</h4>
-              <p>상품 등록에 성공하였습니다.</p>
+              <h4>상품 등록 성공</h4>
+              <p>{SUCCESS.post}</p>
             </>
           ) : (
             <>
-              <h4>등록 실패</h4>
-              <p>상품 등록에 실패하였습니다.</p>
+              <h4>상품 등록 실패</h4>
+              <p>{FAIL.post}</p>
             </>
           )}
           <Button
+            design="black"
             text="확인"
             type="button"
             onClick={() => {
-              submitResult ? navigate("/product") : null;
+              submitResult ? navigate("/product") : setIsOpen(!isOpen);
             }}
           />
         </>
