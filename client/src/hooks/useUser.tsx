@@ -1,6 +1,6 @@
 // useUser.ts
 import { useSetRecoilState } from "recoil";
-import { userState, User } from "../../atoms/atoms";
+import { userState, User } from "../atoms/atoms";
 
 export function useUserActions() {
   const setUser = useSetRecoilState(userState);

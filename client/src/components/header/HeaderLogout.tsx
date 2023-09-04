@@ -8,12 +8,12 @@ import React, { useEffect, useRef } from "react";
 import MenuItem from "../mainPage/dropdownMenu/MenuItem";
 import { DropdownState } from "./DropdownState";
 
-// 최 상단 헤더 Bottom 라인
+// 헤더 하단으 경계 스타일
 const StyledBorder = styled.div`
   border-bottom: 1px solid #e0e0e0;
 `;
 
-// 헤더 컨텐츠 영역
+// 헤더의 주 스타일
 const StyledHeader = styled.header`
   .ButtonStyle {
     border: none;
@@ -60,21 +60,21 @@ const StyledHeader = styled.header`
   }
 `;
 
-// Header 컴포넌트 반환 영역
+// 로그아웃 상태의 헤더 컴포넌트
 const HeaderLogout = (): JSX.Element => {
+  // Recoil을 사용하여 드롭다운의 상태를 관리
   const [dropdown, setDropdown] = useRecoilState(dropDownState);
+  // 드롭다운 외부 클릭을 감지하기 위한 ref
   const sidebarRef = useRef<HTMLElement | null>(null); // HTML Element의 타입을 명시
 
-  // const onClickHandler = () => {
-  //   setDropdown(!dropdown);
-  // };
-
+  // 드롭다운 토글 핸들러
   const onClickHandler = () => {
     setDropdown((prevState) =>
       prevState === DropdownState.None ? DropdownState.Profile : DropdownState.None,
     );
   };
 
+  // 외부 클릭 이벤트를 처리하여 드롭다운을 닫는 로직
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
@@ -83,6 +83,7 @@ const HeaderLogout = (): JSX.Element => {
     };
     document.addEventListener("mousedown", handleOutsideClick);
 
+    // 클린업: 이벤트 리스너 제거
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
@@ -93,20 +94,23 @@ const HeaderLogout = (): JSX.Element => {
       <StyledBorder>
         <StyledHeader>
           <div className="header-wrapper">
+            {/* 로고 */}
             <Link to="/">
               <Logo />
             </Link>
             <div className="header-right">
+              {/* 로그인/회원가입 링크와 메뉴 아이콘 */}
               <Link to="/login">로그인 / 회원가입</Link>
               <button className="ButtonStyle" onClick={onClickHandler}>
                 <MenuIcon />
               </button>
             </div>
-            {dropdown && (
+            {/* 드롭다운 메뉴 */}
+            {dropdown ? (
               <aside className="sidebar" ref={sidebarRef}>
                 <MenuItem />
               </aside>
-            )}
+            ) : null}
           </div>
         </StyledHeader>
       </StyledBorder>

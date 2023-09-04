@@ -10,12 +10,12 @@ import PersonIcon from "@mui/icons-material/Person";
 import MenuIcon from "@mui/icons-material/Menu";
 import { DropdownState } from "./DropdownState";
 
-// 최 상단 헤더 Bottom 라인
+// 최 상단 헤더의 하단 경계선 스타일
 const StyledBorder = styled.div`
   border-bottom: 1px solid #e0e0e0;
 `;
 
-// 헤더 컨텐츠 영역
+// 헤더의 주요 스타일
 const StyledHeader = styled.header`
   .ButtonStyle {
     border: none;
@@ -62,25 +62,32 @@ const StyledHeader = styled.header`
   }
 `;
 
-// Header 컴포넌트 반환 영역
+// 로그인 상태의 헤더 컴포넌트
 const HeaderLogin = (): JSX.Element => {
+  // 드롭다운 상태를 Recoil로 관리
   const [dropdown, setDropdown] = useRecoilState(dropDownState);
+
+  // 드롭다운을 닫기 위한 ref
   const sidebarRef = useRef<HTMLElement | null>(null);
 
+  // 프로필 드롭다운을 보여주는 함수
   const showProfile = () => {
     setDropdown(DropdownState.Profile);
   };
 
+  // 메뉴 드롭다운을 보여주는 함수
   const showMenu = () => {
     setDropdown(DropdownState.Menu);
   };
 
+  // 드롭다운 외부를 클릭했을 때 드롭다운을 닫는 함수
   const handleOutsideClick = (event: MouseEvent) => {
     if (sidebarRef.current && !sidebarRef.current.contains(event.target as Node)) {
       setDropdown(DropdownState.None); // 수정된 부분
     }
   };
 
+  // 외부 클릭 이벤트 리스너를 추가/제거
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClick);
     return () => {
@@ -91,30 +98,39 @@ const HeaderLogin = (): JSX.Element => {
   return (
     <>
       <StyledBorder>
+        {/* 하단 경계선 */}
         <StyledHeader>
           <div className="header-wrapper">
+            {/* 로고 */}
             <Link to="/">
               <Logo />
             </Link>
             <div className="header-right">
+              {/* 로그아웃 링크 */}
               <Link to="/login">로그아웃</Link>
+
+              {/* 프로필 드롭다운 버튼 */}
               <button className="ButtonStyle" onClick={showProfile}>
                 <PersonIcon />
               </button>
+
+              {/* 메뉴 드롭다운 버튼 */}
               <button className="ButtonStyle" onClick={showMenu}>
                 <MenuIcon />
               </button>
             </div>
+            {/* 프로필 드롭다운 */}
             {dropdown === DropdownState.Profile && (
               <aside className="sidebar" ref={sidebarRef}>
                 <ProfileButton />
               </aside>
             )}
+            {/* 메뉴 드롭다운 */}
             {dropdown === DropdownState.Menu && (
               <aside className="sidebar" ref={sidebarRef}>
                 <MenuItem />
               </aside>
-            )}{" "}
+            )}
           </div>
         </StyledHeader>
       </StyledBorder>
