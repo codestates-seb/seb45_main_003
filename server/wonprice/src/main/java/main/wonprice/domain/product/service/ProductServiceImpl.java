@@ -56,7 +56,7 @@ public class ProductServiceImpl implements ProductService {
         - deletedAt(삭제시간): now()
      */
     @Override
-    public Product deleteOneById(Long productId) {
+    public Product deleteOneById(Long productId, Member member) {
         Product product = findExistsProduct(productId);
         product.setDeletedAt(LocalDateTime.now());
         return productRepository.save(product);
