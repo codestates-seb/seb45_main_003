@@ -1,5 +1,6 @@
 package main.wonprice.domain.member.controller;
 
+import main.wonprice.domain.member.dto.ReviewPatchDto;
 import main.wonprice.domain.member.dto.ReviewPostDto;
 import main.wonprice.domain.member.dto.ReviewResponseDto;
 import main.wonprice.domain.member.entity.Member;
@@ -60,6 +61,27 @@ public class ReviewController {
         List<ReviewResponseDto> response = mapper.reviewsToResponseDtos(reviews);
 
         return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("/reviews/{review-id}")
+    public ResponseEntity patchReview(@PathVariable("review-id") Long reviewId,
+                                      @RequestBody ReviewPatchDto patchDto) {
+
+        Review review = mapper.patchDtoToReview(patchDto);
+        review.setReviewId(reviewId);
+
+        Review patchedReview = reviewService.updateReview(review);
+        ReviewResponseDto response = mapper.reviewToResponseDto(patchedReview);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/reviews/{review-id}")
+    public ResponseEntity deleteReview(@PathVariable("review-id") Long reviewId) {
+
+        reviewService.deleteReview(reviewId);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }
