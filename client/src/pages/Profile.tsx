@@ -1,5 +1,6 @@
 import { styled } from "styled-components";
 import ProfileTab from "../components/profileTab/profileTab";
+import ProfileContent from "../components/profileContent/profileContent";
 
 const ProfileContainer = styled.div`
   padding: 0.75rem 0;
@@ -13,6 +14,7 @@ const Profile = (): JSX.Element => {
   return (
     <ProfileContainer>
       <ProfileTab />
+      <ProfileContent />
     </ProfileContainer>
   );
 };
