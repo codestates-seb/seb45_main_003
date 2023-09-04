@@ -4,7 +4,7 @@ import Button from "../components/common/Button";
 import { useRecoilState } from "recoil";
 import { toSignup } from "../atoms/atoms";
 import { styled } from "styled-components";
-import { GRAY_COLOR } from "../contstants/color";
+import { COLOR } from "../contstants/color";
 
 const BackgroundContainer = styled.div`
   display: flex;
@@ -14,7 +14,7 @@ const BackgroundContainer = styled.div`
 
 const PageContentContainer = styled.div`
   padding: 3rem 1.25rem 3rem 1.25rem;
-  border: 1px solid ${GRAY_COLOR.gray_300};
+  border: 1px solid ${COLOR.gray_300};
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -22,7 +22,7 @@ const PageContentContainer = styled.div`
   gap: 1.5rem;
 
   .bottomContainer {
-    border-top: 0.0625rem solid ${GRAY_COLOR.gray_300};
+    border-top: 0.0625rem solid ${COLOR.gray_300};
     padding: 1rem 0;
     display: flex;
     flex-direction: column;
@@ -59,14 +59,14 @@ const PageContentContainer = styled.div`
       top: 0.5rem;
       width: 3.125rem;
       height: 0.0625rem;
-      background-color: ${GRAY_COLOR.gray_900};
+      background-color: ${COLOR.darkText};
     }
     &:after {
       content: "";
       top: 0.5rem;
       width: 3.125rem;
       height: 0.0625rem;
-      background-color: ${GRAY_COLOR.gray_900};
+      background-color: ${COLOR.darkText};
     }
     .socialLabel {
       padding: 0.5rem 0.75rem;
