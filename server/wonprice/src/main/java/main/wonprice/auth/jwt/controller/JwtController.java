@@ -32,7 +32,6 @@ public class JwtController {
     public ResponseEntity verifyTokenExpiration(HttpServletRequest request) {
 
         jwtService.verifyAccessToken(request);
-        String accessToken = request.getHeader("Authorization");
 
         return new ResponseEntity(HttpStatus.OK);
     }
