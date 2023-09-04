@@ -2,6 +2,7 @@ package main.wonprice.domain.product.entity;
 
 import lombok.*;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.product.dto.ProductRequestDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -50,4 +51,10 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member seller; // 판매자
+
+    public Product update(ProductRequestDto productRequestDto) {
+        this.title = productRequestDto.getTitle();
+        this.description = productRequestDto.getDescription();
+        return this;
+    }
 }

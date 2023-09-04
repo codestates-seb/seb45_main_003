@@ -1,6 +1,7 @@
 package main.wonprice.domain.product.service;
 
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
 import org.springframework.data.domain.Pageable;
 
@@ -17,5 +18,7 @@ public interface ProductService {
 
     List<Product> findLoginMembersProduct(Pageable pageable, Member member);
 
-    Product deleteOneById(Long productId);
+    Product deleteOneById(Long productId,Member loginMember);
+
+    Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member loginMember);
 }
