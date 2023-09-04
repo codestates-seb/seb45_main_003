@@ -59,7 +59,7 @@ export const ContentBox = styled.div`
 
       .Text2 {
         /* background-color: #db3636; */
-
+        margin-top: 2.625rem;
         margin-left: 12.9375rem;
 
         color: #616161;
@@ -104,7 +104,7 @@ export const ContentBox = styled.div`
 
       .Text2 {
         /* background-color: #db3636; */
-
+        margin-top: 2.625rem;
         margin-left: 11.25rem;
 
         color: #616161;
@@ -150,14 +150,3 @@ export const SecondTitle = styled.div`
   line-height: 5rem;
   margin-bottom: 3.125rem;
 `;
-// export const wrapperStyle = {
-//   height: "auto",
-//   minHeight: "100%",
-//   paddingBottom: "YOUR_FOOTER_HEIGHT",
-// };
-
-// export const footerStyle = {
-//   height: "YOUR_FOOTER_HEIGHT",
-//   position: "relative",
-//   transform: "translateY(-100%)",
-// };
