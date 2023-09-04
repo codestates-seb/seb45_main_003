@@ -63,7 +63,7 @@ const UploadForm = () => {
       data = {
         ...data,
         auction: isAuction,
-        images: imagePaths,
+        images: base64Img,
         closedAt: data.closingDate + " " + data.closingTime,
       };
       delete data.closingDate;
