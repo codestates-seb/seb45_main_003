@@ -18,16 +18,17 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 
 const Box = styled.div`
-  /* height: 18.75rem; */
-  width: 28.125rem;
+  max-width: 28.125rem;
+  width: 50%;
+
   height: 37.5rem;
   border-radius: 0.375rem;
   .swiper-slide {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 18px;
-    font-size: 22px;
+    border-radius: 1.125rem;
+    font-size: 1.375rem;
     font-weight: bold;
     color: #fff;
     height: 37.5rem;
@@ -46,7 +47,6 @@ const Box = styled.div`
 SwiperCore.use([EffectCards]);
 
 interface CustomSwiperProps extends ReactSwiperProps {
-  // slidesPerView?: number;
   spaceBetween?: number;
   effect?: string;
   grabCursor?: boolean;

@@ -36,7 +36,7 @@ const Main = (): JSX.Element => {
             imgSrc={Img1}
           />
           <SecondScreen
-            text1="기능 소개1"
+            text1="기능 소개3"
             text2="뭐라 적어야 하긴 하는데 <br /> 뭐라고 적어야 할지 생각이 안남 <br /> 뭔가 엄청난 소개 문구"
             imgSrc={Img1}
           />

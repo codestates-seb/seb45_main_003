@@ -59,7 +59,7 @@ export const ContentBox = styled.div`
 
       .Text2 {
         /* background-color: #db3636; */
-
+        margin-top: 2.625rem;
         margin-left: 12.9375rem;
 
         color: #616161;
@@ -96,15 +96,15 @@ export const ContentBox = styled.div`
 
         color: #222;
         font-family: Pretendard Variable;
-        font-size: 60px;
+        font-size: 3.75rem;
         font-style: normal;
         font-weight: 800;
-        line-height: 60px; /* 100% */
+        line-height: 3.75rem; /* 100% */
       }
 
       .Text2 {
         /* background-color: #db3636; */
-
+        margin-top: 2.625rem;
         margin-left: 11.25rem;
 
         color: #616161;
@@ -117,8 +117,7 @@ export const ContentBox = styled.div`
     }
     .FunctionImg {
       margin-left: 1rem;
-      width: 50.8125rem;
-      height: 29.875rem;
+      width: 50%;
       flex-shrink: 0;
       border-radius: 0.375rem;
       background:
@@ -136,29 +135,18 @@ export const MainTitle = styled.div`
   color: #222;
   text-align: center;
   font-family: Pretendard Variable;
-  font-size: 92px;
+  font-size: 5.75rem;
   font-style: normal;
   font-weight: 800;
-  line-height: 100px; /* 108.696% */
+  line-height: 6.25rem; /* 108.696% */
 `;
 export const SecondTitle = styled.div`
   color: #222;
   font-family: Pretendard Variable;
   text-align: center;
-  font-size: 48px;
+  font-size: 3rem;
   font-style: normal;
   font-weight: 800;
-  line-height: 80px;
+  line-height: 5rem;
   margin-bottom: 3.125rem;
 `;
-// export const wrapperStyle = {
-//   height: "auto",
-//   minHeight: "100%",
-//   paddingBottom: "YOUR_FOOTER_HEIGHT",
-// };
-
-// export const footerStyle = {
-//   height: "YOUR_FOOTER_HEIGHT",
-//   position: "relative",
-//   transform: "translateY(-100%)",
-// };
