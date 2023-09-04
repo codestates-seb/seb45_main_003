@@ -20,7 +20,7 @@ function App() {
       element: <Main />,
     },
     {
-      // Root Rayout
+      // Root Layout
       path: "/",
       element: <Root />,
       children: [

@@ -5,7 +5,7 @@ import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
 import { dropDownState } from "../../atoms/atoms";
 import MenuIcon from "@mui/icons-material/Menu";
 import React, { useEffect, useRef } from "react";
-import MenuItem from "../mainPage/dropdownMenu/MeunItem";
+import MenuItem from "../mainPage/dropdownMenu/MenuItem";
 import { DropdownState } from "./DropdownState";
 
 // 최 상단 헤더 Bottom 라인

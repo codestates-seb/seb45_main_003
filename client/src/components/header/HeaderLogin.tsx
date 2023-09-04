@@ -5,7 +5,7 @@ import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
 import { dropDownState } from "../../atoms/atoms";
 import React, { useEffect, useRef } from "react";
 import ProfileButton from "./LoginProfile";
-import MenuItem from "../mainPage/dropdownMenu/MeunItem";
+import MenuItem from "../mainPage/dropdownMenu/MenuItem";
 import PersonIcon from "@mui/icons-material/Person";
 import MenuIcon from "@mui/icons-material/Menu";
 import { DropdownState } from "./DropdownState";
