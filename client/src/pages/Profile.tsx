@@ -3,6 +3,7 @@ import ProfileTab from "../components/profileTab/profileTab";
 import ProfileContent from "../components/profileContent/profileContent";
 import { useRecoilValue } from "recoil";
 import { profileTabState } from "../atoms/atoms";
+import { useValidateToken } from "../hooks/useValidateToken";
 
 const ProfileContainer = styled.div`
   padding: 0.75rem 0;
@@ -14,6 +15,7 @@ const ProfileContainer = styled.div`
 
 const Profile = (): JSX.Element => {
   const mypageMode = useRecoilValue(profileTabState);
+  useValidateToken();
   return (
     <ProfileContainer>
       <ProfileTab />

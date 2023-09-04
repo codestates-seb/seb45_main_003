@@ -23,7 +23,7 @@ const StyledLoginForm = styled.form`
   align-items: stretch;
   gap: 0.5rem;
 `;
-
+//errormessage 빨간색
 const LogInForm = (): JSX.Element => {
   const {
     register,

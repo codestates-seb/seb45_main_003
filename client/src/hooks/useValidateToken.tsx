@@ -1,28 +1,48 @@
-import { useRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { loginState } from "../atoms/atoms";
 import axios from "axios";
 
 export const useValidateToken = () => {
-  const [login, setLogin] = useRecoilState(loginState);
+  const setLogin = useSetRecoilState(loginState);
   const accessToken = localStorage.getItem("accessToken");
   if (accessToken) {
     const validateAccessToken = async (accessToken: string) => {
       try {
-        const res = await axios.post(`${process.env.REACT_APP_API_URL}/`, accessToken);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/access`, {
+          headers: {
+            Authorization: accessToken,
+            "ngrok-skip-browser-warning": "69420",
+          },
+          withCredentials: true,
+        });
         if (res) {
           setLogin(true);
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          if (error.response?.status === 401) {
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/refresh`);
-            if (res.status === 200) {
-              localStorage.setItem("accessToken", res.headers["authorization"]);
-              setLogin(true);
-            } else if (res.status === 401) {
-              localStorage.removeItem("accessToken");
-              localStorage.removeItem("refreshToken");
-              setLogin(false);
+          if (error.response?.status === 500) {
+            const refreshToken = localStorage.getItem("refreshToken");
+            if (refreshToken) {
+              const getAccessToken = async (refreshToken: string) => {
+                const res = await axios.get(`${process.env.REACT_APP_API_URL}/refresh`, {
+                  headers: {
+                    Refresh: refreshToken,
+                    "ngrok-skip-browser-warning": "69420",
+                  },
+                });
+                if (res.status === 200) {
+                  localStorage.setItem("accessToken", res.headers["authorization"]);
+                  setLogin(true);
+                }
+                if (axios.isAxiosError(error)) {
+                  if (error.response?.status === 500) {
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("refreshToken");
+                    setLogin(false);
+                  }
+                }
+              };
+              getAccessToken(refreshToken);
             }
           }
         }
@@ -30,5 +50,4 @@ export const useValidateToken = () => {
     };
     validateAccessToken(accessToken);
   }
-  console.log(login);
 };

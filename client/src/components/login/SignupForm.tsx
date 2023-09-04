@@ -78,7 +78,7 @@ const StyledModal = styled.div`
     align-items: flex-end;
   }
 `;
-
+//readonly 일때 인풋 백그라운드 변화필요
 const SignupForm = (): JSX.Element => {
   const {
     register,
