@@ -3,11 +3,8 @@ package main.wonprice.domain.member.controller;
 import lombok.AllArgsConstructor;
 import main.wonprice.domain.member.dto.*;
 import main.wonprice.domain.member.entity.Member;
-import main.wonprice.domain.member.entity.Review;
 import main.wonprice.domain.member.mapper.MemberMapper;
-import main.wonprice.domain.member.mapper.ReviewMapper;
 import main.wonprice.domain.member.service.MemberService;
-import main.wonprice.domain.member.service.ReviewService;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.mapper.ProductMapper;
@@ -28,10 +25,8 @@ public class MemberController {
 
     private final MemberService memberService;
     private final ProductService productService;
-    private final ReviewService reviewService;
     private final MemberMapper mapper;
     private final ProductMapper productMapper;
-    private final ReviewMapper reviewMapper;
 
     @PostMapping
     public ResponseEntity postMember(@RequestBody @Valid MemberPostDto postDto) {
@@ -62,30 +57,6 @@ public class MemberController {
         List<ProductResponseDto> response = productMapper.toMypageProduct(products);
 
         return ResponseEntity.ok(response);
-    }
-
-    //    리뷰
-    @GetMapping("/myPage/reviews")
-    public ResponseEntity findLoginMembersReview(Pageable pageable) {
-
-        Member loginMember = memberService.findLoginMember();
-
-        List<Review> reviews = reviewService.findReviews(pageable, loginMember);
-        List<ReviewResponseDto> response = reviewMapper.reviewsToResponseDtos(reviews);
-
-        return new ResponseEntity(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/{member-id}/reviews")
-    public ResponseEntity findMembersReviews(Pageable pageable,
-                                             @PathVariable("member-id") Long memberId) {
-
-        Member findMember = memberService.findMember(memberId);
-
-        List<Review> reviews = reviewService.findReviews(pageable, findMember);
-        List<ReviewResponseDto> response = reviewMapper.reviewsToResponseDtos(reviews);
-
-        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @GetMapping("/{member-id}")
