@@ -7,6 +7,7 @@ import { useRecoilState } from "recoil";
 import { toSignup } from "../../atoms/atoms";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
+import { COLOR } from "../../contstants/color";
 
 //폼에서 사용하는 데이터
 interface SignupForm {
@@ -29,7 +30,6 @@ interface SignupData {
 const StyledSignupForm = styled.form`
   width: 28.125rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -48,13 +48,13 @@ const StyledSignupForm = styled.form`
     flex: 1 0 18.75rem;
   }
   .errormessage {
-    color: #f44336;
+    color: ${COLOR.invalid};
   }
   .successmessage {
-    color: #33a754;
+    color: ${COLOR.valid};
   }
   .errorInput {
-    border-color: #f44336;
+    border-color: ${COLOR.invalid};
   }
 `;
 const StyledModal = styled.div`
@@ -173,11 +173,10 @@ const SignupForm = (): JSX.Element => {
             })}
           />
           <Button
-            type={"button"}
-            disabled={false}
-            text={"인증요청"}
+            type="button"
+            text="인증요청"
             onClick={() => reqConfirmCode(getValues("email"))}
-            design={"yellow"}
+            design="yellow"
           />
         </div>
         {errors.email && <div className="errormessage">{errors.email?.message}</div>}
@@ -195,11 +194,10 @@ const SignupForm = (): JSX.Element => {
             })}
           />
           <Button
-            type={"button"}
-            disabled={false}
-            text={"인증하기"}
+            type="button"
+            text="인증하기"
             onClick={() => testConfirmCode(getValues())}
-            design={"yellow"}
+            design="yellow"
           />
         </div>
         {errors.confirmcode && <div className="errormessage">{errors.confirmcode?.message}</div>}
@@ -256,7 +254,7 @@ const SignupForm = (): JSX.Element => {
           })}
         />
         {errors.phone && <div className="errormessage">{errors.phone?.message}</div>}
-        <Button type={"submit"} disabled={isSubmitting} text={"회원가입"} design={"black"} />
+        <Button type="submit" disabled={isSubmitting} text="회원가입" design="black" />
       </StyledSignupForm>
       <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
         <StyledModal>
@@ -264,13 +262,7 @@ const SignupForm = (): JSX.Element => {
             <p>회원가입 되셨습니다!</p>
           </div>
           <div className="modalButtonContainer">
-            <Button
-              type={"button"}
-              disabled={false}
-              text={"확인"}
-              onClick={() => changeform()}
-              design={"black"}
-            />
+            <Button type="button" text="확인" onClick={() => changeform()} design="black" />
           </div>
         </StyledModal>
       </Modal>
