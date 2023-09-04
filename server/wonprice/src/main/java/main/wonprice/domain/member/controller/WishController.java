@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/wishes")
 public class WishController {
 
     private final MemberService memberService;
@@ -31,7 +30,7 @@ public class WishController {
         this.mapper = mapper;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/wishes/add")
     public ResponseEntity postWish(@RequestBody WishPostDto postDto) {
 
         Member loginMember = memberService.findLoginMember();
@@ -43,7 +42,7 @@ public class WishController {
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
 
-    @GetMapping
+    @GetMapping("/members/wishes")
     public ResponseEntity getLoginMemberWish(Pageable pageable) {
 
         Member logimMember = memberService.findLoginMember();
@@ -52,5 +51,13 @@ public class WishController {
         List<WishResponseDto> response = mapper.toResponseDtos(wishes);
 
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/wishes/{wish-id}")
+    public ResponseEntity deleteWish(@PathVariable("wish-id") Long wishId) {
+
+        wishService.removeWish(wishId);
+
+        return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
 }
