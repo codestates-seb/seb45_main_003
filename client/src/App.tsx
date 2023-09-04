@@ -5,7 +5,7 @@ import Chatting from "./pages/Chatting";
 import CreatePost from "./pages/CreatePost";
 import ErrorIndication from "./pages/ErrorIndication";
 import LogIn from "./pages/LogIn";
-import Main from "./pages/Main";
+import Main from "./pages/main/Main";
 import PostInformation from "./pages/PostInformation";
 import PostsList from "./pages/PostsList";
 import Profile from "./pages/Profile";
@@ -20,7 +20,7 @@ function App() {
       element: <Main />,
     },
     {
-      // Root Rayout
+      // Root Layout
       path: "/",
       element: <Root />,
       children: [
