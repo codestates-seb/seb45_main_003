@@ -36,6 +36,15 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<Review> findWroteReviews(Pageable pageable, Member member) {
+
+        List<Review> reviews = repository.findAllByPostMemberId(pageable, member.getMemberId()).getContent();
+        return reviews.stream()
+                .filter(review -> review.getDeletedAt() == null)
+                .collect(Collectors.toList());
+    }
+
     public Review updateReview(Review review) {
 
         Review findReview = findVerifiedReview(review.getReviewId());

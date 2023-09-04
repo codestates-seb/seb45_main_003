@@ -40,6 +40,19 @@ public class ReviewController {
 
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
+
+    @GetMapping("/members/myPage/reviews/wrote")
+    public ResponseEntity fingLoginMemberwroteReview(Pageable pageable) {
+
+        Member loginMember = memberService.findLoginMember();
+
+        List<Review> reviews = reviewService.findWroteReviews(pageable, loginMember);
+        List<ReviewResponseDto> response = mapper.reviewsToResponseDtos(reviews);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
+
     @GetMapping("/members/myPage/reviews")
     public ResponseEntity findLoginMembersReview(Pageable pageable) {
 
