@@ -18,7 +18,7 @@ public interface ProductService {
 
     List<Product> findLoginMembersProduct(Pageable pageable, Member member);
 
-    Product deleteOneById(Long productId);
+    Product deleteOneById(Long productId,Member loginMember);
 
     Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member loginMember);
 }
