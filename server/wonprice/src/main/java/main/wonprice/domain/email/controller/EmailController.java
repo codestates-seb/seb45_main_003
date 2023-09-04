@@ -34,7 +34,7 @@ public class EmailController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @GetMapping("/auth")
+    @PostMapping("/auth")
     public ResponseEntity veriftyAuthCode(@RequestBody @Valid EmailAuthDto emailDto) throws MessagingException, UnsupportedEncodingException {
 
         AuthEmail email = mapper.authDtoToEmail(emailDto);

@@ -3,21 +3,20 @@ package main.wonprice.domain.product.controller;
 import lombok.RequiredArgsConstructor;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
-import main.wonprice.domain.product.dto.ProductPostDto;
+import main.wonprice.domain.product.dto.ProductMypageResponseDto;
+import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.mapper.ProductMapper;
 import main.wonprice.domain.product.service.ProductService;
-import main.wonprice.utils.UriCreator;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Positive;
-import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/products")
@@ -26,22 +25,53 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
+    private final MemberService memberService;
 
     // 상품 등록
-    @PostMapping("/register")
-    public ResponseEntity postProduct(@RequestBody ProductPostDto postDto) {
-        Product product = productService.createProduct(productMapper.postDtoToProduct(postDto));
-        URI location = UriCreator.createUri("/products", product.getProductId());
-        return ResponseEntity.created(location).body(product);
+    @PostMapping
+    public ResponseEntity createProduct(@RequestBody ProductRequestDto productRequestDto) {
+        Member loginMember = memberService.findLoginMember();
+        Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember));
+        ProductResponseDto productResponseDto = productMapper.fromEntity(product);
+        return ResponseEntity.ok(productResponseDto);
     }
 
-    // 상품 상세 정보 페이지로 이동
-    @GetMapping("/list/{productId}")
-    public ResponseEntity productDetailsPage(@PathVariable("productId") @Positive Long productId) {
-        // 조회할 판매 상품 select
-        Product product = productService.getProduct(productId);
-        ProductResponseDto productResponseDto = productMapper.responseDtoToProduct(product);
+    // 전체 상품 조회
+    @GetMapping
+    public ResponseEntity<List<ProductResponseDto>> findAllProduct() {
+        List<ProductResponseDto> productResponseDtoList = productService
+                .findAll()
+                .stream()
+                .map(productMapper::fromEntity)
+                .collect(Collectors.toList());
 
-        return new ResponseEntity(productResponseDto, HttpStatus.OK);
+        return ResponseEntity.ok(productResponseDtoList);
+    }
+
+    // 특정 상품 조회
+    @GetMapping("/{productId}")
+    public ResponseEntity findOnProduct(@PathVariable Long productId) {
+        Product product = productService.findOneById(productId);
+        ProductResponseDto productResponseDto = productMapper.fromEntity(product);
+        return ResponseEntity.ok(productResponseDto);
+    }
+
+    //    마이페이지용 로그인한 회원 게시물 목록 조회
+    @GetMapping("/myPage")
+    public ResponseEntity findLoginMembersProduct(Pageable pageable) {
+
+        Member loginMember = memberService.findLoginMember();
+
+        List<Product> products = productService.findLoginMembersProduct(pageable, loginMember);
+        List<ProductMypageResponseDto> response = productMapper.toMypageProduct(products);
+
+        return ResponseEntity.ok(response);
+    }
+
+    // 상품 게시글 삭제
+    @DeleteMapping("/{productId}")
+    public ResponseEntity deleteProduct(@PathVariable Long productId){
+        productService.deleteOneById(productId);
+        return ResponseEntity.noContent().build();
     }
 }
