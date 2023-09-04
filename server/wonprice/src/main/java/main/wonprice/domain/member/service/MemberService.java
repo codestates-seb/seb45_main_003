@@ -57,11 +57,7 @@ public class MemberService {
 
     public Member updateMember(Member member) {
 
-        Member loginMember = findLoginMember();
-
-        if (!loginMember.getMemberId().equals(member.getMemberId()) & !loginMember.getRoles().contains("ADMIN")) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
-        }
+        validateOwner(member.getMemberId());
 
         Member findMember = findVerifyMember(member.getMemberId());
 
@@ -83,11 +79,7 @@ public class MemberService {
 
     public void deleteMember(Long memberId) {
 
-        Member loginMember = findLoginMember();
-
-        if (!loginMember.getMemberId().equals(memberId) & !loginMember.getRoles().contains("ADMIN")) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
-        }
+        validateOwner(memberId);
 
         Member findMember = findVerifyMember(memberId);
         findMember.setDeletedAt(LocalDateTime.now());
