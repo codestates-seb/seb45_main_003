@@ -4,19 +4,18 @@ type TextInputProps = {
   register: UseFormRegister<FieldValues>;
   id: string;
   title: string;
-  type?: string;
   options?: RegisterOptions;
   formState?: FormState<FieldValues>;
 };
 
-const TextInput = (props: TextInputProps) => {
-  const { register, id, title, type, options, formState } = props;
+const TextArea = (props: TextInputProps) => {
+  const { register, id, title, options, formState } = props;
 
   return (
     <div>
       <p>{title}</p>
 
-      <input {...register(id, options)} id={id} type={type} />
+      <textarea {...register(id, options)} id={id}></textarea>
 
       {formState?.errors && formState.errors[id]?.message && (
         <p>{formState?.errors[id]?.message?.toString()}</p>
@@ -25,4 +24,4 @@ const TextInput = (props: TextInputProps) => {
   );
 };
 
-export default TextInput;
+export default TextArea;
