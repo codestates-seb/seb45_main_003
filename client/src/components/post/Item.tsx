@@ -1,8 +1,11 @@
 type ItemProps = {
-  key: number;
+  data: {
+    productId: number;
+  };
 };
 
 const Item = (props: ItemProps): JSX.Element => {
-  return <li>{props.key}</li>;
+  const { data } = props;
+  return <li>{data.productId}</li>;
 };
 export default Item;

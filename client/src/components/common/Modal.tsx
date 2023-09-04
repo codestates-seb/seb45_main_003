@@ -3,8 +3,8 @@ import { ReactComponent as CloseIcon } from "../../assets/images/Close.svg";
 
 interface ModalProp {
   isOpen: boolean;
-  closeModal: (event: React.MouseEvent<HTMLElement>) => void;
-  toggleModal: () => void;
+  closeModal?: (event: React.MouseEvent<HTMLElement>) => void;
+  toggleModal?: () => void;
   children: JSX.Element;
 }
 

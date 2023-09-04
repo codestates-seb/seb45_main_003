@@ -1,4 +1,6 @@
 import { createGlobalStyle } from "styled-components";
+import { COLOR } from "../contstants/color";
+import { FONT_SIZE } from "../contstants/font";
 import "./font.ts";
 
 export const GlobalStyle = createGlobalStyle`
@@ -37,30 +39,31 @@ ul {
   letter-spacing: -0.1px;
 }
 h1 {
-  font-size: 2rem;
+  ${FONT_SIZE.font_32}
 }
 h2 {
-  font-size: 1.5rem;
+  ${FONT_SIZE.font_24}
 }
 h3 {
-  font-size: 1.25rem;
+  ${FONT_SIZE.font_20}
 }
 h4 {
-  font-size: 1.125rem;
+  ${FONT_SIZE.font_18}
 }
 h5 {
-  font-size: 1rem;
+  ${FONT_SIZE.font_16}
 }
 ul {
   list-style: none;
 }
-button,
-input {
-  height: 2.5rem;
+input, textarea {
   font-size: 1rem;
-  line-height: 1.5rem;
+  padding: .5rem .75rem;
   border-radius: 6px;
-  border: .0625rem solid #e0e0e0;
+  border: 1px solid ${COLOR.border};
+}
+textarea {
+  resize: none;
 }
 select {
   margin: 0;

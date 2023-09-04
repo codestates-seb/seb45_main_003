@@ -1,7 +1,9 @@
+import List from "../components/post/List";
+
 const PostsList = (): JSX.Element => {
   return (
     <>
-      <h1>PostsList</h1>
+      <List />
     </>
   );
 };
