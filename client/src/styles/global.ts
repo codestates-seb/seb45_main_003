@@ -5,7 +5,7 @@ import "./font.ts";
 
 export const GlobalStyle = createGlobalStyle`
 body,
-textarea {
+textarea, input {
   margin: 0;
   font-family: "Pretendard";
   -webkit-font-smoothing: antialiased;
@@ -56,12 +56,19 @@ h5 {
 ul {
   list-style: none;
 }
-input, textarea {
+input:not([type=checkbox], [type=radio]), textarea {
   font-size: 1rem;
   padding: .5rem .75rem;
   border-radius: 6px;
   border: 1px solid ${COLOR.border};
+
+  &:hover, &:focus {
+    border: 1px solid ${COLOR.primary};
+    outline: 1px solid ${COLOR.primary};
+  }
 }
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance: none;margin: 0;}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance: none;margin: 0;}
 textarea {
   resize: none;
 }
