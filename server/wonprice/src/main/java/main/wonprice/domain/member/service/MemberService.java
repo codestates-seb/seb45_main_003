@@ -155,4 +155,18 @@ public class MemberService {
             throw new BusinessLogicException(ExceptionCode.INVALID_PASSWORD);
         }
     }
+
+//    게시물, 리뷰, 찜 등 행위 주체와 요청을 보낸 회원이 동일한지 검증
+    public void validateOwner(Long memberId) {
+
+        Member loginMember = findLoginMember();
+        if (loginMember.getRoles().contains("ADMIN")) {
+            return;
+        }
+
+        boolean hasAuthority = loginMember.getMemberId().equals(memberId);
+        if (!hasAuthority) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHENTICATED);
+        }
+    }
 }
