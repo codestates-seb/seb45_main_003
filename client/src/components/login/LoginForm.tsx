@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import Button from "../common/Button";
 import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
+import { loginState } from "../../atoms/atoms";
 //폼에서 사용하는 데이터
 interface LoginForm {
   email: string;
@@ -32,6 +34,7 @@ const LogInForm = (): JSX.Element => {
     setError,
   } = useForm<LoginForm>();
   const navigate = useNavigate();
+  const setLogin = useSetRecoilState(loginState);
   //로그인 시도 함수
   const submitLogin = async (body: LoginData) => {
     try {
@@ -40,17 +43,19 @@ const LogInForm = (): JSX.Element => {
         const headers = response.headers;
         const accessToken = headers["authorization"];
         const refreshToken = headers["refresh"];
-        console.log(`access:${accessToken}`, `refresh:${refreshToken}`);
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
+        setLogin(true);
         navigate("/");
-      } else if (response.status === 401) {
-        setError("formError", {
-          message: "이메일 또는 비밀번호가 잘못 작성되었습니다.",
-        });
       }
     } catch (error) {
-      console.log(`Error: ${error}`);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          setError("formError", {
+            message: "이메일 또는 비밀번호가 잘못 작성되었습니다.",
+          });
+        }
+      }
     }
   };
 
