@@ -44,8 +44,6 @@ const StyledHeader = styled.header`
   .sidebar {
     z-index: 2;
     border-radius: 6px;
-    /* border: 1px solid var(--cool-gray-20, #dde1e6); */
-    background: #ffffff;
     margin: 0.375rem;
     max-width: 22rem;
     width: 25%;
