@@ -10,9 +10,9 @@ const ItemBox = styled.div`
   /* max-width: 15.0625rem;
   height: 4.3125rem; */
   align-self: stretch;
-  width: 100%;
+  width: calc(100% - 3rem);
   border: 1px solid #ebebeb;
-  padding: 1.0625rem 1.8125rem 1.125rem 4.125rem;
+  padding: 1.0625rem 1.8125rem 1.125rem 1.4375rem;
 
   /* background-color: aqua; */
 `;
