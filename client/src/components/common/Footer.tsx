@@ -39,8 +39,8 @@ export const Footer = (): JSX.Element => {
 
   return (
     <>
-      <FooterStyled>
-        <footer ref={footerRef}>
+      <FooterStyled ref={footerRef}>
+        <footer>
           <div className="fotterText">CompanyName @ 202X. All rights reserved.</div>
         </footer>
       </FooterStyled>
