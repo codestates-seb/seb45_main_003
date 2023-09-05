@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { COLOR, GRAY_COLOR } from "../../contstants/color";
+import { COLOR } from "../../contstants/color";
 
 type ButtonProp = {
   type: "button" | "submit" | "reset" | undefined;
@@ -12,6 +12,9 @@ type ButtonProp = {
 };
 const StyledButton = styled.button<ButtonProp>`
   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   border-radius: 6px;
   font-weight: 600;
   transition: 0.3s;
@@ -20,7 +23,7 @@ const StyledButton = styled.button<ButtonProp>`
   background: ${(props) => {
     switch (props.design) {
       case "black":
-        return GRAY_COLOR.gray_900;
+        return COLOR.darkText;
       case "yellow":
         return COLOR.primary;
       default:

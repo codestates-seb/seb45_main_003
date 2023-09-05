@@ -1,10 +1,4 @@
-import {
-  DeepMap,
-  FieldError,
-  FieldValues,
-  RegisterOptions,
-  UseFormRegister,
-} from "react-hook-form";
+import { FieldValues, FormState, RegisterOptions, UseFormRegister } from "react-hook-form";
 
 type TextInputProps = {
   register: UseFormRegister<FieldValues>;
@@ -12,20 +6,21 @@ type TextInputProps = {
   title: string;
   type?: string;
   options?: RegisterOptions;
-  errors?: DeepMap<FieldValues, FieldError>;
+  formState?: FormState<FieldValues>;
 };
 
 const TextInput = (props: TextInputProps) => {
+  const { register, id, title, type, options, formState } = props;
+
   return (
     <div>
-      <h4>{props.title}</h4>
+      <p>{title}</p>
 
-      {props.id === "content" ? (
-        <textarea {...props.register(props.id, props.options)} id={props.id}></textarea>
-      ) : (
-        <input {...props.register(props.id, props.options)} id={props.id} type={props.type} />
+      <input {...register(id, options)} id={id} type={type} />
+
+      {formState?.errors && formState.errors[id]?.message && (
+        <p>{formState?.errors[id]?.message?.toString()}</p>
       )}
-      {props.errors && props.errors[props.id]?.message && <p>{props.errors[props.id].message}</p>}
     </div>
   );
 };

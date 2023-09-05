@@ -1,7 +1,6 @@
 package main.wonprice.domain.product.mapper;
 
 import main.wonprice.domain.member.entity.Member;
-import main.wonprice.domain.product.dto.ProductMypageResponseDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
@@ -53,5 +52,5 @@ public interface ProductMapper {
                 .build();
     }
 
-    List<ProductMypageResponseDto> toMypageProduct(List<Product> products);
+    List<ProductResponseDto> toMypageProduct(List<Product> products);
 }

@@ -2,6 +2,7 @@ package main.wonprice.domain.product.service;
 
 import lombok.RequiredArgsConstructor;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.repository.ProductRepository;
 import org.springframework.data.domain.Pageable;
@@ -55,10 +56,22 @@ public class ProductServiceImpl implements ProductService {
         - deletedAt(삭제시간): now()
      */
     @Override
-    public Product deleteOneById(Long productId) {
-        Product product = findOneById(productId);
+    public Product deleteOneById(Long productId, Member member) {
+        Product product = findExistsProduct(productId);
         product.setDeletedAt(LocalDateTime.now());
         return productRepository.save(product);
+    }
+
+    /*
+        상품 정보 수정
+        - 상품을 등록한 판매자만 상품 정보 수정 가능
+        - createdAt(등록시간): now()
+     */
+    @Override
+    public Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member member) {
+        Product product = findExistsProduct(productId);
+        product.setCreateAt(LocalDateTime.now());
+        return productRepository.save(product.update(productRequestDto));
     }
 
     // 상품이 존재하는지 확인하는 메서드

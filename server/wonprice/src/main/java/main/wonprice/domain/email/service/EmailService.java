@@ -2,10 +2,12 @@ package main.wonprice.domain.email.service;
 
 import main.wonprice.domain.email.entity.AuthEmail;
 import main.wonprice.domain.email.repository.EmailAuthRepository;
+import main.wonprice.domain.member.service.MemberService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -15,20 +17,23 @@ import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 
 @Service
+@Transactional
 public class EmailService {
 
     private final JavaMailSender emailSender;
     private final TemplateEngine templateEngine;
     private final EmailAuthRepository emailAuthRepository;
+    private final MemberService memberService;
 
 
     @Value("${ADMIN_EMAIL}")
     private String emailFrom;
 
-    public EmailService(JavaMailSender emailSender, TemplateEngine templateEngine, EmailAuthRepository emailRepository) {
+    public EmailService(JavaMailSender emailSender, TemplateEngine templateEngine, EmailAuthRepository emailRepository, MemberService memberService) {
         this.emailSender = emailSender;
         this.templateEngine = templateEngine;
         this.emailAuthRepository = emailRepository;
+        this.memberService = memberService;
     }
 
 //    인증 코드 랜덤 생성
@@ -50,8 +55,14 @@ public class EmailService {
     public void sendAuthEmail(AuthEmail email) throws MessagingException, UnsupportedEncodingException {
 
         String authCode = generateRandomCode();
-
         String recipient = email.getEmail();
+
+        memberService.checkExistEmail(recipient);
+
+        AuthEmail authEmail = emailAuthRepository.findByEmail(recipient);
+        if (authEmail != null) {
+            emailAuthRepository.deleteByEmail(recipient);
+        }
 
         Context context = new Context();
         context.setVariable("email", recipient);
@@ -69,12 +80,6 @@ public class EmailService {
         mimeMessageHelper.setTo(recipient);
         mimeMessageHelper.setFrom("WonPrice");
         mimeMessageHelper.setText(message, true);
-
-        AuthEmail authEmail = emailAuthRepository.findByEmail(recipient);
-
-        if (authEmail != null) {
-            emailAuthRepository.deleteByEmail(recipient);
-        }
 
         emailAuthRepository.save(new AuthEmail(recipient, authCode));
 
