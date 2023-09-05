@@ -45,8 +45,8 @@ const List = (): JSX.Element => {
     return <Loading />;
   }
 
-  if (error instanceof Error) {
-    return <ErrorIndication />;
+  if (error as Error) {
+    return <ErrorIndication error={error} />;
   }
 
   return (
