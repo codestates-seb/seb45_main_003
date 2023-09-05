@@ -14,7 +14,6 @@ const StyledError = styled.section<HeaderHeightProps>`
   justify-content: center;
   flex-flow: column;
   height: calc(100vh - ${(props) => props.height}px);
-  margin: 0 0 ${(props) => props.height}px;
 
   h1 {
     font-size: 6rem;
