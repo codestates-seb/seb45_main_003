@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useForm } from "react-hook-form";
-import Button from "../common/Button";
-import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { styled } from "styled-components";
+import Button from "../common/Button";
 //폼에서 사용하는 데이터
 interface LoginForm {
   email: string;
@@ -76,7 +76,7 @@ const LogInForm = (): JSX.Element => {
         })}
       />
       {errors.password && <div>{errors.password?.message}</div>}
-      <Button type="submit" disabled={isSubmitting} text="로그인" design="black" />
+      <Button type="submit" disabled={isSubmitting} text="로그인" $design="black" />
     </StyledLoginForm>
   );
 };

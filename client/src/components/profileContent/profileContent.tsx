@@ -62,7 +62,7 @@ const ProfileContent = (): JSX.Element => {
     <ProfileContentContainer>
       <div className="topContainer">
         <p className="menuTitle">프로필</p>
-        <Button type="button" text="변경" design="black" />
+        <Button type="button" text="변경" $design="black" />
       </div>
       <div className="profileInfoContainer">
         <img className="profileImg"></img>
