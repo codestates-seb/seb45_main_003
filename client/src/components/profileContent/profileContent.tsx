@@ -98,6 +98,7 @@ const ProfileContent = (): JSX.Element => {
     formState: { errors, isSubmitting },
   } = useForm<profileData>();
   const [profile, setProfile] = useState(null);
+  // const Id = window.location.search
   const getProfile = async () => {
     const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/{member-id}`);
     setProfile(res.data);
