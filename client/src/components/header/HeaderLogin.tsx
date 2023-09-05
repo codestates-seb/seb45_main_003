@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
-import { dropDownState, loginState } from "../../atoms/atoms"; // loginState 추가
+import { dropDownState } from "../../atoms/atoms"; // loginState 추가
 import React, { useEffect, useRef } from "react";
 import ProfileButton from "./LoginProfile";
 import MenuItem from "../mainPage/dropdownMenu/MenuItem";
@@ -21,6 +21,10 @@ const StyledHeader = styled.header`
   .ButtonStyle {
     border: none;
     background: none;
+    &:hover {
+      /* background-color: #ffb300; // 원하는 호버 색상 */
+      color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
+    }
   }
   .header-wrapper {
     width: calc(100% - 3rem);
@@ -69,7 +73,7 @@ const HeaderLogin = (): JSX.Element => {
   const [dropdown, setDropdown] = useRecoilState(dropDownState);
 
   // 로그인 상태를 Recoil로 관리
-  const setLogin = useSetRecoilState(loginState);
+  // const setLogin = useSetRecoilState(loginState);
 
   // 드롭다운을 닫기 위한 ref
   const sidebarRef = useRef<HTMLElement | null>(null);
@@ -92,21 +96,21 @@ const HeaderLogin = (): JSX.Element => {
   };
 
   // 로그아웃 핸들러
-  const handleLogout = async () => {
-    try {
-      // 서버에 로그아웃 요청을 보냅니다.
-      // await axios.delete(`${process.env.REACT_APP_API_URL}/members/login`);
-      // `${process.env.REACT_APP_API_URL}/members/login`;
-      // Recoil 상태 업데이트
-      setLogin(false);
+  // const handleLogout = async () => {
+  //   try {
+  //     // 서버에 로그아웃 요청을 보냅니다.
+  //     // await axios.delete(`${process.env.REACT_APP_API_URL}/members/login`);
+  //     // `${process.env.REACT_APP_API_URL}/members/login`;
+  //     // Recoil 상태 업데이트
+  //     setLogin(false);
 
-      // 로컬 스토리지나 쿠키에서 인증 정보를 제거
-      // localStorage.removeItem('token');
-    } catch (error) {
-      // 로그아웃 실패 처리
-      console.error("Logout failed:", error);
-    }
-  };
+  //     // 로컬 스토리지나 쿠키에서 인증 정보를 제거
+  //     // localStorage.removeItem('token');
+  //   } catch (error) {
+  //     // 로그아웃 실패 처리
+  //     console.error("Logout failed:", error);
+  //   }
+  // };
 
   // 외부 클릭 이벤트 리스너를 추가/제거
   useEffect(() => {
@@ -128,7 +132,7 @@ const HeaderLogin = (): JSX.Element => {
             </Link>
             <div className="header-right">
               {/* 로그아웃 버튼 */}
-              <button onClick={handleLogout}>로그아웃</button>
+              {/* <button onClick={handleLogout}>로그아웃</button> */}
               <button className="ButtonStyle" onClick={showProfile}></button>
               {/* 프로필 드롭다운 버튼 */}
               <button className="ButtonStyle" onClick={showProfile}>
