@@ -1,7 +1,9 @@
+import Error from "../components/common/Error";
+
 const ErrorIndication = (): JSX.Element => {
   return (
     <>
-      <h1>ErrorIndication</h1>
+      <Error />
     </>
   );
 };
