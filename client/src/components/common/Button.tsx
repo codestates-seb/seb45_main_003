@@ -5,7 +5,7 @@ type ButtonProp = {
   type: "button" | "submit" | "reset" | undefined;
   $size?: string;
   $design?: string;
-  text: string;
+  $text: string;
   disabled?: boolean;
   onClick?: () => void;
   onSubmit?: () => void;
@@ -84,7 +84,7 @@ const StyledButton = styled.button<ButtonProp>`
 const Button = ({ ...props }: ButtonProp): JSX.Element => {
   return (
     <StyledButton {...props} disabled={props.disabled} type={props.type}>
-      {props.text}
+      {props.$text}
     </StyledButton>
   );
 };

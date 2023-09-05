@@ -98,7 +98,7 @@ const List = (): JSX.Element => {
               }}
               $design="black"
               type="button"
-              text="상품 등록하기"
+              $text="상품 등록하기"
             ></Button>
           </div>
         </div>
