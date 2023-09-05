@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { MAX } from "../contstants/systemMessage";
 
 interface UseImageUpload {
   setError: (name: string, error: { type: string; message?: string }) => void;
@@ -8,7 +9,6 @@ interface UseImageUpload {
 export const useImageUpload = ({ setError, clearErrors }: UseImageUpload) => {
   const MAX_IMAGE_COUNT = 4;
   const [images, setImages] = useState<File[]>([]);
-  const [base64Img, setBase64Img] = useState<string[]>([]);
 
   //이미지를 상태에 추가하는 이벤트 핸들러
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,41 +20,23 @@ export const useImageUpload = ({ setError, clearErrors }: UseImageUpload) => {
     if (event.target.files) {
       //FileList 객체를 배열화하여 images로 관리
       const imageArray = Array.from(event.target.files);
-      const base64Array: string[] = [];
 
-      imageArray.forEach((file) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const base64String = event.target?.result as string;
-          base64Array.push(base64String);
-
-          // 모든 파일을 변환하고 이미지 배열과 base64 배열을 업데이트
-          if (base64Array.length === imageArray.length) {
-            if (imageArray?.length > MAX_IMAGE_COUNT) {
-              setError("images", {
-                type: "maxImageCount",
-                message: `이미지는 최대 ${MAX_IMAGE_COUNT}장까지 선택 가능합니다.`,
-              });
-              setImages((prev) => [...prev, ...imageArray.slice(0, MAX_IMAGE_COUNT - prev.length)]);
-              setBase64Img((prev) => [
-                ...prev,
-                ...base64Array.slice(0, MAX_IMAGE_COUNT - prev.length),
-              ]);
-            } else {
-              clearErrors("image");
-              setImages((prev) => [...prev, ...imageArray]);
-              setBase64Img((prev) => [...prev, ...base64Array]);
-            }
-          }
-        };
-        reader.readAsDataURL(file);
-      });
+      //최대 이미지 업로드 수 제한
+      if (imageArray?.length > MAX_IMAGE_COUNT) {
+        setError("images", {
+          type: "maxImageCount",
+          message: MAX.imageSelect(MAX_IMAGE_COUNT),
+        });
+        setImages((prev) => [...prev, ...imageArray.slice(0, MAX_IMAGE_COUNT - prev.length)]);
+        return;
+      }
+      clearErrors("image");
+      setImages((prev) => [...prev, ...imageArray]);
     }
   };
 
   return {
     images,
-    base64Img,
     handleChange,
   };
 };

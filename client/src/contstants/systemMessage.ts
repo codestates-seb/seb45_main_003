@@ -18,3 +18,11 @@ export const FAIL = {
   post: "상품 등록에 실패하였습니다.",
   review: "후기 작성에 실패하였습니다.",
 };
+
+export const MAX = {
+  imageSelect: (max: number) => `이미지는 최대 ${max}장까지 선택 가능합니다.`,
+};
+
+export const AUCTION = {
+  isnot: "즉시 구매만 가능한 상품입니다.",
+};

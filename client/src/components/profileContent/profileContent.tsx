@@ -118,8 +118,8 @@ const ProfileContent = (): JSX.Element => {
         <p className="menuTitle">프로필</p>
         <Button
           type="button"
-          text="변경"
-          design="black"
+          $text="변경"
+          $design="black"
           onClick={() => setModifyMode(!modifyMode)}
         />
       </div>
@@ -167,7 +167,7 @@ const ProfileContent = (): JSX.Element => {
             />
           </div>
           {errors.password && <div className="errormessage">{errors.password?.message}</div>}
-          <Button type="submit" disabled={isSubmitting} text="저장" design="black" />
+          <Button type="submit" disabled={isSubmitting} $text="저장" $design="black" />
         </Modifyform>
       )}
       <PostListTab />
