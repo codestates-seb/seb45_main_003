@@ -98,40 +98,62 @@ const SignupForm = (): JSX.Element => {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/members`, data);
       if (response.status === 201) {
         toggleModal();
-      } else {
-        setError("formError", {
-          message: "잘못 작성된 부분이 있습니다.",
-        });
       }
     } catch (error) {
-      console.log(`Error: ${error}`);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          setError("formError", {
+            message: "잘못 작성된 부분이 있습니다.",
+          });
+        }
+      }
     }
   };
   //인증코드를 보내달라는 요청 함수
   const reqConfirmCode = async (data: string) => {
     //새로고침 방지
     event?.preventDefault();
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth/send`, {
-      email: data,
-    });
-    if (response.status === 200) {
-      console.log("succsess");
-      //인증코드 전송시 안내문 제공
-      setSuccess({ ...success, req: true });
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth/send`, {
+        email: data,
+      });
+      if (response.status === 200) {
+        console.log("succsess");
+        //인증코드 전송시 안내문 제공
+        setSuccess({ ...success, req: true });
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          setError("formError", {
+            message: "유효하지 않은 이메일입니다.",
+          });
+        }
+      }
     }
   };
   //사용자가 작성한 인증코드를 서버에서 검증하게 보내주는 함수
   const testConfirmCode = async (data: SignupForm) => {
     //새로고침 방지
     event?.preventDefault();
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth`, {
-      email: data.email,
-      authCode: data.confirmcode,
-    });
-    if (response.status === 200) {
-      console.log("succsess");
-      //인증성공시 인증코드 작성란과 이메일 작성란을 비활성화
-      setSuccess({ ...success, confirm: true });
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth`, {
+        email: data.email,
+        authCode: data.confirmcode,
+      });
+      if (response.status === 200) {
+        console.log("succsess");
+        //인증성공시 인증코드 작성란과 이메일 작성란을 비활성화
+        setSuccess({ ...success, confirm: true });
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          setError("formError", {
+            message: "인증코드가 다릅니다.",
+          });
+        }
+      }
     }
   };
 
