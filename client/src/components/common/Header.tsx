@@ -1,17 +1,23 @@
-// import { useEffect } from "react";
-import { useRecoilValue } from "recoil";
-import { loginState } from "../../atoms/atoms";
+import React, { useEffect, useRef } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { headerHeightState, userState } from "../../atoms/atoms";
 import HeaderLogin from "../header/HeaderLogin"; // 로그인 시 표시할 헤더
 import HeaderLogout from "../header/HeaderLogout"; // 로그아웃 시 표시할 헤더
-import { useValidateToken } from "../../hooks/useValidateToken";
 
 const MainHeader: React.FC = () => {
-  const user = useRecoilValue(loginState);
-  useValidateToken();
+  //헤더 높이 구하기
+  const headerRef = useRef<HTMLDivElement | null>(null);
+  const setHeaderHeight = useSetRecoilState(headerHeightState);
 
-  console.log(user);
+  useEffect(() => {
+    if (headerRef.current !== null) {
+      setHeaderHeight(headerRef.current?.clientHeight);
+    }
+  }, [setHeaderHeight]);
 
-  return <>{user ? <HeaderLogin /> : <HeaderLogout />}</>;
+  const user = useRecoilValue(userState);
+
+  return <div ref={headerRef}>{user ? <HeaderLogin /> : <HeaderLogout />}</div>;
 };
 
 export default MainHeader;

@@ -1,11 +1,10 @@
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { styled } from "styled-components";
-import Button from "../common/Button";
 import { useSetRecoilState } from "recoil";
+import { styled } from "styled-components";
 import { loginState } from "../../atoms/atoms";
-import { COLOR } from "../../contstants/color";
+import Button from "../common/Button";
 
 //폼에서 사용하는 데이터
 interface LoginForm {
@@ -26,12 +25,6 @@ const StyledLoginForm = styled.form`
   justify-content: stretch;
   align-items: stretch;
   gap: 0.5rem;
-  .errormessage {
-    color: ${COLOR.invalid};
-  }
-  .errorInput {
-    border-color: ${COLOR.invalid};
-  }
 `;
 //errormessage 빨간색
 const LogInForm = (): JSX.Element => {
@@ -74,18 +67,16 @@ const LogInForm = (): JSX.Element => {
         id="email"
         type="email"
         placeholder="Email"
-        className={errors.email ? "errorInput" : "input"}
         {...register("email", {
           required: "이메일을 입력해주세요.",
         })}
       />
-      {errors.email && <div className="errormessage">{errors.email?.message}</div>}
+      {errors.email && <div>{errors.email?.message}</div>}
       <label htmlFor="password">Password</label>
       <input
         id="password"
         type="password"
         placeholder="Password"
-        className={errors.password ? "errorInput" : "input"}
         {...register("password", {
           required: "비밀번호를 입력해주세요.",
         })}

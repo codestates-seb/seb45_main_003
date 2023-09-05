@@ -1,4 +1,7 @@
+import { useEffect, useRef } from "react";
+import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import { footerHeightState } from "../../atoms/atoms";
 
 const FooterStyled = styled.div`
   justify-content: center;
@@ -24,10 +27,20 @@ const FooterStyled = styled.div`
 `;
 
 export const Footer = (): JSX.Element => {
+  //헤더 높이 구하기
+  const footerRef = useRef<HTMLDivElement | null>(null);
+  const setFooterHeight = useSetRecoilState(footerHeightState);
+
+  useEffect(() => {
+    if (footerRef.current !== null) {
+      setFooterHeight(footerRef.current?.clientHeight);
+    }
+  }, [setFooterHeight]);
+
   return (
     <>
       <FooterStyled>
-        <footer>
+        <footer ref={footerRef}>
           <div className="fotterText">CompanyName @ 202X. All rights reserved.</div>
         </footer>
       </FooterStyled>
