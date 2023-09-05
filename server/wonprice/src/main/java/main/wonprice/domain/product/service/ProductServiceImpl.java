@@ -1,6 +1,8 @@
 package main.wonprice.domain.product.service;
 
 import lombok.RequiredArgsConstructor;
+import main.wonprice.domain.category.entity.Category;
+import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryService categoryService;
 
     /*
         상품 등록
@@ -25,6 +28,11 @@ public class ProductServiceImpl implements ProductService {
      */
     @Override
     public Product save(Product product) {
+        if (product.getCategory().getCategoryId() != null) {
+            Category category = categoryService.findById(product.getCategory().getCategoryId());
+            product.setCategory(category);
+        }
+
         // auction(경매여부): true 일 경우에만 경매 종료일, 시작가 등록 가능 ,, 아닐 경우 null
         if (product.getAuction()) {
             product.setClosedAt(product.getClosedAt());
@@ -83,7 +91,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<Product> findLoginMembersProduct(Pageable pageable, Member member) {
-
         return productRepository.findAllBySeller(member, pageable).getContent();
     }
 }
