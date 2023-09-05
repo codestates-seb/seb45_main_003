@@ -320,8 +320,8 @@ const UploadForm = () => {
             />
           </div>
           <Button
-            size="big"
-            design="black"
+            $size="big"
+            $design="black"
             text="상품 등록"
             type="submit"
             onClick={handleSubmit(onSubmit)}
@@ -343,7 +343,7 @@ const UploadForm = () => {
             </>
           )}
           <Button
-            design="black"
+            $design="black"
             text="확인"
             type="button"
             onClick={() => {

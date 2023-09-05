@@ -1,9 +1,9 @@
+import { useRecoilState } from "recoil";
+import { styled } from "styled-components";
+import { toSignup } from "../atoms/atoms";
+import Button from "../components/common/Button";
 import LogInForm from "../components/login/LoginForm";
 import SignupForm from "../components/login/SignupForm";
-import Button from "../components/common/Button";
-import { useRecoilState } from "recoil";
-import { toSignup } from "../atoms/atoms";
-import { styled } from "styled-components";
 import { COLOR } from "../contstants/color";
 
 const BackgroundContainer = styled.div`
@@ -91,13 +91,13 @@ const LogIn = (): JSX.Element => {
             </label>
           </div>
           <div id="socialButtonContainer">
-            <Button type="button" text={"구글 로그인"} design={"yellow"} />
-            <Button type="button" text={"카카오 로그인"} design={"yellow"} />
+            <Button type="button" text={"구글 로그인"} $design={"yellow"} />
+            <Button type="button" text={"카카오 로그인"} $design={"yellow"} />
           </div>
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">서비스를 처음 방문하셨나요?</div>
-              <Button type={"button"} text={"회원가입"} onClick={changeform} design={"black"} />
+              <Button type={"button"} text={"회원가입"} onClick={changeform} $design={"black"} />
             </div>
           </div>
         </PageContentContainer>
@@ -108,7 +108,7 @@ const LogIn = (): JSX.Element => {
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">이미 계정이 있으신가요?</div>
-              <Button type={"button"} text={"로그인"} onClick={changeform} design={"black"} />
+              <Button type={"button"} text={"로그인"} onClick={changeform} $design={"black"} />
             </div>
           </div>
         </PageContentContainer>

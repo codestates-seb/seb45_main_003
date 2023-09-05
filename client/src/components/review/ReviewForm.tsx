@@ -88,8 +88,8 @@ const ReviewForm = () => {
             </>
           )}
           <Button
-            size="big"
-            design="black"
+            $size="big"
+            $design="black"
             text="확인"
             type="button"
             onClick={() => {
