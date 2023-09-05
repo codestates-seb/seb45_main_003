@@ -1,8 +1,6 @@
 import axios from "axios";
 import { useQuery, useQueryClient } from "react-query";
-import { useSetRecoilState } from "recoil";
 import { ReactComponent as EmptyImage } from "../../assets/images/empty.svg";
-import { errorState } from "../../atoms/atoms";
 import Loading from "../../components/common/Loading";
 import { API_PATHS } from "../../contstants/path";
 import useSSE from "../../hooks/useSSE";
@@ -25,7 +23,6 @@ export type PostType = {
 };
 
 const List = (): JSX.Element => {
-  const setError = useSetRecoilState(errorState);
   const { isLoading, error, data } = useQuery<PostType[]>("productData", async () => {
     const response = await axios.get(API_PATHS.products(""), {
       headers: {
@@ -45,12 +42,10 @@ const List = (): JSX.Element => {
   });
 
   if (isLoading) {
-    setError(null);
     return <Loading />;
   }
 
   if (error instanceof Error) {
-    setError(error);
     return <ErrorIndication />;
   }
 
