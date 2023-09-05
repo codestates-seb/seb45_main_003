@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { styled } from "styled-components";
-import { GRAY_COLOR, COLOR } from "../../contstants/color";
+import { COLOR } from "../../contstants/color";
 import { FONT_SIZE } from "../../contstants/font";
 
 const PostListContainer = styled.div`
@@ -15,7 +15,7 @@ const PostListContainer = styled.div`
     align-items: center;
     .postlistTabMenu {
       width: 15rem;
-      border: 1px solid ${GRAY_COLOR.gray_300};
+      border: 1px solid ${COLOR.gray_300};
       border-radius: 6px 6px 0 0;
       padding: 0.5rem 0.75rem;
       font-size: ${FONT_SIZE.font_16};

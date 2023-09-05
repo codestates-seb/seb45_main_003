@@ -6,7 +6,6 @@ export const toSignup = atom<boolean>({
   default: true,
 });
 
-
 export const profileTabState = atom<string>({
   key: "profileTabState",
   default: "profile",
@@ -41,3 +40,14 @@ export const userState = atom<User | null>({
 //   default: false,
 // });
 
+// 컨텐츠 100vh 유지를 위한 헤더 높이 저장
+export const headerHeightState = atom<number>({
+  key: "headerHeightState",
+  default: 0,
+});
+
+// 에러 상태관리
+export const errorState = atom<unknown | null>({
+  key: "errorState",
+  default: null,
+});

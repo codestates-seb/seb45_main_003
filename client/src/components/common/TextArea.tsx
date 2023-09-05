@@ -12,7 +12,7 @@ const TextArea = (props: TextInputProps) => {
   const { register, id, title, options, formState } = props;
 
   return (
-    <div>
+    <div className="field">
       <p>{title}</p>
 
       <textarea {...register(id, options)} id={id}></textarea>

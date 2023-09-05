@@ -16,6 +16,7 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@types/swiper": "^6.0.0",
+    "aws-sdk": "^2.1450.0",
     "axios": "^1.4.0",
     "event-source-polyfill": "^1.0.31",
     "lodash": "^4.17.21",
