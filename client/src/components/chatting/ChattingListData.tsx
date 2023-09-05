@@ -9,14 +9,13 @@ import { styled } from "styled-components";
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 12px 8px;
-  align-items: start;
-  gap: 8px;
+  padding: 0.75rem 0.5rem;
+  font-size: 1rem;
+  align-items: center; // Container의 모든 아이템을 수직으로 중앙 정렬
+  gap: 0.5rem;
   align-self: stretch;
-  /* background-color: #3871a3; */
-  text-align: center;
   margin-bottom: 1rem;
-  border: 1px solid var(--cool-gray-20, #dde1e6);
+  border: 0.0625rem solid var(--cool-gray-20, #dde1e6);
   border-radius: 0.375rem;
   justify-content: space-between;
 
@@ -24,14 +23,16 @@ const Container = styled.div`
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
-    background-color: #3871a3;
+    /* background-color: #3871a3; */
+    align-items: center; // chatRoom 내부의 모든 아이템을 수직으로 중앙 정렬
   }
   .createdAt {
     justify-content: end;
     font-size: 0.3125rem;
+    text-align: center;
+    align-self: flex-end; // createdAt 텍스트를 수직으로 중앙 정렬
   }
 `;
-
 const ChattingListData: React.FC = () => {
   const [chatList, setChatList] = useRecoilState(chatListState);
   const isLoggedIn = useRecoilValue(loginState); // 로그인 상태를 가져옵니다.
@@ -74,10 +75,11 @@ const ChattingListData: React.FC = () => {
               <div className="chatRoom">
                 <div>{chat.chatParticipantId}</div>
                 <div>Member ID: {chat.memberId}</div>
-              </div>
-              {/* moment.js를 사용하여 날짜 형식을 "YYYY-MM-DD"로 변경 */}
-              <div className="createdAt">
-                {moment(chat.chatRoom.createdAt).format("YYYY-MM-DD")}
+
+                {/* moment.js를 사용하여 날짜 형식을 "YYYY-MM-DD"로 변경 */}
+                <div className="createdAt">
+                  {moment(chat.chatRoom.createdAt).format("YYYY-MM-DD")}
+                </div>
               </div>
             </li>
           </Container>

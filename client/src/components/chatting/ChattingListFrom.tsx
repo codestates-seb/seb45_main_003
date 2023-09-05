@@ -48,8 +48,7 @@ const Container = styled.div`
       margin: 0 1.4375rem;
 
       &:hover {
-        /* background-color: #ffb300; // 원하는 호버 색상 */
-        color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
+        color: #ffb300; // 텍스트의 호버 색상
       }
     }
   }
