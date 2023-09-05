@@ -60,11 +60,7 @@ const StyledList = styled.section`
 const List = (): JSX.Element => {
   const navigate = useNavigate();
   const { isLoading, error, data } = useQuery<ProductData[]>("productData", async () => {
-    const response = await axios.get(API_PATHS.products(""), {
-      headers: {
-        "ngrok-skip-browser-warning": "69420",
-      },
-    });
+    const response = await axios.get(API_PATHS.products(""));
     return response.data;
   });
   const queryClient = useQueryClient();
