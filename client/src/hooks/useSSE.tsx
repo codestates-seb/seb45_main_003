@@ -27,7 +27,7 @@ const useSSE = ({ url, callback }: UseSSE) => {
     return () => {
       eventSource.close();
     };
-  }, [url]);
+  }, [url, callback]);
 };
 
 export default useSSE;
