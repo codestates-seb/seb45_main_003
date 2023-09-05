@@ -110,7 +110,7 @@ const TradeContent = (): JSX.Element => {
                 <span className="price">{` 원`}</span>
               </div>
             </div>
-            <Button type="button" text="후기 작성" design="yellow" />
+            <Button type="button" $text="후기 작성" $design="yellow" />
           </div>
         </div>
       </div>

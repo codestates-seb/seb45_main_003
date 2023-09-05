@@ -120,7 +120,7 @@ const BookmarkContent = (): JSX.Element => {
         <div className="selectButtonContainer">
           <input type="checkbox" className="checkbox"></input>
           <p className="optionName">전체 선택</p>
-          <Button type="button" text="선택 취소" design="yellow" />
+          <Button type="button" $text="선택 취소" $design="yellow" />
         </div>
       </div>
       <div className="bookmarkListContainer">
@@ -146,7 +146,7 @@ const BookmarkContent = (): JSX.Element => {
                 <span className="price">{` 원`}</span>
               </div>
             </div>
-            <Button type="button" text="찜 취소" design="yellow" />
+            <Button type="button" $text="찜 취소" $design="yellow" />
           </div>
         </div>
         {/* ))} */}
