@@ -5,11 +5,13 @@ import { useRecoilState } from "recoil";
 import { toSignup } from "../atoms/atoms";
 import { styled } from "styled-components";
 import { COLOR } from "../contstants/color";
-
+import login from "../assets/images/Login/login.png";
+import signup from "../assets/images/Login/signup.png";
 const BackgroundContainer = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
 `;
 
 const PageContentContainer = styled.div`
@@ -81,6 +83,7 @@ const LogIn = (): JSX.Element => {
   };
   return (
     <BackgroundContainer>
+      {loginPageForm ? <img src={login} /> : <img src={signup} />}
       {loginPageForm ? (
         <PageContentContainer>
           <h2>로그인</h2>

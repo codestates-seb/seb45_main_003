@@ -5,6 +5,7 @@ import { styled } from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { loginState } from "../../atoms/atoms";
+import { COLOR } from "../../contstants/color";
 //폼에서 사용하는 데이터
 interface LoginForm {
   email: string;
@@ -24,6 +25,12 @@ const StyledLoginForm = styled.form`
   justify-content: stretch;
   align-items: stretch;
   gap: 0.5rem;
+  .errormessage {
+    color: ${COLOR.invalid};
+  }
+  .errorInput {
+    border-color: ${COLOR.invalid};
+  }
 `;
 //errormessage 빨간색
 const LogInForm = (): JSX.Element => {
@@ -66,21 +73,23 @@ const LogInForm = (): JSX.Element => {
         id="email"
         type="email"
         placeholder="Email"
+        className={errors.email ? "errorInput" : "input"}
         {...register("email", {
           required: "이메일을 입력해주세요.",
         })}
       />
-      {errors.email && <div>{errors.email?.message}</div>}
+      {errors.email && <div className="errormessage">{errors.email?.message}</div>}
       <label htmlFor="password">Password</label>
       <input
         id="password"
         type="password"
         placeholder="Password"
+        className={errors.password ? "errorInput" : "input"}
         {...register("password", {
           required: "비밀번호를 입력해주세요.",
         })}
       />
-      {errors.password && <div>{errors.password?.message}</div>}
+      {errors.password && <div className="errormessage">{errors.password?.message}</div>}
       <Button type="submit" disabled={isSubmitting} text="로그인" design="black" />
     </StyledLoginForm>
   );
