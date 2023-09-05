@@ -39,19 +39,19 @@ ul {
   letter-spacing: -0.1px;
 }
 h1 {
-  ${FONT_SIZE.font_32}
+  font-size: ${FONT_SIZE.font_32};
 }
 h2 {
-  ${FONT_SIZE.font_24}
+  font-size: ${FONT_SIZE.font_24};
 }
 h3 {
-  ${FONT_SIZE.font_20}
+  font-size: ${FONT_SIZE.font_20};
 }
 h4 {
-  ${FONT_SIZE.font_18}
+  font-size: ${FONT_SIZE.font_18};
 }
 h5 {
-  ${FONT_SIZE.font_16}
+  font-size: ${FONT_SIZE.font_16};
 }
 ul {
   list-style: none;
