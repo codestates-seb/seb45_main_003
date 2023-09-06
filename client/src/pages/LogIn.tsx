@@ -9,6 +9,7 @@ import { COLOR } from "../contstants/color";
 import login from "../assets/images/Login/login.png";
 import signup from "../assets/images/Login/signup.png";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const BackgroundContainer = styled.div`
   display: flex;
@@ -86,9 +87,11 @@ const LogIn = (): JSX.Element => {
   };
   const navigate = useNavigate();
   const isLogin = useRecoilValue(loginState);
-  if (isLogin) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+    }
+  }, [isLogin]);
   return (
     <BackgroundContainer>
       {loginPageForm ? <img src={login} /> : <img src={signup} />}

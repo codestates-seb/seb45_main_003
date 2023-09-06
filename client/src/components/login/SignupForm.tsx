@@ -118,15 +118,14 @@ const SignupForm = (): JSX.Element => {
         email: data,
       });
       if (response.status === 200) {
-        console.log("succsess");
         //인증코드 전송시 안내문 제공
         setSuccess({ ...success, req: true });
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 409) {
-          setError("formError", {
-            message: "유효하지 않은 이메일입니다.",
+          setError("email", {
+            message: "이미 등록된 이메일입니다.",
           });
         }
       }
@@ -142,14 +141,13 @@ const SignupForm = (): JSX.Element => {
         authCode: data.confirmcode,
       });
       if (response.status === 200) {
-        console.log("succsess");
         //인증성공시 인증코드 작성란과 이메일 작성란을 비활성화
         setSuccess({ ...success, confirm: true });
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
-          setError("formError", {
+          setError("confirmcode", {
             message: "인증코드가 다릅니다.",
           });
         }
@@ -276,6 +274,7 @@ const SignupForm = (): JSX.Element => {
           })}
         />
         {errors.phone && <div className="errormessage">{errors.phone?.message}</div>}
+        {errors.formError && <div className="errormessage">{errors.formError?.message}</div>}
         <Button type="submit" disabled={isSubmitting} $text="회원가입" $design="black" />
       </StyledSignupForm>
       <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
