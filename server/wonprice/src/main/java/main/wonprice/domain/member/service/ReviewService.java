@@ -30,7 +30,7 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public List<Review> findReviews(Pageable pageable, Member member) {
 
-        List<Review> reviews = repository.findAllByMember(pageable, member).getContent();
+        List<Review> reviews = repository.findAllByProductSeller(pageable, member).getContent();
         return reviews.stream()
                 .filter(review -> review.getDeletedAt() == null)
                 .collect(Collectors.toList());
@@ -39,7 +39,7 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public List<Review> findWroteReviews(Pageable pageable, Member member) {
 
-        List<Review> reviews = repository.findAllByPostMemberId(pageable, member.getMemberId()).getContent();
+        List<Review> reviews = repository.findAllByPostMember(pageable, member).getContent();
         return reviews.stream()
                 .filter(review -> review.getDeletedAt() == null)
                 .collect(Collectors.toList());
@@ -57,7 +57,7 @@ public class ReviewService {
 
         Review findReview = findVerifiedReview(reviewId);
 
-        memberService.validateOwner(findReview.getPostMemberId());
+        memberService.validateOwner(findReview.getPostMember().getMemberId());
 
         findReview.setDeletedAt(LocalDateTime.now());
     }
