@@ -125,8 +125,8 @@ const SignupForm = (): JSX.Element => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 409) {
-          setError("formError", {
-            message: "유효하지 않은 이메일입니다.",
+          setError("email", {
+            message: "이미 등록된 이메일입니다.",
           });
         }
       }

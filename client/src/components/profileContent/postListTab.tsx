@@ -41,7 +41,7 @@ const PostListTab = (): JSX.Element => {
   const [menu, setMenu] = useState("cell");
   const getPostlist = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/myPage`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/my-page/products`);
       setCellPost(res.data);
     } catch (error) {}
   };

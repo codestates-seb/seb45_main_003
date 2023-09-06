@@ -2,10 +2,24 @@ import { styled } from "styled-components";
 import { FONT_SIZE } from "../../contstants/font";
 import { COLOR } from "../../contstants/color";
 import Button from "../common/Button";
-// import axios from "axios";
+import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import axios from "axios";
 //dto 정해지면 추가
 
-const BookmarkContentContainer = styled.div`
+type bookmark = {
+  wishId: number;
+  creadtedAt: string;
+  productId: string;
+};
+
+type checkInputType = {
+  selectAll: boolean;
+  checkboxes: boolean[];
+  index: number;
+};
+
+const BookmarkContentContainer = styled.form`
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -105,51 +119,81 @@ const BookmarkContentContainer = styled.div`
 `;
 
 const BookmarkContent = (): JSX.Element => {
-  //
-  //   const getData = async () => {
-  //     const res = await axios.get(`${process.env.REACT_APP_API_URL}/wishes`);
-  //     setData(res.data);
-  //   };
-  //   useEffect(() => {
-  //     getData();
-  //   });
+  const { register, handleSubmit, watch, setValue } = useForm<checkInputType>();
+  const checkboxes = watch("checkboxes", []);
+  const selectAll = watch("selectAll", false);
+  const handleSelectAll = (checked: boolean) => {
+    setValue("selectAll", checked);
+    setValue("checkboxes", Array(checkboxes.length).fill(checked));
+  };
+  const handleCheckBox = (index: number, checked: boolean) => {
+    const checkedBoxes = [...checkboxes];
+    checkedBoxes[index] = checked;
+    const checkedAll = checkedBoxes.every(Boolean);
+    setValue("selectAll", checkedAll);
+    setValue("checkboxes", checkedBoxes);
+  };
+  const sendBookmarkList = (data: checkInputType) => {
+    console.log(data);
+  };
+  const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
+  const getData = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/wishes`);
+    setBookmarklist(res.data);
+  };
+  useEffect(() => {
+    getData();
+  });
   return (
-    <BookmarkContentContainer>
+    <BookmarkContentContainer onSubmit={handleSubmit(sendBookmarkList)}>
       <div className="topContainer">
         <p className="menuTitle">찜 목록</p>
         <div className="selectButtonContainer">
-          <input type="checkbox" className="checkbox"></input>
+          <input
+            type="checkbox"
+            className="checkbox"
+            checked={selectAll}
+            id="selectAll"
+            {...register("selectAll")}
+            onChange={() => handleSelectAll(selectAll)}
+          ></input>
           <p className="optionName">전체 선택</p>
           <Button type="button" $text="선택 취소" $design="yellow" />
         </div>
       </div>
       <div className="bookmarkListContainer">
-        {/* {data &&
-          data.map((el: postData) => ( */}
-        <div className="bookmarkContainer">
-          <div className="leftSection">
-            <input type="checkbox" className="checkbox" id="1"></input>
-            <img></img>
-            <div className="infoContainer">
-              <div className="postTitle">글제목</div>
-              <div>{`남은 시간 `}</div>
-            </div>
-          </div>
-          <div className="rightSection">
-            <div className="priceContainer">
-              <div className="priceLabel">
-                {`현재 입찰가`}
-                <span className="price">{` 원`}</span>
+        {bookmarklist &&
+          bookmarklist.map((el, index: number) => (
+            <div className="bookmarkContainer">
+              <div className="leftSection">
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  checked={checkboxes[index]}
+                  {...register(`checkboxes.${el.wishId}`)}
+                  onChange={() => handleCheckBox(index, checkboxes[index])}
+                ></input>
+                <img></img>
+                <div className="infoContainer">
+                  <div className="postTitle">글제목</div>
+                  <div>{`남은 시간 `}</div>
+                </div>
               </div>
-              <div className="priceLabel">
-                {`즉시 구매가`}
-                <span className="price">{` 원`}</span>
+              <div className="rightSection">
+                <div className="priceContainer">
+                  <div className="priceLabel">
+                    {`현재 입찰가`}
+                    <span className="price">{` 원`}</span>
+                  </div>
+                  <div className="priceLabel">
+                    {`즉시 구매가`}
+                    <span className="price">{` 원`}</span>
+                  </div>
+                </div>
+                <Button type="button" $text="찜 취소" $design="yellow" />
               </div>
             </div>
-            <Button type="button" $text="찜 취소" $design="yellow" />
-          </div>
-        </div>
-        {/* ))} */}
+          ))}
       </div>
       <div className="pagenation">페이지네이션</div>
     </BookmarkContentContainer>
