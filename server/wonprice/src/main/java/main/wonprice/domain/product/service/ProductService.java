@@ -18,11 +18,13 @@ public interface ProductService {
 
     Product findExistsProduct(Long productId);
 
-    List<Product> findLoginMembersProduct(Pageable pageable, Member member);
+    List<Product> findMembersProduct(Pageable pageable, Member member);
 
     Product deleteOneById(Long productId,Member loginMember);
 
     Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member loginMember);
+
+    public List<Product> findMembersTradedProduct(Pageable pageable, Member member);
 
     Page<Product> getProductsByCategory(Long categoryId, Pageable pageable);
 
@@ -30,3 +32,4 @@ public interface ProductService {
 
     Page<Product> getProductsByStatusAndAuction(ProductStatus productStatus, boolean auction, Pageable pageable);
 }
+

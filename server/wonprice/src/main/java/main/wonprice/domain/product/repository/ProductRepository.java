@@ -14,6 +14,12 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Page<Product> findAllBySeller(Member seller, Pageable pageable);
 
+    Page<Product> findAllByBuyerIdAndStatus(Long memberId, ProductStatus status, Pageable pageable);
+
+    int countProductBySeller(Member member);
+
+    int countProductByBuyerIdAndStatus(Long memberId, ProductStatus status);
+  
     // 카테고리 ID를 기반으로 상품 목록 조회
     @Query("SELECT p FROM Product p WHERE p.category.categoryId = :categoryId")
     Page<Product> findProductsByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
@@ -23,4 +29,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // 경매 중인 상품/즉시 구매만 가능한 상품을 구분해서 검색하는 메서드
     Page<Product> findProductsByStatusAndAuction(ProductStatus status, boolean auction, Pageable pageable);
+
 }
