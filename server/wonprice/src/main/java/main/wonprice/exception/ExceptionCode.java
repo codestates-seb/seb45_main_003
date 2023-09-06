@@ -13,7 +13,7 @@ public enum ExceptionCode {
     INVALID_PASSWORD(403, "Invalid Password"),
     WISH_NOT_FOUND(404, "Wish not found"),
     REVIEW_NOT_FOUND(404, "Review not found"),
-    REVIEW_EXISTS(409, "Already wrote Review");
+    REVIEW_EXISTS(409, "Review exists");
 
     private int status;
     private String message;
