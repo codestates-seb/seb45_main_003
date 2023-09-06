@@ -15,20 +15,20 @@ import Root from "./pages/Root";
 function App() {
   const routes: RouteObject[] = [
     // 1) 메인 홈 페이지
-    {
-      path: "/",
-      element: <Main />,
-    },
+    // {
+    //   path: "/",
+    //   element: <Main />,
+    // },
     {
       // Root Layout
       path: "/",
       element: <Root />,
       children: [
         // // 1) 메인 홈 페이지
-        // {
-        //   path: "/",
-        //   element: <Main />,
-        // },
+        {
+          path: "/",
+          element: <Main />,
+        },
 
         // 2) 로그인 페이지
         {

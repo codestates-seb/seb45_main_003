@@ -10,6 +10,8 @@ type ImageInputProps = {
 };
 
 const ImageInput = (props: ImageInputProps) => {
+  const { register, handleChange, images, formState } = props;
+
   return (
     <div className="field">
       <p>이미지</p>
@@ -17,8 +19,8 @@ const ImageInput = (props: ImageInputProps) => {
         <UploadImageIcon />
         <p>이미지 등록</p>
       </label>
-      {props.images.length > 0 &&
-        props.images.map((image: File, index: number) => {
+      {images.length > 0 &&
+        images.map((image: File, index: number) => {
           return (
             <img
               className="image-preview"
@@ -29,16 +31,16 @@ const ImageInput = (props: ImageInputProps) => {
           );
         })}
       <input
-        {...props.register("images", {
-          onChange: (event) => props.handleChange(event),
+        {...register("images", {
+          onChange: (event) => handleChange(event),
         })}
         id="images"
         type="file"
         accept="image/*"
         multiple
       />
-      {props.formState?.errors?.images?.message && (
-        <p>{props.formState.errors.images.message.toString()}</p>
+      {formState?.errors?.images?.message && (
+        <p className="error_message">{formState.errors.images.message.toString()}</p>
       )}
     </div>
   );

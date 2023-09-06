@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 import { COLOR } from "../../contstants/color";
 import { FONT_SIZE } from "../../contstants/font";
 import { AUCTION } from "../../contstants/systemMessage";
+import { formatTime } from "../../util/data";
 import { ProductData } from "./List";
 
 type ItemProps = {
@@ -46,26 +47,29 @@ const StyledItem = styled.li`
 const ListItem = (props: ItemProps): JSX.Element => {
   const { data } = props;
 
-  const formatTime = (time: string | undefined) => {
-    if (time) {
-      return time.replace("T", " ");
-    }
-  };
-
   return (
     <StyledItem>
       <Link to={`/product/${data.productId}`}>
         <div className="title">
           <h3>{data.title}</h3>
-          <p className="gray">{data.auction ? formatTime(data.closedAt) : AUCTION.isnot}</p>
+          <p className="gray">
+            {data.auction
+              ? data.productStatus === "BEFORE"
+                ? formatTime(data.closedAt) + " 경매종료"
+                : AUCTION.end
+              : AUCTION.isnot}
+          </p>
         </div>
         <div className="price">
           <p className="gray">
-            현재 입찰가
-            <span className="price_number">{data.auction ? data.currentAuctionPrice : "-"}</span>
+            <span>현재 입찰가</span>
+            <span className="price_number">
+              {data.auction ? data.currentAuctionPrice?.toLocaleString() : "-"}
+            </span>
           </p>
           <p className="gray">
-            즉시 구매가 <span className="price_number">{data.immediatelyBuyPrice}</span>
+            <span>즉시 구매가</span>
+            <span className="price_number">{data.immediatelyBuyPrice.toLocaleString()}</span>
           </p>
         </div>
       </Link>
