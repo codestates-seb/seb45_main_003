@@ -18,7 +18,9 @@ public interface ReviewMapper {
 
         responseDto.setPostMemberId(review.getPostMemberId());
         responseDto.setTargetMemberId(review.getMember().getMemberId());
+        responseDto.setProductId(responseDto.getProductId());
         responseDto.setScore(review.getScore());
+        responseDto.setTitle(responseDto.getTitle());
         responseDto.setContent(review.getContent());
         responseDto.setCreatedAt(review.getCreatedAt());
 

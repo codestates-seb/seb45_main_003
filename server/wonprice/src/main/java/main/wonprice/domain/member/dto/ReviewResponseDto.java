@@ -13,6 +13,10 @@ public class ReviewResponseDto {
 
     private Long targetMemberId;
 
+    private Long productId;
+
+    private String title;
+
     @Lob
     private String content;
 

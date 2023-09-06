@@ -8,6 +8,9 @@ import javax.validation.constraints.NotBlank;
 public class ReviewPostDto {
 
     @NotBlank
+    private String title;
+
+    @NotBlank
     private String content;
 
     @NotBlank
