@@ -1,9 +1,13 @@
 package main.wonprice.domain.member.service;
 
+import lombok.AllArgsConstructor;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
+import main.wonprice.domain.member.dto.MemberResponseDto;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.MemberStatus;
 import main.wonprice.domain.member.repository.MemberRepository;
+import main.wonprice.domain.product.entity.ProductStatus;
+import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Pageable;
@@ -20,17 +24,14 @@ import java.util.Optional;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final ProductRepository productRepository;
     private final CustomAuthorityUtils authorityUtils;
 
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-
-    public MemberService(MemberRepository memberRepository, CustomAuthorityUtils authorityUtils) {
-        this.memberRepository = memberRepository;
-        this.authorityUtils = authorityUtils;
-    }
 
     public Member joinMember(Member member) {
 
@@ -164,5 +165,15 @@ public class MemberService {
         if (!hasAuthority) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHENTICATED);
         }
+    }
+
+    public MemberResponseDto putCounts(MemberResponseDto responseDto) {
+
+        Member member = findVerifyMember(responseDto.getMemberId());
+
+        responseDto.setPostCount(productRepository.countProductBySeller(member));
+        responseDto.setTradeCount(productRepository.countProductByBuyerIdAndStatus(member.getMemberId(), ProductStatus.AFTER));
+
+        return responseDto;
     }
 }

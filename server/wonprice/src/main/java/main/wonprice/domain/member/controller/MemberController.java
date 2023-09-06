@@ -28,6 +28,7 @@ public class MemberController {
     private final MemberMapper mapper;
     private final ProductMapper productMapper;
 
+//    회원 가입
     @PostMapping
     public ResponseEntity postMember(@RequestBody @Valid MemberPostDto postDto) {
 
@@ -38,36 +39,42 @@ public class MemberController {
         return new ResponseEntity("🌟🌟🌟 Success 🌟🌟🌟",HttpStatus.CREATED);
     }
 
-    @GetMapping("/my-page")
-    public ResponseEntity getLoginMember() {
+//    프로필 정보 조회
+    @GetMapping("/{member-id}")
+    public ResponseEntity getProfile(@PathVariable("member-id") Long memberId) {
 
-        Member loginMember = memberService.findLoginMember();
-        MemberResponseDto response = mapper.memberToResponseDto(loginMember);
+        Member member = memberService.findMember(memberId);
+        MemberResponseDto response = memberService.putCounts(mapper.memberToResponseDto(member));
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-    //    마이페이지용 로그인한 회원 게시물 목록 조회
-    @GetMapping("/my-page/products")
-    public ResponseEntity findLoginMembersProduct(Pageable pageable) {
+    //    회원 게시물 목록 조회
+    @GetMapping("/{member-id}/products")
+    public ResponseEntity findMembersProduct(Pageable pageable,
+                                                  @PathVariable("member-id") Long memberId) {
 
-        Member loginMember = memberService.findLoginMember();
+        Member member = memberService.findMember(memberId);
 
-        List<Product> products = productService.findLoginMembersProduct(pageable, loginMember);
+        List<Product> products = productService.findMembersProduct(pageable, member);
         List<ProductResponseDto> response = productMapper.toMypageProduct(products);
 
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{member-id}")
-    public ResponseEntity getMember(@PathVariable("member-id") Long memberId) {
+    //    거래 완료 목록 조회
+    @GetMapping("/{member-id}/purchase")
+    public ResponseEntity findMembersPurchase(Pageable pageable,
+                                              @PathVariable("member-id") Long memberId) {
 
-        Member findMember = memberService.findMember(memberId);
-        MemberResponseDto response = mapper.memberToResponseDto(findMember);
+        Member member = memberService.findMember(memberId);
+        List<Product> products = productService.findMembersTradedProduct(pageable, member);
+        List<ProductResponseDto> response = productMapper.toMypageProduct(products);
 
-        return new ResponseEntity(response, HttpStatus.OK);
+        return ResponseEntity.ok(response);
     }
 
+//    회원 목록 조회
     @GetMapping("/all")
     public ResponseEntity getMembers(Pageable pageable) {
 
@@ -77,6 +84,7 @@ public class MemberController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
+//    회원 정보 수정
     @PatchMapping("/{member-id}")
     public ResponseEntity patchMember(@PathVariable("member-id") Long memberId,
                                       @RequestBody @Valid MemberPatchDto patchDto) {
@@ -90,6 +98,7 @@ public class MemberController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
+//    회원 탈퇴
     @DeleteMapping("/{member-id}")
     public ResponseEntity deleteMember(@PathVariable("member-id") Long memberId) {
         memberService.deleteMember(memberId);
@@ -97,6 +106,7 @@ public class MemberController {
         return new ResponseEntity("Deleted Successfully", HttpStatus.NO_CONTENT);
     }
 
+//    비밀번호 인증
     @PostMapping("/auth/password")
     public ResponseEntity checkPassword(@RequestBody AuthPasswordDto passwordDto) {
 
@@ -105,6 +115,7 @@ public class MemberController {
         return new ResponseEntity<>("🌟🌟🌟 Success 🌟🌟🌟", HttpStatus.OK);
     }
 
+//    중복 이름 검증
     @PostMapping("/auth/name")
     public ResponseEntity checkName(@RequestBody Map<String, String> name) {
 
@@ -114,6 +125,7 @@ public class MemberController {
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
 
+//    중복 번호 검증
     @PostMapping("/auth/phone")
     public ResponseEntity checkPhone(@RequestBody Map<String, String> phone) {
 
