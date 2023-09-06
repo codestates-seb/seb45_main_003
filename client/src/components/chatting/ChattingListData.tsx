@@ -1,24 +1,12 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, RecoilState } from "recoil";
 import { loginState } from "../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
 import { chatListState } from "./chatListState";
 import moment from "moment";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-
-export type Chat = {
-  chatRoomId: number;
-  memberId: number;
-  productId: number;
-  deletedAt: string;
-
-  chatRoom: {
-    memberId: number;
-    deletedAt: string;
-  };
-  message: string;
-};
+import { ChatList } from "./chatListState";
 
 const Container = styled.button`
   display: flex;
@@ -51,7 +39,9 @@ const Container = styled.button`
   }
 `;
 const ChattingListData: React.FC = () => {
-  const [chatList, setChatList] = useRecoilState<Chat[]>(chatListState); // 타입을 명시합니다.
+  const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
+
+  // const [chatList, setChatList] = useRecoilState<Chat[]>(chatListState); // 타입을 명시합니다.
   const isLoggedIn = useRecoilValue(loginState);
   const navigate = useNavigate();
 
@@ -74,6 +64,8 @@ const ChattingListData: React.FC = () => {
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat`, {
             headers: {
               Authorization: `Bearer ${accessToken}`, // 헤더에 토큰을 추가합니다.
+              // 로컬일때만 사용 배포링크 사용시 제거
+              "ngrok-skip-browser-warning": "69420",
             },
           });
           setChatList(response.data);
@@ -90,15 +82,13 @@ const ChattingListData: React.FC = () => {
       <ul>
         {chatList.map((chat, index) => (
           <Container key={index} onClick={() => handleRoomClick(chat.chatRoomId)}>
-            {" "}
-            {/* 수정된 부분 */}
             <li key={index}>
               <div className="chatRoom">
-                {/* chat의 구조에 따라 수정된 부분 */}
                 <div>{chat.chatRoomId}</div>
                 <div>Member ID: {chat.memberId}</div>
+                <div>Message: {chat.message.content}</div> {/* Access message directly */}
                 <div className="createdAt">
-                  {moment(chat.chatRoom.deletedAt).format("YYYY-MM-DD")} {/* 수정된 부분 */}
+                  {moment(chat.chatRoom.deletedAt).format("YYYY-MM-DD")}
                 </div>
               </div>
             </li>
@@ -108,4 +98,5 @@ const ChattingListData: React.FC = () => {
     </>
   );
 };
+
 export default ChattingListData;
