@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { headerHeightState, loginState, userState } from "../../atoms/atoms";
+import { headerHeightState, loginState } from "../../atoms/atoms";
 import HeaderLogin from "../header/HeaderLogin"; // 로그인 시 표시할 헤더
 import HeaderLogout from "../header/HeaderLogout"; // 로그아웃 시 표시할 헤더
 
