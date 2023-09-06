@@ -6,42 +6,104 @@ import { chatListState } from "./chatListState";
 import moment from "moment";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import { ChatList } from "./chatListState";
+// import { ChatList } from "./chatListState";
+
+interface ChatList {
+  chatRoomId: number;
+  memberId: number;
+  productId: number;
+  deletedAt: string | null;
+  chatRoom: {
+    memberId: number;
+    deletedAt: string | null;
+  };
+  message: {
+    messageId: number;
+    content: string;
+    createdAt: string | null;
+  } | null;
+}
+
+const formatTimeOrDate = (createdAt: string | null) => {
+  if (!createdAt) {
+    return "No message";
+  }
+
+  const currentTime = moment();
+  const messageTime = moment(createdAt);
+  const diffInHours = currentTime.diff(messageTime, "hours");
+
+  if (diffInHours < 24) {
+    // 24시간 미만이면 시간을 표시 (오전/오후 구분)
+    return messageTime.format("A h:mm");
+  } else {
+    // 24시간 이상이면 월-일을 표시
+    return messageTime.format("MM-DD");
+  }
+};
 
 const Container = styled.button`
+  background-color: white;
   display: flex;
   padding: 0.75rem 0.5rem;
   align-items: center;
   gap: 0.5rem;
   align-self: stretch;
+  padding: 8px 12px;
 
   width: 100%;
 
-  flex-direction: column;
   font-size: 1rem;
-  margin-bottom: 1rem;
-  border: 0.0625rem solid var(--cool-gray-20, #dde1e6);
+  border: none;
   border-radius: 0.375rem;
-  justify-content: space-between;
+  justify-content: start;
+
+  /* hover 상태일 때의 스타일 */
+  &:hover {
+    background: #ffcd57;
+  }
 
   .chatRoom {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 0.5rem;
     /* background-color: #3871a3; */
-    align-items: center; // chatRoom 내부의 모든 아이템을 수직으로 중앙 정렬
+    align-items: start; // chatRoom 내부의 모든 아이템을 수직으로 중앙 정렬
+  }
+  .idDate {
+    display: flex;
+    flex-direction: row;
+    gap: 1.25rem;
+  }
+  .memberId {
+    color: var(--cool-gray-90, #21272a);
+    font-family: Pretendard Variable;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: bold;
+    line-height: 100%; /* 16px */
+  }
+  .message {
+    color: #616161;
+    font-family: Pretendard Variable;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.5rem; /* 150% */
+    letter-spacing: 0.0063rem;
   }
   .createdAt {
     justify-content: end;
     font-size: 0.3125rem;
+    font-weight: 400;
     text-align: center;
-    align-self: flex-end; // createdAt 텍스트를 수직으로 중앙 정렬
+    align-self: center;
+    color: #616161;
   }
 `;
 const ChattingListData: React.FC = () => {
   const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
 
-  // const [chatList, setChatList] = useRecoilState<Chat[]>(chatListState); // 타입을 명시합니다.
   const isLoggedIn = useRecoilValue(loginState);
   const navigate = useNavigate();
 
@@ -68,6 +130,7 @@ const ChattingListData: React.FC = () => {
               // "ngrok-skip-browser-warning": "69420",
             },
           });
+          console.log(response.data);
           setChatList(response.data);
         } catch (error) {
           console.log("Failed to fetch chat list:", error);
@@ -84,12 +147,15 @@ const ChattingListData: React.FC = () => {
           <Container key={index} onClick={() => handleRoomClick(chat.chatRoomId)}>
             <li key={index}>
               <div className="chatRoom">
-                <div>{chat.chatRoomId}</div>
-                <div>Member ID: {chat.memberId}</div>
-                <div>Message: {chat.message.content}</div> {/* Access message directly */}
-                <div className="createdAt">
-                  {moment(chat.chatRoom.deletedAt).format("YYYY-MM-DD")}
+                {/* <div>{chat.chatRoomId}</div> */}
+                <div className="idDate">
+                  <div className="memberId">테스트 아이디{chat.memberId}</div>
+                  <div className="createdAt">
+                    {formatTimeOrDate(chat.message ? chat.message.createdAt : null)}{" "}
+                  </div>
                 </div>
+
+                <div className="message">{chat.message ? chat.message.content : "No message"}</div>
               </div>
             </li>
           </Container>

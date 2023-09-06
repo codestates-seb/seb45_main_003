@@ -12,7 +12,9 @@ export type ChatList = {
     deletedAt: string;
   };
   message: {
+    messageId: number;
     content: string;
+    createdAt: string;
   };
 };
 
