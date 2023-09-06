@@ -23,4 +23,6 @@ public class ProductRequestDto {
     private LocalDateTime closedAt; // 경매 종료 시간
 
     private Boolean auction; // 판매 방식 (경매:true or 즉시 구매:false)
+
+    private Long categoryId;
 }

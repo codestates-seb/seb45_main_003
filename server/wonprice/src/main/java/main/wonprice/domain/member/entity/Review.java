@@ -14,14 +14,21 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
-    private Long createId;
+    @Column(nullable = false)
+    private Long postMemberId;
 
     @Lob
+    @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
     private Long score;
 
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(nullable = true)
+    private LocalDateTime deletedAt;
 
     @ManyToOne
     @JoinColumn(name = "member_id")

@@ -1,8 +1,7 @@
-package main.wonprice.auth.refreshToken.repository;
+package main.wonprice.auth.jwt.repository;
 
-import main.wonprice.auth.refreshToken.entity.RefreshToken;
+import main.wonprice.auth.jwt.entity.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
 

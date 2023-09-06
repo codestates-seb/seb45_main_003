@@ -1,7 +1,7 @@
 package main.wonprice.domain.product.mapper;
 
+import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.member.entity.Member;
-import main.wonprice.domain.product.dto.ProductMypageResponseDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
@@ -14,9 +14,10 @@ import java.util.List;
 public interface ProductMapper {
 
     // DTO -> Entity
-    default Product toEntity(ProductRequestDto productRequestDto, Member member) {
+    default Product toEntity(ProductRequestDto productRequestDto, Member member, Category category) {
         Product.ProductBuilder productBuilder = Product.builder()
                 .seller(member)
+                .category(category)
                 .title(productRequestDto.getTitle())
                 .description(productRequestDto.getDescription())
                 .immediatelyBuyPrice(productRequestDto.getImmediatelyBuyPrice())
@@ -50,8 +51,9 @@ public interface ProductMapper {
                 .deletedAt(product.getDeletedAt())
                 .currentAuctionPrice(product.getCurrentAuctionPrice())
                 .closedAt(product.getClosedAt())
+                .categoryId(product.getCategory().getCategoryId())
                 .build();
     }
 
-    List<ProductMypageResponseDto> toMypageProduct(List<Product> products);
+    List<ProductResponseDto> toMypageProduct(List<Product> products);
 }

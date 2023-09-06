@@ -31,16 +31,16 @@ public class ErrorResponse {
 //    BusinessLogic Exception 응답을 위한 필드
     private int status;
     private String message;
-    private String exceptionName;
+    private String exception;
 
     private ErrorResponse(int status, String message) {
         this.status = status;
         this.message = message;
     }
-    private ErrorResponse(int status, String message, String exceptionName) {
+    private ErrorResponse(int status, String message, String exception) {
         this.status = status;
         this.message = message;
-        this.exceptionName = exceptionName;
+        this.exception = exception;
     }
 
     private ErrorResponse(List<FieldError> fieldErrors, List<ConstraintViolationError> violationErrors) {
