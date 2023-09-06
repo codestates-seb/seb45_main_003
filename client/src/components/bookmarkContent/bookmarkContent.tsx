@@ -122,14 +122,17 @@ const BookmarkContent = (): JSX.Element => {
   const { register, handleSubmit, watch, setValue } = useForm<checkInputType>();
   const checkboxes = watch("checkboxes", []);
   const selectAll = watch("selectAll", false);
+  console.log(selectAll, checkboxes);
   const handleSelectAll = (checked: boolean) => {
     setValue("selectAll", checked);
-    setValue("checkboxes", Array(checkboxes.length).fill(checked));
+    setValue("checkboxes", Array(bookmarklist.length + 1).fill(checked));
   };
   const handleCheckBox = (index: number, checked: boolean) => {
     const checkedBoxes = [...checkboxes];
     checkedBoxes[index] = checked;
-    const checkedAll = checkedBoxes.every(Boolean);
+    const lowerCheckbox = checkedBoxes.slice();
+    lowerCheckbox.shift();
+    const checkedAll = lowerCheckbox.every(Boolean);
     setValue("selectAll", checkedAll);
     setValue("checkboxes", checkedBoxes);
   };
@@ -137,13 +140,20 @@ const BookmarkContent = (): JSX.Element => {
     console.log(data);
   };
   const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
+  const accessToken = localStorage.getItem("accessToken");
   const getData = async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/wishes`);
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/wishes`, {
+      headers: {
+        Authorization: accessToken,
+      },
+    });
+    console.log(res.data);
     setBookmarklist(res.data);
   };
   useEffect(() => {
     getData();
-  });
+    setValue("checkboxes", Array(bookmarklist.length + 1).fill(false));
+  }, []);
   return (
     <BookmarkContentContainer onSubmit={handleSubmit(sendBookmarkList)}>
       <div className="topContainer">
@@ -152,10 +162,9 @@ const BookmarkContent = (): JSX.Element => {
           <input
             type="checkbox"
             className="checkbox"
-            checked={selectAll}
             id="selectAll"
             {...register("selectAll")}
-            onChange={() => handleSelectAll(selectAll)}
+            onChange={(e) => handleSelectAll(e.target.checked)}
           ></input>
           <p className="optionName">전체 선택</p>
           <Button type="button" $text="선택 취소" $design="yellow" />
@@ -164,14 +173,14 @@ const BookmarkContent = (): JSX.Element => {
       <div className="bookmarkListContainer">
         {bookmarklist &&
           bookmarklist.map((el, index: number) => (
-            <div className="bookmarkContainer">
+            <div className="bookmarkContainer" key={el.productId}>
               <div className="leftSection">
                 <input
                   type="checkbox"
                   className="checkbox"
-                  checked={checkboxes[index]}
                   {...register(`checkboxes.${el.wishId}`)}
-                  onChange={() => handleCheckBox(index, checkboxes[index])}
+                  onChange={(e) => handleCheckBox(index + 1, e.currentTarget.checked)}
+                  key={el.productId}
                 ></input>
                 <img></img>
                 <div className="infoContainer">
