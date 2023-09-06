@@ -4,16 +4,20 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
 import { chatListState } from "./chatListState";
 import moment from "moment";
-import { styled } from "styled-components";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
-const Container = styled.div`
+const Container = styled.button`
   display: flex;
-  flex-direction: column;
   padding: 0.75rem 0.5rem;
-  font-size: 1rem;
-  align-items: center; // Container의 모든 아이템을 수직으로 중앙 정렬
+  align-items: center;
   gap: 0.5rem;
   align-self: stretch;
+
+  width: 100%;
+
+  flex-direction: column;
+  font-size: 1rem;
   margin-bottom: 1rem;
   border: 0.0625rem solid var(--cool-gray-20, #dde1e6);
   border-radius: 0.375rem;
@@ -36,7 +40,11 @@ const Container = styled.div`
 const ChattingListData: React.FC = () => {
   const [chatList, setChatList] = useRecoilState(chatListState);
   const isLoggedIn = useRecoilValue(loginState); // 로그인 상태를 가져옵니다.
+  const navigate = useNavigate();
 
+  const handleRoomClick = (chatRoomId: number) => {
+    navigate(`/room/${chatRoomId}`);
+  };
   // 토큰을 검증하는 로직이 필요하면 여기에 추가할 수 있습니다.
 
   useEffect(() => {
@@ -70,7 +78,8 @@ const ChattingListData: React.FC = () => {
     <>
       <ul>
         {chatList.map((chat, index) => (
-          <Container>
+          <Container key={index} onClick={() => handleRoomClick(chat.chatRoom.chatRoomId)}>
+            {" "}
             <li key={index}>
               <div className="chatRoom">
                 <div>{chat.chatParticipantId}</div>

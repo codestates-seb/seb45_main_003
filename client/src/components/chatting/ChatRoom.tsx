@@ -1,25 +1,27 @@
 import { styled } from "styled-components";
 import ChatInput from "./ChatInput";
+import MessageBubble from "./MessageBubble";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: calc(100% - 3rem);
-  height: 43.6875rem;
+  width: 90%; // 상대적인 단위로 변경
+  height: 40.625rem;
   padding: 1.5rem 1rem;
 
   justify-content: end;
 
-  border-radius: 6px;
+  border-radius: 0.375rem;
   border: 1px solid #e0e0e0;
   background: #f7f7f7;
   background-color: aqua;
 
-  /* .inputBar {
-    align-items: center;
-    background-color: aqua;
-    width: calc(100% - 3rem);
-  } */
+  .chatBox {
+    overflow-y: auto; /* 내용이 넘칠 경우 스크롤 표시 */
+  }
+  @media (max-width: 64rem) {
+    width: 95%; // 상대적인 단위로 변경
+  }
 `;
 
 const ChatRoom = (): JSX.Element => {
@@ -32,9 +34,22 @@ const ChatRoom = (): JSX.Element => {
   return (
     <>
       <Container>
-        <div className="InputBar">
-          <ChatInput onSendMessage={handleSendMessage} />
+        <div className="chatBox" style={{ display: "flex", flexDirection: "column" }}>
+          <MessageBubble owner="user" message="안녕하세요!" time="12:00 PM" />
+          <MessageBubble owner="other" message="안녕하세요! 만나서 반가워요." time="12:01 PM" />
+          <MessageBubble owner="user" message="어떻게 지내세요?" time="12:02 PM" />
+          <MessageBubble owner="user" message="안녕하세요!" time="12:00 PM" />
+          <MessageBubble owner="other" message="안녕하세요! 만나서 반가워요." time="12:01 PM" />
+          <MessageBubble owner="user" message="어떻게 지내세요?" time="12:02 PM" />
+          <MessageBubble owner="user" message="안녕하세요!" time="12:00 PM" />
+          <MessageBubble owner="other" message="안녕하세요! 만나서 반가워요." time="12:01 PM" />
+          <MessageBubble owner="user" message="어떻게 지내세요?" time="12:02 PM" />
+          <MessageBubble owner="user" message="어떻게 지내세요?" time="12:02 PM" />
+          <MessageBubble owner="user" message="안녕하세요!" time="12:00 PM" />
+          <MessageBubble owner="other" message="안녕하세요! 만나서 반가워요." time="12:01 PM" />
+          <MessageBubble owner="user" message="어떻게 지내세요?" time="12:02 PM" />
         </div>
+        <ChatInput onSendMessage={handleSendMessage} />
       </Container>
     </>
   );

@@ -12,6 +12,7 @@ const ItemContainer = styled.div`
   align-items: center;
   gap: 1.25rem;
   max-width: 22rem;
+  min-width: 240px; // 여기만
   width: calc(100% - 3rem);
   display: flex;
   justify-content: center;
