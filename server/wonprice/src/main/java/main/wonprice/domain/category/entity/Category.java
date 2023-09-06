@@ -1,9 +1,11 @@
-package main.wonprice.domain.product.entity;
+package main.wonprice.domain.category.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.wonprice.domain.product.entity.Product;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -15,6 +17,6 @@ public class Category {
 
     private String name;
 
-    @OneToOne(mappedBy = "category")
-    private Product product;
+    @OneToMany(mappedBy = "category")
+    private List<Product> products;
 }
