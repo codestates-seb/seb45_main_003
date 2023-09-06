@@ -142,12 +142,20 @@ const BookmarkContent = (): JSX.Element => {
   const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
   const accessToken = localStorage.getItem("accessToken");
   const getData = async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/wishes`, {
-      headers: {
-        Authorization: accessToken,
-      },
-    });
-    setBookmarklist(res.data);
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/wishes`, {
+        headers: {
+          Authorization: accessToken,
+        },
+      });
+      setBookmarklist(res.data);
+    } catch (error) {
+      //토큰 만료시 대응하는 함수
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+        }
+      }
+    }
   };
   const cancleBookmark = async (wishId: number) => {
     const res = await axios.delete(`${process.env.REACT_APP_API_URL}/wishes/${wishId}`, {

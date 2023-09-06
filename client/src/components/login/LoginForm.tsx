@@ -54,6 +54,7 @@ const LogInForm = (): JSX.Element => {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         //id도 담아주면 id도 저장
+        localStorage.setItem("Id", response.data.memberId);
         setLogin(true);
         navigate("/");
       }
