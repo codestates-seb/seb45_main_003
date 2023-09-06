@@ -82,7 +82,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findLoginMembersProduct(Pageable pageable, Member member) {
+    public List<Product> findMembersProduct(Pageable pageable, Member member) {
 
         return productRepository.findAllBySeller(member, pageable).getContent();
     }
