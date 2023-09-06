@@ -86,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member member) {
         Product product = findExistsProduct(productId);
-        product.setCreateAt(LocalDateTime.now());
+        product.setModifiedAt(LocalDateTime.now());
         return productRepository.save(product.update(productRequestDto));
     }
 
