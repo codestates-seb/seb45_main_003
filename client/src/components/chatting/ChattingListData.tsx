@@ -1,19 +1,24 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, RecoilState } from "recoil";
 import { loginState } from "../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
 import { chatListState } from "./chatListState";
 import moment from "moment";
-import { styled } from "styled-components";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import { ChatList } from "./chatListState";
 
-const Container = styled.div`
+const Container = styled.button`
   display: flex;
-  flex-direction: column;
   padding: 0.75rem 0.5rem;
-  font-size: 1rem;
-  align-items: center; // Container의 모든 아이템을 수직으로 중앙 정렬
+  align-items: center;
   gap: 0.5rem;
   align-self: stretch;
+
+  width: 100%;
+
+  flex-direction: column;
+  font-size: 1rem;
   margin-bottom: 1rem;
   border: 0.0625rem solid var(--cool-gray-20, #dde1e6);
   border-radius: 0.375rem;
@@ -34,11 +39,15 @@ const Container = styled.div`
   }
 `;
 const ChattingListData: React.FC = () => {
-  const [chatList, setChatList] = useRecoilState(chatListState);
-  const isLoggedIn = useRecoilValue(loginState); // 로그인 상태를 가져옵니다.
+  const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
 
-  // 토큰을 검증하는 로직이 필요하면 여기에 추가할 수 있습니다.
+  // const [chatList, setChatList] = useRecoilState<Chat[]>(chatListState); // 타입을 명시합니다.
+  const isLoggedIn = useRecoilValue(loginState);
+  const navigate = useNavigate();
 
+  const handleRoomClick = (chatRoomId: number) => {
+    navigate(`/room/${chatRoomId}`);
+  };
   useEffect(() => {
     if (isLoggedIn) {
       // 로그인 상태가 true일 때만 API 호출을 합니다.
@@ -55,6 +64,8 @@ const ChattingListData: React.FC = () => {
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat`, {
             headers: {
               Authorization: `Bearer ${accessToken}`, // 헤더에 토큰을 추가합니다.
+              // 로컬일때만 사용 배포링크 사용시 제거
+              // "ngrok-skip-browser-warning": "69420",
             },
           });
           setChatList(response.data);
@@ -70,15 +81,14 @@ const ChattingListData: React.FC = () => {
     <>
       <ul>
         {chatList.map((chat, index) => (
-          <Container>
+          <Container key={index} onClick={() => handleRoomClick(chat.chatRoomId)}>
             <li key={index}>
               <div className="chatRoom">
-                <div>{chat.chatParticipantId}</div>
+                <div>{chat.chatRoomId}</div>
                 <div>Member ID: {chat.memberId}</div>
-
-                {/* moment.js를 사용하여 날짜 형식을 "YYYY-MM-DD"로 변경 */}
+                <div>Message: {chat.message.content}</div> {/* Access message directly */}
                 <div className="createdAt">
-                  {moment(chat.chatRoom.createdAt).format("YYYY-MM-DD")}
+                  {moment(chat.chatRoom.deletedAt).format("YYYY-MM-DD")}
                 </div>
               </div>
             </li>

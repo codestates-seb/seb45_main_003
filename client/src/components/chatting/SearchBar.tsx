@@ -56,7 +56,6 @@ const ChatListComponent: React.FC = () => {
           width: "100%",
           fontSize: "1rem",
           padding: "0.4375rem",
-          backgroundColor: "var(--cool-gray-10, #f2f4f8)",
           border: "none",
         }}
       />
