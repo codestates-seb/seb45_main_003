@@ -2,10 +2,13 @@ package main.wonprice.domain.product.entity;
 
 import lombok.*;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.member.entity.Review;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -51,6 +54,9 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member seller; // 판매자
+
+    @OneToMany(mappedBy = "product")
+    private List<Review> reviews = new ArrayList<>(); // 리뷰
 
     public Product update(ProductRequestDto productRequestDto) {
         this.title = productRequestDto.getTitle();
