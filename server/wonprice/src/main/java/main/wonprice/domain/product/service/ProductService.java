@@ -3,6 +3,7 @@ package main.wonprice.domain.product.service;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.entity.ProductStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -24,4 +25,6 @@ public interface ProductService {
     Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member loginMember);
 
     Page<Product> getProductsByCategory(Long categoryId, Pageable pageable);
+
+    Page<Product> getProductsByStatus(ProductStatus status, Pageable pageable);
 }
