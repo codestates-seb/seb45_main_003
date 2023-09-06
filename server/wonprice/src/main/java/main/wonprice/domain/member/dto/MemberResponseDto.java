@@ -15,4 +15,8 @@ public class MemberResponseDto {
     private String email;
 
     private String phone;
+
+    private int postCount;
+
+    private int tradeCount;
 }

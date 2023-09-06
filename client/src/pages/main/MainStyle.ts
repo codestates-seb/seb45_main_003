@@ -6,18 +6,11 @@ export const BackGround = styled.div`
   background-repeat: no-repeat;
   justify-content: center;
   align-items: center;
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  }
 `;
 export const StyledMain = styled.main`
   max-width: 1440px;
   width: calc(100% - 3rem);
   margin: 0 auto;
-
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  }
 `;
 
 export const ContentBox = styled.div`
@@ -26,7 +19,6 @@ export const ContentBox = styled.div`
   justify-content: center;
   flex-direction: column;
   margin: 0 auto;
-  width: calc(100% - 3rem);
   padding-bottom: 19.625rem;
 
   /* 순차 적으로 컨텐츠 배치 : 캐러셀 하단 이펙트카드 */

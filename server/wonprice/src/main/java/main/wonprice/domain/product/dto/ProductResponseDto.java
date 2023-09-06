@@ -28,6 +28,8 @@ public class ProductResponseDto {
 
     private Boolean auction;
 
+    private Long categoryId;
+
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime createAt;
 

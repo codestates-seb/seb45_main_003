@@ -1,21 +1,24 @@
 package main.wonprice.domain.product.controller;
 
 import lombok.RequiredArgsConstructor;
+import main.wonprice.domain.category.entity.Category;
+import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.mapper.ProductMapper;
-import main.wonprice.domain.product.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import main.wonprice.domain.product.service.ProductService;
 
 @Controller
 @RequestMapping("/products")
@@ -25,27 +28,75 @@ public class ProductController {
     private final ProductService productService;
     private final ProductMapper productMapper;
     private final MemberService memberService;
+    private final CategoryService categoryService;
 
     // 상품 등록
     @PostMapping
     public ResponseEntity createProduct(@RequestBody ProductRequestDto productRequestDto) {
         Member loginMember = memberService.findLoginMember();
-        Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember));
+        Category category = categoryService.findById(productRequestDto.getCategoryId());
+        Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember, category));
         ProductResponseDto productResponseDto = productMapper.fromEntity(product);
         return ResponseEntity.ok(productResponseDto);
     }
 
     // 전체 상품 조회
     @GetMapping
-    public ResponseEntity<List<ProductResponseDto>> findAllProduct() {
-        List<ProductResponseDto> productResponseDtoList = productService
-                .findAll()
-                .stream()
-                .map(productMapper::fromEntity)
-                .collect(Collectors.toList());
+    public ResponseEntity<Page<ProductResponseDto>> findAllProduct(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Page<ProductResponseDto> productResponseDtoList = productService
+                .findAll(pageable)
+                .map(productMapper::fromEntity);
 
         return ResponseEntity.ok(productResponseDtoList);
     }
+
+    // 카테고리 별로 전체 상품 조회
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Page<ProductResponseDto>> getProductCategory(@PathVariable Long categoryId,
+                                                                       @RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Page<Product> products = productService.getProductsByCategory(categoryId, pageable);
+        Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
+        return ResponseEntity.ok(productResponseDtoList);
+    }
+
+    // 거래 가능한 상품만 조회
+    @GetMapping("/available")
+    public ResponseEntity<Page<ProductResponseDto>> getAvailableProducts(
+            @RequestParam(name = "type", defaultValue = "all") String type,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+
+        Page<Product> products;
+
+        if ("immediatelyBuy".equalsIgnoreCase(type)) { // 즉시 구매만 가능한 상품을 조회하는 경우: "products/available?type=immediatelyBuy"
+            products = productService.getProductsByStatusAndAuction(ProductStatus.BEFORE, false, pageable);
+        } else if ("auction".equalsIgnoreCase(type)) { // 경매중인 상품을 조회하는 경우: "products/available?type=auction"
+            products = productService.getProductsByStatusAndAuction(ProductStatus.BEFORE, true, pageable);
+        } else { // 모든 거래가 가능한 상품을 조회하는 경우: "products/available?type=all"
+            products = productService.getProductsByStatus(ProductStatus.BEFORE, pageable);
+        }
+
+        Page<ProductResponseDto> productResponseDtoPage = products.map(productMapper::fromEntity);
+        return ResponseEntity.ok(productResponseDtoPage);
+    }
+
+    // 거래 완료된 상품만 조회
+    @GetMapping("/completed")
+    public ResponseEntity<Page<ProductResponseDto>> getCompletedProducts(@RequestParam(defaultValue = "0") int page,
+                                                                         @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        // ProductStatus가 AFTER인 상품만 조회
+        Page<Product> products = productService.getProductsByStatus(ProductStatus.AFTER, pageable);
+        Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
+        return ResponseEntity.ok(productResponseDtoList);
+    }
+
 
     // 특정 상품 조회
     @GetMapping("/{productId}")

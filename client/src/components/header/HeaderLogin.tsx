@@ -48,9 +48,8 @@ const StyledHeader = styled.header`
   // 최 상단으로 배치 z-index: 2;
   .sidebar {
     z-index: 2;
-    border-radius: 6px;
+    border-radius: 0.375rem;
     /* border: 1px solid var(--cool-gray-20, #dde1e6); */
-    background: #ffffff;
     margin: 0.375rem;
     max-width: 22rem;
     width: 25%;
