@@ -147,8 +147,21 @@ const BookmarkContent = (): JSX.Element => {
         Authorization: accessToken,
       },
     });
-    console.log(res.data);
     setBookmarklist(res.data);
+  };
+  const cancleBookmark = async (wishId: number) => {
+    const res = await axios.delete(`${process.env.REACT_APP_API_URL}/wishes/${wishId}`, {
+      headers: {
+        Authorization: accessToken,
+      },
+    });
+    if (res.status === 200) {
+      getData();
+      setValue(
+        "checkboxes",
+        checkboxes.filter((el, idx) => idx !== wishId),
+      );
+    }
   };
   useEffect(() => {
     getData();
@@ -167,7 +180,7 @@ const BookmarkContent = (): JSX.Element => {
             onChange={(e) => handleSelectAll(e.target.checked)}
           ></input>
           <p className="optionName">전체 선택</p>
-          <Button type="button" $text="선택 취소" $design="yellow" />
+          <Button type="submit" $text="선택 취소" $design="yellow" />
         </div>
       </div>
       <div className="bookmarkListContainer">
@@ -199,7 +212,12 @@ const BookmarkContent = (): JSX.Element => {
                     <span className="price">{` 원`}</span>
                   </div>
                 </div>
-                <Button type="button" $text="찜 취소" $design="yellow" />
+                <Button
+                  type="button"
+                  $text="찜 취소"
+                  $design="yellow"
+                  onClick={() => cancleBookmark(el.wishId)}
+                />
               </div>
             </div>
           ))}
