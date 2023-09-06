@@ -17,8 +17,8 @@ public class ChatParticipantDto {
     private Long memberId;
     private Long productId;
     private LocalDateTime deletedAt;
-    private List<ChatParticipantChatRoomDto> chatRoom;
-    private List<ChatParticipantMessagesDto> message;
+    private ChatParticipantChatRoomDto chatRoom;
+    private ChatParticipantMessagesDto message;
 
     public ChatParticipantDto(ChatParticipant chatParticipant) {
         this.chatRoomId = chatParticipant.getChatRoom().getChatRoomId();
@@ -29,9 +29,15 @@ public class ChatParticipantDto {
         this.chatRoom = chatParticipant.getChatRoom().getChatParticipantList().stream()
                 .map(o -> new ChatParticipantChatRoomDto(o))
                 .filter(o -> o.getMemberId() != memberId)
-                .collect(Collectors.toList());
-        this.message = chatParticipant.getChatRoom().getMessages().stream()
+                .collect(Collectors.toList()).get(0);
+
+        List<ChatParticipantMessagesDto> messages = chatParticipant.getChatRoom().getMessages().stream()
                 .map(o -> new ChatParticipantMessagesDto(o))
                 .collect(Collectors.toList());
+
+        if (!messages.isEmpty()) {
+            this.message = messages.get(messages.size() - 1);
+        }
+
     }
 }
