@@ -1,19 +1,25 @@
 import LogInForm from "../components/login/LoginForm";
 import SignupForm from "../components/login/SignupForm";
 import Button from "../components/common/Button";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { toSignup } from "../atoms/atoms";
+import { loginState } from "../atoms/atoms";
 import { styled } from "styled-components";
+import { COLOR } from "../contstants/color";
+import login from "../assets/images/Login/login.png";
+import signup from "../assets/images/Login/signup.png";
+import { useNavigate } from "react-router-dom";
 
 const BackgroundContainer = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
 `;
 
 const PageContentContainer = styled.div`
   padding: 3rem 1.25rem 3rem 1.25rem;
-  border: 1px solid #e0e0e0;
+  border: 1px solid ${COLOR.gray_300};
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -21,6 +27,8 @@ const PageContentContainer = styled.div`
   gap: 1.5rem;
 
   .bottomContainer {
+    border-top: 0.0625rem solid ${COLOR.gray_300};
+    padding: 1rem 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -56,14 +64,14 @@ const PageContentContainer = styled.div`
       top: 0.5rem;
       width: 3.125rem;
       height: 0.0625rem;
-      background-color: #212121;
+      background-color: ${COLOR.darkText};
     }
     &:after {
       content: "";
       top: 0.5rem;
       width: 3.125rem;
       height: 0.0625rem;
-      background-color: #212121;
+      background-color: ${COLOR.darkText};
     }
     .socialLabel {
       padding: 0.5rem 0.75rem;
@@ -76,8 +84,14 @@ const LogIn = (): JSX.Element => {
   const changeform = () => {
     setloginPageForm(!loginPageForm);
   };
+  const navigate = useNavigate();
+  const isLogin = useRecoilValue(loginState);
+  if (isLogin) {
+    navigate("/");
+  }
   return (
     <BackgroundContainer>
+      {loginPageForm ? <img src={login} /> : <img src={signup} />}
       {loginPageForm ? (
         <PageContentContainer>
           <h2>로그인</h2>
@@ -88,13 +102,13 @@ const LogIn = (): JSX.Element => {
             </label>
           </div>
           <div id="socialButtonContainer">
-            <Button type="button" text={"구글 로그인"} />
-            <Button type="button" text={"카카오 로그인"} />
+            <Button type="button" $text={"구글 로그인"} $design={"yellow"} />
+            <Button type="button" $text={"카카오 로그인"} $design={"yellow"} />
           </div>
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">서비스를 처음 방문하셨나요?</div>
-              <Button type={"button"} text={"회원가입"} onClick={changeform} />
+              <Button type={"button"} $text={"회원가입"} onClick={changeform} $design={"black"} />
             </div>
           </div>
         </PageContentContainer>
@@ -105,7 +119,7 @@ const LogIn = (): JSX.Element => {
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">이미 계정이 있으신가요?</div>
-              <Button type={"button"} text={"로그인"} onClick={changeform} />
+              <Button type={"button"} $text={"로그인"} onClick={changeform} $design={"black"} />
             </div>
           </div>
         </PageContentContainer>

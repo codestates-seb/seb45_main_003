@@ -16,8 +16,11 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@types/swiper": "^6.0.0",
+    "aws-sdk": "^2.1450.0",
     "axios": "^1.4.0",
+    "event-source-polyfill": "^1.0.31",
     "lodash": "^4.17.21",
+    "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.4",
@@ -56,6 +59,7 @@
     ]
   },
   "devDependencies": {
+    "@types/event-source-polyfill": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",
     "eslint": "^8.46.0",

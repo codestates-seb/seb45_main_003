@@ -42,12 +42,13 @@ public class WishController {
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
 
-    @GetMapping("/members/wishes")
-    public ResponseEntity getLoginMemberWish(Pageable pageable) {
+    @GetMapping("/members/{member-id}/wishes")
+    public ResponseEntity getLoginMemberWish(Pageable pageable,
+                                             @PathVariable("member-id")Long memberId) {
 
-        Member logimMember = memberService.findLoginMember();
+        Member member = memberService.findMember(memberId);
 
-        List<Wish> wishes = wishService.findMemberWish(pageable, logimMember);
+        List<Wish> wishes = wishService.findMemberWish(pageable, member);
         List<WishResponseDto> response = mapper.toResponseDtos(wishes);
 
         return ResponseEntity.ok(response);

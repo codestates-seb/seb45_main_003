@@ -1,10 +1,11 @@
 import axios from "axios";
-import { useForm } from "react-hook-form";
-import { styled } from "styled-components";
 import { useState } from "react";
-import { useModal } from "../../hooks/useModal";
+import { useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
+import { styled } from "styled-components";
 import { toSignup } from "../../atoms/atoms";
+import { COLOR } from "../../contstants/color";
+import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 
@@ -29,7 +30,6 @@ interface SignupData {
 const StyledSignupForm = styled.form`
   width: 28.125rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -42,19 +42,19 @@ const StyledSignupForm = styled.form`
     gap: 0.6875rem;
   }
   #email {
-    flex: 1 0 21.875rem;
+    flex: 1 0 18.75rem;
   }
   #confirmcode {
-    flex: 1 0 21.875rem;
+    flex: 1 0 18.75rem;
   }
   .errormessage {
-    color: #f44336;
+    color: ${COLOR.invalid};
   }
   .successmessage {
-    color: #33a754;
+    color: ${COLOR.valid};
   }
   .errorInput {
-    border-color: #f44336;
+    border-color: ${COLOR.invalid};
   }
 `;
 const StyledModal = styled.div`
@@ -78,7 +78,7 @@ const StyledModal = styled.div`
     align-items: flex-end;
   }
 `;
-
+//readonly 일때 인풋 백그라운드 변화필요
 const SignupForm = (): JSX.Element => {
   const {
     register,
@@ -98,40 +98,62 @@ const SignupForm = (): JSX.Element => {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/members`, data);
       if (response.status === 201) {
         toggleModal();
-      } else {
-        setError("formError", {
-          message: "잘못 작성된 부분이 있습니다.",
-        });
       }
     } catch (error) {
-      console.log(`Error: ${error}`);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          setError("formError", {
+            message: "잘못 작성된 부분이 있습니다.",
+          });
+        }
+      }
     }
   };
   //인증코드를 보내달라는 요청 함수
   const reqConfirmCode = async (data: string) => {
     //새로고침 방지
     event?.preventDefault();
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth/send`, {
-      email: data,
-    });
-    if (response.status === 200) {
-      console.log("succsess");
-      //인증코드 전송시 안내문 제공
-      setSuccess({ ...success, req: true });
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth/send`, {
+        email: data,
+      });
+      if (response.status === 200) {
+        console.log("succsess");
+        //인증코드 전송시 안내문 제공
+        setSuccess({ ...success, req: true });
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          setError("formError", {
+            message: "유효하지 않은 이메일입니다.",
+          });
+        }
+      }
     }
   };
   //사용자가 작성한 인증코드를 서버에서 검증하게 보내주는 함수
   const testConfirmCode = async (data: SignupForm) => {
     //새로고침 방지
     event?.preventDefault();
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth`, {
-      email: data.email,
-      authCode: data.confirmcode,
-    });
-    if (response.status === 200) {
-      console.log("succsess");
-      //인증성공시 인증코드 작성란과 이메일 작성란을 비활성화
-      setSuccess({ ...success, confirm: true });
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth`, {
+        email: data.email,
+        authCode: data.confirmcode,
+      });
+      if (response.status === 200) {
+        console.log("succsess");
+        //인증성공시 인증코드 작성란과 이메일 작성란을 비활성화
+        setSuccess({ ...success, confirm: true });
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          setError("formError", {
+            message: "인증코드가 다릅니다.",
+          });
+        }
+      }
     }
   };
 
@@ -173,10 +195,10 @@ const SignupForm = (): JSX.Element => {
             })}
           />
           <Button
-            type={"button"}
-            disabled={false}
-            text={"인증요청"}
+            type="button"
+            $text="인증요청"
             onClick={() => reqConfirmCode(getValues("email"))}
+            $design="yellow"
           />
         </div>
         {errors.email && <div className="errormessage">{errors.email?.message}</div>}
@@ -194,10 +216,10 @@ const SignupForm = (): JSX.Element => {
             })}
           />
           <Button
-            type={"button"}
-            disabled={false}
-            text={"인증하기"}
+            type="button"
+            $text="인증하기"
             onClick={() => testConfirmCode(getValues())}
+            $design="yellow"
           />
         </div>
         {errors.confirmcode && <div className="errormessage">{errors.confirmcode?.message}</div>}
@@ -254,7 +276,7 @@ const SignupForm = (): JSX.Element => {
           })}
         />
         {errors.phone && <div className="errormessage">{errors.phone?.message}</div>}
-        <Button type={"submit"} disabled={isSubmitting} text={"회원가입"} />
+        <Button type="submit" disabled={isSubmitting} $text="회원가입" $design="black" />
       </StyledSignupForm>
       <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
         <StyledModal>
@@ -262,7 +284,7 @@ const SignupForm = (): JSX.Element => {
             <p>회원가입 되셨습니다!</p>
           </div>
           <div className="modalButtonContainer">
-            <Button type={"button"} disabled={false} text={"확인"} onClick={() => changeform()} />
+            <Button type="button" $text="확인" onClick={() => changeform()} $design="black" />
           </div>
         </StyledModal>
       </Modal>
