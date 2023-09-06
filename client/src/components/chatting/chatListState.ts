@@ -20,3 +20,15 @@ export const chatListState = atom<ChatList[]>({
   key: "chatListState",
   default: [],
 });
+
+export type Message = {
+  messageId: number;
+  senderId: number;
+  content: string;
+  createdAt: string;
+};
+
+export const chatRoomState = atom<ChatList[]>({
+  key: "chatRoomState",
+  default: [],
+});

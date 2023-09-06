@@ -1,5 +1,6 @@
-import React, { FC } from "react";
+import React, { useState, useEffect, FC } from "react";
 import styled from "styled-components";
+import axios from "axios";
 
 const BubbleWrapper = styled.div<{ owner: "user" | "other" }>`
   display: flex;
@@ -23,6 +24,13 @@ const Time = styled.span`
   padding: 0.25rem;
 `;
 
+interface Message {
+  messageId: number;
+  senderId: number;
+  content: string;
+  createdAt: string;
+}
+
 interface MessageBubbleProps {
   owner: "user" | "other";
   message: string;
@@ -36,4 +44,48 @@ const MessageBubble: FC<MessageBubbleProps> = ({ owner, message, time }) => (
   </BubbleWrapper>
 );
 
-export default MessageBubble;
+const ChatRoom: React.FC = () => {
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  // 로컬 스토리지에서 userId 값을 가져옵니다.
+  const userIdFromLocalStorage = localStorage.getItem("Id");
+  console.log(userIdFromLocalStorage);
+
+  // 문자열을 숫자로 변환합니다. 로컬 스토리지에 값이 없으면 null로 설정합니다.
+  const Id = userIdFromLocalStorage ? parseInt(userIdFromLocalStorage, 10) : null;
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat/1`);
+        setMessages(response.data);
+      } catch (error) {
+        console.error("Failed to fetch messages:", error);
+      }
+    };
+
+    fetchMessages();
+    const intervalId = setInterval(fetchMessages, 5000); // 5초마다 메시지를 새로 가져옵니다.
+
+    return () => {
+      clearInterval(intervalId); // 컴포넌트가 언마운트되면 인터벌을 제거합니다.
+    };
+  }, []);
+
+  return (
+    <div>
+      {messages.map((message) => (
+        <MessageBubble
+          key={message.messageId}
+          owner={message.senderId === Id ? "user" : "other"}
+          message={message.content}
+          time={message.createdAt}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default ChatRoom;
+
+// localStorage.getItem("refreshToken")
