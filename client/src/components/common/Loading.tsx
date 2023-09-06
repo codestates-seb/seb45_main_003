@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import loadingImg from "../../assets/images/loading.gif";
+import loadingImg from "../../assets/images/Loading.gif";
 
 const StyledLoading = styled.section`
   position: absolute;

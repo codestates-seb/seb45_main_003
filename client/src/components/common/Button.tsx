@@ -6,6 +6,7 @@ type ButtonProp = {
   $size?: string;
   $design?: string;
   $text: string;
+  $icon?: JSX.Element;
   disabled?: boolean;
   onClick?: () => void;
   onSubmit?: () => void;
@@ -19,7 +20,7 @@ const StyledButton = styled.button<ButtonProp>`
   font-weight: 600;
   transition: 0.3s;
   padding: ${(props) => (props.$size === "big" ? "1.25rem 2.5rem" : "0.5rem 1.25rem")};
-  font-size: ${(props) => (props.$size === "big" ? "1.5rem" : "1rem")};
+  font-size: ${(props) => (props.$size === "big" ? "1.5rem" : ".875rem")};
   background: ${(props) => {
     switch (props.$design) {
       case "black":
@@ -33,10 +34,10 @@ const StyledButton = styled.button<ButtonProp>`
 
   color: ${(props) => {
     switch (props.$design) {
-      case "outline":
-        return COLOR.darkText;
-      default:
+      case "black":
         return "#fff";
+      default:
+        return COLOR.darkText;
     }
   }};
 
@@ -84,6 +85,7 @@ const StyledButton = styled.button<ButtonProp>`
 const Button = ({ ...props }: ButtonProp): JSX.Element => {
   return (
     <StyledButton {...props} disabled={props.disabled} type={props.type}>
+      {props.$icon}
       {props.$text}
     </StyledButton>
   );

@@ -1,12 +1,11 @@
 import axios from "axios";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { ReactComponent as EmptyImage } from "../../assets/images/empty.svg";
+import { ReactComponent as EmptyImage } from "../../assets/images/Empty.svg";
 import Loading from "../../components/common/Loading";
 import { COLOR } from "../../contstants/color";
 import { API_PATHS } from "../../contstants/path";
-import useSSE from "../../hooks/useSSE";
 import ErrorIndication from "../../pages/ErrorIndication";
 import Button from "../common/Button";
 import ListItem from "./ListItem";
@@ -21,6 +20,7 @@ export type ProductData = {
   currentAuctionPrice?: number;
   immediatelyBuyPrice: number;
   productStatus: string;
+  categoryId: number;
   views: number;
   action: boolean;
   createAt: string;
@@ -59,18 +59,9 @@ const StyledList = styled.section`
 
 const List = (): JSX.Element => {
   const navigate = useNavigate();
-  const { isLoading, error, data } = useQuery<ProductData[]>("productData", async () => {
+  const { isLoading, error, data } = useQuery<ProductData[]>("productList", async () => {
     const response = await axios.get(API_PATHS.products(""));
     return response.data;
-  });
-  const queryClient = useQueryClient();
-
-  //Server-Sent-Event 적용
-  useSSE<ProductData>({
-    url: "/subscribe/products/1",
-    callback: (newData) => {
-      queryClient.setQueryData("productData", newData);
-    },
   });
 
   if (isLoading) {
