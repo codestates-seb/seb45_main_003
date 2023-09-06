@@ -12,7 +12,8 @@ public enum ExceptionCode {
     MEMBER_NOT_AUTHORIZED(403, "Member not Authorized"),
     INVALID_PASSWORD(403, "Invalid Password"),
     WISH_NOT_FOUND(404, "Wish not found"),
-    REVIEW_NOT_FOUND(404, "Review not found");
+    REVIEW_NOT_FOUND(404, "Review not found"),
+    REVIEW_EXISTS(409, "Already wrote Review");
 
     private int status;
     private String message;

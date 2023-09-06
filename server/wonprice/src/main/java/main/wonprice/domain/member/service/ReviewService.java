@@ -24,6 +24,9 @@ public class ReviewService {
     private final MemberService memberService;
 
     public Review createReview(Review review) {
+
+        checkReview(review);
+
         return repository.save(review);
     }
 
@@ -71,5 +74,14 @@ public class ReviewService {
         }
 
         return verifiedReview.get();
+    }
+
+    public void checkReview(Review review) {
+
+        Optional<Review> findReview = repository.findByPostMemberAndProduct(review.getPostMember(), review.getProduct());
+
+        if (findReview.isPresent()) {
+            throw new BusinessLogicException(ExceptionCode.REVIEW_EXISTS);
+        }
     }
 }
