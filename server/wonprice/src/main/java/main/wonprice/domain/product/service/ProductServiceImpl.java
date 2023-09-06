@@ -7,6 +7,7 @@ import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.repository.ProductRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -44,8 +45,15 @@ public class ProductServiceImpl implements ProductService {
 
     // 전체 상품 조회
     @Override
-    public List<Product> findAll() {
-        return productRepository.findAll();
+    public Page<Product> findAll(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
+
+    // 카테고리별 전체 상품 조회
+    @Override
+    public Page<Product> getProductsByCategory(Long categoryId, Pageable pageable) {
+        return productRepository.findProductsByCategoryId(categoryId, pageable);
     }
 
     /*

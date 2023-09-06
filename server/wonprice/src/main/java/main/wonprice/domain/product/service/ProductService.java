@@ -3,6 +3,7 @@ package main.wonprice.domain.product.service;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 public interface ProductService {
     Product save(Product product);
 
-    List<Product> findAll();
+    Page<Product> findAll(Pageable pageable);
 
     Product findOneById(Long productId);
 
@@ -21,4 +22,6 @@ public interface ProductService {
     Product deleteOneById(Long productId,Member loginMember);
 
     Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member loginMember);
+
+    Page<Product> getProductsByCategory(Long categoryId, Pageable pageable);
 }

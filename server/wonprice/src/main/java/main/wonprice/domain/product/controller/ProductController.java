@@ -9,14 +9,14 @@ import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.mapper.ProductMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import main.wonprice.domain.product.service.ProductService;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/products")
@@ -40,13 +40,25 @@ public class ProductController {
 
     // 전체 상품 조회
     @GetMapping
-    public ResponseEntity<List<ProductResponseDto>> findAllProduct() {
-        List<ProductResponseDto> productResponseDtoList = productService
-                .findAll()
-                .stream()
-                .map(productMapper::fromEntity)
-                .collect(Collectors.toList());
+    public ResponseEntity<Page<ProductResponseDto>> findAllProduct(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductResponseDto> productResponseDtoList = productService
+                .findAll(pageable)
+                .map(productMapper::fromEntity);
 
+        return ResponseEntity.ok(productResponseDtoList);
+    }
+
+    // 카테고리 별로 전체 상품 조회
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<Page<ProductResponseDto>> getProductCategory(@PathVariable Long categoryId,
+                                                                       @RequestParam(defaultValue = "0") int page,
+                                                                       @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Product> products = productService.getProductsByCategory(categoryId, pageable);
+        Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
         return ResponseEntity.ok(productResponseDtoList);
     }
 
