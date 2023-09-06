@@ -27,4 +27,6 @@ public interface ProductService {
     Page<Product> getProductsByCategory(Long categoryId, Pageable pageable);
 
     Page<Product> getProductsByStatus(ProductStatus status, Pageable pageable);
+
+    Page<Product> getProductsByStatusAndAuction(ProductStatus productStatus, boolean auction, Pageable pageable);
 }

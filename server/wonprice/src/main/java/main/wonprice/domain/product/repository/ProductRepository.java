@@ -20,4 +20,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     // 상품의 상태에 따라 검색하는 메서드
     Page<Product> findProductsByStatus(ProductStatus status, Pageable pageable);
+
+    // 경매 중인 상품/즉시 구매만 가능한 상품을 구분해서 검색하는 메서드
+    Page<Product> findProductsByStatusAndAuction(ProductStatus status, boolean auction, Pageable pageable);
 }

@@ -57,11 +57,16 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findProductsByCategoryId(categoryId, pageable);
     }
 
-
     // 상품 상태 별 조회 (거래중:BEFORE, 거래완료:AFTER)
     @Override
     public Page<Product> getProductsByStatus(ProductStatus status, Pageable pageable) {
         return productRepository.findProductsByStatus(status, pageable);
+    }
+
+    // 경매 중인 상품 / 즉시 구매만 가능한 상품을 구분해서 조회
+    @Override
+    public Page<Product> getProductsByStatusAndAuction(ProductStatus status, boolean auction, Pageable pageable) {
+        return productRepository.findProductsByStatusAndAuction(status, auction, pageable);
     }
 
     /*
