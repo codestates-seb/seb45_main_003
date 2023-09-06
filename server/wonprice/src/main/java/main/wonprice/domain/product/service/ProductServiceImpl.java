@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.repository.ProductRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -81,9 +82,16 @@ public class ProductServiceImpl implements ProductService {
         return product.orElseThrow();
     }
 
+//    회원이 등록한 상품 목록
     @Override
     public List<Product> findMembersProduct(Pageable pageable, Member member) {
 
         return productRepository.findAllBySeller(member, pageable).getContent();
+    }
+
+//    회원이 구매 완료한 상품 목록
+    public List<Product> findMembersTradedProduct(Pageable pageable, Member member) {
+
+        return productRepository.findAllByBuyerIdAndStatus(member.getMemberId(), ProductStatus.AFTER, pageable).getContent();
     }
 }

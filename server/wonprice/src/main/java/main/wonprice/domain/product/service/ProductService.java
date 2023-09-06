@@ -21,4 +21,6 @@ public interface ProductService {
     Product deleteOneById(Long productId,Member loginMember);
 
     Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member loginMember);
-}
+
+    public List<Product> findMembersTradedProduct(Pageable pageable, Member member);
+    }
