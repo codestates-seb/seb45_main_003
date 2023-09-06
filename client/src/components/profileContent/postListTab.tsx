@@ -4,6 +4,13 @@ import { COLOR } from "../../contstants/color";
 import { FONT_SIZE } from "../../contstants/font";
 import axios from "axios";
 
+interface products {
+  productId: number;
+  title: string;
+  createAt: string;
+  img: string;
+}
+
 const PostListContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -37,17 +44,27 @@ const PostListTab = (): JSX.Element => {
     { value: "leaveReview", text: "작성한 거래 후기" },
     { value: "getReview", text: "받은 거래 후기" },
   ];
-  const [cellPost, setCellPost] = useState([]);
+  const [cellPost, setCellPost] = useState<products[]>([]);
   const [menu, setMenu] = useState("cell");
   const getPostlist = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/my-page/products`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/myPage/products`, {
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      });
       setCellPost(res.data);
-    } catch (error) {}
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          console.log(error);
+        }
+      }
+    }
   };
   useEffect(() => {
     getPostlist();
-  }, [cellPost]);
+  }, []);
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">
@@ -62,16 +79,16 @@ const PostListTab = (): JSX.Element => {
         ))}
       </ul>
       <div className="tabContent">
-        {/* menu === "cell" && 
+        {menu === "cell" &&
           cellPost.map((el) => (
-            <div>
+            <div key={el.productId}>
               <img src={el.img}></img>
               <div>
                 <div className="postTitle">{el.title}</div>
                 <div className="createdAt">{el.createAt}</div>
               </div>
             </div>
-          ))*/}
+          ))}
         {menu === "leaveReview" && (
           <div>
             <img></img>
