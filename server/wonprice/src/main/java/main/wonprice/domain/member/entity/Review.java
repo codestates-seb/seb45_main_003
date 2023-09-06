@@ -16,9 +16,6 @@ public class Review {
     private Long reviewId;
 
     @Column(nullable = false)
-    private Long postMemberId;
-
-    @Column(nullable = false)
     private String title;
 
     @Lob
@@ -36,7 +33,7 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Member postMember;
 
     @ManyToOne
     @JoinColumn(name = "product_id")

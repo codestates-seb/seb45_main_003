@@ -48,7 +48,7 @@ public class Member {
     @Column(nullable = true, name = "profile_image")
     private String image = null;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "postMember")
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
