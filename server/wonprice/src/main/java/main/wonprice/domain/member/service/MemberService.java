@@ -61,18 +61,22 @@ public class MemberService {
 
         Member findMember = findVerifyMember(member.getMemberId());
 
-        if (member.getName() != null) {
+/*        if (member.getName() != null) {
             findMember.setName(member.getName());
         }
         if (member.getPhone() != null) {
             findMember.setPhone(member.getPhone());
         }
-        if (member.getPassword() != null) {
-            findMember.setPassword(passwordEncoder.encode(member.getPassword()));
-        }
+
+
         if (member.getImage() != null) {
             findMember.setImage(member.getImage());
         }
+ */
+        if (member.getPassword() != null) {
+            findMember.setPassword(passwordEncoder.encode(member.getPassword()));
+        }
+
 
         return findMember;
     }
