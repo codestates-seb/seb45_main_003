@@ -7,9 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     Page<Review> findAllByPostMember(Pageable pageable, Member member);
 
     Page<Review> findAllByProductSeller(Pageable pageable, Member member);
+
+    Optional<Review> findByPostMemberAndProduct(Member postMember, Product product);
 }
