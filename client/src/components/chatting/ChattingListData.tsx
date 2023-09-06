@@ -7,6 +7,19 @@ import moment from "moment";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
+export type Chat = {
+  chatRoomId: number;
+  memberId: number;
+  productId: number;
+  deletedAt: string;
+
+  chatRoom: {
+    memberId: number;
+    deletedAt: string;
+  };
+  message: string;
+};
+
 const Container = styled.button`
   display: flex;
   padding: 0.75rem 0.5rem;
@@ -38,15 +51,13 @@ const Container = styled.button`
   }
 `;
 const ChattingListData: React.FC = () => {
-  const [chatList, setChatList] = useRecoilState(chatListState);
-  const isLoggedIn = useRecoilValue(loginState); // 로그인 상태를 가져옵니다.
+  const [chatList, setChatList] = useRecoilState<Chat[]>(chatListState); // 타입을 명시합니다.
+  const isLoggedIn = useRecoilValue(loginState);
   const navigate = useNavigate();
 
   const handleRoomClick = (chatRoomId: number) => {
     navigate(`/room/${chatRoomId}`);
   };
-  // 토큰을 검증하는 로직이 필요하면 여기에 추가할 수 있습니다.
-
   useEffect(() => {
     if (isLoggedIn) {
       // 로그인 상태가 true일 때만 API 호출을 합니다.
@@ -78,16 +89,16 @@ const ChattingListData: React.FC = () => {
     <>
       <ul>
         {chatList.map((chat, index) => (
-          <Container key={index} onClick={() => handleRoomClick(chat.chatRoom.chatRoomId)}>
+          <Container key={index} onClick={() => handleRoomClick(chat.chatRoomId)}>
             {" "}
+            {/* 수정된 부분 */}
             <li key={index}>
               <div className="chatRoom">
-                <div>{chat.chatParticipantId}</div>
+                {/* chat의 구조에 따라 수정된 부분 */}
+                <div>{chat.chatRoomId}</div>
                 <div>Member ID: {chat.memberId}</div>
-
-                {/* moment.js를 사용하여 날짜 형식을 "YYYY-MM-DD"로 변경 */}
                 <div className="createdAt">
-                  {moment(chat.chatRoom.createdAt).format("YYYY-MM-DD")}
+                  {moment(chat.chatRoom.deletedAt).format("YYYY-MM-DD")} {/* 수정된 부분 */}
                 </div>
               </div>
             </li>
@@ -97,5 +108,4 @@ const ChattingListData: React.FC = () => {
     </>
   );
 };
-
 export default ChattingListData;

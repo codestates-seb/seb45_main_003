@@ -18,7 +18,6 @@ const Container = styled.div`
   align-items: center;
   gap: 1rem;
   flex-shrink: 0;
-  /* background-color: #2077c4; */
   text-align: center;
 
   border-radius: 0.375rem;
@@ -29,7 +28,7 @@ const Container = styled.div`
     display: flex;
     flex-direction: row;
     width: calc(100%);
-    background-color: aqua;
+    /* background-color: aqua; */
     justify-content: space-between;
     align-items: center;
     .ProfileImg {
