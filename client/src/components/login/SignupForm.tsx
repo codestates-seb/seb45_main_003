@@ -1,13 +1,13 @@
 import axios from "axios";
-import { useForm } from "react-hook-form";
-import { styled } from "styled-components";
 import { useState } from "react";
-import { useModal } from "../../hooks/useModal";
+import { useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
+import { styled } from "styled-components";
 import { toSignup } from "../../atoms/atoms";
+import { COLOR } from "../../contstants/color";
+import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import { COLOR } from "../../contstants/color";
 
 //폼에서 사용하는 데이터
 interface SignupForm {
@@ -98,40 +98,62 @@ const SignupForm = (): JSX.Element => {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/members`, data);
       if (response.status === 201) {
         toggleModal();
-      } else {
-        setError("formError", {
-          message: "잘못 작성된 부분이 있습니다.",
-        });
       }
     } catch (error) {
-      console.log(`Error: ${error}`);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          setError("formError", {
+            message: "잘못 작성된 부분이 있습니다.",
+          });
+        }
+      }
     }
   };
   //인증코드를 보내달라는 요청 함수
   const reqConfirmCode = async (data: string) => {
     //새로고침 방지
     event?.preventDefault();
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth/send`, {
-      email: data,
-    });
-    if (response.status === 200) {
-      console.log("succsess");
-      //인증코드 전송시 안내문 제공
-      setSuccess({ ...success, req: true });
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth/send`, {
+        email: data,
+      });
+      if (response.status === 200) {
+        console.log("succsess");
+        //인증코드 전송시 안내문 제공
+        setSuccess({ ...success, req: true });
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 409) {
+          setError("formError", {
+            message: "유효하지 않은 이메일입니다.",
+          });
+        }
+      }
     }
   };
   //사용자가 작성한 인증코드를 서버에서 검증하게 보내주는 함수
   const testConfirmCode = async (data: SignupForm) => {
     //새로고침 방지
     event?.preventDefault();
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth`, {
-      email: data.email,
-      authCode: data.confirmcode,
-    });
-    if (response.status === 200) {
-      console.log("succsess");
-      //인증성공시 인증코드 작성란과 이메일 작성란을 비활성화
-      setSuccess({ ...success, confirm: true });
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth`, {
+        email: data.email,
+        authCode: data.confirmcode,
+      });
+      if (response.status === 200) {
+        console.log("succsess");
+        //인증성공시 인증코드 작성란과 이메일 작성란을 비활성화
+        setSuccess({ ...success, confirm: true });
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          setError("formError", {
+            message: "인증코드가 다릅니다.",
+          });
+        }
+      }
     }
   };
 
@@ -174,9 +196,9 @@ const SignupForm = (): JSX.Element => {
           />
           <Button
             type="button"
-            text="인증요청"
+            $text="인증요청"
             onClick={() => reqConfirmCode(getValues("email"))}
-            design="yellow"
+            $design="yellow"
           />
         </div>
         {errors.email && <div className="errormessage">{errors.email?.message}</div>}
@@ -195,9 +217,9 @@ const SignupForm = (): JSX.Element => {
           />
           <Button
             type="button"
-            text="인증하기"
+            $text="인증하기"
             onClick={() => testConfirmCode(getValues())}
-            design="yellow"
+            $design="yellow"
           />
         </div>
         {errors.confirmcode && <div className="errormessage">{errors.confirmcode?.message}</div>}
@@ -254,7 +276,7 @@ const SignupForm = (): JSX.Element => {
           })}
         />
         {errors.phone && <div className="errormessage">{errors.phone?.message}</div>}
-        <Button type="submit" disabled={isSubmitting} text="회원가입" design="black" />
+        <Button type="submit" disabled={isSubmitting} $text="회원가입" $design="black" />
       </StyledSignupForm>
       <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
         <StyledModal>
@@ -262,7 +284,7 @@ const SignupForm = (): JSX.Element => {
             <p>회원가입 되셨습니다!</p>
           </div>
           <div className="modalButtonContainer">
-            <Button type="button" text="확인" onClick={() => changeform()} design="black" />
+            <Button type="button" $text="확인" onClick={() => changeform()} $design="black" />
           </div>
         </StyledModal>
       </Modal>

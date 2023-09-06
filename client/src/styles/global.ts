@@ -5,7 +5,7 @@ import "./font.ts";
 
 export const GlobalStyle = createGlobalStyle`
 body,
-textarea {
+textarea, input {
   margin: 0;
   font-family: "Pretendard";
   -webkit-font-smoothing: antialiased;
@@ -39,29 +39,36 @@ ul {
   letter-spacing: -0.1px;
 }
 h1 {
-  ${FONT_SIZE.font_32}
+  font-size: ${FONT_SIZE.font_32};
 }
 h2 {
-  ${FONT_SIZE.font_24}
+  font-size: ${FONT_SIZE.font_24};
 }
 h3 {
-  ${FONT_SIZE.font_20}
+  font-size: ${FONT_SIZE.font_20};
 }
 h4 {
-  ${FONT_SIZE.font_18}
+  font-size: ${FONT_SIZE.font_18};
 }
 h5 {
-  ${FONT_SIZE.font_16}
+  font-size: ${FONT_SIZE.font_16};
 }
 ul {
   list-style: none;
 }
-input, textarea {
+input:not([type=checkbox], [type=radio]), textarea {
   font-size: 1rem;
   padding: .5rem .75rem;
   border-radius: 6px;
   border: 1px solid ${COLOR.border};
+
+  &:hover, &:focus {
+    border: 1px solid ${COLOR.primary};
+    outline: 1px solid ${COLOR.primary};
+  }
 }
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance: none;margin: 0;}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance: none;margin: 0;}
 textarea {
   resize: none;
 }

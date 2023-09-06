@@ -39,3 +39,14 @@ export const userState = atom<User | null>({
 //   key: "dropDownState",
 //   default: false,
 // });
+
+// 컨텐츠 100vh 유지를 위한 헤더,푸터 높이 저장
+export const headerHeightState = atom<number>({
+  key: "headerHeightState",
+  default: 0,
+});
+
+export const footerHeightState = atom<number>({
+  key: "footerHeightState",
+  default: 0,
+});

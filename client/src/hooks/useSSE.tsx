@@ -1,13 +1,12 @@
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { useEffect } from "react";
-import { PostType } from "../components/post/List";
 
-interface UseSSE {
+interface UseSSE<T> {
   url: string;
-  callback: (newData: PostType[]) => void;
+  callback: (newData: T[]) => void;
 }
 
-const useSSE = ({ url, callback }: UseSSE) => {
+const useSSE = <T,>({ url, callback }: UseSSE<T>) => {
   useEffect(() => {
     const eventSource = new EventSourcePolyfill(url, {
       headers: {

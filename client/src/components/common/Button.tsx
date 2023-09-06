@@ -3,9 +3,9 @@ import { COLOR } from "../../contstants/color";
 
 type ButtonProp = {
   type: "button" | "submit" | "reset" | undefined;
-  size?: string;
-  design?: string;
-  text: string;
+  $size?: string;
+  $design?: string;
+  $text: string;
   disabled?: boolean;
   onClick?: () => void;
   onSubmit?: () => void;
@@ -18,10 +18,10 @@ const StyledButton = styled.button<ButtonProp>`
   border-radius: 6px;
   font-weight: 600;
   transition: 0.3s;
-  padding: ${(props) => (props.size === "big" ? "1.25rem 2.5rem" : "0.5rem 1.25rem")};
-  font-size: ${(props) => (props.size === "big" ? "1.5rem" : "1rem")};
+  padding: ${(props) => (props.$size === "big" ? "1.25rem 2.5rem" : "0.5rem 1.25rem")};
+  font-size: ${(props) => (props.$size === "big" ? "1.5rem" : "1rem")};
   background: ${(props) => {
-    switch (props.design) {
+    switch (props.$design) {
       case "black":
         return COLOR.darkText;
       case "yellow":
@@ -32,7 +32,7 @@ const StyledButton = styled.button<ButtonProp>`
   }};
 
   color: ${(props) => {
-    switch (props.design) {
+    switch (props.$design) {
       case "outline":
         return COLOR.darkText;
       default:
@@ -41,7 +41,7 @@ const StyledButton = styled.button<ButtonProp>`
   }};
 
   border: ${(props) => {
-    switch (props.design) {
+    switch (props.$design) {
       case "outline":
         return "1px solid" + COLOR.primary;
       default:
@@ -51,7 +51,7 @@ const StyledButton = styled.button<ButtonProp>`
 
   &:hover {
     background: ${(props) => {
-      switch (props.design) {
+      switch (props.$design) {
         case "black":
           return COLOR.primary;
         case "yellow":
@@ -62,7 +62,7 @@ const StyledButton = styled.button<ButtonProp>`
     }};
 
     color: ${(props) => {
-      switch (props.design) {
+      switch (props.$design) {
         case "outline":
           return COLOR.primary;
         case "black":
@@ -71,7 +71,7 @@ const StyledButton = styled.button<ButtonProp>`
     }};
 
     border: ${(props) => {
-      switch (props.design) {
+      switch (props.$design) {
         case "outline":
           return "1px solid" + COLOR.primary;
         default:
@@ -84,7 +84,7 @@ const StyledButton = styled.button<ButtonProp>`
 const Button = ({ ...props }: ButtonProp): JSX.Element => {
   return (
     <StyledButton {...props} disabled={props.disabled} type={props.type}>
-      {props.text}
+      {props.$text}
     </StyledButton>
   );
 };
