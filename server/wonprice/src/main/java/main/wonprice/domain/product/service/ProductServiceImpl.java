@@ -6,6 +6,7 @@ import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.repository.ProductRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -56,6 +57,18 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findProductsByCategoryId(categoryId, pageable);
     }
 
+    // 상품 상태 별 조회 (거래중:BEFORE, 거래완료:AFTER)
+    @Override
+    public Page<Product> getProductsByStatus(ProductStatus status, Pageable pageable) {
+        return productRepository.findProductsByStatus(status, pageable);
+    }
+
+    // 경매 중인 상품 / 즉시 구매만 가능한 상품을 구분해서 조회
+    @Override
+    public Page<Product> getProductsByStatusAndAuction(ProductStatus status, boolean auction, Pageable pageable) {
+        return productRepository.findProductsByStatusAndAuction(status, auction, pageable);
+    }
+
     /*
         특정 상품 조회
         - views(조회수): +1 씩 증가
@@ -86,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member member) {
         Product product = findExistsProduct(productId);
-        product.setCreateAt(LocalDateTime.now());
+        product.setModifiedAt(LocalDateTime.now());
         return productRepository.save(product.update(productRequestDto));
     }
 
