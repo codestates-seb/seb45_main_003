@@ -1,5 +1,6 @@
 package main.wonprice.config;
 
+import lombok.AllArgsConstructor;
 import main.wonprice.auth.exception.CustomAuthenticationEntryPoint;
 import main.wonprice.auth.filter.JwtAuthenticationFilter;
 import main.wonprice.auth.filter.JwtVerificationFilter;
@@ -9,6 +10,7 @@ import main.wonprice.auth.handler.CustomAuthenticationSuccessHandler;
 import main.wonprice.auth.jwt.JwtTokenizer;
 import main.wonprice.auth.jwt.service.JwtService;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
+import main.wonprice.domain.member.repository.MemberRepository;
 import main.wonprice.domain.member.service.MemberService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,18 +28,14 @@ import java.util.List;
 
 
 @Configuration
+@AllArgsConstructor
 public class SecurityConfig {
 
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
     private final JwtService jwtService;
+    private final MemberRepository memberRepository;
 
-
-    public SecurityConfig(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils, MemberService memberService, JwtService jwtService) {
-        this.jwtTokenizer = jwtTokenizer;
-        this.authorityUtils = authorityUtils;
-        this.jwtService = jwtService;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -95,7 +93,7 @@ public class SecurityConfig {
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer, jwtService);
-            jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler());
+            jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler(memberRepository));
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
             jwtAuthenticationFilter.setFilterProcessesUrl("/members/login");
 
