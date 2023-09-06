@@ -65,7 +65,7 @@ const ChattingListData: React.FC = () => {
             headers: {
               Authorization: `Bearer ${accessToken}`, // 헤더에 토큰을 추가합니다.
               // 로컬일때만 사용 배포링크 사용시 제거
-              "ngrok-skip-browser-warning": "69420",
+              // "ngrok-skip-browser-warning": "69420",
             },
           });
           setChatList(response.data);
