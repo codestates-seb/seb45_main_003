@@ -41,7 +41,7 @@ public class ReviewController {
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("/members/myPage/reviews/wrote")
+    @GetMapping("/members/my-page/reviews/wrote")
     public ResponseEntity fingLoginMemberwroteReview(Pageable pageable) {
 
         Member loginMember = memberService.findLoginMember();
@@ -53,7 +53,7 @@ public class ReviewController {
     }
 
 
-    @GetMapping("/members/myPage/reviews")
+    @GetMapping("/members/my-page/reviews")
     public ResponseEntity findLoginMembersReview(Pageable pageable) {
 
         Member loginMember = memberService.findLoginMember();

@@ -38,7 +38,7 @@ public class MemberController {
         return new ResponseEntity("🌟🌟🌟 Success 🌟🌟🌟",HttpStatus.CREATED);
     }
 
-    @GetMapping("/myPage")
+    @GetMapping("/my-page")
     public ResponseEntity getLoginMember() {
 
         Member loginMember = memberService.findLoginMember();
@@ -48,7 +48,7 @@ public class MemberController {
     }
 
     //    마이페이지용 로그인한 회원 게시물 목록 조회
-    @GetMapping("/myPage/products")
+    @GetMapping("/my-page/products")
     public ResponseEntity findLoginMembersProduct(Pageable pageable) {
 
         Member loginMember = memberService.findLoginMember();
