@@ -71,7 +71,7 @@ const ReviewForm = () => {
           />
         </section>
 
-        <Button text="후기 등록" type="submit" onClick={handleSubmit(onSubmit)} />
+        <Button $text="후기 등록" type="submit" onClick={handleSubmit(onSubmit)} />
       </StyledUploadForm>
 
       <Modal {...{ isOpen, setIsOpen, closeModal, toggleModal }}>
@@ -90,7 +90,7 @@ const ReviewForm = () => {
           <Button
             $size="big"
             $design="black"
-            text="확인"
+            $text="확인"
             type="button"
             onClick={() => {
               submitResult ? navigate("/product") : setIsOpen(!isOpen);
