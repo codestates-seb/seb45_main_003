@@ -34,10 +34,6 @@ public class MemberService {
 
     public Member joinMember(Member member) {
 
-        checkExistName(member.getName());
-        checkExistEmail(member.getEmail());
-        checkExistPhone(member.getPhone());
-
         String encryptedPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(encryptedPassword);
 
@@ -61,11 +57,7 @@ public class MemberService {
 
     public Member updateMember(Member member) {
 
-        Member loginMember = findLoginMember();
-
-        if (!loginMember.getMemberId().equals(member.getMemberId()) & !loginMember.getRoles().contains("ADMIN")) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
-        }
+        validateOwner(member.getMemberId());
 
         Member findMember = findVerifyMember(member.getMemberId());
 
@@ -87,26 +79,22 @@ public class MemberService {
 
     public void deleteMember(Long memberId) {
 
-        Member loginMember = findLoginMember();
-
-        if (!loginMember.getMemberId().equals(memberId) & !loginMember.getRoles().contains("ADMIN")) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
-        }
+        validateOwner(memberId);
 
         Member findMember = findVerifyMember(memberId);
         findMember.setDeletedAt(LocalDateTime.now());
     }
 
 //    입력한 이름으로 가입한 회원이 있는지 확인
-    private void checkExistName(String name) {
+    public void checkExistName(String name) {
         Optional<Member> findByNameMember = memberRepository.findByName(name);
         if (findByNameMember.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NAME_EXISTS);
         }
     }
 
-//    입력한 이메일으로 가입한 회원이 있는지 확인
-    private void checkExistEmail(String email) {
+//    입력한 이메일으로 가입한 회원이 있는지 확인 -> 이메일로 인증 코드 요청 시 확인
+    public void checkExistEmail(String email) {
         Optional<Member> findByEmailMember = memberRepository.findByEmail(email);
         if (findByEmailMember.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_EMAIL_EXISTS);
@@ -114,7 +102,7 @@ public class MemberService {
     }
 
 //    입력한 번호로 가입한 회원이 있는지 확인
-    private void checkExistPhone(String phone) {
+    public void checkExistPhone(String phone) {
         Optional<Member> findByPhoneMember = memberRepository.findByPhone(phone);
         if (findByPhoneMember.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_PHONE_EXISTS);
@@ -157,6 +145,20 @@ public class MemberService {
 
         if (!result) {
             throw new BusinessLogicException(ExceptionCode.INVALID_PASSWORD);
+        }
+    }
+
+//    게시물, 리뷰, 찜 등 행위 주체와 요청을 보낸 회원이 동일한지 검증
+    public void validateOwner(Long memberId) {
+
+        Member loginMember = findLoginMember();
+        if (loginMember.getRoles().contains("ADMIN")) {
+            return;
+        }
+
+        boolean hasAuthority = loginMember.getMemberId().equals(memberId);
+        if (!hasAuthority) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHENTICATED);
         }
     }
 }

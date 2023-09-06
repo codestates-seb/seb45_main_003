@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,10 +35,8 @@ public class ChatRoom {
 //    private Member seller;
 
     @OneToMany(mappedBy = "chatRoom")
-    @JsonIgnore
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
 
     @OneToMany(mappedBy = "chatRoom")
-    @JsonIgnore
-    private List<ChatParticipant> chatParticipants;
+    private List<ChatParticipant> chatParticipantList = new ArrayList<>();
 }
