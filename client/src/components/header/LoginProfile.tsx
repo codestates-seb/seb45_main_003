@@ -7,14 +7,10 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 // import { red } from "@mui/material/colors";
 
 const ItemBox = styled.div`
-  /* max-width: 15.0625rem;
-  height: 4.3125rem; */
   align-self: stretch;
   width: calc(100% - 3rem);
-  border: 1px solid #ebebeb;
   padding: 1.0625rem 1.8125rem 1.125rem 1.4375rem;
-
-  /* background-color: aqua; */
+  border-radius: 0.375rem;
 `;
 
 // 버튼 호버 스타일
@@ -36,10 +32,14 @@ const StyledLink = styled(Link)`
 `;
 
 const Container = styled.div`
+  background-color: white;
   display: flex;
-  width: 241px;
+  width: 15.0625rem;
   flex-direction: column;
   align-items: flex-start;
+  border-radius: 0.375rem;
+  /* border: 1px solid #ebebeb; */
+  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
 `;
 
 // 프롭스 타입 정의

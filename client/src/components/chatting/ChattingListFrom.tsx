@@ -18,7 +18,6 @@ const Container = styled.div`
   align-items: center;
   gap: 1rem;
   flex-shrink: 0;
-  background-color: #2077c4;
   text-align: center;
 
   border-radius: 0.375rem;
@@ -54,19 +53,19 @@ const Container = styled.div`
   }
   .SearchBar {
     display: flex;
+    flex-direction: row;
     max-width: 11.875rem;
     max-height: 3rem;
-    width: calc(100%);
-    background-color: aqua;
     align-items: center;
-    background-color: white;
-    padding: 12px 16px;
-    gap: 8px;
-    background: var(--cool-gray-10, #f2f4f8);
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
     border-radius: 0.375rem;
   }
   .data {
-    width: calc(100%);
+    width: 100%;
+  }
+  @media (max-width: 64rem) {
+    width: calc(100% - 2rem);
   }
 `;
 
