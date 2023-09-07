@@ -57,7 +57,7 @@ public class ProductController {
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<Page<ProductResponseDto>> getProductCategory(@PathVariable Long categoryId,
                                                                        @RequestParam(defaultValue = "0") int page,
-                                                                       @RequestParam(defaultValue = "10") int size) {
+                                                                       @RequestParam(defaultValue = "8") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
         Page<Product> products = productService.getProductsByCategory(categoryId, pageable);
         Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
@@ -69,7 +69,7 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponseDto>> getAvailableProducts(
             @RequestParam(name = "type", defaultValue = "all") String type,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "8") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
 
         Page<Product> products;
