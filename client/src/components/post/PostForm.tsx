@@ -1,10 +1,12 @@
 import axios from "axios";
 import { pickBy } from "lodash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import { styled } from "styled-components";
+import { loginState } from "../../atoms/atoms";
 import S3 from "../../aws-config";
 import SelectInput from "../../components/common/selectInput";
 import { CATEGORY } from "../../constants/category";
@@ -14,6 +16,7 @@ import { API_PATHS } from "../../constants/path";
 import { FAIL, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { useModal } from "../../hooks/useModal";
+import { getAuthToken } from "../../util/auth";
 import Button from "../common/Button";
 import ImageInput from "../common/ImageInput";
 import Modal from "../common/Modal";
@@ -73,22 +76,28 @@ const StyledUploadForm = styled.section`
       }
 
       .input {
+        width: 100%;
         position: relative;
+        display: flex;
+        flex-flow: column;
       }
     }
 
     #title {
       max-width: 37.5rem;
-      width: 100%;
     }
 
     input[name="currentAuctionPrice"],
-    input[name="immediatelyBuyPrice"],
-    input[name="closingDate"] {
+    input[name="immediatelyBuyPrice"] {
       box-sizing: border-box;
       max-width: 15rem;
       width: 100%;
     }
+  }
+
+  .image_box {
+    display: flex;
+    flex-flow: row;
   }
 
   label[for="images"] {
@@ -97,14 +106,12 @@ const StyledUploadForm = styled.section`
     align-items: center;
     justify-content: center;
     gap: 0.25rem;
-    max-width: 9.375rem;
-    width: 100%;
+    width: 9.375rem;
     aspect-ratio: 1/1;
     background: #f7f7f7;
     color: ${COLOR.lightText};
     font-size: ${FONT_SIZE.font_18};
     border: 1px solid ${COLOR.border};
-    border-radius: 6px;
   }
 
   input[type="file"] {
@@ -118,7 +125,7 @@ const StyledUploadForm = styled.section`
     & + span {
       color: ${COLOR.gray_800};
       position: absolute;
-      right: 0.75rem;
+      left: 13.375rem;
       top: 0.5rem;
     }
   }
@@ -141,14 +148,18 @@ const StyledUploadForm = styled.section`
     }
   }
 
-  .image-input {
+  input[type="time"] {
+    width: 7.5rem;
+  }
+
+  .image_input {
     display: flex;
     flex-flow: row;
     align-items: center;
     gap: 1rem;
   }
 
-  .image-preview {
+  .image_preview {
     max-width: 9.375rem;
     aspect-ratio: 1/1;
     object-fit: cover;
@@ -197,8 +208,20 @@ const UploadForm = () => {
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
   const mutation = useMutation((data: FieldValues) =>
-    axios.post(API_PATHS.products.default(""), data, {}),
+    axios.post(API_PATHS.products.default(""), data, {
+      headers: {
+        Authorization: token,
+      },
+    }),
   );
+  const isLogin = useRecoilValue(loginState);
+  const token = getAuthToken();
+
+  useEffect(() => {
+    if (!isLogin) {
+      navigate("/login");
+    }
+  }, [isLogin]);
 
   const onSubmit = async (data: FieldValues) => {
     try {
@@ -207,7 +230,7 @@ const UploadForm = () => {
 
       for (const image of images) {
         const params: AWS.S3.PutObjectRequest = {
-          Bucket: "wonprice-seb45-003",
+          Bucket: "wonprice-test1",
           Key: `${new Date().toISOString() + "-" + image.name}`,
           Body: image,
           ContentType: image.type,
@@ -223,7 +246,8 @@ const UploadForm = () => {
         ...data,
         auction: isAuction,
         images: imagePaths,
-        closedAt: data.closingDate + " " + data.closingTime,
+        closedAt:
+          data.closingDate && data.closingTime ? `${data.closingDate} ${data.closingTime}` : "",
       };
       delete data.closingDate;
       delete data.closingTime;
@@ -263,7 +287,6 @@ const UploadForm = () => {
               handleChange={handleChange}
               formState={formState}
             />
-
             <TextInput
               register={register}
               options={{
@@ -276,7 +299,7 @@ const UploadForm = () => {
             />
 
             <Controller
-              name="category"
+              name="categoryId"
               control={control}
               defaultValue=""
               render={({ field }) => (

@@ -52,11 +52,18 @@ function App() {
         {
           path: "/product",
           element: <PostsList />,
+          children: [
+            {
+              path: ":category",
+              element: <PostsList />,
+              children: [],
+            },
+          ],
         },
 
         // 6) 게시글 상세 페이지
         {
-          path: "/product/:item",
+          path: "/product/:category/:item",
           element: <PostInformation />,
         },
 
