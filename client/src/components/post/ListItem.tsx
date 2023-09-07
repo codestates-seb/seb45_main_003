@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
@@ -46,6 +46,7 @@ const StyledItem = styled.li`
 `;
 
 const ListItem = (props: ItemProps): JSX.Element => {
+  const location = useLocation();
   const { data } = props;
   const category = findCategory(data.categoryId);
 

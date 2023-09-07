@@ -52,6 +52,7 @@ public interface ProductMapper {
                 .currentAuctionPrice(product.getCurrentAuctionPrice())
                 .closedAt(product.getClosedAt())
                 .categoryId(product.getCategory().getCategoryId())
+                .images(product.getProductPictures())
                 .build();
     }
 
