@@ -42,8 +42,8 @@ public class ProductController {
         Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember, category));
 
         /* 대표 */
-//        log.info("productRequestDto.getPictures() : " + productRequestDto.getImages());
         for (String imageUrl : productRequestDto.getImages()) {
+            log.info("imageUrl" + imageUrl);
             pictureService.createPicture(imageUrl, product);
         }
         /* 대표 */
