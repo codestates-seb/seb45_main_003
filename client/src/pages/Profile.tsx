@@ -24,7 +24,7 @@ const Profile = (): JSX.Element => {
     console.log(isLogin);
   }
   //refresh 살아있는데 access만료시 login false로 간주중
-
+  //거래내역 대신에 판매내역, 그리고 구매내역도 추가해야 함
   return (
     <ProfileContainer>
       <ProfileTab />

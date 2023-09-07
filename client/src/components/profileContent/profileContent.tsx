@@ -11,6 +11,7 @@ import PostListTab from "./postListTab";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
 import { authInstance } from "../../interceptors/interceptors";
+import { useLocation } from "react-router-dom";
 
 interface Profile {
   memberId: number;
@@ -127,7 +128,9 @@ const StyledModal = styled.form`
 const ProfileContent = (): JSX.Element => {
   const [profile, setProfile] = useState<Profile>({ memberId: 0, name: "", email: "", phone: "" });
   // const Id = window.location.search
-  const Id = localStorage.getItem("Id");
+  const loginUserId = localStorage.getItem("Id");
+  const location = useLocation();
+  const Id = location.pathname.slice(9);
   const [pass, setPass] = useState(false);
   const {
     register,
@@ -191,17 +194,19 @@ const ProfileContent = (): JSX.Element => {
       <ProfileContentContainer>
         <div className="topContainer">
           <p className="menuTitle">프로필</p>
-          <Button
-            type="button"
-            $text="비밀번호 변경"
-            onClick={() => toggleModal()}
-            $design="black"
-          />
+          {loginUserId === Id && (
+            <Button
+              type="button"
+              $text="비밀번호 변경"
+              onClick={() => toggleModal()}
+              $design="black"
+            />
+          )}
         </div>
         <div className="profileInfoContainer">
           <div className="imgContainer">
             <img className="profileImg"></img>
-            <Button type="button" $text="이미지 등록" $design="black" />
+            {loginUserId === Id && <Button type="button" $text="이미지 등록" $design="black" />}
           </div>
           <div className="labelContainer">
             <label className="infoLabel">성함</label>

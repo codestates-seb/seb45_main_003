@@ -7,6 +7,7 @@ import { useValidateToken } from "../../hooks/useValidateToken";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
 import { authInstance } from "../../interceptors/interceptors";
+import { useLocation } from "react-router-dom";
 
 interface products {
   productId: number;
@@ -104,8 +105,9 @@ const PostListTab = (): JSX.Element => {
   const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
   const isLogin = useRecoilValue(loginState);
-  const { accessToken, validateAccessToken } = useValidateToken();
-  const Id = localStorage.getItem("Id");
+  const location = useLocation();
+  const Id = location.pathname.slice(9);
+  const { validateAccessToken } = useValidateToken();
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getPostlist = async () => {
     try {
@@ -138,7 +140,7 @@ const PostListTab = (): JSX.Element => {
     }
   };
   useEffect(() => {
-    validateAccessToken(accessToken);
+    validateAccessToken();
     getPostlist();
     getLeaveReview();
     getRecievedReview();
