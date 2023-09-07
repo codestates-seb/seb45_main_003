@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
 import { ErrorProps } from "../../pages/ErrorIndication";
 
 const StyledError = styled.section`

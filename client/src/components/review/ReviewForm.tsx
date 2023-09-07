@@ -4,8 +4,8 @@ import { FieldValues, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
-import { API_PATHS } from "../../contstants/path";
-import { FAIL, REQUIRED, SUCCESS } from "../../contstants/systemMessage";
+import { API_PATHS } from "../../constants/path";
+import { FAIL, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
@@ -18,11 +18,10 @@ const StyledUploadForm = styled.section`
 
 const ReviewForm = () => {
   const { register, handleSubmit, formState } = useForm<FieldValues>();
-
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
-  const mutation = useMutation((data: FieldValues) => axios.post(API_PATHS.products(""), data, {}));
+  const mutation = useMutation((data: FieldValues) => axios.post(API_PATHS.reviews(""), data, {}));
 
   const onSubmit = async (data: FieldValues) => {
     try {

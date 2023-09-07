@@ -24,7 +24,10 @@ export const API_PATHS = {
     auth: "/email/auth",
     send: "/email/auth/send",
   },
-  products: (id: PathType) => createPath(id, "products"),
+  products: {
+    default: (id: PathType) => createPath(id, "products"),
+    category: (id: PathType) => createPath(id, "products/category"),
+  },
   chat: (id: PathType) => createPath(id, "chat"),
   reviews: (id: PathType) => createPath(id, "reviews"),
   wishes: {

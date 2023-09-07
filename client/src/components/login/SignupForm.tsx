@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { styled } from "styled-components";
 import { toSignup } from "../../atoms/atoms";
-import { COLOR } from "../../contstants/color";
+import { COLOR } from "../../constants/color";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";

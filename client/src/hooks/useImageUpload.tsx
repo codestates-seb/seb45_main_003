@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MAX } from "../contstants/systemMessage";
+import { MAX } from "../constants/systemMessage";
 
 interface UseImageUpload {
   setError: (name: string, error: { type: string; message?: string }) => void;
