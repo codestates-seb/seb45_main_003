@@ -1,6 +1,7 @@
 export const REQUIRED = {
   images: "이미지 등록은 필수입니다.",
   title: "제목은 필수입니다.",
+  category: "카테고리 선택은 필수입니다.",
   description: "상품 설명은 필수입니다.",
   currentAuctionPrice: "경매 시작가는 필수입니다.",
   immediatelyBuyPrice: "즉시 구매가는 필수입니다.",
@@ -25,4 +26,5 @@ export const MAX = {
 
 export const AUCTION = {
   isnot: "즉시 구매만 가능한 상품입니다.",
+  end: "거래가 종료된 상품입니다.",
 };

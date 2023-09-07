@@ -1,23 +1,27 @@
 //드롭다운 메뉴 아이템
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as AddButton } from "../../../assets/images/Add.svg";
 import myImage from "../../../assets/images/Img1.png";
-import { Link } from "react-router-dom";
 
 const ItemContainer = styled.div`
+  font-family: Pretendard Variable;
   display: flex;
   padding: 0.625rem;
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
   max-width: 22rem;
-  width: 100%;
+  min-width: 240px; // 여기만
+  width: calc(100% - 3rem);
   display: flex;
   justify-content: center;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  background-color: white;
+  border-radius: 0.375rem;
 
   .ItemImg {
     border-radius: 10px;
-    width: 100%;
     size: fit;
   }
   @media (max-width: 64rem) {
@@ -27,19 +31,19 @@ const ItemContainer = styled.div`
 
 const Title = styled.div`
   display: flex;
-  padding: 0px 189px 6px 0px;
+  /* padding: 0rem 11.8125rem 0.375rem 0rem; */
   align-items: center;
   align-self: stretch;
 
   color: var(--text-color, #252b42);
   font-family: Pretendard Variable;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 800;
   line-height: 2rem; /* 133.333% */
   letter-spacing: 0.2px;
 
-  @media (max-width: 64rem) {
+  @media (max-width: 56.25rem) {
     width: calc(100% - 2rem);
   }
 `;
@@ -69,11 +73,14 @@ const ItemBox = styled.div`
 
     color: var(--second-text-color, #737373);
     font-family: Pretendard Variable;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-style: normal;
     font-weight: 600;
-    line-height: 24px; /* 171.429% */
-    letter-spacing: 0.2px;
+    line-height: 1.5rem; /* 171.429% */
+    letter-spacing: 0.0125rem;
+    &:hover {
+      color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
+    }
   }
   .count {
     /* background-color: #b0ee35; */
@@ -82,23 +89,28 @@ const ItemBox = styled.div`
 
     color: var(--second-text-color, #737373);
     font-family: Pretendard Variable;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-style: normal;
     font-weight: 600;
-    line-height: 24px; /* 171.429% */
-    letter-spacing: 0.2px;
+    line-height: 1.5rem; /* 171.429% */
+    letter-spacing: 0.0125rem;
   }
   @media (max-width: 64rem) {
     width: calc(100% - 2rem);
   }
 `;
+
 const ListBox = styled.div`
   gap: 1.25rem;
   display: flex;
   flex-direction: column;
+  width: calc(100% - 3rem);
+
   .ItemList {
     padding-bottom: 1rem;
-    /* background: gold; */
+    &:hover {
+      color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
+    }
   }
   @media (max-width: 64rem) {
     width: calc(100% - 2rem);
@@ -113,10 +125,10 @@ const CountBox = styled.div`
 
   color: var(--text-color, #252b42);
   font-family: Pretendard Variable;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: normal;
   font-weight: 600;
-  line-height: 24px; /* 171.429% */
+  line-height: 1.5rem; /* 171.429% */
   letter-spacing: 0.2px;
 
   .count {
@@ -126,11 +138,11 @@ const CountBox = styled.div`
 
     color: var(--second-text-color, #737373);
     font-family: Pretendard Variable;
-    font-size: 14px;
+    font-size: 0.875rem;
     font-style: normal;
     font-weight: 600;
-    line-height: 24px; /* 171.429% */
-    letter-spacing: 0.2px;
+    line-height: 1.5rem; /* 171.429% */
+    letter-spacing: 0.0125rem;
   }
   @media (max-width: 64rem) {
     width: calc(100% - 2rem);
@@ -162,32 +174,39 @@ const MenuItem: React.FunctionComponent<ItemProps> = (props) => {
       <ItemContainer>
         <img className="ItemImg" src={myImage} />
         <ListBox>
-          <Title>Accessories</Title>
+          <Title>Shop By Department</Title>
           <ul>
             <li className="ItemList">
-              <Link to="/product/{categories}">
+              <Link to="/product/books">
                 <Item categories="Books" count="1" />
               </Link>
             </li>
             <li className="ItemList">
-              <Link to="/product/{categories}">
+              <Link to="/product/electronics">
                 <Item categories="Electronics " count="1" />
               </Link>
             </li>
             <li className="ItemList">
-              <Link to="/product/{categories}">
-                <Item categories="Clothes" count="1" />
+              <Link to="/product/clothing">
+                <Item categories="Clothing" count="1" />
               </Link>
             </li>
             <li className="ItemList">
-              <Link to="/product/{categories}">
+              <Link to="/product/food">
                 <Item categories="Food" count="1" />
+              </Link>
+            </li>
+            <li className="ItemList">
+              <Link to="/product/cosmetic">
+                <Item categories="Cosmetic" count="1" />
               </Link>
             </li>
           </ul>
           <div className="ViewAll">
             <CountBox>
-              <div>View all</div>
+              <Link to="/product">
+                <div>View all</div>
+              </Link>
               <div className="count">{props.allCount}0</div>
             </CountBox>
           </div>

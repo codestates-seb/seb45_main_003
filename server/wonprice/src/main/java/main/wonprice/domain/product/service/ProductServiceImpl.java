@@ -69,6 +69,12 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findProductsByStatusAndAuction(status, auction, pageable);
     }
 
+    // 상품 제목 키워드 별로 조회
+    @Override
+    public Page<Product> searchProductsByTitle(String keyword, Pageable pageable) {
+        return productRepository.findByTitleContaining(keyword, pageable);
+    }
+
     /*
         특정 상품 조회
         - views(조회수): +1 씩 증가
