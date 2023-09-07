@@ -54,10 +54,6 @@ const StyledHeader = styled.header`
     top: 4.8125rem;
     right: 0;
   }
-
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  }
 `;
 
 // 로그아웃 상태의 헤더 컴포넌트

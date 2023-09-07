@@ -11,7 +11,7 @@ const Container = styled.div`
   align-items: center;
   gap: 2.25rem;
   align-self: stretch;
-  background-color: #3871a3;
+  /* background-color: #3871a3; */
   text-align: center;
 
   @media (max-width: 64rem) {
