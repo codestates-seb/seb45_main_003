@@ -1,19 +1,16 @@
 // 메인
 import Carousel from "../../components/mainPage/carousel/Carousel";
-import Header from "../../components/common/Header";
-import { BackGround, ContentBox, MainTitle, SecondTitle } from "./MainStyle";
 import FirstScreen from "../../components/mainPage/mainLayout/FirstScreen";
 import SecondScreen from "../../components/mainPage/mainLayout/SecondScreen";
+import { BackGround, ContentBox, MainTitle, SecondTitle } from "./MainStyle";
 
+import background from "../../assets/images/main/background.png";
 import Img1 from "../../assets/images/main/image-3.png";
 import ThirdScreen from "../../components/mainPage/mainLayout/ThirdScreen";
-import { Footer } from "../../components/common/Footer";
-import background from "../../assets/images/main/background.png";
 
 const Main = (): JSX.Element => {
   return (
     <>
-      <Header />
       <BackGround style={{ backgroundImage: `url(${background})` }}>
         <ContentBox>
           <MainTitle>THE PRICE YOU WANT</MainTitle>
@@ -42,7 +39,6 @@ const Main = (): JSX.Element => {
           />
         </ContentBox>
       </BackGround>
-      <Footer />
     </>
   );
 };

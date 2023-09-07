@@ -1,16 +1,17 @@
-import LogInForm from "../components/login/LoginForm";
-import SignupForm from "../components/login/SignupForm";
-import Button from "../components/common/Button";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { toSignup } from "../atoms/atoms";
-import { loginState } from "../atoms/atoms";
 import { styled } from "styled-components";
-import { COLOR } from "../contstants/color";
 import login from "../assets/images/Login/login.png";
 import signup from "../assets/images/Login/signup.png";
-import { useNavigate } from "react-router-dom";
+import { loginState, toSignup } from "../atoms/atoms";
+import Button from "../components/common/Button";
+import LogInForm from "../components/login/LoginForm";
+import SignupForm from "../components/login/SignupForm";
+import { COLOR } from "../constants/color";
 
 const BackgroundContainer = styled.div`
+  padding: 19.6875rem 0;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -86,9 +87,11 @@ const LogIn = (): JSX.Element => {
   };
   const navigate = useNavigate();
   const isLogin = useRecoilValue(loginState);
-  if (isLogin) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (isLogin) {
+      navigate("/");
+    }
+  }, [isLogin]);
   return (
     <BackgroundContainer>
       {loginPageForm ? <img src={login} /> : <img src={signup} />}

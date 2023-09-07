@@ -1,8 +1,28 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
-import axios from "axios";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
+import { useValidateToken } from "../../hooks/useValidateToken";
+import { useRecoilValue } from "recoil";
+import { loginState } from "../../atoms/atoms";
+import { authInstance } from "../../interceptors/interceptors";
+
+interface products {
+  productId: number;
+  title: string;
+  createAt: string;
+  img: string;
+}
+
+interface Review {
+  postMemberId: number;
+  targetMemberId: number;
+  content: string;
+  score: number;
+  createdAt: string;
+  img: string;
+}
 
 const PostListContainer = styled.div`
   display: flex;
@@ -29,6 +49,48 @@ const PostListContainer = styled.div`
       }
     }
   }
+  .tabContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    .postContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: stretch;
+      gap: 0.5rem;
+      border-bottom: 1px solid ${COLOR.border};
+    }
+    .infoContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 0.5rem;
+      padding: 0.5rem 0;
+      font-size: ${FONT_SIZE.font_16};
+      color: ${COLOR.mediumText};
+      .postTitle {
+        font-weight: bold;
+        font-size: ${FONT_SIZE.font_20};
+        color: ${COLOR.darkText};
+      }
+      .productName {
+        font-weight: bold;
+        color: ${COLOR.darkText};
+      }
+      .authorContainer {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5rem;
+        .author {
+          font-weight: bold;
+          color: ${COLOR.darkText};
+        }
+      }
+    }
+  }
 `;
 
 const PostListTab = (): JSX.Element => {
@@ -37,17 +99,50 @@ const PostListTab = (): JSX.Element => {
     { value: "leaveReview", text: "작성한 거래 후기" },
     { value: "getReview", text: "받은 거래 후기" },
   ];
-  const [cellPost, setCellPost] = useState([]);
+  const [cellPost, setCellPost] = useState<products[]>([]);
+  const [leaveReview, setLeaveReview] = useState<Review[]>([]);
+  const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
+  const isLogin = useRecoilValue(loginState);
+  const { accessToken, validateAccessToken } = useValidateToken();
+  const Id = localStorage.getItem("Id");
+  // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getPostlist = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/myPage`);
+      const res = await authInstance.get(`/members/${Id}/products`);
       setCellPost(res.data);
-    } catch (error) {}
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+      }
+    }
+  };
+  const getLeaveReview = async () => {
+    try {
+      const res = await authInstance.get(`/members/${Id}/reviews/post`, {});
+      setLeaveReview(res.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+      }
+    }
+  };
+  const getRecievedReview = async () => {
+    try {
+      const res = await authInstance.get(`/members/${Id}/reviews`);
+      setRecievedReview(res.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+      }
+    }
   };
   useEffect(() => {
+    validateAccessToken(accessToken);
     getPostlist();
-  }, [cellPost]);
+    getLeaveReview();
+    getRecievedReview();
+  }, [isLogin, menu]);
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">
@@ -62,44 +157,46 @@ const PostListTab = (): JSX.Element => {
         ))}
       </ul>
       <div className="tabContent">
-        {/* menu === "cell" && 
+        {menu === "cell" &&
           cellPost.map((el) => (
-            <div>
+            <div className="postContainer" key={el.productId}>
               <img src={el.img}></img>
-              <div>
+              <div className="infoContainer">
                 <div className="postTitle">{el.title}</div>
                 <div className="createdAt">{el.createAt}</div>
               </div>
             </div>
-          ))*/}
-        {menu === "leaveReview" && (
-          <div>
-            <img></img>
-            <div>
-              <div className="postTitle"></div>
-              <div className="productName"></div>
-              <div>
-                <span className="author"></span>
-                <span className="createdAt"></span>
+          ))}
+        {menu === "leaveReview" &&
+          leaveReview.map((el, idx) => (
+            <div key={idx} className="postContainer">
+              <img src={el.img}></img>
+              <div className="infoContainer">
+                <div className="postTitle">글제목</div>
+                <div className="productName">제품이름</div>
+                <div className="authorContainer">
+                  <span className="author">{`작성자 id ${el.postMemberId}`}</span>
+                  <span className="createdAt">{el.createdAt}</span>
+                </div>
+                <p className="postContent">{el.content}</p>
               </div>
-              <p className="postContent"></p>
             </div>
-          </div>
-        )}
-        {menu === "getReview" && (
-          <div>
-            <img></img>
-            <div>
-              <div className="postTitle"></div>
-              <div className="productName"></div>
-              <div>
-                <span className="author"></span>
-                <span className="createdAt"></span>
+          ))}
+        {menu === "getReview" &&
+          recievedReview.map((el, idx) => (
+            <div key={idx} className="postContainer">
+              <img src={el.img}></img>
+              <div className="infoContainer">
+                <div className="postTitle">글제목</div>
+                <div className="productName">제품이름</div>
+                <div className="authorContainer">
+                  <span className="author">{`작성자 id${el.postMemberId}`}</span>
+                  <span className="createdAt">{el.createdAt}</span>
+                </div>
+                <p className="postContent">{el.content}</p>
               </div>
-              <p className="postContent"></p>
             </div>
-          </div>
-        )}
+          ))}
       </div>
     </PostListContainer>
   );

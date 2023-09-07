@@ -5,19 +5,19 @@
 
 .swiper-pagination-bullet-active {
   color: #fff;
-  background: #FFF;
+  background: #fff;
   width: 0.75rem;
   height: 0.75rem;
 }
 
 .swiper-pagination-bullet {
   color: #fff;
-  background: #FFF;
+  background: #fff;
   width: 0.75rem;
   height: 0.75rem;
 }
 
-.swiper-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet,
+.swiper-horizontal > .swiper-pagination-bullets .swiper-pagination-bullet,
 .swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet {
   margin: 0 var(--swiper-pagination-bullet-horizontal-gap, 5px);
 }
@@ -26,7 +26,7 @@
   background: url(../../../assets/images/ButtonR.svg) no-repeat;
   background-size: 100% auto;
   background-position: center;
-  margin-right: 10rem;
+  margin-right: 15%;
   position: fixed;
   width: 3.75rem;
   height: 3.75rem;
@@ -36,13 +36,8 @@
   background: url(../../../assets/images/ButtonL.svg) no-repeat;
   background-size: 100% auto;
   background-position: center;
-  margin-left: 10rem;
+  margin-left: 15%;
   position: fixed;
   width: 3.75rem;
   height: 3.75rem;
-
-
-
-
-
 }
