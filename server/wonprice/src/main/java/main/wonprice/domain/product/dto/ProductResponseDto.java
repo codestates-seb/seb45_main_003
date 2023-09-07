@@ -4,9 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import main.wonprice.domain.picture.entity.ProductPicture;
 import main.wonprice.domain.product.entity.ProductStatus;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 // 상품 등록을 위한 응답 객체
 @Getter @Setter
@@ -43,4 +46,6 @@ public class ProductResponseDto {
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime closedAt; // 경매 종료 시간
+
+    private List<ProductPicture> images;
 }

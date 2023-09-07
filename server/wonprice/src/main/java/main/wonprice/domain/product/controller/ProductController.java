@@ -1,10 +1,12 @@
 package main.wonprice.domain.product.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.picture.service.PictureService;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
@@ -23,12 +25,14 @@ import main.wonprice.domain.product.service.ProductService;
 @Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
+@Slf4j
 public class ProductController {
 
     private final ProductService productService;
     private final ProductMapper productMapper;
     private final MemberService memberService;
     private final CategoryService categoryService;
+    private final PictureService pictureService;
 
     // 상품 등록
     @PostMapping
@@ -36,6 +40,14 @@ public class ProductController {
         Member loginMember = memberService.findLoginMember();
         Category category = categoryService.findById(productRequestDto.getCategoryId());
         Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember, category));
+
+        /* 대표 */
+//        log.info("productRequestDto.getPictures() : " + productRequestDto.getImages());
+        for (String imageUrl : productRequestDto.getImages()) {
+            pictureService.createPicture(imageUrl, product);
+        }
+        /* 대표 */
+
         ProductResponseDto productResponseDto = productMapper.fromEntity(product);
         return ResponseEntity.ok(productResponseDto);
     }
@@ -102,6 +114,9 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity findOnProduct(@PathVariable Long productId) {
         Product product = productService.findOneById(productId);
+
+        log.info("product : " + product.getProductPictures());
+
         ProductResponseDto productResponseDto = productMapper.fromEntity(product);
         return ResponseEntity.ok(productResponseDto);
     }

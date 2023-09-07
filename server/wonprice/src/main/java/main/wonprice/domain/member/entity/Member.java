@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import main.wonprice.domain.chat.entity.ChatRoom;
+import main.wonprice.domain.picture.entity.MemberPicture;
 import main.wonprice.domain.picture.entity.Picture;
 import main.wonprice.domain.product.entity.Product;
 
@@ -57,11 +58,14 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Wish> wishs = new ArrayList<>();
 
-    @OneToOne(mappedBy = "member")
-    private Picture picture;
+//    @OneToOne(mappedBy = "member")
+//    private Picture picture;
 
     @OneToMany(mappedBy = "seller")
     private List<Product> products = new ArrayList<>();
+
+    @OneToOne(mappedBy = "member")
+    private MemberPicture memberPicture; // 프로필 이미지
 
 //    @OneToMany(mappedBy = "seller")
 //    private List<ChatRoom> chatRooms = new ArrayList<>();
