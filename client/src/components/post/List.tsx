@@ -1,13 +1,17 @@
 import axios from "axios";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
-import { ReactComponent as EmptyImage } from "../../assets/images/Empty.svg";
+import { loginState } from "../../atoms/atoms";
 import Loading from "../../components/common/Loading";
-import { COLOR } from "../../contstants/color";
-import { API_PATHS } from "../../contstants/path";
+import { CATEGORY } from "../../constants/category";
+import { COLOR } from "../../constants/color";
+import { API_PATHS } from "../../constants/path";
 import ErrorIndication from "../../pages/ErrorIndication";
 import Button from "../common/Button";
+import Empty from "../common/Empty";
 import ListItem from "./ListItem";
 import SearchBar from "./SearchBar";
 
@@ -44,11 +48,12 @@ const StyledList = styled.section`
     flex-wrap: wrap;
     gap: 1rem;
 
-    li {
-      width: calc(25% - 0.75rem);
+    li:not(.no_border) {
+      width: calc(25% - 0.875rem);
       border: 1px solid ${COLOR.border};
       border-radius: 6px;
       overflow: hidden;
+      list-style: none;
     }
   }
 
@@ -59,10 +64,21 @@ const StyledList = styled.section`
 
 const List = (): JSX.Element => {
   const navigate = useNavigate();
-  const { isLoading, error, data } = useQuery<ProductData[]>("productList", async () => {
-    const response = await axios.get(API_PATHS.products(""));
-    return response.data;
+  const location = useLocation();
+  const currentCategory = location.pathname.slice(9);
+  const path =
+    location.pathname === "/product"
+      ? API_PATHS.products.default("")
+      : API_PATHS.products.category(CATEGORY[currentCategory].id);
+  const { isLoading, error, data, refetch } = useQuery<ProductData[]>("productList", async () => {
+    const response = await axios.get(path);
+    return response.data.content;
   });
+  const isLogin = useRecoilValue(loginState);
+
+  useEffect(() => {
+    refetch();
+  }, [location.pathname]);
 
   if (isLoading) {
     return <Loading />;
@@ -76,32 +92,35 @@ const List = (): JSX.Element => {
     <>
       <StyledList>
         <div className="list_top">
-          <h1>페이지 제목</h1>
+          <h1>
+            {location.pathname === "/product" ? "전체 상품" : CATEGORY[currentCategory].value}
+          </h1>
           <div className="list_top_right">
             <SearchBar></SearchBar>
-            <Button
-              onClick={() => {
-                navigate("/create-post");
-              }}
-              $design="black"
-              type="button"
-              $text="상품 등록하기"
-            ></Button>
+            {isLogin && (
+              <Button
+                onClick={() => {
+                  navigate("/create-post");
+                }}
+                $design="black"
+                type="button"
+                $text="상품 등록하기"
+              ></Button>
+            )}
           </div>
         </div>
 
         <ul className="list">
-          {data ? (
+          {data && data.length > 0 ? (
             <>
               {data.map((el) => {
                 return <ListItem key={el.productId} data={el} />;
               })}
             </>
           ) : (
-            <>
-              <EmptyImage />
-              <p className="empty_message">목록이 없습니다.</p>
-            </>
+            <li className="no_border">
+              <Empty />
+            </li>
           )}
         </ul>
       </StyledList>

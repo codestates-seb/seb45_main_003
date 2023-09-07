@@ -1,8 +1,13 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import { ReactComponent as EditIcon } from "../../assets/images/Edit.svg";
 import { ReactComponent as HeartIcon } from "../../assets/images/Heart.svg";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
-import { AUCTION } from "../../contstants/systemMessage";
+import { loginState } from "../../atoms/atoms";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
+import { AUCTION } from "../../constants/systemMessage";
+import { formatTime } from "../../util/date";
 import Button from "../common/Button";
 import { ProductData } from "./List";
 
@@ -88,10 +93,11 @@ const StyledItemStatus = styled.section`
 `;
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
-  const formatTime = (time: string | undefined) => {
-    if (time) {
-      return time.replace("T", " ");
-    }
+  const isLogin = useRecoilValue(loginState);
+  const navigate = useNavigate();
+
+  const redirect = () => {
+    navigate("/login");
   };
 
   return (
@@ -99,6 +105,10 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
       <img src="" alt="" />
       <div className="item_status">
         <h1>{data.title}</h1>
+        <Link to="/product">
+          <EditIcon />
+        </Link>
+
         <p className="gray date_or_status">
           {data.auction
             ? data.productStatus === "BEFORE"
@@ -111,7 +121,13 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             <HeartIcon />
             숫자
           </span>
-          <Button $icon={<HeartIcon />} $text="찜" $design="yellow" type="button" />
+          <Button
+            $icon={<HeartIcon />}
+            $text="찜"
+            $design="yellow"
+            type="button"
+            onClick={isLogin ? undefined : redirect}
+          />
         </div>
         {data.auction && (
           <div className="auction">
@@ -120,7 +136,12 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                 <span>현재 입찰가</span>
                 <span className="price_number">{data.currentAuctionPrice?.toLocaleString()}</span>
               </div>
-              <Button $text="입찰하기" $design="black" type="button" />
+              <Button
+                $text="입찰하기"
+                $design="black"
+                type="button"
+                onClick={isLogin ? undefined : redirect}
+              />
             </div>
             <div className="create_at">
               <div className="time">
@@ -142,7 +163,12 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             <span className="price_number_title gray">즉시 구매가</span>
             <span className="price_number">{data.immediatelyBuyPrice.toLocaleString()}</span>
           </div>
-          <Button $text="즉시구매" $design="black" type="button" />
+          <Button
+            $text="즉시구매"
+            $design="black"
+            type="button"
+            onClick={isLogin ? undefined : redirect}
+          />
         </div>
       </div>
     </StyledItemStatus>

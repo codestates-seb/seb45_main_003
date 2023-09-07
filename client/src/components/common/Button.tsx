@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { COLOR } from "../../contstants/color";
+import { COLOR } from "../../constants/color";
 
 type ButtonProp = {
   type: "button" | "submit" | "reset" | undefined;

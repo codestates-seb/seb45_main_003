@@ -2,7 +2,7 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { API_PATHS } from "../../contstants/path";
+import { API_PATHS } from "../../constants/path";
 import ErrorIndication from "../../pages/ErrorIndication";
 import Loading from "../common/Loading";
 import ItemDescription from "./ItemDescription";
@@ -24,9 +24,9 @@ const StyledItem = styled.article`
 
 const Item = (): JSX.Element => {
   const location = useLocation();
-  const itemNumber = location.pathname.slice(location.pathname.indexOf("t") + 2);
+  const itemNumber = location.pathname.split("/");
   const { isLoading, error, data } = useQuery("productData", async () => {
-    const response = await axios.get(API_PATHS.products(itemNumber));
+    const response = await axios.get(API_PATHS.products.default(itemNumber[itemNumber.length - 1]));
     return response.data;
   });
 
@@ -37,8 +37,6 @@ const Item = (): JSX.Element => {
   if (error as Error) {
     return <ErrorIndication error={error} />;
   }
-
-  console.log(data);
 
   return (
     <StyledItem>

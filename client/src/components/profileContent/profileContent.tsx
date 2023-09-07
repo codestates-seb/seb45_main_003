@@ -1,13 +1,16 @@
-import { styled } from "styled-components";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
-import Button from "../common/Button";
-import PostListTab from "./postListTab";
-import { useEffect, useState } from "react";
 import axios from "axios";
-import { useModal } from "../../hooks/useModal";
-import Modal from "../common/Modal";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { styled } from "styled-components";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
+import { useModal } from "../../hooks/useModal";
+import Button from "../common/Button";
+import Modal from "../common/Modal";
+import PostListTab from "./postListTab";
+import { useRecoilValue } from "recoil";
+import { loginState } from "../../atoms/atoms";
+import { authInstance } from "../../interceptors/interceptors";
 
 interface Profile {
   memberId: number;
@@ -47,8 +50,17 @@ const ProfileContentContainer = styled.div`
     justify-content: flex-start;
     align-items: stretch;
     gap: 2rem;
-    .profileImg {
-      border-radius: 6px;
+    .imgContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      gap: 0.5rem;
+      .profileImg {
+        border-radius: 6px;
+        width: 12.5rem;
+        height: 12.5rem;
+      }
     }
     .labelContainer {
       display: flex;
@@ -115,42 +127,42 @@ const StyledModal = styled.form`
 const ProfileContent = (): JSX.Element => {
   const [profile, setProfile] = useState<Profile>({ memberId: 0, name: "", email: "", phone: "" });
   // const Id = window.location.search
+  const Id = localStorage.getItem("Id");
   const [pass, setPass] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
+    setValue,
     getValues,
   } = useForm<modifyPasswordForm>();
+  const isLogin = useRecoilValue(loginState);
   const { toggleModal, closeModal, isOpen } = useModal();
+  // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getProfile = async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/myPage`, {
-      headers: {
-        Authorization: localStorage.getItem("accessToken"),
-      },
-    });
-    setProfile(res.data);
+    try {
+      const res = await authInstance.get(`/members/${Id}`);
+      setProfile(res.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+      }
+    }
   };
   const modifyPassword = async (body: modifyPasswordForm) => {
-    const res = await axios.patch(`${process.env.REACT_APP_API_URL}/members/myPage`, body, {
-      headers: {
-        Authorization: localStorage.getItem("accessToken"),
-      },
-    });
-    setProfile(res.data);
+    try {
+      const res = await authInstance.patch(`/members/${Id}`, { password: body.newPassword });
+      setProfile(res.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+      }
+    }
   };
   const validatePassword = async (body: string) => {
     try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API_URL}/members/auth/password`,
-        { password: body },
-        {
-          headers: {
-            Authorization: localStorage.getItem("accessToken"),
-          },
-        },
-      );
+      const res = await authInstance.post(`/members/auth/password`, { password: body });
       if (res.status === 200) {
         setPass(true);
       }
@@ -166,12 +178,14 @@ const ProfileContent = (): JSX.Element => {
     }
   };
   const resetModal = () => {
+    setValue("newPassword", "");
+    setValue("passwordCheck", "");
     setPass(false);
     toggleModal();
   };
   useEffect(() => {
     getProfile();
-  }, []);
+  }, [isLogin]);
   if (profile.name !== "") {
     return (
       <ProfileContentContainer>
@@ -185,7 +199,10 @@ const ProfileContent = (): JSX.Element => {
           />
         </div>
         <div className="profileInfoContainer">
-          <img className="profileImg"></img>
+          <div className="imgContainer">
+            <img className="profileImg"></img>
+            <Button type="button" $text="이미지 등록" $design="black" />
+          </div>
           <div className="labelContainer">
             <label className="infoLabel">성함</label>
             <label className="infoLabel">이메일</label>
