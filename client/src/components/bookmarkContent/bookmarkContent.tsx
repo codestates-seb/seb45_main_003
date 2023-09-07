@@ -1,11 +1,11 @@
 import axios from "axios";
-import { useValidateToken } from "../../hooks/useValidateToken";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
+import { authInstance } from "../../interceptors/interceptors";
 //dto 정해지면 추가
 
 type bookmark = {
@@ -138,44 +138,39 @@ const BookmarkContent = (): JSX.Element => {
     console.log(data);
   };
   const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
-  const { accessToken, getAccessToken, refreshToken } = useValidateToken();
   const Id = localStorage.getItem("Id");
   console.log(selectAll, checkboxes, bookmarklist);
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getData = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}/wishes`, {
-        headers: {
-          Authorization: accessToken,
-        },
-      });
+      const res = await authInstance.get(`/members/${Id}/wishes`);
       setBookmarklist(res.data);
     } catch (error) {
       //토큰 만료시 대응하는 함수
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          getAccessToken(refreshToken);
-        }
+        console.log(error);
       }
     }
   };
   const cancleBookmark = async (wishId: number) => {
-    const deletedIndex = bookmarklist.findIndex((el) => el.wishId === wishId);
-    const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
-    const res = await axios.delete(`${process.env.REACT_APP_API_URL}/wishes/${wishId}`, {
-      headers: {
-        Authorization: accessToken,
-      },
-    });
-    if (res.status === 200) {
-      getData();
-      setValue("checkboxes", checkedlist);
+    try {
+      const deletedIndex = bookmarklist.findIndex((el) => el.wishId === wishId);
+      const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
+      const res = await authInstance.delete(`/wishes/${wishId}`);
+      if (res.status === 200) {
+        getData();
+        setValue("checkboxes", checkedlist);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+      }
     }
   };
   useEffect(() => {
     getData();
     setValue("checkboxes", Array(bookmarklist.length).fill(false));
-  }, [accessToken]);
+  }, []);
   return (
     <BookmarkContentContainer onSubmit={handleSubmit(sendBookmarkList)}>
       <div className="topContainer">

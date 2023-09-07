@@ -6,6 +6,7 @@ import { FONT_SIZE } from "../../constants/font";
 import { useValidateToken } from "../../hooks/useValidateToken";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
+import { authInstance } from "../../interceptors/interceptors";
 
 interface products {
   productId: number;
@@ -103,54 +104,36 @@ const PostListTab = (): JSX.Element => {
   const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
   const isLogin = useRecoilValue(loginState);
-  const { accessToken, getAccessToken, refreshToken, validateAccessToken } = useValidateToken();
+  const { accessToken, validateAccessToken } = useValidateToken();
   const Id = localStorage.getItem("Id");
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getPostlist = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}/products`, {
-        headers: {
-          Authorization: accessToken,
-        },
-      });
+      const res = await authInstance.get(`/members/${Id}/products`);
       setCellPost(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          getAccessToken(refreshToken);
-        }
+        console.log(error);
       }
     }
   };
   const getLeaveReview = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}/reviews/post`, {
-        headers: {
-          Authorization: accessToken,
-        },
-      });
+      const res = await authInstance.get(`/members/${Id}/reviews/post`, {});
       setLeaveReview(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401 || error.response?.status === 404) {
-          console.log(error);
-        }
+        console.log(error);
       }
     }
   };
   const getRecievedReview = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}/reviews`, {
-        headers: {
-          Authorization: accessToken,
-        },
-      });
+      const res = await authInstance.get(`/members/${Id}/reviews`);
       setRecievedReview(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401 || error.response?.status === 404) {
-          console.log(error);
-        }
+        console.log(error);
       }
     }
   };
