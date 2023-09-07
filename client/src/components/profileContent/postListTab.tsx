@@ -100,9 +100,11 @@ const PostListTab = (): JSX.Element => {
   const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
   const accessToken = localStorage.getItem("accessToken");
+  const Id = localStorage.getItem("Id");
+  // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getPostlist = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/myPage/products`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}/products`, {
         headers: {
           Authorization: accessToken,
         },
@@ -118,7 +120,7 @@ const PostListTab = (): JSX.Element => {
   };
   const getLeaveReview = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/myPage/reviews/wrote`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}/reviews/post`, {
         headers: {
           Authorization: accessToken,
         },
@@ -134,7 +136,7 @@ const PostListTab = (): JSX.Element => {
   };
   const getRecievedReview = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/myPage/reviews`, {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}/reviews`, {
         headers: {
           Authorization: accessToken,
         },

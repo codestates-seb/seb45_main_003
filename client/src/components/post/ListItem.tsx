@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import { COLOR } from "../../contstants/color";
 import { FONT_SIZE } from "../../contstants/font";
 import { AUCTION } from "../../contstants/systemMessage";
-import { formatTime } from "../../util/data";
+import { formatTime } from "../../util/date";
 import { ProductData } from "./List";
 
 type ItemProps = {

@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 const BackgroundContainer = styled.div`
+  padding: 19.6875rem 0;
   display: flex;
   flex-direction: row;
   justify-content: center;

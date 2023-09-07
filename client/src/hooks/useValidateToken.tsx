@@ -12,7 +12,6 @@ export const useValidateToken = () => {
           Authorization: accessToken,
           "ngrok-skip-browser-warning": "69420",
         },
-        withCredentials: true,
       });
       if (res) {
         setLogin(true);

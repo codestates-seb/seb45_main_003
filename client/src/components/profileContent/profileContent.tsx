@@ -121,11 +121,14 @@ const ProfileContent = (): JSX.Element => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
+    setValue,
     getValues,
   } = useForm<modifyPasswordForm>();
   const { toggleModal, closeModal, isOpen } = useModal();
+  const Id = localStorage.getItem("Id");
+  // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getProfile = async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/myPage`, {
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}`, {
       headers: {
         Authorization: localStorage.getItem("accessToken"),
       },
@@ -133,11 +136,15 @@ const ProfileContent = (): JSX.Element => {
     setProfile(res.data);
   };
   const modifyPassword = async (body: modifyPasswordForm) => {
-    const res = await axios.patch(`${process.env.REACT_APP_API_URL}/members/myPage`, body, {
-      headers: {
-        Authorization: localStorage.getItem("accessToken"),
+    const res = await axios.patch(
+      `${process.env.REACT_APP_API_URL}/members/${Id}`,
+      { password: body.newPassword },
+      {
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
       },
-    });
+    );
     setProfile(res.data);
   };
   const validatePassword = async (body: string) => {
@@ -166,6 +173,8 @@ const ProfileContent = (): JSX.Element => {
     }
   };
   const resetModal = () => {
+    setValue("newPassword", "");
+    setValue("passwordCheck", "");
     setPass(false);
     toggleModal();
   };
