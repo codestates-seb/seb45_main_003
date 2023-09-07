@@ -38,8 +38,6 @@ const Item = (): JSX.Element => {
     return <ErrorIndication error={error} />;
   }
 
-  console.log(data);
-
   return (
     <StyledItem>
       <ItemStatus data={data} />

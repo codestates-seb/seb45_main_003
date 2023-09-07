@@ -73,8 +73,12 @@ textarea {
   resize: none;
 }
 select {
-  margin: 0;
-  padding: 0;
+  padding: 0.5rem 0.75rem;
+  width: 15rem;
+  border-radius: 6px;
+  border: 1px solid ${COLOR.border};
+  background: ${COLOR.gray_100};
+  outline: none;
 }
 button{
   cursor: pointer;
