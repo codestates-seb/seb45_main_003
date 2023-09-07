@@ -23,7 +23,9 @@ public interface ProductMapper {
                 .immediatelyBuyPrice(productRequestDto.getImmediatelyBuyPrice())
                 .auction(productRequestDto.getAuction())
                 .status(ProductStatus.BEFORE)
-                .views(0L);
+                .views(0L)
+                .buyerReview(false)
+                .sellerReview(false);
 
         // auction이 true인 경우에만 추가 정보 설정
         if (productRequestDto.getAuction()) {
