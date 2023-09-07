@@ -110,8 +110,16 @@ public class ProductServiceImpl implements ProductService {
         return product.orElseThrow();
     }
 
+//    회원이 등록한 상품 목록
     @Override
-    public List<Product> findLoginMembersProduct(Pageable pageable, Member member) {
+    public List<Product> findMembersProduct(Pageable pageable, Member member) {
+
         return productRepository.findAllBySeller(member, pageable).getContent();
+    }
+
+//    회원이 구매 완료한 상품 목록
+    public List<Product> findMembersTradedProduct(Pageable pageable, Member member) {
+
+        return productRepository.findAllByBuyerIdAndStatus(member.getMemberId(), ProductStatus.AFTER, pageable).getContent();
     }
 }

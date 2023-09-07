@@ -1,9 +1,11 @@
 import { createGlobalStyle } from "styled-components";
+import { COLOR } from "../contstants/color";
+import { FONT_SIZE } from "../contstants/font";
 import "./font.ts";
 
 export const GlobalStyle = createGlobalStyle`
 body,
-textarea {
+textarea, input {
   margin: 0;
   font-family: "Pretendard";
   -webkit-font-smoothing: antialiased;
@@ -37,30 +39,38 @@ ul {
   letter-spacing: -0.1px;
 }
 h1 {
-  font-size: 2rem;
+  font-size: ${FONT_SIZE.font_32};
 }
 h2 {
-  font-size: 1.5rem;
+  font-size: ${FONT_SIZE.font_24};
 }
 h3 {
-  font-size: 1.25rem;
+  font-size: ${FONT_SIZE.font_20};
 }
 h4 {
-  font-size: 1.125rem;
+  font-size: ${FONT_SIZE.font_18};
 }
 h5 {
-  font-size: 1rem;
+  font-size: ${FONT_SIZE.font_16};
 }
 ul {
   list-style: none;
 }
-button,
-input {
-  height: 2.5rem;
+input:not([type=checkbox], [type=radio]), textarea {
   font-size: 1rem;
-  line-height: 1.5rem;
+  padding: .5rem .75rem;
   border-radius: 6px;
-  border: .0625rem solid #e0e0e0;
+  border: 1px solid ${COLOR.border};
+
+  &:hover, &:focus {
+    border: 1px solid ${COLOR.primary};
+    outline: 1px solid ${COLOR.primary};
+  }
+}
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance: none;margin: 0;}
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance: none;margin: 0;}
+textarea {
+  resize: none;
 }
 select {
   margin: 0;

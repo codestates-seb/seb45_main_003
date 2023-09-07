@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { MAX } from "../contstants/systemMessage";
 
 interface UseImageUpload {
   setError: (name: string, error: { type: string; message?: string }) => void;
@@ -20,19 +21,17 @@ export const useImageUpload = ({ setError, clearErrors }: UseImageUpload) => {
       //FileList 객체를 배열화하여 images로 관리
       const imageArray = Array.from(event.target.files);
 
-      if (event.target.files.length > MAX_IMAGE_COUNT) {
+      //최대 이미지 업로드 수 제한
+      if (imageArray?.length > MAX_IMAGE_COUNT) {
         setError("images", {
           type: "maxImageCount",
-          message: `이미지는 최대 ${MAX_IMAGE_COUNT}장까지 선택 가능합니다.`,
+          message: MAX.imageSelect(MAX_IMAGE_COUNT),
         });
-
-        //몇장을 업로드하더라도 한계치까지만 업로드
-        setImages((prev) => [...imageArray.slice(0, MAX_IMAGE_COUNT - images.length), ...prev]);
+        setImages((prev) => [...prev, ...imageArray.slice(0, MAX_IMAGE_COUNT - prev.length)]);
         return;
       }
-
-      setImages((prev) => [...imageArray, ...prev]);
       clearErrors("image");
+      setImages((prev) => [...prev, ...imageArray]);
     }
   };
 

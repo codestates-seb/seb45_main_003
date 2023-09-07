@@ -1,7 +1,13 @@
-const ErrorIndication = (): JSX.Element => {
+import Error from "../components/common/Error";
+
+export type ErrorProps = {
+  error?: unknown;
+};
+
+const ErrorIndication = ({ error }: ErrorProps): JSX.Element => {
   return (
     <>
-      <h1>ErrorIndication</h1>
+      <Error error={error} />
     </>
   );
 };

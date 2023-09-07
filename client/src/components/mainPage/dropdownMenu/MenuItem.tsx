@@ -1,6 +1,7 @@
+//드롭다운 메뉴 아이템
 import styled from "styled-components";
-import { ReactComponent as AddButton } from "../../assets/images/Add.svg";
-import myImage from "../../assets/images/Img1.png";
+import { ReactComponent as AddButton } from "../../../assets/images/Add.svg";
+import myImage from "../../../assets/images/Img1.png";
 import { Link } from "react-router-dom";
 
 const ItemContainer = styled.div`

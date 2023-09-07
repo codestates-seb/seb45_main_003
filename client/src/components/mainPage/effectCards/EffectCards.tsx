@@ -1,3 +1,4 @@
+// 이펙트 카드 < 카드 넘기기 효과 >
 import SwiperCore from "swiper";
 import { EffectCards } from "swiper/modules";
 import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/react";
@@ -5,28 +6,47 @@ import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/rea
 import styled from "styled-components";
 
 // 이미지 파일의 경로
-import image1 from "../../assets/images/Carousel/unsplash1.jpg";
-import image2 from "../../assets/images/Carousel/unsplash2.jpg";
-import image3 from "../../assets/images/Carousel/unsplash3.jpg";
-import image4 from "../../assets/images/Carousel/unsplash4.jpg";
-import image5 from "../../assets/images/Carousel/unsplash5.jpg";
-import image6 from "../../assets/images/Carousel/unsplash6.jpg";
-import image7 from "../../assets/images/Carousel/unsplash7.jpg";
+import image1 from "../../../assets/images/Carousel/unsplash1.jpg";
+import image2 from "../../../assets/images/Carousel/unsplash2.jpg";
+import image3 from "../../../assets/images/Carousel/unsplash3.jpg";
+import image4 from "../../../assets/images/Carousel/unsplash4.jpg";
+import image5 from "../../../assets/images/Carousel/unsplash5.jpg";
+import image6 from "../../../assets/images/Carousel/unsplash6.jpg";
+import image7 from "../../../assets/images/Carousel/unsplash7.jpg";
 
 import "swiper/css";
 import "swiper/css/effect-cards";
 
 const Box = styled.div`
-  /* height: 18.75rem; */
-  width: 14rem;
+  max-width: 28.125rem;
+  width: 50%;
+
+  height: 37.5rem;
   border-radius: 0.375rem;
+  .swiper-slide {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1.125rem;
+    font-size: 1.375rem;
+    font-weight: bold;
+    color: #fff;
+    height: 37.5rem;
+  }
+
+  .swiper-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
 `;
 
 // 모듈 종류
 SwiperCore.use([EffectCards]);
 
 interface CustomSwiperProps extends ReactSwiperProps {
-  // slidesPerView?: number;
   spaceBetween?: number;
   effect?: string;
   grabCursor?: boolean;

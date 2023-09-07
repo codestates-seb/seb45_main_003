@@ -2,6 +2,7 @@ package main.wonprice.domain.member.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.wonprice.domain.product.entity.Product;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ public class Review {
     private Long reviewId;
 
     @Column(nullable = false)
-    private Long postMemberId;
+    private String title;
 
     @Lob
     @Column(nullable = false)
@@ -32,5 +33,9 @@ public class Review {
 
     @ManyToOne
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Member postMember;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 }

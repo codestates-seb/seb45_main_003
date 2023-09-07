@@ -8,12 +8,7 @@ export const COLOR = {
   border: "#e5e5e5",
   invalid: "#F44336",
   valid: "#33A754",
-};
-
-export const GRAY_COLOR = {
-  gray_900: "#212121",
   gray_800: "#424242",
-  gray_700: "#616161",
   gray_600: "#757575",
   gray_500: "#9e9e9e",
   gray_400: "#bdbdbd",
