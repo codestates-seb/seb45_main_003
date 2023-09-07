@@ -11,7 +11,9 @@ public class ReviewResponseDto {
 
     private Long postMemberId;
 
-    private Long targetMemberId;
+    private Long productId;
+
+    private String title;
 
     @Lob
     private String content;

@@ -6,7 +6,7 @@ function createPath(id: PathType, path: string): string {
 
 export const API_PATHS = {
   members: {
-    default: (id: PathType) => createPath(id, "default"),
+    default: (id: PathType) => createPath(id, "members"),
     all: "/members/all",
     auth: {
       name: "/members/auth/name",
