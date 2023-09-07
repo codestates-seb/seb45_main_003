@@ -5,6 +5,8 @@ import Button from "../common/Button";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { getAuthToken } from "../../util/auth";
+import { useValidateToken } from "../../hooks/useValidateToken";
 //dto 정해지면 추가
 
 type bookmark = {
@@ -122,17 +124,14 @@ const BookmarkContent = (): JSX.Element => {
   const { register, handleSubmit, watch, setValue } = useForm<checkInputType>();
   const checkboxes = watch("checkboxes", []);
   const selectAll = watch("selectAll", false);
-  console.log(selectAll, checkboxes);
   const handleSelectAll = (checked: boolean) => {
     setValue("selectAll", checked);
-    setValue("checkboxes", Array(bookmarklist.length + 1).fill(checked));
+    setValue("checkboxes", Array(bookmarklist.length).fill(checked));
   };
   const handleCheckBox = (index: number, checked: boolean) => {
     const checkedBoxes = [...checkboxes];
     checkedBoxes[index] = checked;
-    const lowerCheckbox = checkedBoxes.slice();
-    lowerCheckbox.shift();
-    const checkedAll = lowerCheckbox.every(Boolean);
+    const checkedAll = checkedBoxes.every(Boolean);
     setValue("selectAll", checkedAll);
     setValue("checkboxes", checkedBoxes);
   };
@@ -140,8 +139,10 @@ const BookmarkContent = (): JSX.Element => {
     console.log(data);
   };
   const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
-  const accessToken = localStorage.getItem("accessToken");
+  const { getAccessToken, refreshToken } = useValidateToken();
+  const accessToken = getAuthToken();
   const Id = localStorage.getItem("Id");
+  console.log(selectAll, checkboxes, bookmarklist);
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getData = async () => {
     try {
@@ -155,11 +156,14 @@ const BookmarkContent = (): JSX.Element => {
       //토큰 만료시 대응하는 함수
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
+          getAccessToken(refreshToken);
         }
       }
     }
   };
   const cancleBookmark = async (wishId: number) => {
+    const deletedIndex = bookmarklist.findIndex((el) => el.wishId === wishId);
+    const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
     const res = await axios.delete(`${process.env.REACT_APP_API_URL}/wishes/${wishId}`, {
       headers: {
         Authorization: accessToken,
@@ -167,16 +171,13 @@ const BookmarkContent = (): JSX.Element => {
     });
     if (res.status === 200) {
       getData();
-      setValue(
-        "checkboxes",
-        checkboxes.filter((el, idx) => idx !== wishId),
-      );
+      setValue("checkboxes", checkedlist);
     }
   };
   useEffect(() => {
     getData();
-    setValue("checkboxes", Array(bookmarklist.length + 1).fill(false));
-  }, []);
+    setValue("checkboxes", Array(bookmarklist.length).fill(false));
+  }, [accessToken]);
   return (
     <BookmarkContentContainer onSubmit={handleSubmit(sendBookmarkList)}>
       <div className="topContainer">
@@ -201,8 +202,8 @@ const BookmarkContent = (): JSX.Element => {
                 <input
                   type="checkbox"
                   className="checkbox"
-                  {...register(`checkboxes.${el.wishId}`)}
-                  onChange={(e) => handleCheckBox(index + 1, e.currentTarget.checked)}
+                  {...register(`checkboxes.${index}`)}
+                  onChange={(e) => handleCheckBox(index, e.currentTarget.checked)}
                   key={el.productId}
                 ></input>
                 <img></img>

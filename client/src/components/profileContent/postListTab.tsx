@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 import { COLOR } from "../../contstants/color";
 import { FONT_SIZE } from "../../contstants/font";
 import axios from "axios";
+import { getAuthToken } from "../../util/auth";
 
 interface products {
   productId: number;
@@ -99,7 +100,7 @@ const PostListTab = (): JSX.Element => {
   const [leaveReview, setLeaveReview] = useState<Review[]>([]);
   const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = getAuthToken();
   const Id = localStorage.getItem("Id");
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getPostlist = async () => {

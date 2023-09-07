@@ -8,6 +8,7 @@ import axios from "axios";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../common/Modal";
 import { useForm } from "react-hook-form";
+import { getAuthToken } from "../../util/auth";
 
 interface Profile {
   memberId: number;
@@ -125,12 +126,13 @@ const ProfileContent = (): JSX.Element => {
     getValues,
   } = useForm<modifyPasswordForm>();
   const { toggleModal, closeModal, isOpen } = useModal();
+  const accessToken = getAuthToken();
   const Id = localStorage.getItem("Id");
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getProfile = async () => {
     const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}`, {
       headers: {
-        Authorization: localStorage.getItem("accessToken"),
+        Authorization: accessToken,
       },
     });
     setProfile(res.data);
@@ -141,7 +143,7 @@ const ProfileContent = (): JSX.Element => {
       { password: body.newPassword },
       {
         headers: {
-          Authorization: localStorage.getItem("accessToken"),
+          Authorization: accessToken,
         },
       },
     );
@@ -154,7 +156,7 @@ const ProfileContent = (): JSX.Element => {
         { password: body },
         {
           headers: {
-            Authorization: localStorage.getItem("accessToken"),
+            Authorization: accessToken,
           },
         },
       );
