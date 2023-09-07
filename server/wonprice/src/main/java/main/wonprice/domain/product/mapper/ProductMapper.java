@@ -52,6 +52,9 @@ public interface ProductMapper {
                 .currentAuctionPrice(product.getCurrentAuctionPrice())
                 .closedAt(product.getClosedAt())
                 .categoryId(product.getCategory().getCategoryId())
+                .images(product.getProductPictures())
+                .sellerName(product.getSeller().getName()) // 판매자 이름 설정
+                .sellerReputation(product.getSeller().getReputation()) // 판매자 평판 설정
 //                .images(product.getProductPictures())
                 .build();
     }
