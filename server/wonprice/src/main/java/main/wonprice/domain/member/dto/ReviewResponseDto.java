@@ -9,7 +9,11 @@ import java.time.LocalDateTime;
 @Getter @Setter
 public class ReviewResponseDto {
 
+    private Long reviewId;
+
     private Long postMemberId;
+
+    private Long targetMemberId;
 
     private Long productId;
 
