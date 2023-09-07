@@ -4,6 +4,9 @@ import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { useValidateToken } from "../../hooks/useValidateToken";
+import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { loginState } from "../../atoms/atoms";
 
 interface products {
   productId: number;
@@ -91,6 +94,7 @@ const PostListContainer = styled.div`
 `;
 
 const PostListTab = (): JSX.Element => {
+  const navigate = useNavigate();
   const tabmenu = [
     { value: "cell", text: "판매글 목록" },
     { value: "leaveReview", text: "작성한 거래 후기" },
@@ -100,6 +104,7 @@ const PostListTab = (): JSX.Element => {
   const [leaveReview, setLeaveReview] = useState<Review[]>([]);
   const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
+  const isLogin = useRecoilValue(loginState);
   const { accessToken, getAccessToken, refreshToken } = useValidateToken();
   const Id = localStorage.getItem("Id");
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
@@ -152,10 +157,14 @@ const PostListTab = (): JSX.Element => {
     }
   };
   useEffect(() => {
+    if (!isLogin) {
+      alert("토큰이 만료되었습니다.");
+      navigate("/login");
+    }
     getPostlist();
     getLeaveReview();
     getRecievedReview();
-  }, [accessToken]);
+  }, [isLogin]);
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">

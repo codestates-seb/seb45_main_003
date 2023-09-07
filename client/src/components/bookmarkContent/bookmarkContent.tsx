@@ -6,6 +6,7 @@ import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
+import { useNavigate } from "react-router-dom";
 //dto 정해지면 추가
 
 type bookmark = {
@@ -139,6 +140,7 @@ const BookmarkContent = (): JSX.Element => {
   };
   const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
   const { accessToken, getAccessToken, refreshToken } = useValidateToken();
+  const navigate = useNavigate();
   const Id = localStorage.getItem("Id");
   console.log(selectAll, checkboxes, bookmarklist);
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
@@ -173,6 +175,10 @@ const BookmarkContent = (): JSX.Element => {
     }
   };
   useEffect(() => {
+    if (!accessToken) {
+      alert("토큰이 만료되었습니다.");
+      navigate("/login");
+    }
     getData();
     setValue("checkboxes", Array(bookmarklist.length).fill(false));
   }, [accessToken]);

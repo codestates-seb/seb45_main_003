@@ -9,6 +9,9 @@ import Button from "../common/Button";
 import Modal from "../common/Modal";
 import PostListTab from "./postListTab";
 import { useValidateToken } from "../../hooks/useValidateToken";
+import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
+import { loginState } from "../../atoms/atoms";
 
 interface Profile {
   memberId: number;
@@ -114,6 +117,7 @@ const StyledModal = styled.form`
 `;
 
 const ProfileContent = (): JSX.Element => {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile>({ memberId: 0, name: "", email: "", phone: "" });
   // const Id = window.location.search
   const [pass, setPass] = useState(false);
@@ -125,6 +129,7 @@ const ProfileContent = (): JSX.Element => {
     setValue,
     getValues,
   } = useForm<modifyPasswordForm>();
+  const isLogin = useRecoilValue(loginState);
   const { toggleModal, closeModal, isOpen } = useModal();
   const { accessToken, getAccessToken, refreshToken } = useValidateToken();
   const Id = localStorage.getItem("Id");
@@ -146,16 +151,24 @@ const ProfileContent = (): JSX.Element => {
     }
   };
   const modifyPassword = async (body: modifyPasswordForm) => {
-    const res = await axios.patch(
-      `${process.env.REACT_APP_API_URL}/members/${Id}`,
-      { password: body.newPassword },
-      {
-        headers: {
-          Authorization: accessToken,
+    try {
+      const res = await axios.patch(
+        `${process.env.REACT_APP_API_URL}/members/${Id}`,
+        { password: body.newPassword },
+        {
+          headers: {
+            Authorization: accessToken,
+          },
         },
-      },
-    );
-    setProfile(res.data);
+      );
+      setProfile(res.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          getAccessToken(refreshToken);
+        }
+      }
+    }
   };
   const validatePassword = async (body: string) => {
     try {
@@ -179,6 +192,9 @@ const ProfileContent = (): JSX.Element => {
             message: "틀린 비밀번호입니다.",
           });
         }
+        if (error.response?.status === 401) {
+          getAccessToken(refreshToken);
+        }
       }
     }
   };
@@ -189,8 +205,12 @@ const ProfileContent = (): JSX.Element => {
     toggleModal();
   };
   useEffect(() => {
+    if (!isLogin) {
+      alert("토큰이 만료되었습니다.");
+      navigate("/login");
+    }
     getProfile();
-  }, []);
+  }, [isLogin]);
   if (profile.name !== "") {
     return (
       <ProfileContentContainer>
