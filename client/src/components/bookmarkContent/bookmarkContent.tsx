@@ -5,7 +5,6 @@ import Button from "../common/Button";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { getAuthToken } from "../../util/auth";
 import { useValidateToken } from "../../hooks/useValidateToken";
 //dto 정해지면 추가
 
@@ -139,8 +138,7 @@ const BookmarkContent = (): JSX.Element => {
     console.log(data);
   };
   const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
-  const { getAccessToken, refreshToken } = useValidateToken();
-  const accessToken = getAuthToken();
+  const { accessToken, getAccessToken, refreshToken } = useValidateToken();
   const Id = localStorage.getItem("Id");
   console.log(selectAll, checkboxes, bookmarklist);
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함

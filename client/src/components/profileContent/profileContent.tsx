@@ -8,7 +8,7 @@ import axios from "axios";
 import { useModal } from "../../hooks/useModal";
 import Modal from "../common/Modal";
 import { useForm } from "react-hook-form";
-import { getAuthToken } from "../../util/auth";
+import { useValidateToken } from "../../hooks/useValidateToken";
 
 interface Profile {
   memberId: number;
@@ -126,16 +126,24 @@ const ProfileContent = (): JSX.Element => {
     getValues,
   } = useForm<modifyPasswordForm>();
   const { toggleModal, closeModal, isOpen } = useModal();
-  const accessToken = getAuthToken();
+  const { accessToken, getAccessToken, refreshToken } = useValidateToken();
   const Id = localStorage.getItem("Id");
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getProfile = async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}`, {
-      headers: {
-        Authorization: accessToken,
-      },
-    });
-    setProfile(res.data);
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/${Id}`, {
+        headers: {
+          Authorization: accessToken,
+        },
+      });
+      setProfile(res.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          getAccessToken(refreshToken);
+        }
+      }
+    }
   };
   const modifyPassword = async (body: modifyPasswordForm) => {
     const res = await axios.patch(
