@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import { ReactComponent as HeartIcon } from "../../assets/images/Heart.svg";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
-import { AUCTION } from "../../contstants/systemMessage";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
+import { AUCTION } from "../../constants/systemMessage";
 import Button from "../common/Button";
 import { ProductData } from "./List";
 

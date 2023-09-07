@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { COLOR } from "../../contstants/color";
+import { COLOR } from "../../constants/color";
 
 type ItemDescriptionProps = {
   description: string;

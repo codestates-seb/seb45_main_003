@@ -1,13 +1,13 @@
-import { styled } from "styled-components";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
-import Button from "../common/Button";
-import PostListTab from "./postListTab";
-import { useEffect, useState } from "react";
 import axios from "axios";
-import { useModal } from "../../hooks/useModal";
-import Modal from "../common/Modal";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { styled } from "styled-components";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
+import { useModal } from "../../hooks/useModal";
+import Button from "../common/Button";
+import Modal from "../common/Modal";
+import PostListTab from "./postListTab";
 
 interface Profile {
   memberId: number;

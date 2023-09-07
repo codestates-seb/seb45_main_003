@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
-import { FONT_SIZE } from "../../contstants/font";
-import { COLOR } from "../../contstants/color";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
 
 const TradeContentContainer = styled.div`

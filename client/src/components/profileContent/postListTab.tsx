@@ -1,8 +1,8 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { styled } from "styled-components";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
-import axios from "axios";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
 
 interface products {
   productId: number;
