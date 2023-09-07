@@ -41,6 +41,13 @@ const ChatRoom = () => {
   const [client, setClient] = useState<Webstomp.Client | null>(null);
   const roomId = chatRoomId; // 실제 방 ID를 얻는 방법으로 대체하세요
 
+  // 로컬 스토리지에서 Token 값을 가져옵니다.
+  const userIdFromLocalStorage = localStorage.getItem("accessToken");
+  console.log(userIdFromLocalStorage);
+
+  // 로컬 스토리지에 값이 없으면 null로 설정합니다.
+  const Token = userIdFromLocalStorage || null;
+
   useEffect(() => {
     if (chatRoomId !== null) {
       // 웹소켓 연결 및 구독
@@ -51,7 +58,12 @@ const ChatRoom = () => {
         {},
         () => {
           console.log("Connected to the WebSocket server");
-          stompClient!.subscribe(`/topic/chat/${chatRoomId}`, (message) => {
+
+          // 여기에서 토큰을 전송합니다.
+          stompClient.send("/topic/auth", JSON.stringify({ token: Token }), {});
+          console.log(stompClient.send);
+
+          stompClient!.subscribe(`/topic/chat/${roomId}`, (message) => {
             console.log(`Received message: ${message.body}`);
             // 여기에 메시지를 받았을 때의 로직을 추가
           });
@@ -71,37 +83,7 @@ const ChatRoom = () => {
         }
       };
     }
-  }, [chatRoomId]); // currentChatRoomId가 변경될 때마다 웹소켓을 다시 연결
-
-  // useEffect(() => {
-  //   const socket = new WebSocket("ws://아마존서버/ws");
-  //   const stompClient = Webstomp.over(socket);
-
-  //   stompClient.connect(
-  //     {},
-  //     () => {
-  //       console.log("WebSocket 서버에 연결되었습니다.");
-
-  //       stompClient.subscribe(`/topic/chat/${roomId}`, (message: Webstomp.Message) => {
-  //         if (message.body) {
-  //           console.log(`받은 메시지: ${message.body}`);
-  //           // 메시지를 받았을 때의 로직을 추가하세요
-  //         }
-  //       });
-  //     },
-  //     (error: Webstomp.Frame | CloseEvent) => {
-  //       console.log(`STOMP 오류: ${error}`);
-  //     },
-  //   );
-
-  //   setClient(stompClient);
-
-  //   return () => {
-  //     if (client && client.connected) {
-  //       client.disconnect();
-  //     }
-  //   };
-  // }, [client]);
+  }, [roomId]); // currentChatRoomId가 변경될 때마다 웹소켓을 다시 연결
 
   const handleSendMessage = (message: string) => {
     if (client && client.connected) {
@@ -113,7 +95,9 @@ const ChatRoom = () => {
     <>
       <Container>
         <div className="chatBox" style={{ display: "flex", flexDirection: "column" }}>
-          <MessageBubble />
+          <div>
+            <MessageBubble />
+          </div>
         </div>
         <ChatInput onSendMessage={handleSendMessage} />
       </Container>
