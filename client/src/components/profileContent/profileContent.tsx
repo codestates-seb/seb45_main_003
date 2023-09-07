@@ -9,7 +9,6 @@ import Button from "../common/Button";
 import Modal from "../common/Modal";
 import PostListTab from "./postListTab";
 import { useValidateToken } from "../../hooks/useValidateToken";
-import { useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
 
@@ -51,8 +50,16 @@ const ProfileContentContainer = styled.div`
     justify-content: flex-start;
     align-items: stretch;
     gap: 2rem;
-    .profileImg {
-      border-radius: 6px;
+    .imgContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      .profileImg {
+        border-radius: 6px;
+        width: 12.5rem;
+        height: 12.5rem;
+      }
     }
     .labelContainer {
       display: flex;
@@ -117,7 +124,6 @@ const StyledModal = styled.form`
 `;
 
 const ProfileContent = (): JSX.Element => {
-  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile>({ memberId: 0, name: "", email: "", phone: "" });
   // const Id = window.location.search
   const [pass, setPass] = useState(false);
@@ -205,10 +211,6 @@ const ProfileContent = (): JSX.Element => {
     toggleModal();
   };
   useEffect(() => {
-    if (!isLogin) {
-      alert("토큰이 만료되었습니다.");
-      navigate("/login");
-    }
     getProfile();
   }, [isLogin]);
   if (profile.name !== "") {
@@ -224,7 +226,10 @@ const ProfileContent = (): JSX.Element => {
           />
         </div>
         <div className="profileInfoContainer">
-          <img className="profileImg"></img>
+          <div className="imgContainer">
+            <img className="profileImg"></img>
+            <Button type="button" $text="이미지 등록" $design="black" />
+          </div>
           <div className="labelContainer">
             <label className="infoLabel">성함</label>
             <label className="infoLabel">이메일</label>

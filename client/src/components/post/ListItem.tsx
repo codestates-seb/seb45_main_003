@@ -1,14 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { styled } from "styled-components";
-<<<<<<< HEAD
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
-import { AUCTION } from "../../contstants/systemMessage";
-=======
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { AUCTION } from "../../constants/systemMessage";
->>>>>>> upstream/dev
 import { formatTime } from "../../util/date";
 import { ProductData } from "./List";
 

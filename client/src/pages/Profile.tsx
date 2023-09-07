@@ -23,13 +23,14 @@ const Profile = (): JSX.Element => {
   const navigate = useNavigate();
   const mypageMode = useRecoilValue(profileTabState);
   const isLogin = useRecoilValue(loginState);
+  //refresh 살아있는데 access만료시 login false로 간주중
   useEffect(() => {
+    validateAccessToken(accessToken);
     if (!isLogin) {
       alert("토큰이 만료되었습니다.");
       navigate("/login");
     }
-    validateAccessToken(accessToken);
-  }, [mypageMode, isLogin]);
+  }, [mypageMode]);
   return (
     <ProfileContainer>
       <ProfileTab />

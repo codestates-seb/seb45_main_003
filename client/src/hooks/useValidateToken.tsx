@@ -11,7 +11,6 @@ export const useValidateToken = () => {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/refresh`, {
         headers: {
           Refresh: refreshToken,
-          "ngrok-skip-browser-warning": "69420",
         },
       });
       if (res.status === 200) {
@@ -33,7 +32,6 @@ export const useValidateToken = () => {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/access`, {
         headers: {
           Authorization: accessToken,
-          "ngrok-skip-browser-warning": "69420",
         },
       });
       if (res) {
