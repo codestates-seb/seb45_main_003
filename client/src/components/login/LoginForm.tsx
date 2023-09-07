@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { styled } from "styled-components";
 import { loginState } from "../../atoms/atoms";
+import { COLOR } from "../../constants/color";
 import Button from "../common/Button";
-import { COLOR } from "../../contstants/color";
 
 //폼에서 사용하는 데이터
 interface LoginForm {

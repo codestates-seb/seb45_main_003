@@ -7,11 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import S3 from "../../aws-config";
 import SelectInput from "../../components/common/selectInput";
-import { CATEGORY } from "../../contstants/category";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
-import { API_PATHS } from "../../contstants/path";
-import { FAIL, REQUIRED, SUCCESS } from "../../contstants/systemMessage";
+import { CATEGORY } from "../../constants/category";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
+import { API_PATHS } from "../../constants/path";
+import { FAIL, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
@@ -196,7 +196,9 @@ const UploadForm = () => {
   const [isAuction, setIsAuction] = useState(true);
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
-  const mutation = useMutation((data: FieldValues) => axios.post(API_PATHS.products(""), data, {}));
+  const mutation = useMutation((data: FieldValues) =>
+    axios.post(API_PATHS.products.default(""), data, {}),
+  );
 
   const onSubmit = async (data: FieldValues) => {
     try {

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useQuery } from "react-query";
-import { API_PATHS } from "../../contstants/path";
+import { API_PATHS } from "../../constants/path";
 
 type SellerProps = {
   memberId: number;
