@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 // 상품 등록을 위한 요청 객체
 @Builder
@@ -25,4 +26,6 @@ public class ProductRequestDto {
     private Boolean auction; // 판매 방식 (경매:true or 즉시 구매:false)
 
     private Long categoryId;
+
+    private List<String> images; // 이미지 리스트
 }
