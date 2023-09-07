@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import ChatInput from "./ChatInput";
-import MessageBubble from "./MessageBubble";
 import * as Webstomp from "webstomp-client";
 import { useRecoilValue } from "recoil";
 import { currentChatRoomIdState } from "./chatState";
+import MessageBubble from "./MessageBubble";
+import ChetRoomHttp from "./ChetRoomHttp";
 
 const Container = styled.div`
   display: flex;
@@ -35,9 +36,16 @@ const Container = styled.div`
     width: 95%; // 상대적인 단위로 변경
   }
 `;
+interface MessageData {
+  content: string;
+  sender?: string;
+  recipient?: string;
+  // 필요한 다른 필드
+}
 
 const ChatRoom = () => {
   const chatRoomId = useRecoilValue(currentChatRoomIdState);
+  const [messages, setMessages] = useState<MessageData[]>([]);
   const [client, setClient] = useState<Webstomp.Client | null>(null);
   const roomId = chatRoomId; // 실제 방 ID를 얻는 방법으로 대체하세요
 
@@ -49,8 +57,7 @@ const ChatRoom = () => {
   const Token = userIdFromLocalStorage || null;
 
   useEffect(() => {
-    if (chatRoomId !== null) {
-      // 웹소켓 연결 및 구독
+    if (roomId) {
       const socket = new WebSocket(process.env.REACT_APP_WEB_SOCKET_URL as string);
       const stompClient = Webstomp.over(socket);
 
@@ -59,13 +66,11 @@ const ChatRoom = () => {
         () => {
           console.log("Connected to the WebSocket server");
 
-          // 여기에서 토큰을 전송합니다.
           stompClient.send("/topic/auth", JSON.stringify({ token: Token }), {});
-          console.log(stompClient.send);
 
-          stompClient!.subscribe(`/topic/chat/${roomId}`, (message) => {
-            console.log(`Received message: ${message.body}`);
-            // 여기에 메시지를 받았을 때의 로직을 추가
+          stompClient.subscribe(`/topic/chat/${roomId}`, (message) => {
+            const messageData: MessageData = JSON.parse(message.body);
+            setMessages((prevMessages) => [...prevMessages, messageData]);
           });
         },
         (error) => {
@@ -74,16 +79,14 @@ const ChatRoom = () => {
       );
 
       setClient(stompClient);
-      // 정리 함수
+
       return () => {
-        if (stompClient && stompClient.connected) {
-          stompClient.disconnect(() => {
-            console.log("Disconnected from the WebSocket server");
-          });
-        }
+        stompClient.disconnect(() => {
+          console.log("Disconnected from the WebSocket server");
+        });
       };
     }
-  }, [roomId]); // currentChatRoomId가 변경될 때마다 웹소켓을 다시 연결
+  }, [roomId, Token]);
 
   const handleSendMessage = (message: string) => {
     if (client && client.connected) {
@@ -95,10 +98,16 @@ const ChatRoom = () => {
     <>
       <Container>
         <div className="chatBox" style={{ display: "flex", flexDirection: "column" }}>
-          <div>
-            <MessageBubble />
-          </div>
+          <ChetRoomHttp />
         </div>
+        {messages.map((message, index) => (
+          <MessageBubble
+            key={index}
+            owner={message.sender === Token ? "user" : "other"}
+            message={message.content}
+            time={message.recipient || "Unknown time"} // 'recipient' 필드가 시간을 나타내는 것이 맞다면 이렇게 사용하세요
+          />
+        ))}
         <ChatInput onSendMessage={handleSendMessage} />
       </Container>
     </>
