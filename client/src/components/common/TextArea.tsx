@@ -15,11 +15,17 @@ const TextArea = (props: TextInputProps) => {
     <div className="field">
       <p>{title}</p>
 
-      <textarea {...register(id, options)} id={id}></textarea>
+      <div className="textarea">
+        <textarea
+          className={formState?.errors[id]?.message ? "error" : ""}
+          {...register(id, options)}
+          id={id}
+        ></textarea>
 
-      {formState?.errors && formState.errors[id]?.message && (
-        <p>{formState?.errors[id]?.message?.toString()}</p>
-      )}
+        {formState?.errors && formState.errors[id]?.message && (
+          <p className="error_message">{formState?.errors[id]?.message?.toString()}</p>
+        )}
+      </div>
     </div>
   );
 };

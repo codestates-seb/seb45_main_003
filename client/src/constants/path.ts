@@ -6,7 +6,7 @@ function createPath(id: PathType, path: string): string {
 
 export const API_PATHS = {
   members: {
-    default: (id: PathType) => createPath(id, "default"),
+    default: (id: PathType) => createPath(id, "members"),
     all: "/members/all",
     auth: {
       name: "/members/auth/name",
@@ -24,7 +24,10 @@ export const API_PATHS = {
     auth: "/email/auth",
     send: "/email/auth/send",
   },
-  products: (id: PathType) => createPath(id, "products"),
+  products: {
+    default: (id: PathType) => createPath(id, "products"),
+    category: (id: PathType) => createPath(id, "products/category"),
+  },
   chat: (id: PathType) => createPath(id, "chat"),
   reviews: (id: PathType) => createPath(id, "reviews"),
   wishes: {

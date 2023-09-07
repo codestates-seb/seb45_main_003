@@ -1,12 +1,12 @@
 import axios from "axios";
-import { useQuery, useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { ReactComponent as EmptyImage } from "../../assets/images/empty.svg";
+import { ReactComponent as EmptyImage } from "../../assets/images/Empty.svg";
 import Loading from "../../components/common/Loading";
-import { COLOR } from "../../contstants/color";
-import { API_PATHS } from "../../contstants/path";
-import useSSE from "../../hooks/useSSE";
+import { CATEGORY } from "../../constants/category";
+import { COLOR } from "../../constants/color";
+import { API_PATHS } from "../../constants/path";
 import ErrorIndication from "../../pages/ErrorIndication";
 import Button from "../common/Button";
 import ListItem from "./ListItem";
@@ -21,6 +21,7 @@ export type ProductData = {
   currentAuctionPrice?: number;
   immediatelyBuyPrice: number;
   productStatus: string;
+  categoryId: number;
   views: number;
   action: boolean;
   createAt: string;
@@ -59,18 +60,11 @@ const StyledList = styled.section`
 
 const List = (): JSX.Element => {
   const navigate = useNavigate();
-  const { isLoading, error, data } = useQuery<ProductData[]>("productData", async () => {
-    const response = await axios.get(API_PATHS.products(""));
-    return response.data;
-  });
-  const queryClient = useQueryClient();
-
-  //Server-Sent-Event 적용
-  useSSE<ProductData>({
-    url: "/subscribe/products/1",
-    callback: (newData) => {
-      queryClient.setQueryData("productData", newData);
-    },
+  const location = useLocation();
+  const currentCategory = location.pathname.slice(9);
+  const { isLoading, error, data } = useQuery<ProductData[]>("productList", async () => {
+    const response = await axios.get(API_PATHS.products.category(CATEGORY[currentCategory].id));
+    return response.data.content;
   });
 
   if (isLoading) {
@@ -85,7 +79,7 @@ const List = (): JSX.Element => {
     <>
       <StyledList>
         <div className="list_top">
-          <h1>페이지 제목</h1>
+          <h1>{CATEGORY[currentCategory].value}</h1>
           <div className="list_top_right">
             <SearchBar></SearchBar>
             <Button

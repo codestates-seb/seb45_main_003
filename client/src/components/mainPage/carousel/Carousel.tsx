@@ -1,6 +1,6 @@
 //캐러셀 작업
 import SwiperCore from "swiper";
-import { Navigation, Pagination, EffectCoverflow } from "swiper/modules";
+import { EffectCoverflow, Navigation, Pagination } from "swiper/modules";
 import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/react";
 
 import styled from "styled-components";
@@ -15,9 +15,9 @@ import image6 from "../../../assets/images/Carousel/unsplash6.jpg";
 import image7 from "../../../assets/images/Carousel/unsplash7.jpg";
 
 import "swiper/css";
+import "swiper/css/effect-coverflow";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import "swiper/css/effect-coverflow";
 
 import "./styles.css";
 
@@ -28,18 +28,17 @@ const Layout = styled.div`
   justify-content: center;
   /* background-color: blue; */
   margin: 0 auto;
-  width: calc(100% - 3rem);
+  width: 100%;
   margin-bottom: 6.25rem;
   .swiper {
-    max-width: 89.4375rem;
     max-height: 33.875rem;
 
     margin: 0;
-    padding-left: 9.375rem;
-    padding-right: 9.375rem;
+    padding-left: 12%;
+    padding-right: 12%;
   }
   .swiper-slide {
-    width: 89.4375rem;
+    width: 100%;
     height: 33.875rem;
   }
   .swiper-slide img {
@@ -48,10 +47,6 @@ const Layout = styled.div`
     height: 100%;
     object-fit: cover;
     object-position: center;
-  }
-
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
   }
 `;
 interface CustomSwiperProps extends ReactSwiperProps {

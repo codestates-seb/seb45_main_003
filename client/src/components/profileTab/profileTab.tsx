@@ -1,8 +1,8 @@
 import { useRecoilState } from "recoil";
-import { profileTabState } from "../../atoms/atoms";
 import { styled } from "styled-components";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
+import { profileTabState } from "../../atoms/atoms";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
 
 const ProfileTabContainer = styled.ul`
   flex: 0 0 14rem;
