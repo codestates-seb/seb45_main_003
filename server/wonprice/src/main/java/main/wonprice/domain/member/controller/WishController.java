@@ -25,6 +25,7 @@ public class WishController {
     private final ProductService productService;
     private final WishService wishService;
     private final WishMapper mapper;
+    private final ProductMapper productMapper;
 
     @PostMapping("/wishes/add")
     public ResponseEntity postWish(@RequestBody WishPostDto postDto) {
@@ -46,6 +47,8 @@ public class WishController {
 
         List<Wish> wishes = wishService.findMemberWish(pageable, member);
         List<WishResponseDto> response = mapper.toResponseDtos(wishes);
+        response.forEach(
+                dto -> dto.setProductResponseDto(productMapper.fromEntity(productService.findOneById(dto.getProductId()))));
 
         return ResponseEntity.ok(response);
     }

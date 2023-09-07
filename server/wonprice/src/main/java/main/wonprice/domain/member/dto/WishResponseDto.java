@@ -2,6 +2,7 @@ package main.wonprice.domain.member.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.wonprice.domain.product.dto.ProductResponseDto;
 
 import java.time.LocalDateTime;
 
@@ -13,4 +14,6 @@ public class WishResponseDto {
     private LocalDateTime createdAt;
 
     private Long productId;
+
+    private ProductResponseDto productResponseDto;
 }
