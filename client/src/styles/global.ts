@@ -1,6 +1,6 @@
 import { createGlobalStyle } from "styled-components";
-import { COLOR } from "../contstants/color";
-import { FONT_SIZE } from "../contstants/font";
+import { COLOR } from "../constants/color";
+import { FONT_SIZE } from "../constants/font";
 import "./font.ts";
 
 export const GlobalStyle = createGlobalStyle`
@@ -73,8 +73,12 @@ textarea {
   resize: none;
 }
 select {
-  margin: 0;
-  padding: 0;
+  padding: 0.5rem 0.75rem;
+  width: 15rem;
+  border-radius: 6px;
+  border: 1px solid ${COLOR.border};
+  background: ${COLOR.gray_100};
+  outline: none;
 }
 button{
   cursor: pointer;

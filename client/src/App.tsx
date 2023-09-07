@@ -15,20 +15,20 @@ import Root from "./pages/Root";
 function App() {
   const routes: RouteObject[] = [
     // 1) 메인 홈 페이지
-    {
-      path: "/",
-      element: <Main />,
-    },
+    // {
+    //   path: "/",
+    //   element: <Main />,
+    // },
     {
       // Root Layout
       path: "/",
       element: <Root />,
       children: [
         // // 1) 메인 홈 페이지
-        // {
-        //   path: "/",
-        //   element: <Main />,
-        // },
+        {
+          path: "/",
+          element: <Main />,
+        },
 
         // 2) 로그인 페이지
         {
@@ -52,11 +52,18 @@ function App() {
         {
           path: "/product",
           element: <PostsList />,
+          children: [
+            {
+              path: ":category",
+              element: <PostsList />,
+              children: [],
+            },
+          ],
         },
 
         // 6) 게시글 상세 페이지
         {
-          path: "/product/:item",
+          path: "/product/:category/:item",
           element: <PostInformation />,
         },
 

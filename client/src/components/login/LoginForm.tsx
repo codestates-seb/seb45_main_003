@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useSetRecoilState } from "recoil";
 import { styled } from "styled-components";
 import { loginState } from "../../atoms/atoms";
+import { COLOR } from "../../constants/color";
 import Button from "../common/Button";
 
 //폼에서 사용하는 데이터
@@ -25,8 +26,14 @@ const StyledLoginForm = styled.form`
   justify-content: stretch;
   align-items: stretch;
   gap: 0.5rem;
+  .errormessage {
+    color: ${COLOR.invalid};
+  }
+  .errorInput {
+    border-color: ${COLOR.invalid};
+  }
 `;
-//errormessage 빨간색
+
 const LogInForm = (): JSX.Element => {
   const {
     register,
@@ -46,6 +53,8 @@ const LogInForm = (): JSX.Element => {
         const refreshToken = headers["refresh"];
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
+        //id도 담아주면 id도 저장
+        localStorage.setItem("Id", response.data.memberId);
         setLogin(true);
         navigate("/");
       }
@@ -67,6 +76,7 @@ const LogInForm = (): JSX.Element => {
         id="email"
         type="email"
         placeholder="Email"
+        className={errors.email ? "errorInput" : "input"}
         {...register("email", {
           required: "이메일을 입력해주세요.",
         })}
@@ -77,11 +87,13 @@ const LogInForm = (): JSX.Element => {
         id="password"
         type="password"
         placeholder="Password"
+        className={errors.password ? "errorInput" : "input"}
         {...register("password", {
           required: "비밀번호를 입력해주세요.",
         })}
       />
-      {errors.password && <div>{errors.password?.message}</div>}
+      {errors.password && <div className="errormessage">{errors.password?.message}</div>}
+      {errors.formError && <div className="errormessage">{errors.formError?.message}</div>}
       <Button type="submit" disabled={isSubmitting} $text="로그인" $design="black" />
     </StyledLoginForm>
   );

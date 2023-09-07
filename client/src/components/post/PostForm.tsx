@@ -1,17 +1,22 @@
 import axios from "axios";
 import { pickBy } from "lodash";
-import { useState } from "react";
-import { FieldValues, useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Controller, FieldValues, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import { styled } from "styled-components";
+import { loginState } from "../../atoms/atoms";
 import S3 from "../../aws-config";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
-import { API_PATHS } from "../../contstants/path";
-import { FAIL, REQUIRED, SUCCESS } from "../../contstants/systemMessage";
+import SelectInput from "../../components/common/selectInput";
+import { CATEGORY } from "../../constants/category";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
+import { API_PATHS } from "../../constants/path";
+import { FAIL, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { useModal } from "../../hooks/useModal";
+import { getAuthToken } from "../../util/auth";
 import Button from "../common/Button";
 import ImageInput from "../common/ImageInput";
 import Modal from "../common/Modal";
@@ -63,7 +68,7 @@ const StyledUploadForm = styled.section`
         padding: 0.5rem 0;
       }
 
-      & > p {
+      & > p:first-child {
         max-width: 10.125rem;
         width: 25%;
         font-size: ${FONT_SIZE.font_20};
@@ -71,22 +76,28 @@ const StyledUploadForm = styled.section`
       }
 
       .input {
+        width: 100%;
         position: relative;
+        display: flex;
+        flex-flow: column;
       }
     }
 
     #title {
       max-width: 37.5rem;
-      width: 100%;
     }
 
     input[name="currentAuctionPrice"],
-    input[name="immediatelyBuyPrice"],
-    input[name="closingDate"] {
+    input[name="immediatelyBuyPrice"] {
       box-sizing: border-box;
       max-width: 15rem;
       width: 100%;
     }
+  }
+
+  .image_box {
+    display: flex;
+    flex-flow: row;
   }
 
   label[for="images"] {
@@ -94,10 +105,13 @@ const StyledUploadForm = styled.section`
     flex-flow: column;
     align-items: center;
     justify-content: center;
-    max-width: 9.375rem;
-    width: 100%;
+    gap: 0.25rem;
+    width: 9.375rem;
     aspect-ratio: 1/1;
     background: #f7f7f7;
+    color: ${COLOR.lightText};
+    font-size: ${FONT_SIZE.font_18};
+    border: 1px solid ${COLOR.border};
   }
 
   input[type="file"] {
@@ -111,28 +125,73 @@ const StyledUploadForm = styled.section`
     & + span {
       color: ${COLOR.gray_800};
       position: absolute;
-      right: 0.75rem;
-      top: 50%;
-      transform: translatey(-50%);
+      left: 13.375rem;
+      top: 0.5rem;
     }
   }
 
-  .image-input {
+  input[type="radio"] {
+    padding: 0 !important;
+    vertical-align: middle;
+    appearance: none;
+    border: 1px solid ${COLOR.darkText};
+    border-radius: 50%;
+    width: 1.5rem;
+    aspect-ratio: 1/1;
+
+    &:checked {
+      border: 5px solid ${COLOR.darkText};
+    }
+
+    &:hover {
+      border: 5px solid ${COLOR.primary};
+    }
+  }
+
+  input[type="time"] {
+    width: 7.5rem;
+  }
+
+  .image_input {
     display: flex;
     flex-flow: row;
     align-items: center;
     gap: 1rem;
   }
 
-  .image-preview {
+  .image_preview {
     max-width: 9.375rem;
     aspect-ratio: 1/1;
     object-fit: cover;
   }
 
-  textarea {
+  .select_date {
+    display: flex;
+    flex-flow: row;
+    gap: 0.75rem;
+  }
+
+  .error_message {
+    color: ${COLOR.invalid};
+    margin: 0.5rem 0 0;
+
+    & + .error_message {
+      margin: 0;
+    }
+  }
+
+  .error {
+    border: 1px solid ${COLOR.invalid};
+  }
+
+  .textarea {
     width: 100%;
-    min-height: 18.75rem;
+
+    textarea {
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 18.75rem;
+    }
   }
 
   button {
@@ -141,13 +200,28 @@ const StyledUploadForm = styled.section`
 `;
 
 const UploadForm = () => {
-  const { register, handleSubmit, setError, clearErrors, formState } = useForm<FieldValues>();
+  const { control, register, handleSubmit, setError, clearErrors, formState } =
+    useForm<FieldValues>();
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const { images, handleChange } = useImageUpload({ setError, clearErrors });
   const [isAuction, setIsAuction] = useState(true);
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
-  const mutation = useMutation((data: FieldValues) => axios.post(API_PATHS.products(""), data, {}));
+  const mutation = useMutation((data: FieldValues) =>
+    axios.post(API_PATHS.products.default(""), data, {
+      headers: {
+        Authorization: token,
+      },
+    }),
+  );
+  const isLogin = useRecoilValue(loginState);
+  const token = getAuthToken();
+
+  useEffect(() => {
+    if (!isLogin) {
+      navigate("/login");
+    }
+  }, [isLogin]);
 
   const onSubmit = async (data: FieldValues) => {
     try {
@@ -156,7 +230,7 @@ const UploadForm = () => {
 
       for (const image of images) {
         const params: AWS.S3.PutObjectRequest = {
-          Bucket: "wonprice-seb45-003",
+          Bucket: "wonprice-test1",
           Key: `${new Date().toISOString() + "-" + image.name}`,
           Body: image,
           ContentType: image.type,
@@ -172,7 +246,8 @@ const UploadForm = () => {
         ...data,
         auction: isAuction,
         images: imagePaths,
-        closedAt: data.closingDate + " " + data.closingTime,
+        closedAt:
+          data.closingDate && data.closingTime ? `${data.closingDate} ${data.closingTime}` : "",
       };
       delete data.closingDate;
       delete data.closingTime;
@@ -212,7 +287,6 @@ const UploadForm = () => {
               handleChange={handleChange}
               formState={formState}
             />
-
             <TextInput
               register={register}
               options={{
@@ -222,6 +296,21 @@ const UploadForm = () => {
               id="title"
               type="text"
               formState={formState}
+            />
+
+            <Controller
+              name="categoryId"
+              control={control}
+              defaultValue=""
+              render={({ field }) => (
+                <SelectInput
+                  title="카테고리"
+                  id="category"
+                  field={field}
+                  selectoptions={CATEGORY}
+                  formState={formState}
+                />
+              )}
             />
           </div>
 
@@ -281,24 +370,36 @@ const UploadForm = () => {
             {isAuction && (
               <div className="field">
                 <p>경매 종료 시간</p>
-                <input
-                  {...register("closingDate", {
-                    required: REQUIRED.closingDate,
-                  })}
-                  type="date"
-                />
-                <input
-                  {...register("closingTime", {
-                    required: REQUIRED.closingTime,
-                  })}
-                  type="time"
-                />
-                {formState.errors.closingDate?.message && (
-                  <p>{formState.errors.closingDate.message.toString()}</p>
-                )}
-                {formState.errors.closingTime?.message && (
-                  <p>{formState.errors.closingTime.message.toString()}</p>
-                )}
+                <div className="input">
+                  <div className="select_date">
+                    <input
+                      className={formState.errors.closingDate?.message ? "error" : ""}
+                      {...register("closingDate", {
+                        required: REQUIRED.closingDate,
+                      })}
+                      type="date"
+                    />
+                    <input
+                      className={formState.errors.closingTime?.message ? "error" : ""}
+                      {...register("closingTime", {
+                        required: REQUIRED.closingTime,
+                      })}
+                      type="time"
+                    />
+                  </div>
+                  <div className="date_error">
+                    {formState.errors.closingDate?.message && (
+                      <p className="error_message">
+                        {formState.errors.closingDate.message.toString()}
+                      </p>
+                    )}
+                    {formState.errors.closingTime?.message && (
+                      <p className="error_message">
+                        {formState.errors.closingTime.message.toString()}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
           </div>

@@ -18,12 +18,18 @@ const TextInput = (props: TextInputProps) => {
       <p>{title}</p>
 
       <div className="input">
-        <input {...register(id, options)} id={id} type={type} placeholder={placeholder} />
+        <input
+          className={formState?.errors[id]?.message ? "error" : ""}
+          {...register(id, options)}
+          id={id}
+          type={type}
+          placeholder={placeholder}
+        />
 
         {id === "immediatelyBuyPrice" || id === "currentAuctionPrice" ? <span>원</span> : null}
 
         {formState?.errors && formState.errors[id]?.message && (
-          <p>{formState?.errors[id]?.message?.toString()}</p>
+          <p className="error_message">{formState?.errors[id]?.message?.toString()}</p>
         )}
       </div>
     </div>

@@ -1,17 +1,27 @@
-import { styled } from "styled-components";
-import { COLOR } from "../../contstants/color";
-import { FONT_SIZE } from "../../contstants/font";
-import Button from "../common/Button";
-import PostListTab from "./postListTab";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
+import { styled } from "styled-components";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
+import { useModal } from "../../hooks/useModal";
+import Button from "../common/Button";
+import Modal from "../common/Modal";
+import PostListTab from "./postListTab";
+import { useRecoilValue } from "recoil";
+import { loginState } from "../../atoms/atoms";
+import { authInstance } from "../../interceptors/interceptors";
 
-interface profileData {
+interface Profile {
+  memberId: number;
   name: string;
+  email: string;
   phone: string;
-  password: string;
-  image: string;
+}
+
+interface modifyPasswordForm {
+  passwordCheck: string;
+  newPassword: string;
 }
 
 const ProfileContentContainer = styled.div`
@@ -40,8 +50,17 @@ const ProfileContentContainer = styled.div`
     justify-content: flex-start;
     align-items: stretch;
     gap: 2rem;
-    .profileImg {
-      border-radius: 6px;
+    .imgContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: stretch;
+      gap: 0.5rem;
+      .profileImg {
+        border-radius: 6px;
+        width: 12.5rem;
+        height: 12.5rem;
+      }
     }
     .labelContainer {
       display: flex;
@@ -67,66 +86,123 @@ const ProfileContentContainer = styled.div`
     }
   }
 `;
-const Modifyform = styled.form`
-  width: 18.75rem;
-  padding: 1.25rem 1rem;
+const StyledModal = styled.form`
+  width: 25rem;
   display: flex;
   flex-direction: column;
-  justify-content: stretch;
+  justify-content: space-between;
   align-items: stretch;
-  gap: 0.5rem;
-  .inputContainer {
+  gap: 16px;
+  .modalInputContainer {
     display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
     gap: 0.5rem;
+    .ButtonContainer {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+    .errormessage {
+      color: ${COLOR.invalid};
+    }
+    .successmessage {
+      color: ${COLOR.valid};
+    }
+    .errorInput {
+      border-color: ${COLOR.invalid};
+    }
   }
-  .errormessage {
-    color: ${COLOR.invalid};
-  }
-  .errorInput {
-    border-color: ${COLOR.invalid};
+  .modalButtonContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
   }
 `;
 
 const ProfileContent = (): JSX.Element => {
-  const [modifyMode, setModifyMode] = useState(false);
+  const [profile, setProfile] = useState<Profile>({ memberId: 0, name: "", email: "", phone: "" });
+  // const Id = window.location.search
+  const Id = localStorage.getItem("Id");
+  const [pass, setPass] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<profileData>();
-  const [profile, setProfile] = useState(null);
-  // const Id = window.location.search
+    setError,
+    setValue,
+    getValues,
+  } = useForm<modifyPasswordForm>();
+  const isLogin = useRecoilValue(loginState);
+  const { toggleModal, closeModal, isOpen } = useModal();
+  // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getProfile = async () => {
-    const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/{member-id}`);
-    setProfile(res.data);
-  };
-  const submitModifiedProfile = async (body: profileData) => {
-    const res = await axios.patch(`${process.env.REACT_APP_API_URL}/members/{member-id}`, body);
-    if (res.status === 200) {
-      setModifyMode(!modifyMode);
-      getProfile();
+    try {
+      const res = await authInstance.get(`/members/${Id}`);
+      setProfile(res.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+      }
     }
+  };
+  const modifyPassword = async (body: modifyPasswordForm) => {
+    try {
+      const res = await authInstance.patch(`/members/${Id}`, { password: body.newPassword });
+      setProfile(res.data);
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+      }
+    }
+  };
+  const validatePassword = async (body: string) => {
+    try {
+      const res = await authInstance.post(`/members/auth/password`, { password: body });
+      if (res.status === 200) {
+        setPass(true);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 403) {
+          setPass(false);
+          setError("passwordCheck", {
+            message: "틀린 비밀번호입니다.",
+          });
+        }
+      }
+    }
+  };
+  const resetModal = () => {
+    setValue("newPassword", "");
+    setValue("passwordCheck", "");
+    setPass(false);
+    toggleModal();
   };
   useEffect(() => {
     getProfile();
-  }, [profile]);
-  return (
-    <ProfileContentContainer>
-      <div className="topContainer">
-        <p className="menuTitle">프로필</p>
-        <Button
-          type="button"
-          $text="변경"
-          $design="black"
-          onClick={() => setModifyMode(!modifyMode)}
-        />
-      </div>
-      {!modifyMode ? (
+  }, [isLogin]);
+  if (profile.name !== "") {
+    return (
+      <ProfileContentContainer>
+        <div className="topContainer">
+          <p className="menuTitle">프로필</p>
+          <Button
+            type="button"
+            $text="비밀번호 변경"
+            onClick={() => toggleModal()}
+            $design="black"
+          />
+        </div>
         <div className="profileInfoContainer">
-          <img className="profileImg"></img>
+          <div className="imgContainer">
+            <img className="profileImg"></img>
+            <Button type="button" $text="이미지 등록" $design="black" />
+          </div>
           <div className="labelContainer">
             <label className="infoLabel">성함</label>
             <label className="infoLabel">이메일</label>
@@ -134,46 +210,63 @@ const ProfileContent = (): JSX.Element => {
             <label className="infoLabel">거래완료 횟수</label>
           </div>
           <ul className="infoContainer">
-            <li className="info">사용자 성함</li>
-            <li className="info">사용자 이메일</li>
+            <li className="info">{profile.name}</li>
+            <li className="info">{profile.email}</li>
             <li className="info">사용자 작성글 갯수</li>
             <li className="info">사용자 거래완료 횟수</li>
           </ul>
         </div>
-      ) : (
-        <Modifyform onSubmit={handleSubmit(submitModifiedProfile)}>
-          <div className="inputContainer">
-            <label htmlFor="email">성함</label>
-            <input
-              id="name"
-              type="text"
-              placeholder="name"
-              className={errors.name ? "errorInput" : "input"}
-              {...register("name", {
-                required: "이름을 입력해주세요.",
-              })}
-            />
-          </div>
-          {errors.name && <div className="errormessage">{errors.name?.message}</div>}
-          <div className="inputContainer">
-            <label htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              placeholder="Password"
-              className={errors.password ? "errorInput" : "input"}
-              {...register("password", {
-                required: "비밀번호를 입력해주세요.",
-              })}
-            />
-          </div>
-          {errors.password && <div className="errormessage">{errors.password?.message}</div>}
-          <Button type="submit" disabled={isSubmitting} $text="저장" $design="black" />
-        </Modifyform>
-      )}
-      <PostListTab />
-    </ProfileContentContainer>
-  );
+        <PostListTab />
+        <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={resetModal}>
+          <StyledModal onSubmit={handleSubmit(modifyPassword)}>
+            <div className="modalInputContainer">
+              <label htmlFor="passwordCheck">비밀번호</label>
+              <input
+                id="passwordCheck"
+                type="password"
+                placeholder="기존 비밀번호를 확인해야 변경 가능합니다."
+                className={errors.passwordCheck && !pass ? "errorInput" : "input"}
+                {...register("passwordCheck", {
+                  required: "현재 비밀번호를 입력해주세요.",
+                })}
+              ></input>
+              <div className="ButtonContainer">
+                {errors.passwordCheck && !pass && (
+                  <div className="errormessage">{errors.passwordCheck?.message}</div>
+                )}
+                {pass && <div className="successmessage">확인되었습니다.</div>}
+                <Button
+                  type="button"
+                  $text="비밀번호 확인"
+                  $design="black"
+                  onClick={() => validatePassword(getValues("passwordCheck"))}
+                />
+              </div>
+              <label htmlFor="newPassword">새 비밀번호</label>
+              <input
+                id="newPassword"
+                type="password"
+                placeholder="새 비밀번호"
+                disabled={!pass}
+                className={errors.newPassword ? "errorInput" : "input"}
+                {...register("newPassword", {
+                  required: "새로운 비밀번호를 입력해주세요.",
+                })}
+              ></input>
+              {errors.newPassword && (
+                <div className="errormessage">{errors.newPassword?.message}</div>
+              )}
+            </div>
+            <div className="modalButtonContainer">
+              <Button type="submit" $text="확인" $design="black" disabled={isSubmitting} />
+            </div>
+          </StyledModal>
+        </Modal>
+      </ProfileContentContainer>
+    );
+  } else {
+    return <></>;
+  }
 };
 
 export default ProfileContent;

@@ -4,6 +4,7 @@ import lombok.*;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.Review;
+import main.wonprice.domain.picture.entity.ProductPicture;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 
 import javax.persistence.*;
@@ -58,6 +59,9 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<Review> reviews = new ArrayList<>(); // 리뷰
+
+    @OneToMany(mappedBy = "product")
+    private List<ProductPicture> productPictures = new ArrayList<>(); // 게시글 이미지
 
     public Product update(ProductRequestDto productRequestDto) {
         this.title = productRequestDto.getTitle();

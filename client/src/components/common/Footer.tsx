@@ -21,9 +21,6 @@ const FooterStyled = styled.div`
   .fotterText {
     margin-left: 5rem;
   }
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  }
 `;
 
 export const Footer = (): JSX.Element => {
