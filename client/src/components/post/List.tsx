@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useQuery } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as EmptyImage } from "../../assets/images/Empty.svg";
 import Loading from "../../components/common/Loading";
-import { COLOR } from "../../contstants/color";
-import { API_PATHS } from "../../contstants/path";
+import { CATEGORY } from "../../constants/category";
+import { COLOR } from "../../constants/color";
+import { API_PATHS } from "../../constants/path";
 import ErrorIndication from "../../pages/ErrorIndication";
 import Button from "../common/Button";
 import ListItem from "./ListItem";
@@ -59,9 +60,11 @@ const StyledList = styled.section`
 
 const List = (): JSX.Element => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const currentCategory = location.pathname.slice(9);
   const { isLoading, error, data } = useQuery<ProductData[]>("productList", async () => {
-    const response = await axios.get(API_PATHS.products(""));
-    return response.data;
+    const response = await axios.get(API_PATHS.products.category(CATEGORY[currentCategory].id));
+    return response.data.content;
   });
 
   if (isLoading) {
@@ -76,7 +79,7 @@ const List = (): JSX.Element => {
     <>
       <StyledList>
         <div className="list_top">
-          <h1>페이지 제목</h1>
+          <h1>{CATEGORY[currentCategory].value}</h1>
           <div className="list_top_right">
             <SearchBar></SearchBar>
             <Button

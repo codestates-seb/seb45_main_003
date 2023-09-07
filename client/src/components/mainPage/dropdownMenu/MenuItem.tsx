@@ -1,8 +1,8 @@
 //드롭다운 메뉴 아이템
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as AddButton } from "../../../assets/images/Add.svg";
 import myImage from "../../../assets/images/Img1.png";
-import { Link } from "react-router-dom";
 
 const ItemContainer = styled.div`
   font-family: Pretendard Variable;
@@ -177,27 +177,27 @@ const MenuItem: React.FunctionComponent<ItemProps> = (props) => {
           <Title>Shop By Department</Title>
           <ul>
             <li className="ItemList">
-              <Link to="/product/Books">
+              <Link to="/product/books">
                 <Item categories="Books" count="1" />
               </Link>
             </li>
             <li className="ItemList">
-              <Link to="/product/Electronics">
+              <Link to="/product/eletronics">
                 <Item categories="Electronics " count="1" />
               </Link>
             </li>
             <li className="ItemList">
-              <Link to="/product/Fashion">
+              <Link to="/product/clothing">
                 <Item categories="Fashion" count="1" />
               </Link>
             </li>
             <li className="ItemList">
-              <Link to="/product/Food">
+              <Link to="/product/food">
                 <Item categories="Food" count="1" />
               </Link>
             </li>
             <li className="ItemList">
-              <Link to="/product/Cosmetic">
+              <Link to="/product/cosmetic">
                 <Item categories="Cosmetic" count="1" />
               </Link>
             </li>
