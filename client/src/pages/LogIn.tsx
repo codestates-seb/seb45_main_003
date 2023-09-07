@@ -11,6 +11,7 @@ import SignupForm from "../components/login/SignupForm";
 import { COLOR } from "../constants/color";
 
 const BackgroundContainer = styled.div`
+  padding: 19.6875rem 0;
   display: flex;
   flex-direction: row;
   justify-content: center;
