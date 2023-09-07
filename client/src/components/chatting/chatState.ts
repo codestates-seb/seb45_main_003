@@ -1,4 +1,4 @@
-// chatListState.ts
+// chatState.ts
 import { atom } from "recoil";
 
 export type ChatList = {
@@ -33,4 +33,14 @@ export type Message = {
 export const chatRoomState = atom<ChatList[]>({
   key: "chatRoomState",
   default: [],
+});
+
+export const chatRoomIdState = atom({
+  key: "chatRoomIdState",
+  default: 0, // default value
+});
+
+export const currentChatRoomIdState = atom<number | null>({
+  key: "currentChatRoomId",
+  default: null,
 });

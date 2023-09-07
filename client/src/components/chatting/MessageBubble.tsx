@@ -1,6 +1,9 @@
 import React, { useState, useEffect, FC } from "react";
 import styled from "styled-components";
 import axios from "axios";
+import { currentChatRoomIdState } from "./chatState";
+import { useRecoilValue } from "recoil";
+// import NoMessages from "../../assets/images/chatting/NoMessages.svg";
 
 const BubbleWrapper = styled.div<{ owner: "user" | "other" }>`
   display: flex;
@@ -45,7 +48,10 @@ const MessageBubble: FC<MessageBubbleProps> = ({ owner, message, time }) => (
 );
 
 const ChatRoom: React.FC = () => {
+  const chatRoomId = useRecoilValue(currentChatRoomIdState);
+  // const { chatRoomId } = useParams<{ chatRoomId: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
+  console.log(chatRoomId);
 
   // 로컬 스토리지에서 userId 값을 가져옵니다.
   const userIdFromLocalStorage = localStorage.getItem("Id");
@@ -57,7 +63,9 @@ const ChatRoom: React.FC = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat/1`);
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat/${chatRoomId}`);
+        console.log(fetchMessages);
+
         setMessages(response.data);
       } catch (error) {
         console.error("Failed to fetch messages:", error);
@@ -70,18 +78,22 @@ const ChatRoom: React.FC = () => {
     return () => {
       clearInterval(intervalId); // 컴포넌트가 언마운트되면 인터벌을 제거합니다.
     };
-  }, []);
+  }, [chatRoomId]); // chatRoomId를 의존성으로 추가
 
   return (
     <div>
-      {messages.map((message) => (
-        <MessageBubble
-          key={message.messageId}
-          owner={message.senderId === Id ? "user" : "other"}
-          message={message.content}
-          time={message.createdAt}
-        />
-      ))}
+      {messages.length === 0 ? (
+        <div>{/* <NoMessages /> */}</div>
+      ) : (
+        messages.map((message) => (
+          <MessageBubble
+            key={message.messageId}
+            owner={message.senderId === Id ? "user" : "other"}
+            message={message.content}
+            time={message.createdAt}
+          />
+        ))
+      )}
     </div>
   );
 };

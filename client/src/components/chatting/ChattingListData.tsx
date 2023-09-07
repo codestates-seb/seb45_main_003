@@ -2,12 +2,10 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { useRecoilState, useRecoilValue, RecoilState } from "recoil";
 import { loginState } from "../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
-import { chatListState } from "./chatListState";
-import moment from "moment";
+import { chatListState } from "./chatState";
+import moment from "moment-timezone";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
-// import { ChatList } from "./chatListState";
-
+import { currentChatRoomIdState } from "./chatState";
 interface ChatList {
   chatRoomId: number;
   memberId: number;
@@ -29,15 +27,13 @@ const formatTimeOrDate = (createdAt: string | null) => {
     return "No message";
   }
 
-  const currentTime = moment();
-  const messageTime = moment(createdAt);
+  const currentTime = moment().tz("Asia/Seoul");
+  const messageTime = moment(createdAt).tz("Asia/Seoul"); // 타임존 설정 추가
   const diffInHours = currentTime.diff(messageTime, "hours");
 
   if (diffInHours < 24) {
-    // 24시간 미만이면 시간을 표시 (오전/오후 구분)
     return messageTime.format("A h:mm");
   } else {
-    // 24시간 이상이면 월-일을 표시
     return messageTime.format("MM-DD");
   }
 };
@@ -103,13 +99,14 @@ const Container = styled.button`
 `;
 const ChattingListData: React.FC = () => {
   const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
-
+  const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(currentChatRoomIdState);
+  console.log(currentChatRoomId);
   const isLoggedIn = useRecoilValue(loginState);
-  const navigate = useNavigate();
 
   const handleRoomClick = (chatRoomId: number) => {
-    navigate(`/room/${chatRoomId}`);
+    setCurrentChatRoomId(chatRoomId);
   };
+
   useEffect(() => {
     if (isLoggedIn) {
       // 로그인 상태가 true일 때만 API 호출을 합니다.
@@ -130,7 +127,7 @@ const ChattingListData: React.FC = () => {
               // "ngrok-skip-browser-warning": "69420",
             },
           });
-          console.log(response.data);
+          // console.log(response.data);
           setChatList(response.data);
         } catch (error) {
           console.log("Failed to fetch chat list:", error);
@@ -144,7 +141,7 @@ const ChattingListData: React.FC = () => {
     <>
       <ul>
         {chatList.map((chat, index) => (
-          <Container key={index} onClick={() => handleRoomClick(chat.chatRoomId)}>
+          <Container key={chat.chatRoomId} onClick={() => handleRoomClick(chat.chatRoomId)}>
             <li key={index}>
               <div className="chatRoom">
                 {/* <div>{chat.chatRoomId}</div> */}
