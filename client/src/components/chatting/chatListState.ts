@@ -1,18 +1,22 @@
 // chatListState.ts
 import { atom } from "recoil";
 
-export type Chat = {
-  chatParticipantId: number;
+export type ChatList = {
+  chatRoomId: number;
   memberId: number;
+  productId: number;
+  deletedAt: string;
+
   chatRoom: {
-    chatRoomId: number;
-    productId: number;
-    status: string;
-    createdAt: string;
+    memberId: number;
+    deletedAt: string;
+  };
+  message: {
+    content: string;
   };
 };
 
-export const chatListState = atom<Chat[]>({
+export const chatListState = atom<ChatList[]>({
   key: "chatListState",
   default: [],
 });

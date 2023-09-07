@@ -7,6 +7,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import React, { useEffect, useRef } from "react";
 import MenuItem from "../mainPage/dropdownMenu/MenuItem";
 import { DropdownState } from "./DropdownState";
+import { useSetRecoilState } from "recoil";
+import { toSignup } from "../../atoms/atoms";
 
 // 헤더 하단으 경계 스타일
 const StyledBorder = styled.div`
@@ -42,8 +44,6 @@ const StyledHeader = styled.header`
   .sidebar {
     z-index: 2;
     border-radius: 6px;
-    /* border: 1px solid var(--cool-gray-20, #dde1e6); */
-    background: #ffffff;
     margin: 0.375rem;
     max-width: 22rem;
     width: 25%;
@@ -88,7 +88,7 @@ const HeaderLogout = (): JSX.Element => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, []); // 빈 의존성 배열
-
+  const setIsSignup = useSetRecoilState(toSignup);
   return (
     <>
       <StyledBorder>
@@ -100,7 +100,13 @@ const HeaderLogout = (): JSX.Element => {
             </Link>
             <div className="header-right">
               {/* 로그인/회원가입 링크와 메뉴 아이콘 */}
-              <Link to="/login">로그인 / 회원가입</Link>
+              {/* <Link to="/login">로그인 / 회원가입</Link> */}
+              <Link to="/login" onClick={() => setIsSignup(true)}>
+                로그인
+              </Link>
+              <Link to="/login" onClick={() => setIsSignup(false)}>
+                회원가입
+              </Link>
               <button className="ButtonStyle" onClick={onClickHandler}>
                 <MenuIcon />
               </button>

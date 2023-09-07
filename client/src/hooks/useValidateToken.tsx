@@ -1,7 +1,6 @@
+import axios from "axios";
 import { useSetRecoilState } from "recoil";
 import { loginState } from "../atoms/atoms";
-import { useEffect } from "react";
-import axios from "axios";
 
 export const useValidateToken = () => {
   const setLogin = useSetRecoilState(loginState);
@@ -49,9 +48,11 @@ export const useValidateToken = () => {
     }
   };
 
-  useEffect(() => {
-    if (accessToken) {
-      validateAccessToken(accessToken);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (accessToken) {
+  //     validateAccessToken(accessToken);
+  //   }
+  // }, []);
+
+  return { validateAccessToken, accessToken };
 };

@@ -1,11 +1,25 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
-import { FONT_SIZE } from "../../contstants/font";
-import { COLOR } from "../../contstants/color";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
-// import axios from "axios";
 //dto 정해지면 추가
 
-const BookmarkContentContainer = styled.div`
+type bookmark = {
+  wishId: number;
+  creadtedAt: string;
+  productId: string;
+};
+
+type checkInputType = {
+  selectAll: boolean;
+  checkboxes: boolean[];
+  index: number;
+};
+
+const BookmarkContentContainer = styled.form`
   padding: 2rem;
   display: flex;
   flex-direction: column;
@@ -105,51 +119,116 @@ const BookmarkContentContainer = styled.div`
 `;
 
 const BookmarkContent = (): JSX.Element => {
-  //
-  //   const getData = async () => {
-  //     const res = await axios.get(`${process.env.REACT_APP_API_URL}/wishes`);
-  //     setData(res.data);
-  //   };
-  //   useEffect(() => {
-  //     getData();
-  //   });
+  const { register, handleSubmit, watch, setValue } = useForm<checkInputType>();
+  const checkboxes = watch("checkboxes", []);
+  const selectAll = watch("selectAll", false);
+  console.log(selectAll, checkboxes);
+  const handleSelectAll = (checked: boolean) => {
+    setValue("selectAll", checked);
+    setValue("checkboxes", Array(bookmarklist.length + 1).fill(checked));
+  };
+  const handleCheckBox = (index: number, checked: boolean) => {
+    const checkedBoxes = [...checkboxes];
+    checkedBoxes[index] = checked;
+    const lowerCheckbox = checkedBoxes.slice();
+    lowerCheckbox.shift();
+    const checkedAll = lowerCheckbox.every(Boolean);
+    setValue("selectAll", checkedAll);
+    setValue("checkboxes", checkedBoxes);
+  };
+  const sendBookmarkList = (data: checkInputType) => {
+    console.log(data);
+  };
+  const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
+  const accessToken = localStorage.getItem("accessToken");
+  const getData = async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/members/wishes`, {
+        headers: {
+          Authorization: accessToken,
+        },
+      });
+      setBookmarklist(res.data);
+    } catch (error) {
+      //토큰 만료시 대응하는 함수
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+        }
+      }
+    }
+  };
+  const cancleBookmark = async (wishId: number) => {
+    const res = await axios.delete(`${process.env.REACT_APP_API_URL}/wishes/${wishId}`, {
+      headers: {
+        Authorization: accessToken,
+      },
+    });
+    if (res.status === 200) {
+      getData();
+      setValue(
+        "checkboxes",
+        checkboxes.filter((el, idx) => idx !== wishId),
+      );
+    }
+  };
+  useEffect(() => {
+    getData();
+    setValue("checkboxes", Array(bookmarklist.length + 1).fill(false));
+  }, []);
   return (
-    <BookmarkContentContainer>
+    <BookmarkContentContainer onSubmit={handleSubmit(sendBookmarkList)}>
       <div className="topContainer">
         <p className="menuTitle">찜 목록</p>
         <div className="selectButtonContainer">
-          <input type="checkbox" className="checkbox"></input>
+          <input
+            type="checkbox"
+            className="checkbox"
+            id="selectAll"
+            {...register("selectAll")}
+            onChange={(e) => handleSelectAll(e.target.checked)}
+          ></input>
           <p className="optionName">전체 선택</p>
-          <Button type="button" $text="선택 취소" $design="yellow" />
+          <Button type="submit" $text="선택 취소" $design="yellow" />
         </div>
       </div>
       <div className="bookmarkListContainer">
-        {/* {data &&
-          data.map((el: postData) => ( */}
-        <div className="bookmarkContainer">
-          <div className="leftSection">
-            <input type="checkbox" className="checkbox" id="1"></input>
-            <img></img>
-            <div className="infoContainer">
-              <div className="postTitle">글제목</div>
-              <div>{`남은 시간 `}</div>
-            </div>
-          </div>
-          <div className="rightSection">
-            <div className="priceContainer">
-              <div className="priceLabel">
-                {`현재 입찰가`}
-                <span className="price">{` 원`}</span>
+        {bookmarklist &&
+          bookmarklist.map((el, index: number) => (
+            <div className="bookmarkContainer" key={el.productId}>
+              <div className="leftSection">
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  {...register(`checkboxes.${el.wishId}`)}
+                  onChange={(e) => handleCheckBox(index + 1, e.currentTarget.checked)}
+                  key={el.productId}
+                ></input>
+                <img></img>
+                <div className="infoContainer">
+                  <div className="postTitle">글제목</div>
+                  <div>{`남은 시간 `}</div>
+                </div>
               </div>
-              <div className="priceLabel">
-                {`즉시 구매가`}
-                <span className="price">{` 원`}</span>
+              <div className="rightSection">
+                <div className="priceContainer">
+                  <div className="priceLabel">
+                    {`현재 입찰가`}
+                    <span className="price">{` 원`}</span>
+                  </div>
+                  <div className="priceLabel">
+                    {`즉시 구매가`}
+                    <span className="price">{` 원`}</span>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  $text="찜 취소"
+                  $design="yellow"
+                  onClick={() => cancleBookmark(el.wishId)}
+                />
               </div>
             </div>
-            <Button type="button" $text="찜 취소" $design="yellow" />
-          </div>
-        </div>
-        {/* ))} */}
+          ))}
       </div>
       <div className="pagenation">페이지네이션</div>
     </BookmarkContentContainer>
