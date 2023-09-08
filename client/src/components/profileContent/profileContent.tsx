@@ -13,6 +13,7 @@ import { loginState } from "../../atoms/atoms";
 import { authInstance } from "../../interceptors/interceptors";
 import { useLocation } from "react-router-dom";
 import ProfileImgRegisterForm from "./profileImgForm";
+
 interface Profile {
   memberId: number;
   name: string;
@@ -159,6 +160,8 @@ const ProfileContent = (): JSX.Element => {
     try {
       const res = await authInstance.patch(`/members/${Id}`, { password: body.newPassword });
       setProfile(res.data);
+      alert("변경되었습니다.");
+      resetModal();
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error);
@@ -211,7 +214,7 @@ const ProfileContent = (): JSX.Element => {
         </div>
         <div className="profileInfoContainer">
           <div className="imgContainer">
-            {modifyImgMode ? (
+            {!modifyImgMode ? (
               <>
                 <img className="profileImg"></img>
                 {loginUserId === Id && (

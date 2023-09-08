@@ -7,13 +7,20 @@ import { useValidateToken } from "../../hooks/useValidateToken";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
 import { authInstance } from "../../interceptors/interceptors";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { findCategory } from "../../util/category";
+
+interface image {
+  imageId: number;
+  path: string;
+}
 
 interface products {
   productId: number;
   title: string;
   createAt: string;
-  img: string;
+  images: image[];
+  categoryId: number;
 }
 
 interface Review {
@@ -55,6 +62,11 @@ const PostListContainer = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
+    .postImg {
+      width: 6.25rem;
+      height: 6.25rem;
+      padding: 0.5rem 0;
+    }
     .postContainer {
       display: flex;
       flex-direction: row;
@@ -62,6 +74,7 @@ const PostListContainer = styled.div`
       align-items: stretch;
       gap: 0.5rem;
       border-bottom: 1px solid ${COLOR.border};
+      cursor: pointer;
     }
     .infoContainer {
       display: flex;
@@ -104,6 +117,7 @@ const PostListTab = (): JSX.Element => {
   const [leaveReview, setLeaveReview] = useState<Review[]>([]);
   const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
+  const navigate = useNavigate();
   const isLogin = useRecoilValue(loginState);
   const location = useLocation();
   const Id = location.pathname.slice(9);
@@ -113,6 +127,7 @@ const PostListTab = (): JSX.Element => {
     try {
       const res = await authInstance.get(`/members/${Id}/products`);
       setCellPost(res.data);
+      console.log(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error);
@@ -161,8 +176,12 @@ const PostListTab = (): JSX.Element => {
       <div className="tabContent">
         {menu === "cell" &&
           cellPost.map((el) => (
-            <div className="postContainer" key={el.productId}>
-              <img src={el.img}></img>
+            <div
+              className="postContainer"
+              key={el.productId}
+              onClick={() => navigate(`/product/${findCategory(el.categoryId)}/${el.productId}`)}
+            >
+              <img className="postImg" src={el.images[0].path}></img>
               <div className="infoContainer">
                 <div className="postTitle">{el.title}</div>
                 <div className="createdAt">{el.createAt}</div>
