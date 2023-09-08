@@ -56,6 +56,7 @@ public interface ProductMapper {
                 .sellerName(product.getSeller().getName()) // 판매자 이름 설정
                 .sellerReputation(product.getSeller().getReputation()) // 판매자 평판 설정
                 .wishCount(product.getWishCount())
+//                .images(product.getProductPictures())
                 .build();
     }
 
