@@ -8,7 +8,6 @@ import { useRecoilValue } from "recoil";
 import { styled } from "styled-components";
 import { loginState } from "../../atoms/atoms";
 import S3 from "../../aws-config";
-import SelectInput from "../../components/common/selectInput";
 import { CATEGORY } from "../../constants/category";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
@@ -20,6 +19,7 @@ import { getAuthToken } from "../../util/auth";
 import Button from "../common/Button";
 import ImageInput from "../common/ImageInput";
 import Modal from "../common/Modal";
+import SelectInput from "../common/SelectInput";
 import TextArea from "../common/TextArea";
 import TextInput from "../common/TextInput";
 
@@ -95,25 +95,6 @@ const StyledUploadForm = styled.section`
     }
   }
 
-  .image_box {
-    display: flex;
-    flex-flow: row;
-  }
-
-  label[for="images"] {
-    display: flex;
-    flex-flow: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-    width: 9.375rem;
-    aspect-ratio: 1/1;
-    background: #f7f7f7;
-    color: ${COLOR.lightText};
-    font-size: ${FONT_SIZE.font_18};
-    border: 1px solid ${COLOR.border};
-  }
-
   input[type="file"] {
     display: none;
   }
@@ -152,19 +133,6 @@ const StyledUploadForm = styled.section`
     width: 7.5rem;
   }
 
-  .image_input {
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .image_preview {
-    max-width: 9.375rem;
-    aspect-ratio: 1/1;
-    object-fit: cover;
-  }
-
   .select_date {
     display: flex;
     flex-flow: row;
@@ -200,10 +168,15 @@ const StyledUploadForm = styled.section`
 `;
 
 const UploadForm = () => {
+  const MAX_IMAGE_COUNT = 4;
   const { control, register, handleSubmit, setError, clearErrors, formState } =
     useForm<FieldValues>();
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
-  const { images, handleChange } = useImageUpload({ setError, clearErrors });
+  const { images, handleChange, handleDelete } = useImageUpload({
+    setError,
+    clearErrors,
+    maxImageCount: MAX_IMAGE_COUNT,
+  });
   const [isAuction, setIsAuction] = useState(true);
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
@@ -285,7 +258,9 @@ const UploadForm = () => {
               }}
               images={images}
               handleChange={handleChange}
+              handleDelete={handleDelete}
               formState={formState}
+              maximagecount={MAX_IMAGE_COUNT}
             />
             <TextInput
               register={register}
@@ -297,15 +272,15 @@ const UploadForm = () => {
               type="text"
               formState={formState}
             />
-
             <Controller
               name="categoryId"
               control={control}
               defaultValue=""
+              rules={{ required: REQUIRED.category }}
               render={({ field }) => (
                 <SelectInput
                   title="카테고리"
-                  id="category"
+                  id="categoryId"
                   field={field}
                   selectoptions={CATEGORY}
                   formState={formState}
