@@ -32,8 +32,8 @@ const TradeContentContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  width: calc(100% - 14rem);
-  height: calc(100% - 0.75rem);
+  min-width: calc(100% - 14rem);
+  min-height: calc(100% - 0.75rem);
   .topContainer {
     padding: 1.25rem 1rem;
     border-bottom: 3px solid ${COLOR.darkText};

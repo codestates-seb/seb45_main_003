@@ -40,7 +40,7 @@ const ProfileContentContainer = styled.div`
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
   width: calc(100% - 14rem);
   .topContainer {

@@ -9,6 +9,7 @@ import { loginState } from "../../atoms/atoms";
 import { defaultInstance } from "../../interceptors/interceptors";
 import { useLocation, useNavigate } from "react-router-dom";
 import { findCategory } from "../../util/category";
+import Empty from "../common/Empty";
 
 interface image {
   imageId: number;
@@ -35,8 +36,9 @@ interface Review {
 const PostListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
+  min-height: 100%;
   .postlistMenuContainer {
     display: flex;
     flex-direction: row;
@@ -56,6 +58,10 @@ const PostListContainer = styled.div`
         background-color: ${COLOR.secondary};
       }
     }
+  }
+  .empty {
+    height: 100%;
+    position: relative;
   }
   .tabContent {
     display: flex;
@@ -220,6 +226,11 @@ const PostListTab = (): JSX.Element => {
               </div>
             </div>
           ))}
+      </div>
+      <div className="empty">
+        {menu === "cell" && cellPost.length === 0 && <Empty />}
+        {menu === "leaveReview" && leaveReview.length === 0 && <Empty />}
+        {menu === "getReview" && recievedReview.length === 0 && <Empty />}
       </div>
     </PostListContainer>
   );

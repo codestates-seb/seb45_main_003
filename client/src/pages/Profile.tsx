@@ -15,7 +15,7 @@ const ProfileContainer = styled.div`
   justify-content: flex-start;
   align-items: flex-start;
   position: absolute;
-  height: calc(100% - 1.5rem);
+  min-height: calc(100% - 1.5rem);
   width: 100%;
 `;
 
