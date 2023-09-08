@@ -34,7 +34,8 @@ const ProfileTab = (): JSX.Element => {
     { value: "profile", text: "프로필" },
     { value: "auction", text: "경매 현황" },
     { value: "bookmark", text: "찜 목록" },
-    { value: "trade", text: "거래내역" },
+    { value: "purchase", text: "구매내역" },
+    { value: "sales", text: "판매내역" },
   ];
 
   return (
