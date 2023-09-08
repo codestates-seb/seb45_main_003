@@ -31,12 +31,20 @@ public class ReviewService {
 
         Long reviewPostMemberId = review.getPostMember().getMemberId();
 
+//        구매자가 리뷰 작성
         if (!product.getBuyerReview() && Objects.equals(reviewPostMemberId, product.getBuyerId())) {
             product.setBuyerReview(true);
+            product.getSeller().setReputation(product.getSeller().getReputation() + review.getScore());
+
             return repository.save(review);
         }
+//        판매자가 리뷰 작성
         else if (!product.getSellerReview() && Objects.equals(reviewPostMemberId, product.getSeller().getMemberId())) {
             product.setSellerReview(true);
+            Member buyer = memberService.findMember(product.getBuyerId());
+
+            buyer.setReputation(buyer.getReputation() + review.getScore());
+
             return repository.save(review);
         }
         else if (product.getBuyerReview() || product.getSellerReview()) {
