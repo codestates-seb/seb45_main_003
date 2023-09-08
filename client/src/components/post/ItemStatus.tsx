@@ -147,6 +147,11 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
       <div className="item_status">
         <div className="title">
           <h1>{data.title}</h1>
+          {userid === data.memberId.toString() && (
+            <Link to="/create-post">
+              <EditIcon />
+            </Link>
+          )}
         </div>
 
         <p className="gray date_or_status">
