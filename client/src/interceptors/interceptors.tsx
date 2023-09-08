@@ -36,6 +36,7 @@ const onErrorResponse = async (err: AxiosError | Error): Promise<AxiosError> => 
         if (error.response?.status === 500) {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
+          localStorage.removeItem("Id");
         }
       }
     }

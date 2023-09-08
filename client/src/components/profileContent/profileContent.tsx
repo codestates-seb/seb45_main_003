@@ -11,7 +11,8 @@ import PostListTab from "./postListTab";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
 import { authInstance } from "../../interceptors/interceptors";
-
+import { useLocation } from "react-router-dom";
+import ProfileImgRegisterForm from "./profileImgForm";
 interface Profile {
   memberId: number;
   name: string;
@@ -19,9 +20,11 @@ interface Profile {
   phone: string;
 }
 
-interface modifyPasswordForm {
+interface modifyProfileForm {
   passwordCheck: string;
   newPassword: string;
+  images: string;
+  image: string;
 }
 
 const ProfileContentContainer = styled.div`
@@ -58,14 +61,14 @@ const ProfileContentContainer = styled.div`
       gap: 0.5rem;
       .profileImg {
         border-radius: 6px;
-        width: 12.5rem;
-        height: 12.5rem;
+        width: 9.375rem;
+        height: 9.375rem;
       }
     }
     .labelContainer {
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: stretch;
       .infoLabel {
         text-align: end;
@@ -77,7 +80,7 @@ const ProfileContentContainer = styled.div`
     .infoContainer {
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: stretch;
       .info {
         font-size: ${FONT_SIZE.font_16};
@@ -127,7 +130,9 @@ const StyledModal = styled.form`
 const ProfileContent = (): JSX.Element => {
   const [profile, setProfile] = useState<Profile>({ memberId: 0, name: "", email: "", phone: "" });
   // const Id = window.location.search
-  const Id = localStorage.getItem("Id");
+  const loginUserId = localStorage.getItem("Id");
+  const location = useLocation();
+  const Id = location.pathname.slice(9);
   const [pass, setPass] = useState(false);
   const {
     register,
@@ -136,7 +141,7 @@ const ProfileContent = (): JSX.Element => {
     setError,
     setValue,
     getValues,
-  } = useForm<modifyPasswordForm>();
+  } = useForm<modifyProfileForm>();
   const isLogin = useRecoilValue(loginState);
   const { toggleModal, closeModal, isOpen } = useModal();
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
@@ -150,7 +155,7 @@ const ProfileContent = (): JSX.Element => {
       }
     }
   };
-  const modifyPassword = async (body: modifyPasswordForm) => {
+  const modifyPassword = async (body: modifyProfileForm) => {
     try {
       const res = await authInstance.patch(`/members/${Id}`, { password: body.newPassword });
       setProfile(res.data);
@@ -177,6 +182,10 @@ const ProfileContent = (): JSX.Element => {
       }
     }
   };
+  const [modifyImgMode, setModifyImgMode] = useState(false);
+  const setModifyMode = () => {
+    setModifyImgMode(!modifyImgMode);
+  };
   const resetModal = () => {
     setValue("newPassword", "");
     setValue("passwordCheck", "");
@@ -191,17 +200,34 @@ const ProfileContent = (): JSX.Element => {
       <ProfileContentContainer>
         <div className="topContainer">
           <p className="menuTitle">프로필</p>
-          <Button
-            type="button"
-            $text="비밀번호 변경"
-            onClick={() => toggleModal()}
-            $design="black"
-          />
+          {loginUserId === Id && (
+            <Button
+              type="button"
+              $text="비밀번호 변경"
+              onClick={() => toggleModal()}
+              $design="black"
+            />
+          )}
         </div>
         <div className="profileInfoContainer">
           <div className="imgContainer">
-            <img className="profileImg"></img>
-            <Button type="button" $text="이미지 등록" $design="black" />
+            {modifyImgMode ? (
+              <>
+                <img className="profileImg"></img>
+                {loginUserId === Id && (
+                  <Button
+                    type="button"
+                    $text="이미지 변경"
+                    $design="black"
+                    onClick={() => setModifyMode()}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                <ProfileImgRegisterForm setMode={setModifyImgMode} mode={modifyImgMode} />
+              </>
+            )}
           </div>
           <div className="labelContainer">
             <label className="infoLabel">성함</label>

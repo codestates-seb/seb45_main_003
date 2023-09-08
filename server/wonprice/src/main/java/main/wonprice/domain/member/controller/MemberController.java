@@ -1,10 +1,12 @@
 package main.wonprice.domain.member.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.member.dto.*;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.mapper.MemberMapper;
 import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.picture.service.PictureService;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.mapper.ProductMapper;
@@ -21,12 +23,15 @@ import java.util.Map;
 @RestController
 @RequestMapping("/members")
 @AllArgsConstructor
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
     private final ProductService productService;
     private final MemberMapper mapper;
     private final ProductMapper productMapper;
+
+    private final PictureService pictureService;
 
 //    회원 가입
     @PostMapping
@@ -49,7 +54,7 @@ public class MemberController {
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-    //    회원 게시물 목록 조회
+    // 회원 게시물 목록 조회
     @GetMapping("/{member-id}/products")
     public ResponseEntity findMembersProduct(Pageable pageable,
                                                   @PathVariable("member-id") Long memberId) {
@@ -142,6 +147,21 @@ public class MemberController {
 
         String inputPhone = phone.get("phone");
         memberService.checkExistPhone(inputPhone);
+
+        return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
+    }
+
+    @PostMapping("/{member-id}/image")
+    public ResponseEntity createImage(@PathVariable(name = "member-id") Long memberId, @RequestBody Map<String, String> imageUrl) {
+
+        Member findMember = memberService.findMember(memberId);
+
+        if (!imageUrl.isEmpty()) {
+            String path = imageUrl.get("path");
+            log.info("path : " + path);
+            pictureService.createPicture(path, findMember);
+
+        }
 
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
