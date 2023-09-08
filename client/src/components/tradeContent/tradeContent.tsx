@@ -7,6 +7,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { profileTabState } from "../../atoms/atoms";
+import Empty from "../common/Empty";
 
 interface image {
   imageId: number;
@@ -29,9 +30,10 @@ const TradeContentContainer = styled.div`
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
   width: calc(100% - 14rem);
+  height: calc(100% - 0.75rem);
   .topContainer {
     padding: 1.25rem 1rem;
     border-bottom: 3px solid ${COLOR.darkText};
@@ -39,6 +41,10 @@ const TradeContentContainer = styled.div`
       font-size: ${FONT_SIZE.font_32};
       font-weight: bold;
     }
+  }
+  .empty {
+    position: relative;
+    height: 100%;
   }
   .tradeListContainer {
     display: flex;
@@ -140,6 +146,7 @@ const TradeContent = (): JSX.Element => {
       </div>
       <div className="tradeListContainer">
         {mypageMode === "purchase" &&
+          purchaseList.length !== 0 &&
           purchaseList.map((el) => (
             <div className="tradeContainer" key={el.productId}>
               <div className="leftSection">
@@ -172,6 +179,7 @@ const TradeContent = (): JSX.Element => {
             </div>
           ))}
         {mypageMode === "sales" &&
+          salesList.length !== 0 &&
           salesList.map((el) => (
             <div className="tradeContainer" key={el.productId}>
               <div className="leftSection">
@@ -203,6 +211,10 @@ const TradeContent = (): JSX.Element => {
               </div>
             </div>
           ))}
+      </div>
+      <div className="empty">
+        {mypageMode === "purchase" && purchaseList.length === 0 && <Empty />}
+        {mypageMode === "sales" && salesList.length === 0 && <Empty />}
       </div>
       <div className="pagenation">페이지네이션</div>
     </TradeContentContainer>

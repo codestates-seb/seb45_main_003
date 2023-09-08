@@ -232,7 +232,7 @@ const ProfileContent = (): JSX.Element => {
           <div className="imgContainer">
             {!modifyImgMode ? (
               <>
-                <img className="profileImg" src={profile.picture.path}></img>
+                <img className="profileImg" src={profile.picture?.path}></img>
                 {loginUserId === Id && (
                   <Button
                     type="button"

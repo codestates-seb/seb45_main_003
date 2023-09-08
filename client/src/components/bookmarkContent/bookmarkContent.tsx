@@ -8,6 +8,7 @@ import Button from "../common/Button";
 import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import { useLocation, useNavigate } from "react-router-dom";
 import { findCategory } from "../../util/category";
+import Empty from "../common/Empty";
 //dto 정해지면 추가
 interface image {
   imageId: number;
@@ -43,9 +44,10 @@ const BookmarkContentContainer = styled.form`
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
   width: calc(100% - 14rem);
+  height: calc(100% - 0.75rem);
   .checkbox {
     width: 18px;
     height: 18px;
@@ -70,6 +72,10 @@ const BookmarkContentContainer = styled.form`
       font-size: ${FONT_SIZE.font_16};
       color: ${COLOR.mediumText};
     }
+  }
+  .empty {
+    position: relative;
+    height: 100%;
   }
   .bookmarkListContainer {
     display: flex;
@@ -290,6 +296,7 @@ const BookmarkContent = (): JSX.Element => {
             </div>
           ))}
       </div>
+      <div className="empty">{bookmarklist.length === 0 && <Empty />}</div>
       <div className="pagenation">페이지네이션</div>
     </BookmarkContentContainer>
   );
