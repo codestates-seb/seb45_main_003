@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
@@ -12,6 +12,14 @@ type ItemProps = {
 };
 
 const StyledItem = styled.li`
+  .images {
+    img {
+      width: 100%;
+      object-fit: cover;
+      aspect-ratio: 1/1;
+    }
+  }
+
   .title {
     padding: 1.5rem 1rem 1rem;
     border-bottom: 1px solid ${COLOR.border};
@@ -46,13 +54,15 @@ const StyledItem = styled.li`
 `;
 
 const ListItem = (props: ItemProps): JSX.Element => {
-  const location = useLocation();
   const { data } = props;
   const category = findCategory(data.categoryId);
 
   return (
     <StyledItem>
       <Link to={`${category}/${data.productId}`}>
+        <div className="images">
+          <img src={data.images[0].path} alt="썸네일 이미지" />
+        </div>
         <div className="title">
           <h3>{data.title}</h3>
           <p className="gray">

@@ -3,6 +3,7 @@ package main.wonprice.domain.chat.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.chat.controller.dto.MessageSendRequest;
+import main.wonprice.domain.chat.dto.message.MessageResponseDto;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.chat.entity.Message;
 import main.wonprice.domain.chat.service.ChatService;
@@ -38,13 +39,17 @@ public class MessageController {
         /* sender_id = logimMember.getEmail(), created_at = LocalDateTime.now(), chat_room_id = roomId , content = request.content */
         /* 아래 Mapper로 수정 예정 */
         Message message = new Message();
+
+        log.info("request.getContent : " + request.getContent());
         message.setContent(request.getContent());
-        message.setSenderId(1L);
+        message.setSenderId(request.getSenderId());
         message.setChatRoom(findChatRoom);
 
         messageService.saveMessage(message);
 
-        return new ResponseEntity(message, HttpStatus.OK);
+        MessageResponseDto messageResponseDto = new MessageResponseDto(message);
+
+        return new ResponseEntity(messageResponseDto, HttpStatus.OK);
     }
 
 }

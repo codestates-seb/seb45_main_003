@@ -5,6 +5,7 @@ import lombok.Setter;
 import main.wonprice.domain.product.entity.Product;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,5 +19,5 @@ public class Category {
     private String name;
 
     @OneToMany(mappedBy = "category")
-    private List<Product> products;
+    private List<Product> products = new ArrayList<>();
 }

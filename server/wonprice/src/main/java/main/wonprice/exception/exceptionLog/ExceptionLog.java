@@ -15,13 +15,11 @@ public class ExceptionLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long logId;
 
-    @Column(nullable = false)
     private String exception;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String message;
 
-    @Column(nullable = false)
     private LocalDateTime created_at = LocalDateTime.now();
 
     public ExceptionLog(String exception, String message) {

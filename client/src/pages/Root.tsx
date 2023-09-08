@@ -33,7 +33,7 @@ const Root = (): JSX.Element => {
 
   useEffect(() => {
     if (accessToken) {
-      validateAccessToken(accessToken);
+      validateAccessToken();
       console.log("실행됨");
     }
   }, [location.pathname]);

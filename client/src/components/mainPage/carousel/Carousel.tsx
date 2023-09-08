@@ -49,7 +49,7 @@ const Layout = styled.div`
     object-position: center;
   }
 `;
-interface CustomSwiperProps extends ReactSwiperProps {
+export interface CustomSwiperProps extends ReactSwiperProps {
   slidesPerView?: number;
   spaceBetween?: number;
   pagination?: { clickable: boolean };
@@ -63,9 +63,9 @@ interface CustomSwiperProps extends ReactSwiperProps {
     slideShadows: boolean;
   };
   initialSlide?: number;
-  centeredSlides: boolean;
-  autoHeight: boolean;
-  freeMode: boolean;
+  centeredSlides?: boolean;
+  autoHeight?: boolean;
+  freeMode?: boolean;
 }
 
 const Carousel = (): JSX.Element => {
