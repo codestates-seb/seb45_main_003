@@ -9,11 +9,18 @@ import Loading from "../../components/common/Loading";
 import { CATEGORY } from "../../constants/category";
 import { COLOR } from "../../constants/color";
 import { API_PATHS } from "../../constants/path";
+import { usePagination } from "../../hooks/usePagination";
 import ErrorIndication from "../../pages/ErrorIndication";
 import Button from "../common/Button";
 import Empty from "../common/Empty";
+import Pagination from "../common/Pagination";
 import ListItem from "./ListItem";
 import SearchBar from "./SearchBar";
+
+export type Data = {
+  content: ProductData[];
+  totalPages: number;
+};
 
 export type ProductData = {
   auction: boolean;
@@ -37,6 +44,8 @@ export type ProductData = {
   modifiedAt?: string;
   deletedAt?: string;
   closedAt?: string;
+  sellerName?: string;
+  wishCount?: number;
 };
 
 const StyledList = styled.section`
@@ -50,12 +59,14 @@ const StyledList = styled.section`
   }
 
   .list {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
 
     li:not(.no_border) {
-      width: calc(25% - 0.875rem);
+      box-sizing: border-box;
+      width: calc(20% - 0.8rem);
       border: 1px solid ${COLOR.border};
       border-radius: 6px;
       overflow: hidden;
@@ -69,22 +80,48 @@ const StyledList = styled.section`
 `;
 
 const List = (): JSX.Element => {
+  const ITEMS_PER_VIEW = 10;
   const navigate = useNavigate();
   const location = useLocation();
+  const {
+    currentPage,
+    totalPages,
+    setTotalPages,
+    setCurrentPage,
+    pageChangeHandler,
+    prevPageHandler,
+    nextPageHandler,
+  } = usePagination();
+
   const currentCategory = location.pathname.slice(9);
   const path =
     location.pathname === "/product"
-      ? API_PATHS.products.default("")
-      : API_PATHS.products.category(CATEGORY[currentCategory].id);
-  const { isLoading, error, data, refetch } = useQuery<ProductData[]>("productList", async () => {
+      ? API_PATHS.products.default("") + `?page=${currentPage}&size=${ITEMS_PER_VIEW}`
+      : API_PATHS.products.category(CATEGORY[currentCategory].id) +
+        `?page=${currentPage}&size=${ITEMS_PER_VIEW}`;
+
+  const { isLoading, error, data, refetch } = useQuery<Data>("productList", async () => {
     const response = await axios.get(path);
-    return response.data.content;
+    return response.data;
   });
   const isLogin = useRecoilValue(loginState);
 
+  //갱신된 데이터로 토탈페이지 갱신
+  useEffect(() => {
+    if (data) {
+      setTotalPages(data?.totalPages);
+    }
+  }, [data]);
+
+  //토탈페이지 갱신 시 현재 페이지 0으로 초기화
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [totalPages]);
+
+  //페이지넘버와 url이 변할때마다 데이터 갱신
   useEffect(() => {
     refetch();
-  }, [location.pathname]);
+  }, [location.pathname, currentPage]);
 
   if (isLoading) {
     return <Loading />;
@@ -117,9 +154,9 @@ const List = (): JSX.Element => {
         </div>
 
         <ul className="list">
-          {data && data.length > 0 ? (
+          {data && data.content?.length > 0 ? (
             <>
-              {data.map((el) => {
+              {data.content.map((el) => {
                 return <ListItem key={el.productId} data={el} />;
               })}
             </>
@@ -129,6 +166,15 @@ const List = (): JSX.Element => {
             </li>
           )}
         </ul>
+        <Pagination
+          {...{
+            currentPage,
+            totalPages,
+            pageChangeHandler,
+            prevPageHandler,
+            nextPageHandler,
+          }}
+        />
       </StyledList>
     </>
   );
