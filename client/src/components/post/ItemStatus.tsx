@@ -125,6 +125,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
     navigate("/login");
   };
 
+  //슬라이드 관련 설정
   SwiperCore.use([Pagination]);
 
   const swiperProps: CustomSwiperProps = {
@@ -148,7 +149,10 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
         <div className="title">
           <h1>{data.title}</h1>
           {userid === data.memberId.toString() && (
-            <Link to="/create-post">
+            <Link
+              to={{ pathname: "/create-post" }}
+              state={{ isUpdateMode: true, updateModeData: data }}
+            >
               <EditIcon />
             </Link>
           )}

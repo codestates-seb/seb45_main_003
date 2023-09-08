@@ -8,7 +8,6 @@ import main.wonprice.domain.picture.entity.ProductPicture;
 import main.wonprice.domain.product.entity.ProductStatus;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 // 상품 등록을 위한 응답 객체
@@ -48,4 +47,8 @@ public class ProductResponseDto {
     private LocalDateTime closedAt; // 경매 종료 시간
 
     private List<ProductPicture> images;
+
+    private String sellerName; // 판매자 이름
+
+    private Long sellerReputation; // 판매자 평판
 }
