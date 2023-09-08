@@ -6,7 +6,7 @@ import { FONT_SIZE } from "../../constants/font";
 import { useValidateToken } from "../../hooks/useValidateToken";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
-import { authInstance } from "../../interceptors/interceptors";
+import { defaultInstance } from "../../interceptors/interceptors";
 import { useLocation, useNavigate } from "react-router-dom";
 import { findCategory } from "../../util/category";
 
@@ -125,9 +125,8 @@ const PostListTab = (): JSX.Element => {
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getPostlist = async () => {
     try {
-      const res = await authInstance.get(`/members/${Id}/products`);
+      const res = await defaultInstance.get(`/members/${Id}/products`);
       setCellPost(res.data);
-      console.log(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error);
@@ -136,8 +135,9 @@ const PostListTab = (): JSX.Element => {
   };
   const getLeaveReview = async () => {
     try {
-      const res = await authInstance.get(`/members/${Id}/reviews/post`, {});
+      const res = await defaultInstance.get(`/members/${Id}/reviews/post`, {});
       setLeaveReview(res.data);
+      console.log(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error);
@@ -146,7 +146,7 @@ const PostListTab = (): JSX.Element => {
   };
   const getRecievedReview = async () => {
     try {
-      const res = await authInstance.get(`/members/${Id}/reviews`);
+      const res = await defaultInstance.get(`/members/${Id}/reviews`);
       setRecievedReview(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {

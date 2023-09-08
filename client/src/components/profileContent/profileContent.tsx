@@ -10,7 +10,7 @@ import Modal from "../common/Modal";
 import PostListTab from "./postListTab";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
-import { authInstance } from "../../interceptors/interceptors";
+import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import { useLocation } from "react-router-dom";
 import ProfileImgRegisterForm from "./profileImgForm";
 
@@ -19,6 +19,8 @@ interface Profile {
   name: string;
   email: string;
   phone: string;
+  postCount: number;
+  tradeCount: number;
 }
 
 interface modifyProfileForm {
@@ -129,7 +131,14 @@ const StyledModal = styled.form`
 `;
 
 const ProfileContent = (): JSX.Element => {
-  const [profile, setProfile] = useState<Profile>({ memberId: 0, name: "", email: "", phone: "" });
+  const [profile, setProfile] = useState<Profile>({
+    memberId: 0,
+    name: "",
+    email: "",
+    phone: "",
+    postCount: 0,
+    tradeCount: 0,
+  });
   // const Id = window.location.search
   const loginUserId = localStorage.getItem("Id");
   const location = useLocation();
@@ -148,7 +157,7 @@ const ProfileContent = (): JSX.Element => {
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getProfile = async () => {
     try {
-      const res = await authInstance.get(`/members/${Id}`);
+      const res = await defaultInstance.get(`/members/${Id}`);
       setProfile(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -241,8 +250,8 @@ const ProfileContent = (): JSX.Element => {
           <ul className="infoContainer">
             <li className="info">{profile.name}</li>
             <li className="info">{profile.email}</li>
-            <li className="info">사용자 작성글 갯수</li>
-            <li className="info">사용자 거래완료 횟수</li>
+            <li className="info">{profile.postCount} 개</li>
+            <li className="info">{profile.tradeCount} 회</li>
           </ul>
         </div>
         <PostListTab />
