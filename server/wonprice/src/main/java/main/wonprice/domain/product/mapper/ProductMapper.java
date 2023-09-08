@@ -24,6 +24,7 @@ public interface ProductMapper {
                 .auction(productRequestDto.getAuction())
                 .status(ProductStatus.BEFORE)
                 .views(0L)
+                .wishCount(0)
                 .buyerReview(false)
                 .sellerReview(false);
 
