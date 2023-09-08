@@ -31,8 +31,11 @@ public class Review {
     @Column(nullable = true)
     private LocalDateTime deletedAt;
 
+    @Column(nullable = false)
+    private Long targetMemberId;
+
     @ManyToOne
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "post_member_id")
     private Member postMember;
 
     @ManyToOne

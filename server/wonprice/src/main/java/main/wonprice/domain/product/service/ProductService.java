@@ -24,12 +24,16 @@ public interface ProductService {
 
     Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member loginMember);
 
-    public List<Product> findMembersTradedProduct(Pageable pageable, Member member);
+    public List<Product> findMemberSold(Pageable pageable, Member member);
+
+    public List<Product> findMemberBought(Pageable pageable, Long memberId);
 
     Page<Product> getProductsByCategory(Long categoryId, Pageable pageable);
 
     Page<Product> getProductsByStatus(ProductStatus status, Pageable pageable);
 
     Page<Product> getProductsByStatusAndAuction(ProductStatus productStatus, boolean auction, Pageable pageable);
+
+    Page<Product> searchProductsByTitle(String keyword, Pageable pageable);
 }
 

@@ -182,13 +182,13 @@ const MenuItem: React.FunctionComponent<ItemProps> = (props) => {
               </Link>
             </li>
             <li className="ItemList">
-              <Link to="/product/eletronics">
+              <Link to="/product/electronics">
                 <Item categories="Electronics " count="1" />
               </Link>
             </li>
             <li className="ItemList">
               <Link to="/product/clothing">
-                <Item categories="Fashion" count="1" />
+                <Item categories="Clothing" count="1" />
               </Link>
             </li>
             <li className="ItemList">

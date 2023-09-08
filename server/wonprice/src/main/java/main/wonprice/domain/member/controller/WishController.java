@@ -1,5 +1,6 @@
 package main.wonprice.domain.member.controller;
 
+import lombok.AllArgsConstructor;
 import main.wonprice.domain.member.dto.WishPostDto;
 import main.wonprice.domain.member.dto.WishResponseDto;
 import main.wonprice.domain.member.entity.Member;
@@ -8,6 +9,7 @@ import main.wonprice.domain.member.mapper.WishMapper;
 import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.domain.member.service.WishService;
 import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.mapper.ProductMapper;
 import main.wonprice.domain.product.service.ProductService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -16,19 +18,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@AllArgsConstructor
 public class WishController {
 
     private final MemberService memberService;
     private final ProductService productService;
     private final WishService wishService;
     private final WishMapper mapper;
-
-    public WishController(MemberService memberService, ProductService productService, WishService wishService, WishMapper mapper) {
-        this.memberService = memberService;
-        this.productService = productService;
-        this.wishService = wishService;
-        this.mapper = mapper;
-    }
+    private final ProductMapper productMapper;
 
     @PostMapping("/wishes/add")
     public ResponseEntity postWish(@RequestBody WishPostDto postDto) {
@@ -43,13 +40,15 @@ public class WishController {
     }
 
     @GetMapping("/members/{member-id}/wishes")
-    public ResponseEntity getLoginMemberWish(Pageable pageable,
+    public ResponseEntity getMemberWish(Pageable pageable,
                                              @PathVariable("member-id")Long memberId) {
 
         Member member = memberService.findMember(memberId);
 
         List<Wish> wishes = wishService.findMemberWish(pageable, member);
         List<WishResponseDto> response = mapper.toResponseDtos(wishes);
+        response.forEach(
+                dto -> dto.setProductResponseDto(productMapper.fromEntity(productService.findOneById(dto.getProductId()))));
 
         return ResponseEntity.ok(response);
     }

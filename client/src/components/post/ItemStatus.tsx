@@ -1,9 +1,21 @@
+import { Link, useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import SwiperCore from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { ReactComponent as EditIcon } from "../../assets/images/Edit.svg";
 import { ReactComponent as HeartIcon } from "../../assets/images/Heart.svg";
+import { loginState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { AUCTION } from "../../constants/systemMessage";
+import { getUserId } from "../../util/auth";
+import { formatTime } from "../../util/date";
 import Button from "../common/Button";
+import { CustomSwiperProps } from "../mainPage/carousel/Carousel";
 import { ProductData } from "./List";
 
 type ItemStatusProps = {
@@ -11,22 +23,37 @@ type ItemStatusProps = {
 };
 
 const StyledItemStatus = styled.section`
-  padding: 3rem 0;
   box-sizing: border-box;
   display: flex;
   flex-flow: row;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: flex-start;
   border: 1px solid ${COLOR.border};
   border-radius: 6px;
   gap: 3rem;
+  overflow: hidden;
+
+  .custom_swiper.swiper {
+    max-width: 40rem;
+    width: 50% !important;
+    margin: 0;
+  }
 
   .item_status {
+    padding: 1.5rem 1.5rem 1.5rem 0;
     max-width: 27.5rem;
     width: 40%;
 
-    & > div {
+    & > div:not(:first-child) {
       padding: 1.5rem 0;
       border-top: 1px solid ${COLOR.border};
+    }
+
+    .title {
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      gap: 0.5rem;
     }
   }
 
@@ -67,8 +94,10 @@ const StyledItemStatus = styled.section`
   }
 
   img {
-    max-width: 640px;
-    width: 40%;
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    vertical-align: top;
   }
 
   .gray {
@@ -88,17 +117,43 @@ const StyledItemStatus = styled.section`
 `;
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
-  const formatTime = (time: string | undefined) => {
-    if (time) {
-      return time.replace("T", " ");
-    }
+  const isLogin = useRecoilValue(loginState);
+  const userid = getUserId();
+  const navigate = useNavigate();
+
+  const redirect = () => {
+    navigate("/login");
+  };
+
+  SwiperCore.use([Pagination]);
+
+  const swiperProps: CustomSwiperProps = {
+    pagination: {
+      clickable: true,
+    },
   };
 
   return (
     <StyledItemStatus>
-      <img src="" alt="" />
+      <Swiper {...swiperProps} className="custom_swiper">
+        {data.images.map((image) => {
+          return (
+            <SwiperSlide key={image.imageId}>
+              <img src={image.path} alt="" />
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
       <div className="item_status">
-        <h1>{data.title}</h1>
+        <div className="title">
+          <h1>{data.title}</h1>
+          {userid === data.memberId.toString() && (
+            <Link to="/create-post">
+              <EditIcon />
+            </Link>
+          )}
+        </div>
+
         <p className="gray date_or_status">
           {data.auction
             ? data.productStatus === "BEFORE"
@@ -111,7 +166,13 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             <HeartIcon />
             숫자
           </span>
-          <Button $icon={<HeartIcon />} $text="찜" $design="yellow" type="button" />
+          <Button
+            $icon={<HeartIcon />}
+            $text="찜"
+            $design="yellow"
+            type="button"
+            onClick={isLogin ? undefined : redirect}
+          />
         </div>
         {data.auction && (
           <div className="auction">
@@ -120,7 +181,12 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                 <span>현재 입찰가</span>
                 <span className="price_number">{data.currentAuctionPrice?.toLocaleString()}</span>
               </div>
-              <Button $text="입찰하기" $design="black" type="button" />
+              <Button
+                $text="입찰하기"
+                $design="black"
+                type="button"
+                onClick={isLogin ? undefined : redirect}
+              />
             </div>
             <div className="create_at">
               <div className="time">
@@ -142,7 +208,12 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             <span className="price_number_title gray">즉시 구매가</span>
             <span className="price_number">{data.immediatelyBuyPrice.toLocaleString()}</span>
           </div>
-          <Button $text="즉시구매" $design="black" type="button" />
+          <Button
+            $text="즉시구매"
+            $design="black"
+            type="button"
+            onClick={isLogin ? undefined : redirect}
+          />
         </div>
       </div>
     </StyledItemStatus>

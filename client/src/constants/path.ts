@@ -1,7 +1,7 @@
 type PathType = number | string;
 
 function createPath(id: PathType, path: string): string {
-  return `/${path}/${id}`;
+  return id === "" ? `/${path}` : `/${path}/${id}`;
 }
 
 export const API_PATHS = {
@@ -13,6 +13,7 @@ export const API_PATHS = {
       phone: "/members/auth/phone",
       password: "/members/auth/password",
     },
+    login: "/members/login",
     mypage: {
       default: "/members/mypage",
       my_reviews: "/members/mypage/reviews",

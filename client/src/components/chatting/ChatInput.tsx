@@ -103,6 +103,11 @@ const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
     setMessage(e.target.value);
   };
 
+  const handleSendClick = () => {
+    onSendMessage(message);
+    setMessage("");
+  };
+
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSendMessage();
@@ -132,7 +137,7 @@ const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
           onKeyPress={handleKeyPress}
         />
         {/* <Button type="button" $text="Send" onClick={() => handleSendMessage} $design="black" /> */}
-        <button onClick={() => handleSendMessage} className="SendButton">
+        <button onClick={handleSendClick} className="SendButton">
           <SendIcon />
         </button>
       </div>
