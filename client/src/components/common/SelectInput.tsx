@@ -19,16 +19,18 @@ const SelectInput = (props: SelectInputProps): JSX.Element => {
       <p>{title}</p>
 
       <div className="input">
-        <select {...field}>
-          <option value="">카테고리 선택</option>
-          {Object.values(selectoptions).map((option) => {
-            return (
-              <option key={option.id} value={option.id}>
-                {option.value}
-              </option>
-            );
-          })}
-        </select>
+        <div className="select_custom">
+          <select {...field}>
+            <option value="">카테고리 선택</option>
+            {Object.values(selectoptions).map((option) => {
+              return (
+                <option key={option.id} value={option.id}>
+                  {option.value}
+                </option>
+              );
+            })}
+          </select>
+        </div>
 
         {formState?.errors && formState.errors[id]?.message && (
           <p className="error_message">{formState?.errors[id]?.message?.toString()}</p>

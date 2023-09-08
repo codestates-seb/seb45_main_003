@@ -62,13 +62,24 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
-    //    거래 완료 목록 조회
+//    판매 완료 목록 조회
+    @GetMapping("/{member-id}/sell")
+    public ResponseEntity findMembersSell(Pageable pageable,
+                                              @PathVariable("member-id") Long memberId) {
+
+        Member member = memberService.findMember(memberId);
+        List<Product> products = productService.findMemberSold(pageable, member);
+        List<ProductResponseDto> response = productMapper.toMypageProduct(products);
+
+        return ResponseEntity.ok(response);
+    }
+
+//    구매 완료 목록 조회
     @GetMapping("/{member-id}/purchase")
     public ResponseEntity findMembersPurchase(Pageable pageable,
                                               @PathVariable("member-id") Long memberId) {
 
-        Member member = memberService.findMember(memberId);
-        List<Product> products = productService.findMembersTradedProduct(pageable, member);
+        List<Product> products = productService.findMemberBought(pageable, memberId);
         List<ProductResponseDto> response = productMapper.toMypageProduct(products);
 
         return ResponseEntity.ok(response);

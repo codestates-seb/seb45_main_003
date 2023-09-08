@@ -2,7 +2,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 // import { red } from "@mui/material/colors";
 
@@ -70,22 +69,16 @@ const ProfileButton = () => {
   return (
     <Container>
       <ProfileList
-        icon={<FavoriteIcon />} // 아이콘 컴포넌트
-        text="찜" // 텍스트
-        count={10} // 카운트
-        linkTo="/member/:id"
-      />
-      <ProfileList
         icon={<PersonIcon />} // 아이콘 컴포넌트
         text="Profile" // 텍스트
         count={10} // 카운트
-        linkTo="/member/:id"
+        linkTo={`/member/:${localStorage.getItem("Id")}`}
       />
       <ProfileList
         icon={<ChatBubbleIcon />} // 아이콘 컴포넌트
         text="Messages" // 텍스트
         count={10} // 카운트
-        linkTo="/chat/:id"
+        linkTo={`/chat/:${localStorage.getItem("Id")}`}
       />
     </Container>
   );

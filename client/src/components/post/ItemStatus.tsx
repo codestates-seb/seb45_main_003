@@ -1,14 +1,21 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
+import SwiperCore from "swiper";
+import "swiper/css";
+import "swiper/css/pagination";
+import { Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { ReactComponent as EditIcon } from "../../assets/images/Edit.svg";
 import { ReactComponent as HeartIcon } from "../../assets/images/Heart.svg";
 import { loginState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { AUCTION } from "../../constants/systemMessage";
+import { getUserId } from "../../util/auth";
 import { formatTime } from "../../util/date";
 import Button from "../common/Button";
+import { CustomSwiperProps } from "../mainPage/carousel/Carousel";
 import { ProductData } from "./List";
 
 type ItemStatusProps = {
@@ -16,16 +23,24 @@ type ItemStatusProps = {
 };
 
 const StyledItemStatus = styled.section`
-  padding: 3rem 0;
   box-sizing: border-box;
   display: flex;
   flex-flow: row;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: flex-start;
   border: 1px solid ${COLOR.border};
   border-radius: 6px;
   gap: 3rem;
+  overflow: hidden;
+
+  .custom_swiper.swiper {
+    max-width: 40rem;
+    width: 50% !important;
+    margin: 0;
+  }
 
   .item_status {
+    padding: 1.5rem 1.5rem 1.5rem 0;
     max-width: 27.5rem;
     width: 40%;
 
@@ -79,8 +94,10 @@ const StyledItemStatus = styled.section`
   }
 
   img {
-    max-width: 640px;
-    width: 40%;
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    vertical-align: top;
   }
 
   .gray {
@@ -101,21 +118,44 @@ const StyledItemStatus = styled.section`
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
   const isLogin = useRecoilValue(loginState);
+  const userid = getUserId();
   const navigate = useNavigate();
 
   const redirect = () => {
     navigate("/login");
   };
 
+  //슬라이드 관련 설정
+  SwiperCore.use([Pagination]);
+
+  const swiperProps: CustomSwiperProps = {
+    pagination: {
+      clickable: true,
+    },
+  };
+
   return (
     <StyledItemStatus>
-      <img src="" alt="" />
+      <Swiper {...swiperProps} className="custom_swiper">
+        {data.images.map((image) => {
+          return (
+            <SwiperSlide key={image.imageId}>
+              <img src={image.path} alt="" />
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
       <div className="item_status">
         <div className="title">
           <h1>{data.title}</h1>
-          <Link to="/create-post">
-            <EditIcon />
-          </Link>
+          {userid === data.memberId.toString() && (
+            <Link
+              to={{ pathname: "/create-post" }}
+              state={{ isUpdateMode: true, updateModeData: data }}
+            >
+              <EditIcon />
+            </Link>
+          )}
         </div>
 
         <p className="gray date_or_status">

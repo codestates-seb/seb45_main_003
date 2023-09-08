@@ -42,8 +42,8 @@ public class ProductController {
         Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember, category));
 
         /* 대표 */
-//        log.info("productRequestDto.getPictures() : " + productRequestDto.getImages());
         for (String imageUrl : productRequestDto.getImages()) {
+            log.info("imageUrl" + imageUrl);
             pictureService.createPicture(imageUrl, product);
         }
         /* 대표 */
@@ -137,15 +137,23 @@ public class ProductController {
     @DeleteMapping("/{productId}")
     public ResponseEntity deleteProduct(@PathVariable Long productId) {
         Member loginMember = memberService.findLoginMember();
-        Product product = productService.deleteOneById(productId, loginMember);
+        Product product = productService.findOneById(productId);
 
         Long productOwnerId = product.getSeller().getMemberId();
         Long loginMemberId = loginMember.getMemberId();
 
         // 상품 판매자와 로그인 한 사용자가 다를 경우, 권한이 없음을 응답
         if (!productOwnerId.equals(loginMemberId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("게시글을 삭제할 권한이 없습니다.");
         }
+
+        // 경매 상품인 경우, buyer_id가 있는지 확인하여 삭제 여부 결정
+        if(product.getAuction() && product.getBuyerId() != null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("경매가 진행 중인 상품은 삭제할 수 없습니다.");
+        }
+
+        // 삭제가 가능한 경우, 상품 삭제
+        productService.deleteOneById(productId, loginMember);
 
         return ResponseEntity.noContent().build();
     }
@@ -161,7 +169,12 @@ public class ProductController {
 
         // 상품 판매자와 로그인 한 사용자가 다를 경우, 권한이 없음을 응답
         if (!productOwnerId.equals(loginMemberId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("게시글을 수정할 권한이 없습니다.");
+        }
+
+        // 경매 중인 상품인 경우, buyer_id가 있는지 확인하여 수정 여부 결정
+        if(updateProduct.getAuction() && updateProduct.getBuyerId() != null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("경매가 진행 중인 상품은 수정할 수 없습니다.");
         }
 
         ProductResponseDto productResponseDto = productMapper.fromEntity(updateProduct);
