@@ -136,7 +136,6 @@ const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
           onChange={handleInputChange}
           onKeyPress={handleKeyPress}
         />
-        {/* <Button type="button" $text="Send" onClick={() => handleSendMessage} $design="black" /> */}
         <button onClick={handleSendClick} className="SendButton">
           <SendIcon />
         </button>

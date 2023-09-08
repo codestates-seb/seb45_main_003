@@ -5,14 +5,33 @@ import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
-import { authInstance } from "../../interceptors/interceptors";
-import { useLocation } from "react-router-dom";
+import { authInstance, defaultInstance } from "../../interceptors/interceptors";
+import { useLocation, useNavigate } from "react-router-dom";
+import { findCategory } from "../../util/category";
+import Empty from "../common/Empty";
 //dto 정해지면 추가
+interface image {
+  imageId: number;
+  path: string;
+}
+
+interface products {
+  productId: number;
+  title: string;
+  closedAt: string;
+  images: image[];
+  categoryId: number;
+  productStatus: string;
+  auction: boolean;
+  immediatelyBuyPrice: number;
+  currentAuctionPrice: number;
+}
 
 type bookmark = {
   wishId: number;
   creadtedAt: string;
   productId: string;
+  productResponseDto: products;
 };
 
 type checkInputType = {
@@ -25,9 +44,10 @@ const BookmarkContentContainer = styled.form`
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
   width: calc(100% - 14rem);
+  min-height: calc(100% - 0.75rem);
   .checkbox {
     width: 18px;
     height: 18px;
@@ -53,6 +73,10 @@ const BookmarkContentContainer = styled.form`
       color: ${COLOR.mediumText};
     }
   }
+  .empty {
+    position: relative;
+    height: 100%;
+  }
   .bookmarkListContainer {
     display: flex;
     flex-direction: column;
@@ -62,27 +86,39 @@ const BookmarkContentContainer = styled.form`
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
       border-bottom: 1px solid ${COLOR.border};
       padding: 1rem 0;
+      .postImg {
+        width: 6.25rem;
+        height: 6.25rem;
+      }
       .leftSection {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
         align-items: center;
         gap: 1rem;
-        .infoContainer {
+        .postInfo {
           display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: flex-start;
-          gap: 0.625rem;
-          font-size: ${FONT_SIZE.font_16};
-          color: ${COLOR.mediumText};
-          .postTitle {
-            color: ${COLOR.darkText};
-            font-size: ${FONT_SIZE.font_20};
-            font-weight: bold;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: flex-end;
+          gap: 1rem;
+          .infoContainer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 0.625rem;
+            font-size: ${FONT_SIZE.font_16};
+            color: ${COLOR.mediumText};
+            .postTitle {
+              color: ${COLOR.darkText};
+              font-size: ${FONT_SIZE.font_20};
+              font-weight: bold;
+              cursor: pointer;
+            }
           }
         }
       }
@@ -90,7 +126,7 @@ const BookmarkContentContainer = styled.form`
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
-        align-items: center;
+        align-items: flex-end;
         gap: 1rem;
         .priceContainer {
           display: flex;
@@ -138,6 +174,7 @@ const BookmarkContent = (): JSX.Element => {
   const sendBookmarkList = (data: checkInputType) => {
     console.log(data);
   };
+  const navigate = useNavigate();
   const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
   const location = useLocation();
   const Id = location.pathname.slice(9);
@@ -146,8 +183,9 @@ const BookmarkContent = (): JSX.Element => {
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getData = async () => {
     try {
-      const res = await authInstance.get(`/members/${Id}/wishes`);
+      const res = await defaultInstance.get(`/members/${Id}/wishes`);
       setBookmarklist(res.data);
+      console.log(res.data);
     } catch (error) {
       //토큰 만료시 대응하는 함수
       if (axios.isAxiosError(error)) {
@@ -206,21 +244,44 @@ const BookmarkContent = (): JSX.Element => {
                     key={el.productId}
                   ></input>
                 )}
-                <img></img>
-                <div className="infoContainer">
-                  <div className="postTitle">글제목</div>
-                  <div>{`거래 마감시간 `}</div>
+                <div className="postInfo">
+                  <img className="postImg" src={el.productResponseDto.images[0].path}></img>
+                  <div className="infoContainer">
+                    <div
+                      className="postTitle"
+                      onClick={() =>
+                        navigate(
+                          `/product/${findCategory(el.productResponseDto.categoryId)}/${
+                            el.productId
+                          }`,
+                        )
+                      }
+                    >
+                      {el.productResponseDto.title}
+                    </div>
+                    {el.productResponseDto.auction ? (
+                      <div>{`거래 마감시간: ${el.productResponseDto.closedAt} `}</div>
+                    ) : (
+                      <div>즉시 구매 상품</div>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="rightSection">
                 <div className="priceContainer">
-                  <div className="priceLabel">
-                    {`현재 입찰가`}
-                    <span className="price">{` 원`}</span>
-                  </div>
+                  {el.productResponseDto.auction && (
+                    <div className="priceLabel">
+                      {`현재 입찰가`}
+                      <span className="price">{`${el.productResponseDto.currentAuctionPrice.toLocaleString(
+                        "ko-KR",
+                      )} 원`}</span>
+                    </div>
+                  )}
                   <div className="priceLabel">
                     {`즉시 구매가`}
-                    <span className="price">{` 원`}</span>
+                    <span className="price">{`${el.productResponseDto.immediatelyBuyPrice.toLocaleString(
+                      "ko-KR",
+                    )} 원`}</span>
                   </div>
                 </div>
                 {loginUserId === Id && (
@@ -235,6 +296,7 @@ const BookmarkContent = (): JSX.Element => {
             </div>
           ))}
       </div>
+      <div className="empty">{bookmarklist.length === 0 && <Empty />}</div>
       <div className="pagenation">페이지네이션</div>
     </BookmarkContentContainer>
   );
