@@ -41,7 +41,7 @@ public class MessageController {
 
         log.info("request.getContent : " + request.getContent());
         message.setContent(request.getContent());
-        message.setSenderId(8L);
+//        message.setSenderId(8L);
         log.info("sender_id : " + message.getSenderId());
         message.setChatRoom(findChatRoom);
 
