@@ -1,8 +1,12 @@
 // import ChattingList from "../components/chatting/ChattingList";
 import Img1 from "../assets/images/chatting/ProfilrImg.svg";
-import ChatRoom from "../components/chatting/ChatRoom";
+// import ChatRoom from "../components/chatting/ChatRoom";
 import ChattingListFrom from "../components/chatting/ChattingListFrom";
 import { styled } from "styled-components";
+import StartChatRoom from "../components/chatting/StartChatRoom";
+import { currentChatRoomIdState } from "../components/chatting/chatState";
+import { useRecoilValue } from "recoil";
+import ChatRoom from "../components/chatting/ChatRoom";
 
 const Container = styled.div`
   display: flex;
@@ -20,11 +24,13 @@ const Container = styled.div`
 `;
 
 const Chatting = (): JSX.Element => {
+  const chatRoomId = useRecoilValue(currentChatRoomIdState);
+
   return (
     <>
       <Container>
         <ChattingListFrom imgSrc={Img1} />
-        <ChatRoom />
+        {chatRoomId ? <ChatRoom /> : <StartChatRoom />}
       </Container>
     </>
   );
