@@ -3,6 +3,7 @@ package main.wonprice.domain.chat.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.chat.controller.dto.MessageSendRequest;
+import main.wonprice.domain.chat.dto.message.MessageResponseDto;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.chat.entity.Message;
 import main.wonprice.domain.chat.service.ChatService;
@@ -41,13 +42,14 @@ public class MessageController {
 
         log.info("request.getContent : " + request.getContent());
         message.setContent(request.getContent());
-//        message.setSenderId(8L);
-        log.info("sender_id : " + message.getSenderId());
+        message.setSenderId(request.getSenderId());
         message.setChatRoom(findChatRoom);
 
         messageService.saveMessage(message);
 
-        return new ResponseEntity(message.getContent(), HttpStatus.OK);
+        MessageResponseDto messageResponseDto = new MessageResponseDto(message);
+
+        return new ResponseEntity(messageResponseDto, HttpStatus.OK);
     }
 
 }
