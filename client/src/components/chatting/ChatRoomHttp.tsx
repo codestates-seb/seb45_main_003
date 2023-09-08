@@ -11,7 +11,7 @@ interface Message {
   createdAt: string;
 }
 
-const ChetRoomHttp: React.FC = () => {
+const ChatRoomHttp: React.FC = () => {
   const chatRoomId = useRecoilValue(currentChatRoomIdState);
   // const { chatRoomId } = useParams<{ chatRoomId: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -53,7 +53,7 @@ const ChetRoomHttp: React.FC = () => {
         messages.map((message) => (
           <MessageBubble
             key={message.messageId}
-            owner={message.senderId === Id ? "other" : "user"}
+            owner={message.senderId === Id ? "user" : "other"}
             message={message.content}
             time={message.createdAt}
           />
@@ -63,4 +63,4 @@ const ChetRoomHttp: React.FC = () => {
   );
 };
 
-export default ChetRoomHttp;
+export default ChatRoomHttp;
