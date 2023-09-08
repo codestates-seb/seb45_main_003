@@ -9,7 +9,7 @@ export const getAuthToken = () => {
 };
 
 export const getUserId = () => {
-  const id = localStorage.getItem("member_id");
+  const id = localStorage.getItem("Id");
 
   if (!id) {
     return null;
