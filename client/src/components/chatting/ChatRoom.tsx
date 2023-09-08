@@ -60,6 +60,9 @@ const ChatRoom = () => {
   const Id = userIdFromLocalStorage ? parseInt(userIdFromLocalStorage, 10) : null;
 
   useEffect(() => {
+    // 이전 메시지를 초기화합니다.
+    setMessages([]);
+
     if (roomId) {
       const socket = new WebSocket(process.env.REACT_APP_WEB_SOCKET_URL as string);
       const stompClient = Webstomp.over(socket);
