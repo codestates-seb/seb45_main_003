@@ -21,6 +21,12 @@ export type ProductData = {
   memberId: number;
   title: string;
   description: string;
+  images: [
+    {
+      imageId: number;
+      path: string;
+    },
+  ];
   currentAuctionPrice?: number;
   immediatelyBuyPrice: number;
   productStatus: string;

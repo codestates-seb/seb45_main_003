@@ -73,13 +73,20 @@ textarea {
   resize: none;
 }
 select {
+  font-family: "Pretendard";
+  font-size: ${FONT_SIZE.font_16};
   padding: 0.5rem 0.75rem;
   width: 15rem;
   border-radius: 6px;
   border: 1px solid ${COLOR.border};
   background: ${COLOR.gray_100};
   outline: none;
+  -webkit-appearance:none; 
+  -moz-appearance:none; 
+  appearance:none;
+  position: relative;
 }
+
 button{
   cursor: pointer;
 

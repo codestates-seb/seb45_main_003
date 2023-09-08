@@ -7,3 +7,13 @@ export const getAuthToken = () => {
 
   return token;
 };
+
+export const getUserId = () => {
+  const id = localStorage.getItem("member_id");
+
+  if (!id) {
+    return null;
+  }
+
+  return id;
+};
