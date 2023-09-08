@@ -43,6 +43,7 @@ public class GlobalExceptionAdvice {
         return new ResponseEntity<>(response, HttpStatus.valueOf(e.getExceptionCode().getStatus()));
     }
 
+/*    처리 못한 예외 로그 DB 저장용
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ExceptionLog handleException(Exception e) {
@@ -51,4 +52,5 @@ public class GlobalExceptionAdvice {
 
         return repository.save(exceptionLog);
     }
+*/
 }

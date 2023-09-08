@@ -6,6 +6,7 @@ import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
 import { authInstance } from "../../interceptors/interceptors";
+import { useLocation } from "react-router-dom";
 //dto 정해지면 추가
 
 type bookmark = {
@@ -138,7 +139,9 @@ const BookmarkContent = (): JSX.Element => {
     console.log(data);
   };
   const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
-  const Id = localStorage.getItem("Id");
+  const location = useLocation();
+  const Id = location.pathname.slice(9);
+  const loginUserId = localStorage.getItem("Id");
   console.log(selectAll, checkboxes, bookmarklist);
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getData = async () => {
@@ -175,34 +178,38 @@ const BookmarkContent = (): JSX.Element => {
     <BookmarkContentContainer onSubmit={handleSubmit(sendBookmarkList)}>
       <div className="topContainer">
         <p className="menuTitle">찜 목록</p>
-        <div className="selectButtonContainer">
-          <input
-            type="checkbox"
-            className="checkbox"
-            id="selectAll"
-            {...register("selectAll")}
-            onChange={(e) => handleSelectAll(e.target.checked)}
-          ></input>
-          <p className="optionName">전체 선택</p>
-          <Button type="submit" $text="선택 취소" $design="yellow" />
-        </div>
+        {loginUserId === Id && (
+          <div className="selectButtonContainer">
+            <input
+              type="checkbox"
+              className="checkbox"
+              id="selectAll"
+              {...register("selectAll")}
+              onChange={(e) => handleSelectAll(e.target.checked)}
+            ></input>
+            <p className="optionName">전체 선택</p>
+            <Button type="submit" $text="선택 취소" $design="yellow" />
+          </div>
+        )}
       </div>
       <div className="bookmarkListContainer">
         {bookmarklist &&
           bookmarklist.map((el, index: number) => (
             <div className="bookmarkContainer" key={el.productId}>
               <div className="leftSection">
-                <input
-                  type="checkbox"
-                  className="checkbox"
-                  {...register(`checkboxes.${index}`)}
-                  onChange={(e) => handleCheckBox(index, e.currentTarget.checked)}
-                  key={el.productId}
-                ></input>
+                {loginUserId === Id && (
+                  <input
+                    type="checkbox"
+                    className="checkbox"
+                    {...register(`checkboxes.${index}`)}
+                    onChange={(e) => handleCheckBox(index, e.currentTarget.checked)}
+                    key={el.productId}
+                  ></input>
+                )}
                 <img></img>
                 <div className="infoContainer">
                   <div className="postTitle">글제목</div>
-                  <div>{`남은 시간 `}</div>
+                  <div>{`거래 마감시간 `}</div>
                 </div>
               </div>
               <div className="rightSection">
@@ -216,12 +223,14 @@ const BookmarkContent = (): JSX.Element => {
                     <span className="price">{` 원`}</span>
                   </div>
                 </div>
-                <Button
-                  type="button"
-                  $text="찜 취소"
-                  $design="yellow"
-                  onClick={() => cancleBookmark(el.wishId)}
-                />
+                {loginUserId === Id && (
+                  <Button
+                    type="button"
+                    $text="찜 취소"
+                    $design="yellow"
+                    onClick={() => cancleBookmark(el.wishId)}
+                  />
+                )}
               </div>
             </div>
           ))}

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.Review;
 import main.wonprice.domain.member.repository.ReviewRepository;
+import main.wonprice.domain.product.entity.Product;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -25,15 +27,43 @@ public class ReviewService {
 
     public Review createReview(Review review) {
 
-        checkReview(review);
+        Product product = review.getProduct();
 
-        return repository.save(review);
+        Long reviewPostMemberId = review.getPostMember().getMemberId();
+
+//        구매자가 리뷰 작성
+        if (!product.getBuyerReview() && Objects.equals(reviewPostMemberId, product.getBuyerId())) {
+            product.setBuyerReview(true);
+            product.getSeller().setReputation(product.getSeller().getReputation() + review.getScore());
+
+            return repository.save(review);
+        }
+//        판매자가 리뷰 작성
+        else if (!product.getSellerReview() && Objects.equals(reviewPostMemberId, product.getSeller().getMemberId())) {
+            product.setSellerReview(true);
+            Member buyer = memberService.findMember(product.getBuyerId());
+
+            buyer.setReputation(buyer.getReputation() + review.getScore());
+
+            return repository.save(review);
+        }
+        else if (product.getBuyerReview() || product.getSellerReview()) {
+            throw new BusinessLogicException(ExceptionCode.REVIEW_EXISTS);
+        }
+        else {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Review findReview(Long reviewId) {
+        return findVerifiedReview(reviewId);
     }
 
     @Transactional(readOnly = true)
     public List<Review> findReviews(Pageable pageable, Member member) {
 
-        List<Review> reviews = repository.findAllByProductSeller(pageable, member).getContent();
+        List<Review> reviews = repository.findAllByTargetMemberId(pageable, member.getMemberId()).getContent();
         return reviews.stream()
                 .filter(review -> review.getDeletedAt() == null)
                 .collect(Collectors.toList());
@@ -51,6 +81,8 @@ public class ReviewService {
     public Review updateReview(Review review) {
 
         Review findReview = findVerifiedReview(review.getReviewId());
+
+        memberService.validateOwner(findReview.getPostMember().getMemberId());
 
         findReview.setContent(review.getContent());
         return findReview;
@@ -74,14 +106,5 @@ public class ReviewService {
         }
 
         return verifiedReview.get();
-    }
-
-    public void checkReview(Review review) {
-
-        Optional<Review> findReview = repository.findByPostMemberAndProduct(review.getPostMember(), review.getProduct());
-
-        if (findReview.isPresent()) {
-            throw new BusinessLogicException(ExceptionCode.REVIEW_EXISTS);
-        }
     }
 }

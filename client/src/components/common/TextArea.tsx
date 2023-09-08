@@ -6,10 +6,11 @@ type TextInputProps = {
   title: string;
   options?: RegisterOptions;
   formState?: FormState<FieldValues>;
+  defaultValue?: string;
 };
 
 const TextArea = (props: TextInputProps) => {
-  const { register, id, title, options, formState } = props;
+  const { register, id, title, options, formState, defaultValue } = props;
 
   return (
     <div className="field">
@@ -20,6 +21,7 @@ const TextArea = (props: TextInputProps) => {
           className={formState?.errors[id]?.message ? "error" : ""}
           {...register(id, options)}
           id={id}
+          defaultValue={defaultValue}
         ></textarea>
 
         {formState?.errors && formState.errors[id]?.message && (
