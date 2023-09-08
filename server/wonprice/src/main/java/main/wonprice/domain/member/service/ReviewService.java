@@ -48,6 +48,11 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
+    public Review findReview(Long reviewId) {
+        return findVerifiedReview(reviewId);
+    }
+
+    @Transactional(readOnly = true)
     public List<Review> findReviews(Pageable pageable, Member member) {
 
         List<Review> reviews = repository.findAllByTargetMemberId(pageable, member.getMemberId()).getContent();
