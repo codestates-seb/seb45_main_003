@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.Wish;
 import main.wonprice.domain.member.repository.WishRepository;
+import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Pageable;
@@ -18,9 +20,15 @@ public class WishService {
 
     private final WishRepository wishRepository;
     private final MemberService memberService;
+    private final ProductRepository productRepository;
 
 
     public Wish addWish(Wish wish) {
+        // 지연 코드 추가 ---
+        Product product = wish.getProduct();
+        product.setWishCount(product.getWishCount() +1);
+        productRepository.save(product);
+        // ----------------
         return wishRepository.save(wish);
     }
 
@@ -36,6 +44,14 @@ public class WishService {
         if (!findWish.isPresent()) {
             throw new BusinessLogicException(ExceptionCode.WISH_NOT_FOUND);
         }
+
+        // 지연 코드 추가 ---
+        Wish wish = findWish.get();
+        Product product = wish.getProduct();
+
+        product.setWishCount(product.getWishCount() - 1);
+        productRepository.save(product);
+        // ----------------
 
         memberService.validateOwner(findWish.get().getMember().getMemberId());
         wishRepository.deleteById(wishId);
