@@ -1,6 +1,16 @@
 import React, { useState, useEffect, ChangeEvent } from "react";
 import axios from "axios";
+import styled from "styled-components"; // 수정된 부분
 
+const Box = styled.div`
+  .input {
+    &:hover,
+    &:focus {
+      border: none;
+      outline: none;
+    }
+  }
+`;
 export type Chat = {
   chatParticipantId: number;
   memberId: number;
@@ -46,8 +56,9 @@ const ChatListComponent: React.FC = () => {
   };
 
   return (
-    <div>
+    <Box>
       <input
+        className="input"
         type="text"
         placeholder="Search chats..."
         value={searchTerm}
@@ -66,7 +77,7 @@ const ChatListComponent: React.FC = () => {
           </li>
         ))}
       </ul>
-    </div>
+    </Box>
   );
 };
 

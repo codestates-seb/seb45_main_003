@@ -3,9 +3,10 @@ import axios from "axios";
 import { useRecoilState, useRecoilValue, RecoilState } from "recoil";
 import { loginState } from "../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
 import { chatListState } from "./chatState";
-import moment from "moment-timezone";
 import styled from "styled-components";
 import { currentChatRoomIdState } from "./chatState";
+import FormatTimeOrDate from "./FormatTimeOrDate";
+import { COLOR } from "../../constants/color";
 interface ChatList {
   chatRoomId: number;
   memberId: number;
@@ -22,37 +23,22 @@ interface ChatList {
   } | null;
 }
 
-const formatTimeOrDate = (createdAt: string | null) => {
-  if (!createdAt) {
-    return "";
-  }
-
-  const currentTime = moment().tz("Asia/Seoul");
-  const messageTime = moment(createdAt).tz("Asia/Seoul"); // 타임존 설정 추가
-  const diffInHours = currentTime.diff(messageTime, "hours");
-
-  if (diffInHours < 24) {
-    return messageTime.format("A h:mm");
-  } else {
-    return messageTime.format("MM-DD");
-  }
-};
-
 const Container = styled.button`
-  background-color: white;
+  background: ${COLOR.gray_100};
   display: flex;
   padding: 0.75rem 0.5rem;
   align-items: center;
-  gap: 0.5rem;
+  gap: 1rem;
   align-self: stretch;
-  padding: 8px 12px;
-
+  padding: 0.625rem 0.9375rem;
+  min-height: 3rem;
+  border-radius: 0.375rem;
   width: 100%;
-
   font-size: 1rem;
   border: none;
   border-radius: 0.375rem;
   justify-content: start;
+  margin-bottom: 1.25rem;
 
   /* hover 상태일 때의 스타일 */
   &:hover {
@@ -148,11 +134,11 @@ const ChattingListData: React.FC = () => {
                 <div className="idDate">
                   <div className="memberId">테스트 아이디{chat.memberId}</div>
                   <div className="createdAt">
-                    {formatTimeOrDate(chat.message ? chat.message.createdAt : null)}{" "}
+                    {FormatTimeOrDate(chat.message ? chat.message.createdAt : null)}{" "}
                   </div>
                 </div>
 
-                <div className="message">{chat.message ? chat.message.content : ""}</div>
+                <div className="message">{chat.message ? chat.message.content : " "}</div>
               </div>
             </li>
           </Container>

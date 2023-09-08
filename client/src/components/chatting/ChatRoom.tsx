@@ -6,23 +6,7 @@ import { useRecoilValue } from "recoil";
 import { currentChatRoomIdState } from "./chatState";
 import MessageBubble from "./MessageBubble";
 import ChatRoomHttp from "./ChatRoomHttp";
-import moment from "moment-timezone";
-
-const formatTimeOrDate = (createdAt: string | null) => {
-  if (!createdAt) {
-    return "No message";
-  }
-
-  const currentTime = moment().tz("Asia/Seoul");
-  const messageTime = moment(createdAt).tz("Asia/Seoul"); // 타임존 설정 추가
-  const diffInHours = currentTime.diff(messageTime, "hours");
-
-  if (diffInHours < 24) {
-    return messageTime.format("A h:mm");
-  } else {
-    return messageTime.format("MM-DD");
-  }
-};
+import FormatTimeOrDate from "./FormatTimeOrDate";
 
 const Container = styled.div`
   display: flex;
@@ -40,11 +24,14 @@ const Container = styled.div`
 
   .chatBox {
     overflow-y: auto; /* 내용이 넘칠 경우 스크롤 표시 */
-    flex-direction: column-reverse;
 
     &::-webkit-scrollbar {
       width: 0px;
     }
+    /* &::-webkit-scrollbar-thumb {
+      border-radius: 6px;
+      background: #ccc;
+    } */
   }
   @media (max-width: 64rem) {
     width: 95%; // 상대적인 단위로 변경
@@ -84,7 +71,7 @@ const ChatRoom = () => {
           console.log("Connected to the WebSocket server");
 
           // 채팅 구독 메세지를 화면에 띄어줌
-          stompClient.subscribe(`/app/chat/${roomId}`, (message) => {
+          stompClient.subscribe(`/topic/chat/${roomId}`, (message) => {
             const messageData: MessageData = JSON.parse(message.body);
             setMessages((prevMessages) => [...prevMessages, messageData]);
           });
@@ -92,7 +79,6 @@ const ChatRoom = () => {
         },
         (error) => {
           console.error("STOMP protocol error:", error); // 에러 로깅
-          console.log(`STOMP error: ${error}`);
         },
       );
 
@@ -105,26 +91,21 @@ const ChatRoom = () => {
         });
       };
     }
-  }, [roomId, Id]);
+  }, [roomId]);
 
-  //topic/chat/${roomId} 으로 경로 지정하면 실시간 뜸 -> 메세지 안보내짐
-  //메세지 보내는 경로 /app/chat/${roomId} -> 실시간 안뜸
+  useEffect(() => {
+    const element = document.querySelector(".chatBox");
+    if (element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  }, [messages]);
 
   // InPut 내용을 소켓으로 Send
-  const handleSendMessage = (message: string): void => {
+  const handleSendMessage = (message: string) => {
     console.log("handleSendMessage called with message:", message);
     if (client && client.connected) {
-      const createdAt: string = new Date().toISOString();
-      client.send(
-        `/app/chat/${roomId}`,
-        JSON.stringify({ content: message, senderId: Id, createdAt }),
-        {},
-      );
+      client.send(`/app/chat/${roomId}`, JSON.stringify({ content: message, senderId: Id }), {});
       console.log("Message sent:", message);
-      setMessages((prevMessages: MessageData[]) => [
-        ...prevMessages,
-        { body: { content: message, senderId: Id, createdAt } },
-      ]);
     }
   };
 
@@ -139,7 +120,7 @@ const ChatRoom = () => {
               key={index}
               owner={message.body.senderId === Id ? "user" : "other"}
               message={message.body.content}
-              time={formatTimeOrDate(message.body.createdAt || null) || "Unknown time"}
+              time={FormatTimeOrDate(message.body.createdAt || null) || "Unknown time"}
             />
           ))}
         </div>

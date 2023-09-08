@@ -3,6 +3,7 @@ import styled from "styled-components"; // 수정된 부분
 import SendIcon from "@mui/icons-material/Send";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { COLOR } from "../../constants/color";
 
 // import Button from "../../components/common/Button";
 
@@ -12,10 +13,12 @@ const Container = styled.div`
   justify-content: center;
   gap: 0.75rem;
   max-height: 3.75rem;
+  padding: 0 1.875rem;
+
   .chat-input-container {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center; /* 중앙 정렬 */
     background: #fff;
     width: fit-content;
@@ -25,6 +28,12 @@ const Container = styled.div`
     background: #fff;
 
     width: calc(100% - 3rem);
+
+    &:hover,
+    &:focus {
+      border: 1px solid ${COLOR.primary};
+      outline: 1px solid ${COLOR.primary};
+    }
   }
 
   .input {
@@ -35,6 +44,13 @@ const Container = styled.div`
     border: none;
     background: none;
     outline: none; /* 이 부분을 추가 */
+
+    &:hover,
+    &:focus {
+      border: none;
+      outline: none;
+    }
+
     .this-page .input:focus {
       outline: none;
     }
@@ -48,9 +64,9 @@ const Container = styled.div`
       color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
     }
   }
-  @media (max-width: 64rem) {
+  /* @media (max-width: 64rem) {
     width: calc(100% - 2rem);
-  }
+  } */
 `;
 
 const Button = styled.button`
