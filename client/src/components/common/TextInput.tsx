@@ -6,12 +6,13 @@ type TextInputProps = {
   title: string;
   type?: string;
   options?: RegisterOptions;
+  defaultValue?: string;
   formState?: FormState<FieldValues>;
   placeholder?: string;
 };
 
 const TextInput = (props: TextInputProps) => {
-  const { register, id, title, type, options, formState, placeholder } = props;
+  const { register, id, title, type, options, formState, placeholder, defaultValue } = props;
 
   return (
     <div className="field">
@@ -24,6 +25,7 @@ const TextInput = (props: TextInputProps) => {
           id={id}
           type={type}
           placeholder={placeholder}
+          defaultValue={defaultValue}
         />
 
         {id === "immediatelyBuyPrice" || id === "currentAuctionPrice" ? <span>원</span> : null}
