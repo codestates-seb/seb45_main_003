@@ -123,9 +123,15 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllBySeller(member, pageable).getContent();
     }
 
-//    회원이 구매 완료한 상품 목록
-    public List<Product> findMembersTradedProduct(Pageable pageable, Member member) {
+//    회원이 판매 완료한 상품 목록
+    public List<Product> findMemberSold(Pageable pageable, Member member) {
 
-        return productRepository.findAllByBuyerIdAndStatus(member.getMemberId(), ProductStatus.AFTER, pageable).getContent();
+        return productRepository.findAllBySellerAndStatus(member, ProductStatus.AFTER, pageable).getContent();
+    }
+
+//    회원이 구매 완료한 상품 목록
+    @Override
+    public List<Product> findMemberBought(Pageable pageable, Long memberId) {
+        return productRepository.findAllByBuyerIdAndStatus(memberId, ProductStatus.AFTER, pageable).getContent();
     }
 }

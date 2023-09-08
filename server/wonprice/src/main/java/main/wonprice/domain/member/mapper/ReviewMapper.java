@@ -16,7 +16,9 @@ public interface ReviewMapper {
     default ReviewResponseDto reviewToResponseDto(Review review) {
         ReviewResponseDto responseDto = new ReviewResponseDto();
 
+        responseDto.setReviewId(review.getReviewId());
         responseDto.setPostMemberId(review.getPostMember().getMemberId());
+        responseDto.setTargetMemberId(review.getTargetMemberId());
         responseDto.setProductId(review.getProduct().getProductId());
         responseDto.setScore(review.getScore());
         responseDto.setTitle(review.getTitle());
