@@ -23,7 +23,9 @@ public interface ProductMapper {
                 .immediatelyBuyPrice(productRequestDto.getImmediatelyBuyPrice())
                 .auction(productRequestDto.getAuction())
                 .status(ProductStatus.BEFORE)
-                .views(0L);
+                .views(0L)
+                .buyerReview(false)
+                .sellerReview(false);
 
         // auction이 true인 경우에만 추가 정보 설정
         if (productRequestDto.getAuction()) {
@@ -53,6 +55,9 @@ public interface ProductMapper {
                 .closedAt(product.getClosedAt())
                 .categoryId(product.getCategory().getCategoryId())
                 .images(product.getProductPictures())
+                .sellerName(product.getSeller().getName()) // 판매자 이름 설정
+                .sellerReputation(product.getSeller().getReputation()) // 판매자 평판 설정
+//                .images(product.getProductPictures())
                 .build();
     }
 
