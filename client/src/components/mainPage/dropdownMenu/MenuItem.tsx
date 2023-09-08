@@ -2,28 +2,24 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as AddButton } from "../../../assets/images/Add.svg";
-import myImage from "../../../assets/images/Img1.png";
+
+// import myImage from "../../../assets/images/Img1.png";
 
 const ItemContainer = styled.div`
   font-family: Pretendard Variable;
   display: flex;
-  padding: 0.625rem;
+  padding: 0.9375rem;
   flex-direction: column;
   align-items: center;
   gap: 1.25rem;
-  max-width: 22rem;
-  min-width: 240px; // 여기만
+  max-width: 18.75rem;
+  min-width: 15rem; // 여기만
   width: calc(100% - 3rem);
   display: flex;
   justify-content: center;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   background-color: white;
   border-radius: 0.375rem;
-
-  .ItemImg {
-    border-radius: 10px;
-    size: fit;
-  }
   @media (max-width: 64rem) {
     width: calc(100% - 2rem);
   }
@@ -55,6 +51,8 @@ const ItemBox = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
   /* background-color: aqua; */
 
   .Box {
@@ -117,37 +115,37 @@ const ListBox = styled.div`
   }
 `;
 
-const CountBox = styled.div`
-  height: 1.625rem;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
+// const CountBox = styled.div`
+//   height: 1.625rem;
+//   width: 100%;
+//   display: flex;
+//   justify-content: space-between;
 
-  color: var(--text-color, #252b42);
-  font-family: Pretendard Variable;
-  font-size: 0.875rem;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 1.5rem; /* 171.429% */
-  letter-spacing: 0.2px;
+//   color: var(--text-color, #252b42);
+//   font-family: Pretendard Variable;
+//   font-size: 0.875rem;
+//   font-style: normal;
+//   font-weight: 600;
+//   line-height: 1.5rem; /* 171.429% */
+//   letter-spacing: 0.2px;
 
-  .count {
-    /* background-color: #b0ee35; */
-    width: 10%;
-    text-align: end;
+//   .count {
+//     /* background-color: #b0ee35; */
+//     width: 10%;
+//     text-align: end;
 
-    color: var(--second-text-color, #737373);
-    font-family: Pretendard Variable;
-    font-size: 0.875rem;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 1.5rem; /* 171.429% */
-    letter-spacing: 0.0125rem;
-  }
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  }
-`;
+//     color: var(--second-text-color, #737373);
+//     font-family: Pretendard Variable;
+//     font-size: 0.875rem;
+//     font-style: normal;
+//     font-weight: 600;
+//     line-height: 1.5rem; /* 171.429% */
+//     letter-spacing: 0.0125rem;
+//   }
+//   @media (max-width: 64rem) {
+//     width: calc(100% - 2rem);
+//   }
+// `;
 interface ItemProps {
   categories?: string;
   count?: string;
@@ -168,48 +166,44 @@ const Item: React.FunctionComponent<ItemProps> = (props) => {
   );
 };
 
-const MenuItem: React.FunctionComponent<ItemProps> = (props) => {
+const MenuItem: React.FunctionComponent<ItemProps> = () => {
   return (
     <>
       <ItemContainer>
-        <img className="ItemImg" src={myImage} />
         <ListBox>
-          <Title>Shop By Department</Title>
+          <Title>Product Category</Title>
           <ul>
             <li className="ItemList">
               <Link to="/product/books">
-                <Item categories="Books" count="1" />
+                <Item categories="Books" />
               </Link>
             </li>
             <li className="ItemList">
               <Link to="/product/electronics">
-                <Item categories="Electronics " count="1" />
+                <Item categories="Electronics " />
               </Link>
             </li>
             <li className="ItemList">
               <Link to="/product/clothing">
-                <Item categories="Clothing" count="1" />
+                <Item categories="Clothing" />
               </Link>
             </li>
             <li className="ItemList">
               <Link to="/product/food">
-                <Item categories="Food" count="1" />
+                <Item categories="Food" />
               </Link>
             </li>
             <li className="ItemList">
               <Link to="/product/cosmetic">
-                <Item categories="Cosmetic" count="1" />
+                <Item categories="Cosmetic" />
+              </Link>
+            </li>
+            <li className="ViewAll">
+              <Link to="/product">
+                <Item categories="View All" />
               </Link>
             </li>
           </ul>
-          <div className="ViewAll">
-            <CountBox>
-              <Link to="/product">
-                <div>View all</div>
-              </Link>
-              <div className="count">{props.allCount}0</div>
-            </CountBox>
-          </div>
         </ListBox>
       </ItemContainer>
     </>

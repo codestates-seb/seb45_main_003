@@ -3,6 +3,23 @@ import { currentChatRoomIdState } from "./chatState";
 import { useRecoilValue } from "recoil";
 import React, { useState, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
+import moment from "moment-timezone";
+
+const formatTimeOrDate = (createdAt: string | null) => {
+  if (!createdAt) {
+    return "No message";
+  }
+
+  const currentTime = moment().tz("Asia/Seoul");
+  const messageTime = moment(createdAt).tz("Asia/Seoul"); // 타임존 설정 추가
+  const diffInHours = currentTime.diff(messageTime, "hours");
+
+  if (diffInHours < 24) {
+    return messageTime.format("A h:mm");
+  } else {
+    return messageTime.format("MM-DD");
+  }
+};
 
 interface Message {
   messageId: number;
@@ -55,7 +72,7 @@ const ChatRoomHttp: React.FC = () => {
             key={message.messageId}
             owner={message.senderId === Id ? "user" : "other"}
             message={message.content}
-            time={message.createdAt}
+            time={formatTimeOrDate(message.createdAt)}
           />
         ))
       )}

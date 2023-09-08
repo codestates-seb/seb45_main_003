@@ -6,6 +6,23 @@ import { useRecoilValue } from "recoil";
 import { currentChatRoomIdState } from "./chatState";
 import MessageBubble from "./MessageBubble";
 import ChatRoomHttp from "./ChatRoomHttp";
+import moment from "moment-timezone";
+
+const formatTimeOrDate = (createdAt: string | null) => {
+  if (!createdAt) {
+    return "No message";
+  }
+
+  const currentTime = moment().tz("Asia/Seoul");
+  const messageTime = moment(createdAt).tz("Asia/Seoul"); // 타임존 설정 추가
+  const diffInHours = currentTime.diff(messageTime, "hours");
+
+  if (diffInHours < 24) {
+    return messageTime.format("A h:mm");
+  } else {
+    return messageTime.format("MM-DD");
+  }
+};
 
 const Container = styled.div`
   display: flex;
@@ -23,14 +40,11 @@ const Container = styled.div`
 
   .chatBox {
     overflow-y: auto; /* 내용이 넘칠 경우 스크롤 표시 */
+    flex-direction: column-reverse;
 
     &::-webkit-scrollbar {
       width: 0px;
     }
-    /* &::-webkit-scrollbar-thumb {
-      border-radius: 6px;
-      background: #ccc;
-    } */
   }
   @media (max-width: 64rem) {
     width: 95%; // 상대적인 단위로 변경
@@ -51,14 +65,6 @@ const ChatRoom = () => {
   const [client, setClient] = useState<Webstomp.Client | null>(null);
   const roomId = chatRoomId; // 실제 방 ID를 얻는 방법으로 대체하세요
 
-  // // 로컬 스토리지에서 Token 값을 가져옵니다.
-  // const userIdFromLocalStorage = localStorage.getItem("accessToken");
-
-  // console.log(userIdFromLocalStorage);
-
-  // // 로컬 스토리지에 값이 없으면 null로 설정합니다.
-  // const Token = userIdFromLocalStorage || null;
-
   // 로컬 스토리지에서 userId 값을 가져옵니다.
   const userIdFromLocalStorage = localStorage.getItem("Id");
   console.log(userIdFromLocalStorage);
@@ -78,7 +84,7 @@ const ChatRoom = () => {
           console.log("Connected to the WebSocket server");
 
           // 채팅 구독 메세지를 화면에 띄어줌
-          stompClient.subscribe(`/topic/chat/${roomId}`, (message) => {
+          stompClient.subscribe(`/app/chat/${roomId}`, (message) => {
             const messageData: MessageData = JSON.parse(message.body);
             setMessages((prevMessages) => [...prevMessages, messageData]);
           });
@@ -105,11 +111,20 @@ const ChatRoom = () => {
   //메세지 보내는 경로 /app/chat/${roomId} -> 실시간 안뜸
 
   // InPut 내용을 소켓으로 Send
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = (message: string): void => {
     console.log("handleSendMessage called with message:", message);
     if (client && client.connected) {
-      client.send(`/app/chat/${roomId}`, JSON.stringify({ content: message, senderId: Id }), {});
+      const createdAt: string = new Date().toISOString();
+      client.send(
+        `/app/chat/${roomId}`,
+        JSON.stringify({ content: message, senderId: Id, createdAt }),
+        {},
+      );
       console.log("Message sent:", message);
+      setMessages((prevMessages: MessageData[]) => [
+        ...prevMessages,
+        { body: { content: message, senderId: Id, createdAt } },
+      ]);
     }
   };
 
@@ -117,16 +132,17 @@ const ChatRoom = () => {
     <>
       <Container>
         <div className="chatBox" style={{ display: "flex", flexDirection: "column" }}>
+          {" "}
           <ChatRoomHttp />
+          {messages.map((message, index) => (
+            <MessageBubble
+              key={index}
+              owner={message.body.senderId === Id ? "user" : "other"}
+              message={message.body.content}
+              time={formatTimeOrDate(message.body.createdAt || null) || "Unknown time"}
+            />
+          ))}
         </div>
-        {messages.map((message, index) => (
-          <MessageBubble
-            key={index}
-            owner={message.body.senderId === Id ? "user" : "other"}
-            message={message.body.content}
-            time={message.body.createdAt || "Unknown time"} // 'recipient' 필드가 시간을 나타내는 것이 맞다면 이렇게 사용하세요
-          />
-        ))}
         <ChatInput onSendMessage={handleSendMessage} />
       </Container>
     </>

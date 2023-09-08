@@ -24,7 +24,7 @@ interface ChatList {
 
 const formatTimeOrDate = (createdAt: string | null) => {
   if (!createdAt) {
-    return "No message";
+    return "";
   }
 
   const currentTime = moment().tz("Asia/Seoul");
@@ -152,7 +152,7 @@ const ChattingListData: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="message">{chat.message ? chat.message.content : "No message"}</div>
+                <div className="message">{chat.message ? chat.message.content : ""}</div>
               </div>
             </li>
           </Container>
