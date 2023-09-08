@@ -209,7 +209,7 @@ const BookmarkContent = (): JSX.Element => {
                 <img></img>
                 <div className="infoContainer">
                   <div className="postTitle">글제목</div>
-                  <div>{`남은 시간 `}</div>
+                  <div>{`거래 마감시간 `}</div>
                 </div>
               </div>
               <div className="rightSection">

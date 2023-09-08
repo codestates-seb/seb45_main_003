@@ -12,7 +12,7 @@ import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
 import { authInstance } from "../../interceptors/interceptors";
 import { useLocation } from "react-router-dom";
-
+import ProfileImgRegisterForm from "./profileImgForm";
 interface Profile {
   memberId: number;
   name: string;
@@ -20,9 +20,11 @@ interface Profile {
   phone: string;
 }
 
-interface modifyPasswordForm {
+interface modifyProfileForm {
   passwordCheck: string;
   newPassword: string;
+  images: string;
+  image: string;
 }
 
 const ProfileContentContainer = styled.div`
@@ -139,7 +141,7 @@ const ProfileContent = (): JSX.Element => {
     setError,
     setValue,
     getValues,
-  } = useForm<modifyPasswordForm>();
+  } = useForm<modifyProfileForm>();
   const isLogin = useRecoilValue(loginState);
   const { toggleModal, closeModal, isOpen } = useModal();
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
@@ -153,7 +155,7 @@ const ProfileContent = (): JSX.Element => {
       }
     }
   };
-  const modifyPassword = async (body: modifyPasswordForm) => {
+  const modifyPassword = async (body: modifyProfileForm) => {
     try {
       const res = await authInstance.patch(`/members/${Id}`, { password: body.newPassword });
       setProfile(res.data);
@@ -205,8 +207,8 @@ const ProfileContent = (): JSX.Element => {
         </div>
         <div className="profileInfoContainer">
           <div className="imgContainer">
-            <img className="profileImg"></img>
-            {loginUserId === Id && <Button type="button" $text="이미지 등록" $design="black" />}
+            {loginUserId !== Id && <img className="profileImg"></img>}
+            {loginUserId === Id && <ProfileImgRegisterForm />}
           </div>
           <div className="labelContainer">
             <label className="infoLabel">성함</label>
