@@ -89,7 +89,7 @@ const AuctionContent = (): JSX.Element => {
             <img></img>
             <div className="infoContainer">
               <div className="postTitle">글제목</div>
-              <div>{`거래 마감시간 `}</div>
+              <div>{`경매 종료 시간 `}</div>
             </div>
           </div>
           <div className="priceContainer">

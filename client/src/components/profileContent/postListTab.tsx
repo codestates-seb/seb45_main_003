@@ -199,6 +199,7 @@ const PostListTab = (): JSX.Element => {
                   <span className="author">{`작성자 id ${el.postMemberId}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
                 </div>
+                <div>{`평점: ${el.score}`}</div>
                 <p className="postContent">{el.content}</p>
               </div>
             </div>
@@ -214,6 +215,7 @@ const PostListTab = (): JSX.Element => {
                   <span className="author">{`작성자 id${el.postMemberId}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
                 </div>
+                <div>{`평점: ${el.score}`}</div>
                 <p className="postContent">{el.content}</p>
               </div>
             </div>

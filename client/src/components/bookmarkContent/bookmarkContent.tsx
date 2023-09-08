@@ -253,7 +253,11 @@ const BookmarkContent = (): JSX.Element => {
                     >
                       {el.productResponseDto.title}
                     </div>
-                    <div>{`거래 마감시간: ${el.productResponseDto.closedAt} `}</div>
+                    {el.productResponseDto.auction ? (
+                      <div>{`거래 마감시간: ${el.productResponseDto.closedAt} `}</div>
+                    ) : (
+                      <div>즉시 구매 상품</div>
+                    )}
                   </div>
                 </div>
               </div>

@@ -147,7 +147,7 @@ const TradeContent = (): JSX.Element => {
                 <div className="infoContainer">
                   <div className="postTitle">{el.title}</div>
                   <div>{`${el.productStatus}`}</div>
-                  <div>{`거래종료: ${el.closedAt}`}</div>
+                  {el.auction ? <div>{`경매종료: ${el.closedAt}`}</div> : <div>즉시 구매 상품</div>}
                 </div>
               </div>
               <div className="rightSection">
@@ -179,7 +179,7 @@ const TradeContent = (): JSX.Element => {
                 <div className="infoContainer">
                   <div className="postTitle">{el.title}</div>
                   <div>{`${el.productStatus}`}</div>
-                  <div>{`거래종료: ${el.closedAt}`}</div>
+                  {el.auction ? <div>{`경매종료: ${el.closedAt}`}</div> : <div>즉시 구매 상품</div>}
                 </div>
               </div>
               <div className="rightSection">
