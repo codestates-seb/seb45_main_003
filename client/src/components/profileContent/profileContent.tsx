@@ -14,6 +14,11 @@ import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import { useLocation } from "react-router-dom";
 import ProfileImgRegisterForm from "./profileImgForm";
 
+interface image {
+  imageId: number;
+  path: string;
+}
+
 interface Profile {
   memberId: number;
   name: string;
@@ -21,6 +26,7 @@ interface Profile {
   phone: string;
   postCount: number;
   tradeCount: number;
+  picture: image;
 }
 
 interface modifyProfileForm {
@@ -138,6 +144,7 @@ const ProfileContent = (): JSX.Element => {
     phone: "",
     postCount: 0,
     tradeCount: 0,
+    picture: { imageId: 0, path: "" },
   });
   // const Id = window.location.search
   const loginUserId = localStorage.getItem("Id");
@@ -225,7 +232,7 @@ const ProfileContent = (): JSX.Element => {
           <div className="imgContainer">
             {!modifyImgMode ? (
               <>
-                <img className="profileImg"></img>
+                <img className="profileImg" src={profile.picture.path}></img>
                 {loginUserId === Id && (
                   <Button
                     type="button"

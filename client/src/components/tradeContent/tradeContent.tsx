@@ -22,6 +22,7 @@ interface products {
   productStatus: string;
   auction: boolean;
   immediatelyBuyPrice: number;
+  currentAuctionPrice: number;
 }
 
 const TradeContentContainer = styled.div`
@@ -140,7 +141,7 @@ const TradeContent = (): JSX.Element => {
       <div className="tradeListContainer">
         {mypageMode === "purchase" &&
           purchaseList.map((el) => (
-            <div className="tradeContainer">
+            <div className="tradeContainer" key={el.productId}>
               <div className="leftSection">
                 <img className="postImg" src={el.images[0].path}></img>
                 <div className="infoContainer">
@@ -154,7 +155,9 @@ const TradeContent = (): JSX.Element => {
                   {el.auction && (
                     <div className="priceLabel">
                       {`낙찰가`}
-                      <span className="price">{` 원`}</span>
+                      <span className="price">{`${el.currentAuctionPrice.toLocaleString(
+                        "ko-KR",
+                      )} 원`}</span>
                     </div>
                   )}
                   <div className="priceLabel">
@@ -170,7 +173,7 @@ const TradeContent = (): JSX.Element => {
           ))}
         {mypageMode === "sales" &&
           salesList.map((el) => (
-            <div className="tradeContainer">
+            <div className="tradeContainer" key={el.productId}>
               <div className="leftSection">
                 <img className="postImg" src={el.images[0].path}></img>
                 <div className="infoContainer">
@@ -184,7 +187,9 @@ const TradeContent = (): JSX.Element => {
                   {el.auction && (
                     <div className="priceLabel">
                       {`낙찰가`}
-                      <span className="price">{` 원`}</span>
+                      <span className="price">{`${el.currentAuctionPrice.toLocaleString(
+                        "ko-KR",
+                      )} 원`}</span>
                     </div>
                   )}
                   <div className="priceLabel">
