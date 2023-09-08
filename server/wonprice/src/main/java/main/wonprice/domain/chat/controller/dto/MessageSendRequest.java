@@ -10,4 +10,5 @@ import lombok.NoArgsConstructor;
 public class MessageSendRequest {
 
     private String content;
+    private String senderId;
 }
