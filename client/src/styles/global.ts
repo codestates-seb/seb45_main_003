@@ -6,6 +6,7 @@ import "./font.ts";
 export const GlobalStyle = createGlobalStyle`
 body,
 textarea, input {
+  color: ${COLOR.darkText};
   margin: 0;
   font-family: "Pretendard";
   -webkit-font-smoothing: antialiased;
