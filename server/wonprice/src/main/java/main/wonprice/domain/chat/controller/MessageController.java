@@ -38,13 +38,16 @@ public class MessageController {
         /* sender_id = logimMember.getEmail(), created_at = LocalDateTime.now(), chat_room_id = roomId , content = request.content */
         /* 아래 Mapper로 수정 예정 */
         Message message = new Message();
+
+        log.info("request.getContent : " + request.getContent());
         message.setContent(request.getContent());
-        message.setSenderId(1L);
+        message.setSenderId(8L);
+        log.info("sender_id : " + message.getSenderId());
         message.setChatRoom(findChatRoom);
 
         messageService.saveMessage(message);
 
-        return new ResponseEntity(message, HttpStatus.OK);
+        return new ResponseEntity(message.getContent(), HttpStatus.OK);
     }
 
 }
