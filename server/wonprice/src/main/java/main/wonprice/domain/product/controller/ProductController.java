@@ -56,7 +56,7 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<Page<ProductResponseDto>> findAllProduct(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+            @RequestParam(defaultValue = "8") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
         Page<ProductResponseDto> productResponseDtoList = productService
                 .findAll(pageable)
@@ -101,14 +101,13 @@ public class ProductController {
     // 거래 완료된 상품만 조회
     @GetMapping("/completed")
     public ResponseEntity<Page<ProductResponseDto>> getCompletedProducts(@RequestParam(defaultValue = "0") int page,
-                                                                         @RequestParam(defaultValue = "10") int size) {
+                                                                         @RequestParam(defaultValue = "8") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
         // ProductStatus가 AFTER인 상품만 조회
         Page<Product> products = productService.getProductsByStatus(ProductStatus.AFTER, pageable);
         Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
         return ResponseEntity.ok(productResponseDtoList);
     }
-
 
     // 특정 상품 조회
     @GetMapping("/{productId}")
@@ -119,6 +118,19 @@ public class ProductController {
 
         ProductResponseDto productResponseDto = productMapper.fromEntity(product);
         return ResponseEntity.ok(productResponseDto);
+    }
+
+    // 상품 title 키워드로 검색
+    // Example URL: "/products/search?keyword=자켓"
+    @GetMapping("/search")
+    public ResponseEntity<Page<ProductResponseDto>> searchProductsByTitle(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "8") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Page<Product> products = productService.searchProductsByTitle(keyword, pageable);
+        Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
+        return ResponseEntity.ok(productResponseDtoList);
     }
 
     // 상품 게시글 삭제

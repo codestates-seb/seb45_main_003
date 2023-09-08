@@ -29,9 +29,16 @@ const StyledItemStatus = styled.section`
     max-width: 27.5rem;
     width: 40%;
 
-    & > div {
+    & > div:not(:first-child) {
       padding: 1.5rem 0;
       border-top: 1px solid ${COLOR.border};
+    }
+
+    .title {
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      gap: 0.5rem;
     }
   }
 
@@ -104,10 +111,12 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
     <StyledItemStatus>
       <img src="" alt="" />
       <div className="item_status">
-        <h1>{data.title}</h1>
-        <Link to="/product">
-          <EditIcon />
-        </Link>
+        <div className="title">
+          <h1>{data.title}</h1>
+          <Link to="/create-post">
+            <EditIcon />
+          </Link>
+        </div>
 
         <p className="gray date_or_status">
           {data.auction
