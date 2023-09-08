@@ -31,7 +31,8 @@ const Profile = (): JSX.Element => {
       {mypageMode === "profile" && <ProfileContent />}
       {mypageMode === "auction" && <AuctionContent />}
       {mypageMode === "bookmark" && <BookmarkContent />}
-      {mypageMode === "trade" && <TradeContent />}
+      {mypageMode === "purchase" && <TradeContent />}
+      {mypageMode === "sales" && <TradeContent />}
     </ProfileContainer>
   );
 };
