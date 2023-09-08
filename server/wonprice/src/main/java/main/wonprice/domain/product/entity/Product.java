@@ -4,6 +4,7 @@ import lombok.*;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.Review;
+import main.wonprice.domain.member.entity.Wish;
 import main.wonprice.domain.picture.entity.ProductPicture;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 
@@ -62,6 +63,11 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<ProductPicture> productPictures = new ArrayList<>(); // 게시글 이미지
+
+    @OneToMany(mappedBy = "product")
+    private List<Wish> wishes = new ArrayList<>();
+
+    private Integer wishCount = 0;
 
     public Product update(ProductRequestDto productRequestDto) {
         this.title = productRequestDto.getTitle();

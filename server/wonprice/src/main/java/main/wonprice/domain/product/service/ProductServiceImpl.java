@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -114,6 +115,13 @@ public class ProductServiceImpl implements ProductService {
     public Product findExistsProduct(Long productId) {
         Optional<Product> product = productRepository.findById(productId);
         return product.orElseThrow();
+    }
+
+    // 상품의 찜 갯수
+    public Integer getProductWishCount(Long productId){
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with Id: " + productId));
+        return product.getWishCount();
     }
 
 //    회원이 등록한 상품 목록

@@ -51,4 +51,6 @@ public class ProductResponseDto {
     private String sellerName; // 판매자 이름
 
     private Long sellerReputation; // 판매자 평판
+
+    private Integer wishCount; // 받은 찜 개수
 }
