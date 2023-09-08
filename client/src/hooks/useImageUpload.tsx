@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import { MAX } from "../constants/systemMessage";
 
-interface UseImageUpload {
+type UseImageUpload = {
   setError: (name: string, error: { type: string; message?: string }) => void;
   clearErrors: (name: string) => void;
-}
+  maxImageCount: number;
+};
 
-export const useImageUpload = ({ setError, clearErrors }: UseImageUpload) => {
-  const MAX_IMAGE_COUNT = 4;
+export const useImageUpload = ({ setError, clearErrors, maxImageCount }: UseImageUpload) => {
+  const MAX_IMAGE_COUNT = maxImageCount;
   const [images, setImages] = useState<File[]>([]);
 
   //이미지를 상태에 추가하는 이벤트 핸들러
@@ -21,22 +22,38 @@ export const useImageUpload = ({ setError, clearErrors }: UseImageUpload) => {
       //FileList 객체를 배열화하여 images로 관리
       const imageArray = Array.from(event.target.files);
 
+      //중복 이미지 필터링
+      const uniqueImages = imageArray.filter(
+        (image) => !images.some((existingImage) => existingImage.name === image.name),
+      );
+
+      console.log(uniqueImages);
+
       //최대 이미지 업로드 수 제한
-      if (imageArray?.length > MAX_IMAGE_COUNT) {
+      if (uniqueImages?.length + images.length > MAX_IMAGE_COUNT) {
         setError("images", {
           type: "maxImageCount",
           message: MAX.imageSelect(MAX_IMAGE_COUNT),
         });
-        setImages((prev) => [...prev, ...imageArray.slice(0, MAX_IMAGE_COUNT - prev.length)]);
+        setImages((prev) => [...uniqueImages.slice(0, MAX_IMAGE_COUNT - prev.length), ...prev]);
+
         return;
       }
-      clearErrors("image");
-      setImages((prev) => [...prev, ...imageArray]);
+
+      clearErrors("images");
+      setImages((prev) => [...uniqueImages, ...prev]);
     }
+  };
+
+  //이미지 상태에서 이미지를 삭제
+  const handleDelete = (name: string) => {
+    clearErrors("images");
+    setImages(images.filter((image) => image.name !== name));
   };
 
   return {
     images,
     handleChange,
+    handleDelete,
   };
 };

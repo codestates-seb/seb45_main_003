@@ -49,6 +49,10 @@ public class Product {
 
     private LocalDateTime closedAt; // 경매 종료 시간
 
+    private Boolean sellerReview; // 판매자 리뷰 작성 여부
+
+    private Boolean buyerReview; // 구매자 리뷰 작성 여부
+
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category; // 카테고리

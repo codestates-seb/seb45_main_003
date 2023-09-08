@@ -39,6 +39,15 @@ public class ReviewController {
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
 
+    @GetMapping("/reviews/{review-id}")
+    public ResponseEntity getReview(@PathVariable("review-id") Long reviewId) {
+
+        Review findReview = reviewService.findReview(reviewId);
+        ReviewResponseDto response = mapper.reviewToResponseDto(findReview);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
+
     @GetMapping("/members/{member-id}/reviews/post")
     public ResponseEntity fingMemberwroteReview(Pageable pageable,
                                                      @PathVariable("member-id")Long memberId) {

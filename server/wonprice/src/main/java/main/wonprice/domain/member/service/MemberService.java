@@ -117,13 +117,13 @@ public class MemberService {
 //    해당 id의 회원이 있는지 확인 후 리턴
     private Member findVerifyMember(Long memberId) {
 
-        Member loginMember = findLoginMember();
+//        Member loginMember = findLoginMember();
         Optional<Member> findMember = memberRepository.findById(memberId);
 
         if (findMember.isEmpty())
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
-        if (loginMember.getRoles().contains("ADMIN"))
-            return findMember.get();
+//        if (loginMember.getRoles().contains("ADMIN"))
+//            return findMember.get();
         if (findMember.get().getDeletedAt() != null)
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
 
