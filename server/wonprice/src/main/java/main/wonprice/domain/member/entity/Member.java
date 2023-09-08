@@ -65,7 +65,7 @@ public class Member {
     private List<Product> products = new ArrayList<>();
 
     @OneToOne(mappedBy = "member")
-    private MemberPicture memberPicture; // 프로필 이미지
+    private MemberPicture picture; // 프로필 이미지
 
 //    @OneToMany(mappedBy = "seller")
 //    private List<ChatRoom> chatRooms = new ArrayList<>();

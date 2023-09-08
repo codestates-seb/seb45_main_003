@@ -6,14 +6,22 @@ import { FONT_SIZE } from "../../constants/font";
 import { useValidateToken } from "../../hooks/useValidateToken";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
-import { authInstance } from "../../interceptors/interceptors";
-import { useLocation } from "react-router-dom";
+import { defaultInstance } from "../../interceptors/interceptors";
+import { useLocation, useNavigate } from "react-router-dom";
+import { findCategory } from "../../util/category";
+import Empty from "../common/Empty";
+
+interface image {
+  imageId: number;
+  path: string;
+}
 
 interface products {
   productId: number;
   title: string;
   createAt: string;
-  img: string;
+  images: image[];
+  categoryId: number;
 }
 
 interface Review {
@@ -28,8 +36,9 @@ interface Review {
 const PostListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
+  min-height: 100%;
   .postlistMenuContainer {
     display: flex;
     flex-direction: row;
@@ -50,11 +59,20 @@ const PostListContainer = styled.div`
       }
     }
   }
+  .empty {
+    height: 100%;
+    position: relative;
+  }
   .tabContent {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
+    .postImg {
+      width: 6.25rem;
+      height: 6.25rem;
+      padding: 0.5rem 0;
+    }
     .postContainer {
       display: flex;
       flex-direction: row;
@@ -62,6 +80,7 @@ const PostListContainer = styled.div`
       align-items: stretch;
       gap: 0.5rem;
       border-bottom: 1px solid ${COLOR.border};
+      cursor: pointer;
     }
     .infoContainer {
       display: flex;
@@ -104,6 +123,7 @@ const PostListTab = (): JSX.Element => {
   const [leaveReview, setLeaveReview] = useState<Review[]>([]);
   const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
+  const navigate = useNavigate();
   const isLogin = useRecoilValue(loginState);
   const location = useLocation();
   const Id = location.pathname.slice(9);
@@ -111,7 +131,7 @@ const PostListTab = (): JSX.Element => {
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const getPostlist = async () => {
     try {
-      const res = await authInstance.get(`/members/${Id}/products`);
+      const res = await defaultInstance.get(`/members/${Id}/products`);
       setCellPost(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -121,8 +141,9 @@ const PostListTab = (): JSX.Element => {
   };
   const getLeaveReview = async () => {
     try {
-      const res = await authInstance.get(`/members/${Id}/reviews/post`, {});
+      const res = await defaultInstance.get(`/members/${Id}/reviews/post`, {});
       setLeaveReview(res.data);
+      console.log(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.log(error);
@@ -131,7 +152,7 @@ const PostListTab = (): JSX.Element => {
   };
   const getRecievedReview = async () => {
     try {
-      const res = await authInstance.get(`/members/${Id}/reviews`);
+      const res = await defaultInstance.get(`/members/${Id}/reviews`);
       setRecievedReview(res.data);
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -161,8 +182,12 @@ const PostListTab = (): JSX.Element => {
       <div className="tabContent">
         {menu === "cell" &&
           cellPost.map((el) => (
-            <div className="postContainer" key={el.productId}>
-              <img src={el.img}></img>
+            <div
+              className="postContainer"
+              key={el.productId}
+              onClick={() => navigate(`/product/${findCategory(el.categoryId)}/${el.productId}`)}
+            >
+              <img className="postImg" src={el.images[0].path}></img>
               <div className="infoContainer">
                 <div className="postTitle">{el.title}</div>
                 <div className="createdAt">{el.createAt}</div>
@@ -180,6 +205,7 @@ const PostListTab = (): JSX.Element => {
                   <span className="author">{`작성자 id ${el.postMemberId}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
                 </div>
+                <div>{`평점: ${el.score}`}</div>
                 <p className="postContent">{el.content}</p>
               </div>
             </div>
@@ -195,10 +221,16 @@ const PostListTab = (): JSX.Element => {
                   <span className="author">{`작성자 id${el.postMemberId}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
                 </div>
+                <div>{`평점: ${el.score}`}</div>
                 <p className="postContent">{el.content}</p>
               </div>
             </div>
           ))}
+      </div>
+      <div className="empty">
+        {menu === "cell" && cellPost.length === 0 && <Empty />}
+        {menu === "leaveReview" && leaveReview.length === 0 && <Empty />}
+        {menu === "getReview" && recievedReview.length === 0 && <Empty />}
       </div>
     </PostListContainer>
   );

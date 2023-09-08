@@ -3,6 +3,7 @@ import { currentChatRoomIdState } from "./chatState";
 import { useRecoilValue } from "recoil";
 import React, { useState, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
+import FormatTimeOrDate from "./FormatTimeOrDate";
 
 interface Message {
   messageId: number;
@@ -55,7 +56,7 @@ const ChatRoomHttp: React.FC = () => {
             key={message.messageId}
             owner={message.senderId === Id ? "user" : "other"}
             message={message.content}
-            time={message.createdAt}
+            time={FormatTimeOrDate(message.createdAt)}
           />
         ))
       )}

@@ -6,6 +6,7 @@ import { useRecoilValue } from "recoil";
 import { currentChatRoomIdState } from "./chatState";
 import MessageBubble from "./MessageBubble";
 import ChatRoomHttp from "./ChatRoomHttp";
+import FormatTimeOrDate from "./FormatTimeOrDate";
 
 const Container = styled.div`
   display: flex;
@@ -51,14 +52,6 @@ const ChatRoom = () => {
   const [client, setClient] = useState<Webstomp.Client | null>(null);
   const roomId = chatRoomId; // 실제 방 ID를 얻는 방법으로 대체하세요
 
-  // // 로컬 스토리지에서 Token 값을 가져옵니다.
-  // const userIdFromLocalStorage = localStorage.getItem("accessToken");
-
-  // console.log(userIdFromLocalStorage);
-
-  // // 로컬 스토리지에 값이 없으면 null로 설정합니다.
-  // const Token = userIdFromLocalStorage || null;
-
   // 로컬 스토리지에서 userId 값을 가져옵니다.
   const userIdFromLocalStorage = localStorage.getItem("Id");
   console.log(userIdFromLocalStorage);
@@ -86,7 +79,6 @@ const ChatRoom = () => {
         },
         (error) => {
           console.error("STOMP protocol error:", error); // 에러 로깅
-          console.log(`STOMP error: ${error}`);
         },
       );
 
@@ -99,10 +91,14 @@ const ChatRoom = () => {
         });
       };
     }
-  }, [roomId, Id]);
+  }, [roomId]);
 
-  //topic/chat/${roomId} 으로 경로 지정하면 실시간 뜸 -> 메세지 안보내짐
-  //메세지 보내는 경로 /app/chat/${roomId} -> 실시간 안뜸
+  useEffect(() => {
+    const element = document.querySelector(".chatBox");
+    if (element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  }, [messages]);
 
   // InPut 내용을 소켓으로 Send
   const handleSendMessage = (message: string) => {
@@ -117,16 +113,17 @@ const ChatRoom = () => {
     <>
       <Container>
         <div className="chatBox" style={{ display: "flex", flexDirection: "column" }}>
+          {" "}
           <ChatRoomHttp />
+          {messages.map((message, index) => (
+            <MessageBubble
+              key={index}
+              owner={message.body.senderId === Id ? "user" : "other"}
+              message={message.body.content}
+              time={FormatTimeOrDate(message.body.createdAt || null) || "Unknown time"}
+            />
+          ))}
         </div>
-        {messages.map((message, index) => (
-          <MessageBubble
-            key={index}
-            owner={message.body.senderId === Id ? "user" : "other"}
-            message={message.body.content}
-            time={message.body.createdAt || "Unknown time"} // 'recipient' 필드가 시간을 나타내는 것이 맞다면 이렇게 사용하세요
-          />
-        ))}
         <ChatInput onSendMessage={handleSendMessage} />
       </Container>
     </>
