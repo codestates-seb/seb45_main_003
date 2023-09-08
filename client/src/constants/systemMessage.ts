@@ -13,11 +13,13 @@ export const REQUIRED = {
 export const SUCCESS = {
   post: "상품 등록이 완료되었습니다.",
   review: "후기 작성이 완료되었습니다.",
+  update: "상품 수정이 완료되었습니다.",
 };
 
 export const FAIL = {
   post: "상품 등록에 실패하였습니다.",
   review: "후기 작성에 실패하였습니다.",
+  update: "상품 수정에 실패하였습니다.",
 };
 
 export const MAX = {
