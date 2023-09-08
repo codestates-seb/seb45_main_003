@@ -61,14 +61,14 @@ const ProfileContentContainer = styled.div`
       gap: 0.5rem;
       .profileImg {
         border-radius: 6px;
-        width: 12.5rem;
-        height: 12.5rem;
+        width: 9.375rem;
+        height: 9.375rem;
       }
     }
     .labelContainer {
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: stretch;
       .infoLabel {
         text-align: end;
@@ -80,7 +80,7 @@ const ProfileContentContainer = styled.div`
     .infoContainer {
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: flex-start;
       align-items: stretch;
       .info {
         font-size: ${FONT_SIZE.font_16};
@@ -182,6 +182,10 @@ const ProfileContent = (): JSX.Element => {
       }
     }
   };
+  const [modifyImgMode, setModifyImgMode] = useState(false);
+  const setModifyMode = () => {
+    setModifyImgMode(!modifyImgMode);
+  };
   const resetModal = () => {
     setValue("newPassword", "");
     setValue("passwordCheck", "");
@@ -207,8 +211,23 @@ const ProfileContent = (): JSX.Element => {
         </div>
         <div className="profileInfoContainer">
           <div className="imgContainer">
-            {loginUserId !== Id && <img className="profileImg"></img>}
-            {loginUserId === Id && <ProfileImgRegisterForm />}
+            {modifyImgMode ? (
+              <>
+                <img className="profileImg"></img>
+                {loginUserId === Id && (
+                  <Button
+                    type="button"
+                    $text="이미지 변경"
+                    $design="black"
+                    onClick={() => setModifyMode()}
+                  />
+                )}
+              </>
+            ) : (
+              <>
+                <ProfileImgRegisterForm setMode={setModifyImgMode} mode={modifyImgMode} />
+              </>
+            )}
           </div>
           <div className="labelContainer">
             <label className="infoLabel">성함</label>

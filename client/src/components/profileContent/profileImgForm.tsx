@@ -8,7 +8,17 @@ import { useMutation } from "react-query";
 import { authInstance } from "../../interceptors/interceptors";
 import { REQUIRED } from "../../constants/systemMessage";
 
+interface Props {
+  setMode: React.Dispatch<React.SetStateAction<boolean>>;
+  mode: boolean;
+}
+
 const FormContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: stretch;
+  gap: 0.5rem;
   .field {
     & > p:first-child {
       display: none;
@@ -17,12 +27,23 @@ const FormContainer = styled.div`
       display: none;
     }
   }
+  .buttonContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+  }
 `;
 
-const ProfileImgRegisterForm = (): JSX.Element => {
+const ProfileImgRegisterForm = (props: Props): JSX.Element => {
   const { register, handleSubmit, formState, setError, clearErrors } = useForm<FieldValues>();
-  const { images, handleChange } = useImageUpload({ setError, clearErrors });
-  const mutation = useMutation((data: FieldValues) => authInstance.post("url", data));
+  const maxImageCount = 1;
+  const { images, handleChange, handleDelete } = useImageUpload({
+    setError,
+    clearErrors,
+    maxImageCount,
+  });
+  const mutation = useMutation(async (data: FieldValues) => await authInstance.post("url", data));
   const onSubmitImg = async (data: FieldValues) => {
     try {
       const imagePaths: string[] = [];
@@ -51,15 +72,20 @@ const ProfileImgRegisterForm = (): JSX.Element => {
         register={register}
         options={{ required: REQUIRED.images }}
         images={images}
+        handleDelete={handleDelete}
         handleChange={handleChange}
         formState={formState}
+        maximagecount={maxImageCount}
       />
-      <Button
-        type="button"
-        $text="이미지 등록"
-        $design="black"
-        onSubmit={handleSubmit(onSubmitImg)}
-      />
+      <div className="buttonContainer">
+        <Button type="button" $text="적용" $design="black" onSubmit={handleSubmit(onSubmitImg)} />
+        <Button
+          type="button"
+          $text="취소"
+          $design="black"
+          onClick={() => props.setMode(!props.mode)}
+        />
+      </div>
     </FormContainer>
   );
 };
