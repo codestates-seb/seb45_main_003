@@ -83,40 +83,46 @@ const List = (): JSX.Element => {
   const ITEMS_PER_VIEW = 10;
   const navigate = useNavigate();
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
   const {
     currentPage,
     totalPages,
     setTotalPages,
-    setCurrentPage,
     pageChangeHandler,
     prevPageHandler,
     nextPageHandler,
   } = usePagination();
 
   const currentCategory = location.pathname.slice(9);
-  const path =
-    location.pathname === "/product"
-      ? API_PATHS.products.default("") + `?page=${currentPage}&size=${ITEMS_PER_VIEW}`
-      : API_PATHS.products.category(CATEGORY[currentCategory].id) +
-        `?page=${currentPage}&size=${ITEMS_PER_VIEW}`;
+  const { isLoading, error, data, refetch } = useQuery<Data>(
+    ["productList", currentPage],
+    async () => {
+      //쿼리스트링 불러오기
+      const currentPageParam = parseInt(searchParams.get("page") || "1");
+      const pageQueryParam = `?page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
 
-  const { isLoading, error, data, refetch } = useQuery<Data>("productList", async () => {
-    const response = await axios.get(path);
-    return response.data;
-  });
+      //전체 상품과 카테고리 구분해서 호출
+      const path =
+        location.pathname === "/product"
+          ? API_PATHS.products.default("") + pageQueryParam
+          : API_PATHS.products.category(CATEGORY[currentCategory].id) + pageQueryParam;
+
+      const response = await axios.get(path);
+
+      // 토탈 페이지 정보가 변경될 때만 갱신
+      if (response.data?.totalPages !== totalPages) {
+        setTotalPages(response.data?.totalPages);
+      }
+
+      navigate(`?page=${currentPageParam}`);
+      return response.data;
+    },
+    {
+      staleTime: 60000,
+    },
+  );
   const isLogin = useRecoilValue(loginState);
-
-  //갱신된 데이터로 토탈페이지 갱신
-  useEffect(() => {
-    if (data) {
-      setTotalPages(data?.totalPages);
-    }
-  }, [data]);
-
-  //토탈페이지 갱신 시 현재 페이지 0으로 초기화
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [totalPages]);
 
   //페이지넘버와 url이 변할때마다 데이터 갱신
   useEffect(() => {
