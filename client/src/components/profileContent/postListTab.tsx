@@ -227,11 +227,21 @@ const PostListTab = (): JSX.Element => {
             </div>
           ))}
       </div>
-      <div className="empty">
-        {menu === "cell" && cellPost.length === 0 && <Empty />}
-        {menu === "leaveReview" && leaveReview.length === 0 && <Empty />}
-        {menu === "getReview" && recievedReview.length === 0 && <Empty />}
-      </div>
+      {menu === "cell" && cellPost.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
+      {menu === "leaveReview" && leaveReview.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
+      {menu === "getReview" && recievedReview.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
     </PostListContainer>
   );
 };

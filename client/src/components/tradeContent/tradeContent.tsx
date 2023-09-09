@@ -212,10 +212,16 @@ const TradeContent = (): JSX.Element => {
             </div>
           ))}
       </div>
-      <div className="empty">
-        {mypageMode === "purchase" && purchaseList.length === 0 && <Empty />}
-        {mypageMode === "sales" && salesList.length === 0 && <Empty />}
-      </div>
+      {mypageMode === "purchase" && purchaseList.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
+      {mypageMode === "sales" && salesList.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
       <div className="pagenation">페이지네이션</div>
     </TradeContentContainer>
   );

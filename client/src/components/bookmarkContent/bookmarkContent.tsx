@@ -296,7 +296,11 @@ const BookmarkContent = (): JSX.Element => {
             </div>
           ))}
       </div>
-      <div className="empty">{bookmarklist.length === 0 && <Empty />}</div>
+      {bookmarklist.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
       <div className="pagenation">페이지네이션</div>
     </BookmarkContentContainer>
   );
