@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
@@ -8,11 +8,14 @@ import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 import PostListTab from "./postListTab";
-import { useRecoilValue } from "recoil";
-import { loginState } from "../../atoms/atoms";
+// import { useRecoilValue } from "recoil";
+// import { loginState } from "../../atoms/atoms";
 import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import { useLocation } from "react-router-dom";
 import ProfileImgRegisterForm from "./profileImgForm";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import Loading from "../common/Loading";
+import Error from "../common/Error";
 
 interface image {
   imageId: number;
@@ -137,16 +140,6 @@ const StyledModal = styled.form`
 `;
 
 const ProfileContent = (): JSX.Element => {
-  const [profile, setProfile] = useState<Profile>({
-    memberId: 0,
-    name: "",
-    email: "",
-    phone: "",
-    postCount: 0,
-    tradeCount: 0,
-    picture: { imageId: 0, path: "" },
-  });
-  // const Id = window.location.search
   const loginUserId = localStorage.getItem("Id");
   const location = useLocation();
   const Id = location.pathname.slice(9);
@@ -159,32 +152,27 @@ const ProfileContent = (): JSX.Element => {
     setValue,
     getValues,
   } = useForm<modifyProfileForm>();
-  const isLogin = useRecoilValue(loginState);
+  // const isLogin = useRecoilValue(loginState);
   const { toggleModal, closeModal, isOpen } = useModal();
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
-  const getProfile = async () => {
-    try {
-      const res = await defaultInstance.get(`/members/${Id}`);
-      setProfile(res.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  const modifyPassword = async (body: modifyProfileForm) => {
-    try {
-      const res = await authInstance.patch(`/members/${Id}`, { password: body.newPassword });
-      setProfile(res.data);
+  const queryClient = useQueryClient();
+  const {
+    isLoading,
+    error,
+    data: profile,
+  } = useQuery<Profile>("profile", async () => {
+    const res = await defaultInstance.get(`/members/${Id}`);
+    return res.data;
+  });
+  const passwordMutation = useMutation(
+    async (body: modifyProfileForm) => {
+      await authInstance.patch(`/members/${Id}`, { password: body.newPassword });
       alert("변경되었습니다.");
       resetModal();
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  const validatePassword = async (body: string) => {
+    },
+    { onSuccess: () => queryClient.invalidateQueries("profile") },
+  );
+  const validateMutation = useMutation(async (body: string) => {
     try {
       const res = await authInstance.post(`/members/auth/password`, { password: body });
       if (res.status === 200) {
@@ -200,7 +188,7 @@ const ProfileContent = (): JSX.Element => {
         }
       }
     }
-  };
+  });
   const [modifyImgMode, setModifyImgMode] = useState(false);
   const setModifyMode = () => {
     setModifyImgMode(!modifyImgMode);
@@ -211,10 +199,17 @@ const ProfileContent = (): JSX.Element => {
     setPass(false);
     toggleModal();
   };
-  useEffect(() => {
-    getProfile();
-  }, [isLogin]);
-  if (profile.name !== "") {
+  if (isLoading) {
+    return (
+      <>
+        <Loading />
+      </>
+    );
+  }
+  if (error) {
+    return <Error />;
+  }
+  if (profile) {
     return (
       <ProfileContentContainer>
         <div className="topContainer">
@@ -263,7 +258,7 @@ const ProfileContent = (): JSX.Element => {
         </div>
         <PostListTab />
         <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={resetModal}>
-          <StyledModal onSubmit={handleSubmit(modifyPassword)}>
+          <StyledModal onSubmit={handleSubmit(() => passwordMutation.mutateAsync(getValues()))}>
             <div className="modalInputContainer">
               <label htmlFor="passwordCheck">비밀번호</label>
               <input
@@ -284,7 +279,7 @@ const ProfileContent = (): JSX.Element => {
                   type="button"
                   $text="비밀번호 확인"
                   $design="black"
-                  onClick={() => validatePassword(getValues("passwordCheck"))}
+                  onClick={() => validateMutation.mutateAsync(getValues("passwordCheck"))}
                 />
               </div>
               <label htmlFor="newPassword">새 비밀번호</label>

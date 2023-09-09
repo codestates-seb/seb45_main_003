@@ -4,7 +4,7 @@ import S3 from "../../aws-config";
 import ImageInput from "../common/ImageInput";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { FieldValues, useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { authInstance } from "../../interceptors/interceptors";
 import { REQUIRED } from "../../constants/systemMessage";
 
@@ -43,9 +43,11 @@ const ProfileImgRegisterForm = (props: Props): JSX.Element => {
     clearErrors,
     maxImageCount,
   });
+  const queryClient = useQueryClient();
   const Id = localStorage.getItem("Id");
   const mutation = useMutation(
     async (data: FieldValues) => await authInstance.post(`/members/${Id}/image`, data),
+    { onSuccess: () => queryClient.invalidateQueries("profile") },
   );
   //성공시 모드 변경후 프로필 다시 로딩
   const onSubmitImg = async (data: FieldValues) => {
@@ -66,7 +68,6 @@ const ProfileImgRegisterForm = (props: Props): JSX.Element => {
       };
       mutation.mutateAsync(data);
       console.log("실행되었음");
-      props.setMode(!props.mode);
     } catch (error) {
       console.log(error);
     }
