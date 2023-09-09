@@ -11,7 +11,7 @@ const ItemContainer = styled.div`
   padding: 0.9375rem;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 0.9375rem;
   max-width: 18.75rem;
   min-width: 15rem; // 여기만
   width: calc(100% - 3rem);
@@ -45,22 +45,19 @@ const Title = styled.div`
 `;
 
 const ItemBox = styled.div`
+  width: 13rem;
   max-width: 20.3125rem;
   height: 1.625rem;
   align-self: stretch;
   width: 100%;
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  /* background-color: aqua; */
+  flex-direction: row; /* background-color: aqua; */
 
   .Box {
     /* background-color: #b118df; */
     display: flex;
     width: 100%;
     flex-direction: row;
-    justify-content: end;
   }
 
   .category {
@@ -80,19 +77,6 @@ const ItemBox = styled.div`
       color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
     }
   }
-  .count {
-    /* background-color: #b0ee35; */
-    width: 10%;
-    text-align: end;
-
-    color: var(--second-text-color, #737373);
-    font-family: Pretendard Variable;
-    font-size: 0.875rem;
-    font-style: normal;
-    font-weight: 600;
-    line-height: 1.5rem; /* 171.429% */
-    letter-spacing: 0.0125rem;
-  }
   @media (max-width: 64rem) {
     width: calc(100% - 2rem);
   }
@@ -105,7 +89,7 @@ const ListBox = styled.div`
   width: calc(100% - 3rem);
 
   .ItemList {
-    padding-bottom: 1rem;
+    /* padding-bottom: 1rem; */
     &:hover {
       color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
     }
@@ -114,96 +98,58 @@ const ListBox = styled.div`
     width: calc(100% - 2rem);
   }
 `;
+// 버튼 호버 스타일
+const StyledLink = styled(Link)`
+  &:hover {
+    /* background-color: #ffb300; // 원하는 호버 색상 */
+    color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
+  }
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 
-// const CountBox = styled.div`
-//   height: 1.625rem;
-//   width: 100%;
-//   display: flex;
-//   justify-content: space-between;
+  .Text {
+    justify-content: center;
+    flex: 1;
+    padding-left: 1.4375rem;
+  }
+`;
 
-//   color: var(--text-color, #252b42);
-//   font-family: Pretendard Variable;
-//   font-size: 0.875rem;
-//   font-style: normal;
-//   font-weight: 600;
-//   line-height: 1.5rem; /* 171.429% */
-//   letter-spacing: 0.2px;
-
-//   .count {
-//     /* background-color: #b0ee35; */
-//     width: 10%;
-//     text-align: end;
-
-//     color: var(--second-text-color, #737373);
-//     font-family: Pretendard Variable;
-//     font-size: 0.875rem;
-//     font-style: normal;
-//     font-weight: 600;
-//     line-height: 1.5rem; /* 171.429% */
-//     letter-spacing: 0.0125rem;
-//   }
-//   @media (max-width: 64rem) {
-//     width: calc(100% - 2rem);
-//   }
-// `;
 interface ItemProps {
-  categories?: string;
-  count?: string;
-  allCount?: string;
+  linkTo: string;
+  categories: string;
 }
 
-const Item: React.FunctionComponent<ItemProps> = (props) => {
+const Item: React.FC<ItemProps> = ({ categories, linkTo }) => {
   return (
     <>
-      <ItemBox>
-        <AddButton />
-        <div className="Box">
-          <div className="category">{props.categories}</div>
-          <div className="count">{props.count}</div>
-        </div>
-      </ItemBox>
+      <ul>
+        <li className="ItemList">
+          <ItemBox>
+            <StyledLink className="Button" to={linkTo}>
+              <AddButton />
+              <div className="category">{categories}</div> {/* 텍스트 렌더링 */}
+            </StyledLink>
+          </ItemBox>
+        </li>
+      </ul>
     </>
   );
 };
 
-const MenuItem: React.FunctionComponent<ItemProps> = () => {
+const MenuItem = () => {
   return (
     <>
       <ItemContainer>
         <ListBox>
           <Title>Product Category</Title>
-          <ul>
-            <li className="ItemList">
-              <Link to="/product/books">
-                <Item categories="Books" />
-              </Link>
-            </li>
-            <li className="ItemList">
-              <Link to="/product/electronics">
-                <Item categories="Electronics " />
-              </Link>
-            </li>
-            <li className="ItemList">
-              <Link to="/product/clothing">
-                <Item categories="Clothing" />
-              </Link>
-            </li>
-            <li className="ItemList">
-              <Link to="/product/food">
-                <Item categories="Food" />
-              </Link>
-            </li>
-            <li className="ItemList">
-              <Link to="/product/cosmetic">
-                <Item categories="Cosmetic" />
-              </Link>
-            </li>
-            <li className="ViewAll">
-              <Link to="/product">
-                <Item categories="View All" />
-              </Link>
-            </li>
-          </ul>
+          <Item categories="Books" linkTo="/product/books" />
+          <Item categories="Electronics" linkTo="/product/books" />
+          <Item categories="Clothing" linkTo="/product/clothing" />
+          <Item categories="Food" linkTo="/product/food" />
+          <Item categories="Cosmetic" linkTo="/product/cosmetic" />
+          <Item categories="View All" linkTo="/product" />
         </ListBox>
       </ItemContainer>
     </>
