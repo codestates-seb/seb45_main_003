@@ -8,7 +8,7 @@ import { ReactComponent as AddButton } from "../../../assets/images/Add.svg";
 const ItemContainer = styled.div`
   font-family: Pretendard Variable;
   display: flex;
-  padding: 0.9375rem;
+  padding: 1.5rem 0.9375rem;
   flex-direction: column;
   align-items: center;
   gap: 0.9375rem;
