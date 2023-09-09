@@ -36,7 +36,9 @@ export const useValidateToken = () => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        setLogin(false);
+        if (!localStorage.getItem("refreshToken")) {
+          setLogin(false);
+        }
       }
     }
   };

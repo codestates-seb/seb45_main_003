@@ -47,6 +47,7 @@ const ProfileImgRegisterForm = (props: Props): JSX.Element => {
   const mutation = useMutation(
     async (data: FieldValues) => await authInstance.post(`/members/${Id}/image`, data),
   );
+  //성공시 모드 변경후 프로필 다시 로딩
   const onSubmitImg = async (data: FieldValues) => {
     try {
       const imagePaths: string[] = [];
@@ -65,6 +66,7 @@ const ProfileImgRegisterForm = (props: Props): JSX.Element => {
       };
       mutation.mutateAsync(data);
       console.log("실행되었음");
+      props.setMode(!props.mode);
     } catch (error) {
       console.log(error);
     }

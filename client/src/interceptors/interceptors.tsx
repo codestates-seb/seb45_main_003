@@ -21,7 +21,7 @@ const onErrorResponse = async (err: AxiosError | Error): Promise<AxiosError> => 
   const { response } = _err;
   const originalConfig = _err?.config;
 
-  if (response && response.status === 401) {
+  if (response && (response.status === 401 || response?.status === 500)) {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/refresh`, {
         headers: {
