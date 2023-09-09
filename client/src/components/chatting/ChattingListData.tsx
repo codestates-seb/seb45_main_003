@@ -7,6 +7,9 @@ import styled from "styled-components";
 import { currentChatRoomIdState } from "./chatState";
 import FormatTimeOrDate from "./FormatTimeOrDate";
 import { COLOR } from "../../constants/color";
+
+import { useQuery } from "react-query";
+
 interface ChatList {
   chatRoomId: number;
   memberId: number;
@@ -21,6 +24,11 @@ interface ChatList {
     content: string;
     createdAt: string | null;
   } | null;
+}
+
+interface MyError {
+  message: string;
+  // 다른 필드들...
 }
 
 const Container = styled.button`
@@ -83,11 +91,36 @@ const Container = styled.button`
     color: #616161;
   }
 `;
+
 const ChattingListData: React.FC = () => {
   const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
   const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(currentChatRoomIdState);
   console.log(currentChatRoomId);
   const isLoggedIn = useRecoilValue(loginState);
+
+  const fetchChatList = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      throw new Error("No access token found");
+    }
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  };
+
+  const { error, isLoading } = useQuery("chatList", fetchChatList, {
+    refetchInterval: 5000,
+    enabled: isLoggedIn,
+    onError: (err) => {
+      console.log("An error occurred:", err);
+    },
+    onSuccess: (data) => {
+      setChatList(data);
+    },
+  });
 
   const handleRoomClick = (chatRoomId: number) => {
     setCurrentChatRoomId(chatRoomId);
@@ -122,6 +155,14 @@ const ChattingListData: React.FC = () => {
       fetchData();
     }
   }, [isLoggedIn]); // 로그인 상태가 변경될 때마다 useEffect를 실행합니다.
+
+  // 로딩 중인 경우
+  if (isLoading) return <div>Loading...</div>;
+
+  // 에러가 발생한 경우
+  if (error) return <div>Error: {(error as MyError).message}</div>;
+
+  // 로딩도 완료되고 에러도 없는 경우
 
   return (
     <>
