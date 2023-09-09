@@ -60,7 +60,7 @@ const PostListContainer = styled.div`
     }
   }
   .empty {
-    height: 100%;
+    height: 25rem;
     position: relative;
   }
   .tabContent {

@@ -17,6 +17,10 @@ const AuctionContentContainer = styled.div`
       font-weight: bold;
     }
   }
+  .empty {
+    position: relative;
+    height: 25rem;
+  }
   .auctionListContainer {
     display: flex;
     flex-direction: column;

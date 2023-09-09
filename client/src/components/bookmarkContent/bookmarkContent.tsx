@@ -75,7 +75,7 @@ const BookmarkContentContainer = styled.form`
   }
   .empty {
     position: relative;
-    height: 100%;
+    height: 25rem;
   }
   .bookmarkListContainer {
     display: flex;
