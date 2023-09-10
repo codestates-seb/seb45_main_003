@@ -4,10 +4,12 @@ import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
 import { defaultInstance } from "../../interceptors/interceptors";
 import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { profileTabState } from "../../atoms/atoms";
 import Empty from "../common/Empty";
+import { useQueries } from "react-query";
+import Error from "../common/Error";
+import Loading from "../common/Loading";
 
 interface image {
   imageId: number;
@@ -121,32 +123,34 @@ const TradeContent = (): JSX.Element => {
   const loginUserId = localStorage.getItem("Id");
   const location = useLocation();
   const Id = location.pathname.slice(9);
-  const [salesList, setSalesList] = useState<products[]>([]);
-  const [purchaseList, setPurchaseList] = useState<products[]>([]);
-  const getPurchaseList = async () => {
-    const res = await defaultInstance.get(`/members/${Id}/purchase`);
-    setPurchaseList(res.data);
-  };
-  const getSalesList = async () => {
-    const res = await defaultInstance.get(`/members/${Id}/sell`);
-    setSalesList(res.data);
-  };
-  useEffect(() => {
-    if (mypageMode === "sales") {
-      getSalesList();
-    }
-    if (mypageMode === "purchase") {
-      getPurchaseList();
-    }
-  }, []);
+  const result = useQueries([
+    {
+      queryKey: "purchase",
+      queryFn: async () => {
+        const res = await defaultInstance.get(`/members/${Id}/purchase`);
+        return res.data;
+      },
+    },
+    {
+      queryKey: "sales",
+      queryFn: async () => {
+        const res = await defaultInstance.get(`/members/${Id}/sell`);
+        return res.data;
+      },
+    },
+  ]);
+  const purchaseList: products[] = result[0].data;
+  const salesList: products[] = result[1].data;
   return (
     <TradeContentContainer>
       <div className="topContainer">
         <p className="menuTitle">거래내역</p>
       </div>
       <div className="tradeListContainer">
+        {mypageMode === "purchase" && result[0].isLoading && <Loading />}
+        {mypageMode === "purchase" && result[0].isError && <Error />}
         {mypageMode === "purchase" &&
-          purchaseList.length !== 0 &&
+          purchaseList &&
           purchaseList.map((el) => (
             <div className="tradeContainer" key={el.productId}>
               <div className="leftSection">
@@ -178,8 +182,10 @@ const TradeContent = (): JSX.Element => {
               </div>
             </div>
           ))}
+        {mypageMode === "sales" && result[1].isLoading && <Loading />}
+        {mypageMode === "sales" && result[1].isError && <Error />}
         {mypageMode === "sales" &&
-          salesList.length !== 0 &&
+          salesList &&
           salesList.map((el) => (
             <div className="tradeContainer" key={el.productId}>
               <div className="leftSection">
@@ -212,12 +218,12 @@ const TradeContent = (): JSX.Element => {
             </div>
           ))}
       </div>
-      {mypageMode === "purchase" && purchaseList.length === 0 && (
+      {mypageMode === "purchase" && purchaseList && purchaseList.length === 0 && (
         <div className="empty">
           <Empty />
         </div>
       )}
-      {mypageMode === "sales" && salesList.length === 0 && (
+      {mypageMode === "sales" && salesList && salesList.length === 0 && (
         <div className="empty">
           <Empty />
         </div>
