@@ -1,5 +1,4 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
@@ -9,6 +8,9 @@ import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import { useLocation, useNavigate } from "react-router-dom";
 import { findCategory } from "../../util/category";
 import Empty from "../common/Empty";
+import Loading from "../common/Loading";
+import Error from "../common/Error";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 //dto 정해지면 추가
 interface image {
   imageId: number;
@@ -162,7 +164,7 @@ const BookmarkContent = (): JSX.Element => {
   const selectAll = watch("selectAll", false);
   const handleSelectAll = (checked: boolean) => {
     setValue("selectAll", checked);
-    setValue("checkboxes", Array(bookmarklist.length).fill(checked));
+    setValue("checkboxes", Array(bookmarkList?.length).fill(checked));
   };
   const handleCheckBox = (index: number, checked: boolean) => {
     const checkedBoxes = [...checkboxes];
@@ -175,43 +177,67 @@ const BookmarkContent = (): JSX.Element => {
     console.log(data);
   };
   const navigate = useNavigate();
-  const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
   const location = useLocation();
   const Id = location.pathname.slice(9);
   const loginUserId = localStorage.getItem("Id");
-  console.log(selectAll, checkboxes, bookmarklist);
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
-  const getData = async () => {
-    try {
-      const res = await defaultInstance.get(`/members/${Id}/wishes`);
-      setBookmarklist(res.data);
-      console.log(res.data);
-    } catch (error) {
-      //토큰 만료시 대응하는 함수
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  const cancleBookmark = async (wishId: number) => {
-    try {
-      const deletedIndex = bookmarklist.findIndex((el) => el.wishId === wishId);
+  const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
+  const queryClient = useQueryClient();
+  const {
+    isLoading,
+    isError,
+    data: bookmarkList,
+  } = useQuery<bookmark[]>("bookmark", async () => {
+    const res = await defaultInstance.get(`/members/${Id}/wishes`);
+    setValue("checkboxes", Array(bookmarkList?.length).fill(false));
+    return res.data;
+  });
+  console.log(selectAll, checkboxes, bookmarkList);
+  const bookmarkMutation = useMutation(
+    async (wishId: number) => {
+      const deletedIndex = bookmarkList?.findIndex((el) => el.wishId === wishId);
       const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
-      const res = await authInstance.delete(`/wishes/${wishId}`);
-      if (res.status === 200) {
-        getData();
-        setValue("checkboxes", checkedlist);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  useEffect(() => {
-    getData();
-    setValue("checkboxes", Array(bookmarklist.length).fill(false));
-  }, []);
+      setChangedCheckboxes(checkedlist);
+      await authInstance.delete(`/wishes/${wishId}`);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("bookmark");
+        setValue("checkboxes", changedCheckboxes);
+      },
+    },
+  );
+  // const getData = async () => {
+  //   try {
+  //     const res = await defaultInstance.get(`/members/${Id}/wishes`);
+  //     setBookmarklist(res.data);
+  //     console.log(res.data);
+  //   } catch (error) {
+  //     //토큰 만료시 대응하는 함수
+  //     if (axios.isAxiosError(error)) {
+  //       console.log(error);
+  //     }
+  //   }
+  // };
+  // const cancleBookmark = async (wishId: number) => {
+  //   try {
+  //     const deletedIndex = bookmarklist.findIndex((el) => el.wishId === wishId);
+  //     const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
+  //     const res = await authInstance.delete(`/wishes/${wishId}`);
+  //     if (res.status === 200) {
+  //       getData();
+  //       setValue("checkboxes", checkedlist);
+  //     }
+  //   } catch (error) {
+  //     if (axios.isAxiosError(error)) {
+  //       console.log(error);
+  //     }
+  //   }
+  // };
+  // useEffect(() => {
+  //   getData();
+  //   setValue("checkboxes", Array(bookmarklist.length).fill(false));
+  // }, []);
   return (
     <BookmarkContentContainer onSubmit={handleSubmit(sendBookmarkList)}>
       <div className="topContainer">
@@ -231,8 +257,10 @@ const BookmarkContent = (): JSX.Element => {
         )}
       </div>
       <div className="bookmarkListContainer">
-        {bookmarklist &&
-          bookmarklist.map((el, index: number) => (
+        {isLoading && <Loading />}
+        {isError && <Error />}
+        {bookmarkList &&
+          bookmarkList.map((el, index: number) => (
             <div className="bookmarkContainer" key={el.productId}>
               <div className="leftSection">
                 {loginUserId === Id && (
@@ -289,14 +317,14 @@ const BookmarkContent = (): JSX.Element => {
                     type="button"
                     $text="찜 취소"
                     $design="yellow"
-                    onClick={() => cancleBookmark(el.wishId)}
+                    onClick={() => bookmarkMutation.mutateAsync(el.wishId)}
                   />
                 )}
               </div>
             </div>
           ))}
       </div>
-      {bookmarklist.length === 0 && (
+      {bookmarkList && bookmarkList.length === 0 && (
         <div className="empty">
           <Empty />
         </div>
