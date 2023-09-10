@@ -24,6 +24,7 @@ public interface ProductMapper {
                 .auction(productRequestDto.getAuction())
                 .status(ProductStatus.BEFORE)
                 .views(0L)
+                .wishCount(0L)
                 .buyerReview(false)
                 .sellerReview(false);
 
@@ -57,7 +58,10 @@ public interface ProductMapper {
                 .images(product.getProductPictures())
                 .sellerName(product.getSeller().getName()) // 판매자 이름 설정
                 .sellerReputation(product.getSeller().getReputation()) // 판매자 평판 설정
-                .wishCount(product.getWishCount())
+                .sellerWrittenReviewsCount(product.getSeller().getWrittenReviewsCount()) // 판매자가 쓴 리뷰 갯수
+                .sellerReceivedReviewsCount(product.getSeller().getReceivedReviewsCount()) // 판매자가 받은 리뷰 갯수
+                .sellerTradeCount(product.getSeller().getTradeCount()) // 판매자가 거래한 횟수
+                .wishCount(product.getWishCount()) // 상품의 찜 갯수
 //                .images(product.getProductPictures())
                 .build();
     }
