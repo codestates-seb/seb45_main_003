@@ -187,11 +187,19 @@ const BookmarkContent = (): JSX.Element => {
     isLoading,
     isError,
     data: bookmarkList,
-  } = useQuery<bookmark[]>("bookmark", async () => {
-    const res = await defaultInstance.get(`/members/${Id}/wishes`);
-    setValue("checkboxes", Array(bookmarkList?.length).fill(false));
-    return res.data;
-  });
+  } = useQuery<bookmark[]>(
+    "bookmark",
+    async () => {
+      const res = await defaultInstance.get(`/members/${Id}/wishes`);
+      if (changedCheckboxes.some((el) => el === true)) {
+        setValue("checkboxes", changedCheckboxes);
+      } else {
+        setValue("checkboxes", Array(bookmarkList?.length).fill(false));
+      }
+      return res.data;
+    },
+    { refetchInterval: 30000, refetchIntervalInBackground: true },
+  );
   console.log(selectAll, checkboxes, bookmarkList);
   const bookmarkMutation = useMutation(
     async (wishId: number) => {
@@ -207,37 +215,6 @@ const BookmarkContent = (): JSX.Element => {
       },
     },
   );
-  // const getData = async () => {
-  //   try {
-  //     const res = await defaultInstance.get(`/members/${Id}/wishes`);
-  //     setBookmarklist(res.data);
-  //     console.log(res.data);
-  //   } catch (error) {
-  //     //토큰 만료시 대응하는 함수
-  //     if (axios.isAxiosError(error)) {
-  //       console.log(error);
-  //     }
-  //   }
-  // };
-  // const cancleBookmark = async (wishId: number) => {
-  //   try {
-  //     const deletedIndex = bookmarklist.findIndex((el) => el.wishId === wishId);
-  //     const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
-  //     const res = await authInstance.delete(`/wishes/${wishId}`);
-  //     if (res.status === 200) {
-  //       getData();
-  //       setValue("checkboxes", checkedlist);
-  //     }
-  //   } catch (error) {
-  //     if (axios.isAxiosError(error)) {
-  //       console.log(error);
-  //     }
-  //   }
-  // };
-  // useEffect(() => {
-  //   getData();
-  //   setValue("checkboxes", Array(bookmarklist.length).fill(false));
-  // }, []);
   return (
     <BookmarkContentContainer onSubmit={handleSubmit(sendBookmarkList)}>
       <div className="topContainer">
