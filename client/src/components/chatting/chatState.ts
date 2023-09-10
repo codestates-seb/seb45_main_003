@@ -44,3 +44,8 @@ export const currentChatRoomIdState = atom<number | null>({
   key: "currentChatRoomId",
   default: null,
 });
+
+export const webSocketConnectionState = atom({
+  key: "webSocketConnection",
+  default: false, // 초기값은 연결되지 않은 상태
+});

@@ -2,11 +2,12 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import ChatInput from "./ChatInput";
 import * as Webstomp from "webstomp-client";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { currentChatRoomIdState } from "./chatState";
 import MessageBubble from "./MessageBubble";
 import ChatRoomHttp from "./ChatRoomHttp";
 import FormatTimeOrDate from "./FormatTimeOrDate";
+import { webSocketConnectionState } from "./chatState";
 
 const Container = styled.div`
   display: flex;
@@ -44,17 +45,18 @@ interface MessageData {
     createdAt?: string;
   }; // 필요한 다른 필드
 }
-console.log(MessageBubble);
+// console.log(MessageBubble);
 
 const ChatRoom = () => {
   const chatRoomId = useRecoilValue(currentChatRoomIdState);
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [client, setClient] = useState<Webstomp.Client | null>(null);
   const roomId = chatRoomId; // 실제 방 ID를 얻는 방법으로 대체하세요
+  const [, setIsConnected] = useRecoilState(webSocketConnectionState);
 
   // 로컬 스토리지에서 userId 값을 가져옵니다.
   const userIdFromLocalStorage = localStorage.getItem("Id");
-  console.log(userIdFromLocalStorage);
+  // console.log(userIdFromLocalStorage);
 
   // 문자열을 숫자로 변환합니다. 로컬 스토리지에 값이 없으면 null로 설정합니다.
   const Id = userIdFromLocalStorage ? parseInt(userIdFromLocalStorage, 10) : null;
@@ -72,16 +74,19 @@ const ChatRoom = () => {
         () => {
           // 소켓 연결 확인 로그
           console.log("Connected to the WebSocket server");
+          setIsConnected(true); // 연결되면 상태를 true로 변경
+          // ...
 
           // 채팅 구독 메세지를 화면에 띄어줌
           stompClient.subscribe(`/topic/chat/${roomId}`, (message) => {
             const messageData: MessageData = JSON.parse(message.body);
             setMessages((prevMessages) => [...prevMessages, messageData]);
           });
-          console.log(stompClient);
+          // console.log(stompClient);
         },
         (error) => {
           console.error("STOMP protocol error:", error); // 에러 로깅
+          setIsConnected(false); // 에러가 발생하면 상태를 false로 변경
         },
       );
 
@@ -91,6 +96,7 @@ const ChatRoom = () => {
       return () => {
         stompClient.disconnect(() => {
           console.log("Disconnected from the WebSocket server");
+          setIsConnected(false); // 닫기가 발생하면 상태를 false로 변경
         });
       };
     }

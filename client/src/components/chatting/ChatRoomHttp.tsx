@@ -16,11 +16,11 @@ const ChatRoomHttp: React.FC = () => {
   const chatRoomId = useRecoilValue(currentChatRoomIdState);
   // const { chatRoomId } = useParams<{ chatRoomId: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
-  console.log(chatRoomId);
+  // console.log(chatRoomId);
 
   // 로컬 스토리지에서 userId 값을 가져옵니다.
   const userIdFromLocalStorage = localStorage.getItem("Id");
-  console.log(userIdFromLocalStorage);
+  // console.log(userIdFromLocalStorage);
 
   // 문자열을 숫자로 변환합니다. 로컬 스토리지에 값이 없으면 null로 설정합니다.
   const Id = userIdFromLocalStorage ? parseInt(userIdFromLocalStorage, 10) : null;
@@ -29,7 +29,7 @@ const ChatRoomHttp: React.FC = () => {
     const fetchMessages = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat/${chatRoomId}`);
-        console.log(fetchMessages);
+        // console.log(fetchMessages);
 
         setMessages(response.data);
       } catch (error) {

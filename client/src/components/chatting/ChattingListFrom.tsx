@@ -1,8 +1,6 @@
 import React from "react";
 import { styled } from "styled-components";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import SearchComponent from "./SearchBar";
-import SearchIcon from "@mui/icons-material/Search";
 import ChattingListData from "./ChattingListData";
 import { COLOR } from "../../constants/color";
 
@@ -53,7 +51,7 @@ const Container = styled.div`
   }
   .SearchBar {
     margin-top: 0.625rem;
-    margin-bottom: 0.625rem;
+    margin-bottom: 1.875rem;
 
     display: flex;
     flex-direction: row;
@@ -88,9 +86,7 @@ const ChattingListFrom = ({ imgSrc }: ChattingListProps): JSX.Element => {
           <img className="ProfileImg" src={imgSrc} alt="" />
           <NotificationsIcon className="Icon" />
         </div>
-        <div className="SearchBar">
-          <SearchIcon /> <SearchComponent />
-        </div>
+
         <div className="data">
           <ChattingListData />
         </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, ChangeEvent } from "react";
 import axios from "axios";
 import { useRecoilState, useRecoilValue, RecoilState } from "recoil";
 import { loginState } from "../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
@@ -7,8 +7,9 @@ import styled from "styled-components";
 import { currentChatRoomIdState } from "./chatState";
 import FormatTimeOrDate from "./FormatTimeOrDate";
 import { COLOR } from "../../constants/color";
-
 import { useQuery } from "react-query";
+import { webSocketConnectionState } from "./chatState";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface ChatList {
   chatRoomId: number;
@@ -92,39 +93,28 @@ const Container = styled.button`
   }
 `;
 
+const Box = styled.div`
+  padding: 0;
+  .input {
+    padding: 0;
+    border: none;
+    outline: none;
+    width: 90%;
+    font-size: 0.9375rem;
+    &:hover,
+    &:focus {
+      border: none;
+      outline: none;
+    }
+  }
+`;
+
 const ChattingListData: React.FC = () => {
   const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
-  const [currentChatRoomId, setCurrentChatRoomId] = useRecoilState(currentChatRoomIdState);
-  console.log(currentChatRoomId);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [, setCurrentChatRoomId] = useRecoilState(currentChatRoomIdState);
   const isLoggedIn = useRecoilValue(loginState);
-
-  const fetchChatList = async () => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      throw new Error("No access token found");
-    }
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    return response.data;
-  };
-
-  const { error, isLoading } = useQuery("chatList", fetchChatList, {
-    refetchInterval: 5000,
-    enabled: isLoggedIn,
-    onError: (err) => {
-      console.log("An error occurred:", err);
-    },
-    onSuccess: (data) => {
-      setChatList(data);
-    },
-  });
-
-  const handleRoomClick = (chatRoomId: number) => {
-    setCurrentChatRoomId(chatRoomId);
-  };
+  const isConnected = useRecoilValue(webSocketConnectionState); // 웹소켓 연결 상태
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -156,20 +146,71 @@ const ChattingListData: React.FC = () => {
     }
   }, [isLoggedIn]); // 로그인 상태가 변경될 때마다 useEffect를 실행합니다.
 
-  // 로딩 중인 경우
+  const fetchChatList = async () => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+      throw new Error("No access token found");
+    }
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return response.data;
+  };
+
+  const { error, isLoading } = useQuery("chatList", fetchChatList, {
+    refetchInterval: isConnected ? 10000 : undefined, // 웹소켓 연결 상태에 따라 폴링 간격을 설정
+    enabled: isLoggedIn && isConnected, // 로그인과 웹소켓 연결이 모두 되어 있을 때만 쿼리 활성화
+    onError: (err) => {
+      console.log("An error occurred:", err);
+    },
+    onSuccess: (data) => {
+      setChatList(data);
+    },
+  });
+  // 채팅방 필터링
+  const filteredChatList = chatList.filter((chat) => {
+    return chat.memberId.toString().includes(searchTerm);
+  });
+
+  // 최신 메시지 기준으로 채팅방 정렬
+  const sortedChatList = filteredChatList.sort((a, b) => {
+    const timeA = a.message?.createdAt || "";
+    const timeB = b.message?.createdAt || "";
+    return new Date(timeB).getTime() - new Date(timeA).getTime();
+  });
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleRoomClick = (chatRoomId: number) => {
+    setCurrentChatRoomId(chatRoomId);
+  };
+
   if (isLoading) return <div>Loading...</div>;
-
-  // 에러가 발생한 경우
   if (error) return <div>Error: {(error as MyError).message}</div>;
-
-  // 로딩도 완료되고 에러도 없는 경우
 
   return (
     <>
+      <div className="SearchBar">
+        <SearchIcon />
+        <Box>
+          <input
+            className="input"
+            type="text"
+            placeholder="Search for chat rooms..."
+            value={searchTerm}
+            onChange={handleInputChange}
+          />
+        </Box>
+      </div>
+
       <ul>
-        {chatList.map((chat, index) => (
+        {sortedChatList.map((chat) => (
           <Container key={chat.chatRoomId} onClick={() => handleRoomClick(chat.chatRoomId)}>
-            <li key={index}>
+            <li key={chat.chatRoomId}>
               <div className="chatRoom">
                 {/* <div>{chat.chatRoomId}</div> */}
                 <div className="idDate">
