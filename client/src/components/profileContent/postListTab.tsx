@@ -1,15 +1,14 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
-import { useValidateToken } from "../../hooks/useValidateToken";
-import { useRecoilValue } from "recoil";
-import { loginState } from "../../atoms/atoms";
 import { defaultInstance } from "../../interceptors/interceptors";
 import { useLocation, useNavigate } from "react-router-dom";
 import { findCategory } from "../../util/category";
 import Empty from "../common/Empty";
+import { useQueries } from "react-query";
+import Loading from "../common/Loading";
+import Error from "../common/Error";
 
 interface image {
   imageId: number;
@@ -119,53 +118,36 @@ const PostListTab = (): JSX.Element => {
     { value: "leaveReview", text: "작성한 거래 후기" },
     { value: "getReview", text: "받은 거래 후기" },
   ];
-  const [cellPost, setCellPost] = useState<products[]>([]);
-  const [leaveReview, setLeaveReview] = useState<Review[]>([]);
-  const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
   const navigate = useNavigate();
-  const isLogin = useRecoilValue(loginState);
   const location = useLocation();
   const Id = location.pathname.slice(9);
-  const { validateAccessToken } = useValidateToken();
-  // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
-  const getPostlist = async () => {
-    try {
-      const res = await defaultInstance.get(`/members/${Id}/products`);
-      setCellPost(res.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  const getLeaveReview = async () => {
-    try {
-      const res = await defaultInstance.get(`/members/${Id}/reviews/post`, {});
-      setLeaveReview(res.data);
-      console.log(res.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  const getRecievedReview = async () => {
-    try {
-      const res = await defaultInstance.get(`/members/${Id}/reviews`);
-      setRecievedReview(res.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  useEffect(() => {
-    validateAccessToken();
-    getPostlist();
-    getLeaveReview();
-    getRecievedReview();
-  }, [isLogin, menu]);
+  const result = useQueries([
+    {
+      queryKey: "cellPost",
+      queryFn: async () => {
+        const res = await defaultInstance.get(`/members/${Id}/products`);
+        return res.data;
+      },
+    },
+    {
+      queryKey: "leaveReview",
+      queryFn: async () => {
+        const res = await defaultInstance.get(`/members/${Id}/reviews/post`);
+        return res.data;
+      },
+    },
+    {
+      queryKey: "receivedReview",
+      queryFn: async () => {
+        const res = await defaultInstance.get(`/members/${Id}/reviews`);
+        return res.data;
+      },
+    },
+  ]);
+  const cellPost: products[] = result[0].data;
+  const leaveReview: Review[] = result[1].data;
+  const recievedReview: Review[] = result[2].data;
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">
@@ -180,7 +162,10 @@ const PostListTab = (): JSX.Element => {
         ))}
       </ul>
       <div className="tabContent">
+        {menu === "cell" && result[0].isLoading && <Loading />}
+        {menu === "cell" && result[0].isError && <Error />}
         {menu === "cell" &&
+          cellPost &&
           cellPost.map((el) => (
             <div
               className="postContainer"
@@ -194,6 +179,8 @@ const PostListTab = (): JSX.Element => {
               </div>
             </div>
           ))}
+        {menu === "leaveReview" && result[1].isLoading && <Loading />}
+        {menu === "leaveReview" && result[1].isError && <Error />}
         {menu === "leaveReview" &&
           leaveReview.map((el, idx) => (
             <div key={idx} className="postContainer">
@@ -210,6 +197,8 @@ const PostListTab = (): JSX.Element => {
               </div>
             </div>
           ))}
+        {menu === "getReview" && result[2].isLoading && <Loading />}
+        {menu === "getReview" && result[2].isError && <Error />}
         {menu === "getReview" &&
           recievedReview.map((el, idx) => (
             <div key={idx} className="postContainer">
@@ -227,17 +216,17 @@ const PostListTab = (): JSX.Element => {
             </div>
           ))}
       </div>
-      {menu === "cell" && cellPost.length === 0 && (
+      {menu === "cell" && cellPost && cellPost.length === 0 && (
         <div className="empty">
           <Empty />
         </div>
       )}
-      {menu === "leaveReview" && leaveReview.length === 0 && (
+      {menu === "leaveReview" && leaveReview && leaveReview.length === 0 && (
         <div className="empty">
           <Empty />
         </div>
       )}
-      {menu === "getReview" && recievedReview.length === 0 && (
+      {menu === "getReview" && recievedReview && recievedReview.length === 0 && (
         <div className="empty">
           <Empty />
         </div>
