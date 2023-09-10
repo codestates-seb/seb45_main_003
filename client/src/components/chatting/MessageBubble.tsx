@@ -6,6 +6,12 @@ const BubbleWrapper = styled.div<{ owner: "user" | "other" }>`
   flex-direction: column;
   align-items: ${({ owner }) => (owner === "user" ? "flex-end" : "flex-start")};
   margin: 0.5rem;
+
+  text-align: start;
+
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 `;
 
 const Bubble = styled.div<{ owner: "user" | "other" }>`

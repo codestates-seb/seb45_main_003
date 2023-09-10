@@ -10,6 +10,7 @@ import { COLOR } from "../../constants/color";
 import { useQuery } from "react-query";
 import { webSocketConnectionState } from "./chatState";
 import SearchIcon from "@mui/icons-material/Search";
+import Img1 from "../../assets/images/Img2.svg";
 
 interface ChatList {
   chatRoomId: number;
@@ -33,6 +34,7 @@ interface MyError {
 }
 
 const Container = styled.button`
+  min-height: 5.2081rem;
   background: ${COLOR.gray_100};
   display: flex;
   padding: 0.75rem 0.5rem;
@@ -48,6 +50,16 @@ const Container = styled.button`
   border-radius: 0.375rem;
   justify-content: start;
   margin-bottom: 1.25rem;
+  .ProfileImg {
+    width: 1.875rem;
+    height: 1.875rem;
+    flex-shrink: 0;
+    border-radius: 3rem;
+    border: 1px solid var(--muted-color, #bdbdbd);
+    background: lightgray 90% / cover no-repeat;
+    flex: 2;
+    /* margin: 0 1.4375rem; */
+  }
 
   /* hover 상태일 때의 스타일 */
   &:hover {
@@ -65,6 +77,9 @@ const Container = styled.button`
     display: flex;
     flex-direction: row;
     gap: 1.25rem;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
   .memberId {
     color: var(--cool-gray-90, #21272a);
@@ -73,6 +88,7 @@ const Container = styled.button`
     font-style: normal;
     font-weight: bold;
     line-height: 100%; /* 16px */
+    flex: 6;
   }
   .message {
     color: #616161;
@@ -82,6 +98,11 @@ const Container = styled.button`
     font-weight: 400;
     line-height: 1.5rem; /* 150% */
     letter-spacing: 0.0063rem;
+    max-width: 11.25rem;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .createdAt {
     justify-content: end;
@@ -132,8 +153,6 @@ const ChattingListData: React.FC = () => {
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat`, {
             headers: {
               Authorization: `Bearer ${accessToken}`, // 헤더에 토큰을 추가합니다.
-              // 로컬일때만 사용 배포링크 사용시 제거
-              // "ngrok-skip-browser-warning": "69420",
             },
           });
           // console.log(response.data);
@@ -160,7 +179,7 @@ const ChattingListData: React.FC = () => {
   };
 
   const { error, isLoading } = useQuery("chatList", fetchChatList, {
-    refetchInterval: isConnected ? 10000 : undefined, // 웹소켓 연결 상태에 따라 폴링 간격을 설정
+    refetchInterval: isConnected ? 5000 : undefined, // 웹소켓 연결 상태에 따라 폴링 간격을 설정 5초 설정
     enabled: isLoggedIn && isConnected, // 로그인과 웹소켓 연결이 모두 되어 있을 때만 쿼리 활성화
     onError: (err) => {
       console.log("An error occurred:", err);
@@ -171,7 +190,7 @@ const ChattingListData: React.FC = () => {
   });
   // 채팅방 필터링
   const filteredChatList = chatList.filter((chat) => {
-    return chat.memberId.toString().includes(searchTerm);
+    return chat.chatRoom.memberId.toString().includes(searchTerm);
   });
 
   // 최신 메시지 기준으로 채팅방 정렬
@@ -213,14 +232,18 @@ const ChattingListData: React.FC = () => {
             <li key={chat.chatRoomId}>
               <div className="chatRoom">
                 {/* <div>{chat.chatRoomId}</div> */}
+
                 <div className="idDate">
-                  <div className="memberId">테스트 아이디{chat.memberId}</div>
+                  <img className="ProfileImg" src={Img1} alt="" />
+                  <div className="memberId">아이디{chat.chatRoom.memberId}</div>
                   <div className="createdAt">
                     {FormatTimeOrDate(chat.message ? chat.message.createdAt : null)}{" "}
                   </div>
                 </div>
 
-                <div className="message">{chat.message ? chat.message.content : " "}</div>
+                <div className="message">
+                  {chat.message ? chat.message.content : "채팅을 시작해보세요!"}
+                </div>
               </div>
             </li>
           </Container>

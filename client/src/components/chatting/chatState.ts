@@ -49,3 +49,16 @@ export const webSocketConnectionState = atom({
   key: "webSocketConnection",
   default: false, // 초기값은 연결되지 않은 상태
 });
+
+interface MessageData {
+  body: {
+    content: string;
+    senderId: number | null; // 수정된 부분
+    createdAt?: string;
+  }; // 필요한 다른 필드
+}
+
+export const chatState = atom<MessageData[]>({
+  key: "chatState",
+  default: [],
+});
