@@ -191,8 +191,8 @@ const BookmarkContent = (): JSX.Element => {
     "bookmark",
     async () => {
       const res = await defaultInstance.get(`/members/${Id}/wishes`);
-      if (changedCheckboxes.some((el) => el === true)) {
-        setValue("checkboxes", changedCheckboxes);
+      if (checkboxes.some((el) => el === true)) {
+        setValue("checkboxes", checkboxes);
       } else {
         setValue("checkboxes", Array(bookmarkList?.length).fill(false));
       }
@@ -200,7 +200,7 @@ const BookmarkContent = (): JSX.Element => {
     },
     { refetchInterval: 30000, refetchIntervalInBackground: true },
   );
-  console.log(selectAll, checkboxes, bookmarkList);
+  console.log(selectAll, checkboxes, bookmarkList, changedCheckboxes);
   const bookmarkMutation = useMutation(
     async (wishId: number) => {
       const deletedIndex = bookmarkList?.findIndex((el) => el.wishId === wishId);
