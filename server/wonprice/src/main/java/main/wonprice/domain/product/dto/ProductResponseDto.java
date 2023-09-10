@@ -52,9 +52,11 @@ public class ProductResponseDto {
 
     private Long sellerReputation; // 판매자 평판
 
-    private Long wishCount; // 상품이 받은 찜 개수
+    private int sellerTradeCount; // 판매자 거래 횟수
 
-    private Long writtenReviewsCount; // 작성한 리뷰 개수 추가
+    private Long sellerWrittenReviewsCount; // 판매자가 작성한 리뷰 개수
 
-    private Long receivedReviewsCount; // 받은 리뷰 개수 추가
+    private Long sellerReceivedReviewsCount; // 판매자가 받은 리뷰 개수
+
+    private Long wishCount; // 상품이 받은 총 wish 갯수
 }
