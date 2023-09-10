@@ -36,6 +36,6 @@ public interface ProductService {
 
     Page<Product> searchProductsByTitle(String keyword, Pageable pageable);
 
-    Integer getProductWishCount(Long productId);
+    Long getProductWishCount(Long productId);
 }
 

@@ -74,4 +74,12 @@ public class Member {
         this.name = name;
         this.email = email;
     }
+
+    @Column(nullable = false)
+    private Long writtenReviewsCount = 0L; // 사용자가 작성한 리뷰 개수
+
+    @Column(nullable = false)
+    private Long receivedReviewsCount = 0L; // 사용자가 받은 리뷰 개수
+
+    private int tradeCount; // 거래 완료 횟수
 }

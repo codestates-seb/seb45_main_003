@@ -118,7 +118,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     // 상품의 찜 갯수
-    public Integer getProductWishCount(Long productId){
+    public Long getProductWishCount(Long productId){
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with Id: " + productId));
         return product.getWishCount();
