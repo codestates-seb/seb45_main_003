@@ -68,7 +68,7 @@ const ItemBox = styled.div`
 
     color: var(--second-text-color, #737373);
     font-family: Pretendard Variable;
-    font-size: 0.875rem;
+    font-size: 1.125rem;
     font-style: normal;
     font-weight: 600;
     line-height: 1.5rem; /* 171.429% */
