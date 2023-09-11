@@ -77,10 +77,28 @@ public class ProductController {
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+
         Page<Product> products = productService.getProductsByCategory(categoryId, pageable);
+
         Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
+
         return ResponseEntity.ok(productResponseDtoList);
     }
+//    @GetMapping("/category/{categoryId}")
+//    public ResponseEntity<Page<ProductResponseDto>> getProductCategory(@PathVariable Long categoryId,
+//                                                                       @RequestParam(defaultValue = "0") int page,
+//                                                                       @RequestParam(defaultValue = "10") int size) {
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+//
+//        // 삭제되지 않은 상품만 검색하도록 스펙을 적용
+//        Specification<Product> spec = ProductSpecification.notDeleted();
+//
+//        Page<Product> products = productService.getProductsByCategory(categoryId, pageable);
+//
+//        Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
+//
+//        return ResponseEntity.ok(productResponseDtoList);
+//    }
 
     // 거래 가능한 상품만 조회
     @GetMapping("/available")
