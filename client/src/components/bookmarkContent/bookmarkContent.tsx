@@ -48,7 +48,7 @@ const BookmarkContentContainer = styled.form`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: 650px;
+  min-width: calc(100% - 18rem);
   min-height: calc(100% - 0.75rem);
   .checkbox {
     width: 18px;

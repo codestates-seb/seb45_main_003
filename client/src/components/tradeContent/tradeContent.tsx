@@ -34,7 +34,7 @@ const TradeContentContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: 40.625rem;
+  min-width: calc(100% - 18rem);
   min-height: calc(100% - 0.75rem);
   .topContainer {
     padding: 1.25rem 1rem;
