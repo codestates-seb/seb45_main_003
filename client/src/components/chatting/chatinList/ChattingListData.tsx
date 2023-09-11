@@ -122,7 +122,7 @@ const Box = styled.div`
     padding: 0;
     border: none;
     outline: none;
-    width: 90%;
+    width: 100%;
     font-size: 0.9375rem;
     &:hover,
     &:focus {
@@ -235,17 +235,15 @@ const ChattingListData: React.FC = () => {
           <Container key={chat.chatRoomId} onClick={() => handleRoomClick(chat.chatRoomId)}>
             <li key={chat.chatRoomId}>
               <div className="chatRoom">
-                {/* <div>{chat.chatRoomId}</div> */}
-
                 <div className="idDate">
                   <img
                     className="ProfileImg"
                     src={chat?.chatRoom?.path || "default_image_path_here"}
                     alt=""
-                  />{" "}
+                  />
                   <div className="memberId">{chat.chatRoom.name}</div>
                   <div className="createdAt">
-                    {FormatTimeOrDate(chat.message ? chat.message.createdAt : null)}{" "}
+                    {FormatTimeOrDate(chat.message ? chat.message.createdAt : null)}
                   </div>
                 </div>
 

@@ -4,10 +4,6 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import ChattingListData from "./ChattingListData";
 import { COLOR } from "../../../constants/color";
 
-interface ChattingListProps {
-  imgSrc: string;
-}
-
 const Container = styled.div`
   display: flex;
   width: 13.875rem;
@@ -78,12 +74,12 @@ const Container = styled.div`
   } */
 `;
 
-const ChattingListFrom = ({ imgSrc }: ChattingListProps): JSX.Element => {
+const ChattingListFrom = (): JSX.Element => {
   return (
     <>
       <Container>
         <div className="ProfileBox">
-          <img className="ProfileImg" src={imgSrc} alt="" />
+          <img className="ProfileImg" src={""} alt="" />
           <NotificationsIcon className="Icon" />
         </div>
 

@@ -1,6 +1,3 @@
-// import ChattingList from "../components/chatting/ChattingList";
-import Img1 from "../assets/images/chatting/ProfilrImg.svg";
-// import ChatRoom from "../components/chatting/ChatRoom";
 import ChattingListFrom from "../components/chatting/chatinList/ChattingListFrom";
 import { styled } from "styled-components";
 import StartChatRoom from "../components/chatting/chatRoom/StartChatRoom";
@@ -33,7 +30,7 @@ const Chatting = (): JSX.Element => {
   return (
     <>
       <Container>
-        <ChattingListFrom imgSrc={Img1} />
+        <ChattingListFrom />
         {chatRoomId ? (
           id === chatRoomId.toString() ? (
             <ChatRoom />
