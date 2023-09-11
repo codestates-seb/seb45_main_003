@@ -10,6 +10,7 @@ import { COLOR } from "../../../constants/color";
 import { useQuery } from "react-query";
 import { webSocketConnectionState } from "../recoil/chatState";
 import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate } from "react-router-dom";
 
 interface ChatList {
   chatRoomId: number;
@@ -137,6 +138,7 @@ const ChattingListData: React.FC = () => {
   const [, setCurrentChatRoomId] = useRecoilState(currentChatRoomIdState);
   const isLoggedIn = useRecoilValue(loginState);
   const isConnected = useRecoilValue(webSocketConnectionState); // 웹소켓 연결 상태
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -207,6 +209,7 @@ const ChattingListData: React.FC = () => {
 
   const handleRoomClick = (chatRoomId: number) => {
     setCurrentChatRoomId(chatRoomId);
+    navigate(`/chat/${chatRoomId}`);
   };
 
   if (isLoading) return <div>Loading...</div>;

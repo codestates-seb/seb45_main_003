@@ -7,6 +7,9 @@ import StartChatRoom from "../components/chatting/chatRoom/StartChatRoom";
 import { currentChatRoomIdState } from "../components/chatting/recoil/chatState";
 import { useRecoilValue } from "recoil";
 import ChatRoom from "../components/chatting/chatRoom/ChatRoom";
+import { useParams } from "react-router-dom";
+
+// ... 다른 import 문
 
 const Container = styled.div`
   display: flex;
@@ -25,12 +28,21 @@ const Container = styled.div`
 
 const Chatting = (): JSX.Element => {
   const chatRoomId = useRecoilValue(currentChatRoomIdState);
+  const { id } = useParams<{ id: string }>(); // URL에서 id 파라미터를 가져옵니다.
 
   return (
     <>
       <Container>
         <ChattingListFrom imgSrc={Img1} />
-        {chatRoomId ? <ChatRoom /> : <StartChatRoom />}
+        {chatRoomId ? (
+          id === chatRoomId.toString() ? (
+            <ChatRoom />
+          ) : (
+            <StartChatRoom />
+          )
+        ) : (
+          <StartChatRoom />
+        )}{" "}
       </Container>
     </>
   );

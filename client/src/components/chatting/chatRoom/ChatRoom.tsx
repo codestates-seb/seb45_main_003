@@ -9,6 +9,7 @@ import ChatRoomHttp from "./ChatRoomHttp";
 import FormatTimeOrDate from "../hook/FormatTimeOrDate";
 import { webSocketConnectionState } from "../recoil/chatState";
 import moment from "moment";
+import { useSearchParams } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -63,10 +64,14 @@ interface MessageData {
 // console.log(MessageBubble);
 
 const ChatRoom = () => {
-  const chatRoomId = useRecoilValue(currentChatRoomIdState);
+  const [searchParams] = useSearchParams();
+  const chatRoomIdFromState = useRecoilValue(currentChatRoomIdState);
+  const roomId = searchParams.get("roomId") || chatRoomIdFromState;
   const [messages, setMessages] = useState<MessageData[]>([]);
   const [client, setClient] = useState<Webstomp.Client | null>(null);
-  const roomId = chatRoomId; // 실제 방 ID를 얻는 방법으로 대체하세요
+  // const roomId = useSearchParams("roomId");
+  // const chatRoomId = useRecoilValue(currentChatRoomIdState);
+  // const roomId = chatRoomId; // 실제 방 ID를 얻는 방법으로 대체하세요
   const [, setIsConnected] = useRecoilState(webSocketConnectionState);
   const [, setChatList] = useRecoilState(chatState);
   const currentTime = moment().format("YYYY년 MM월 DD일 a hh시 mm분");
