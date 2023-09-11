@@ -10,6 +10,7 @@ import Empty from "../common/Empty";
 import { useQueries } from "react-query";
 import Error from "../common/Error";
 import Loading from "../common/Loading";
+import { translateProductStatus } from "../../util/productStatus";
 
 interface image {
   imageId: number;
@@ -157,7 +158,7 @@ const TradeContent = (): JSX.Element => {
                 <img className="postImg" src={el.images[0].path}></img>
                 <div className="infoContainer">
                   <div className="postTitle">{el.title}</div>
-                  <div>{`${el.productStatus}`}</div>
+                  <div>{`${translateProductStatus(el.productStatus)}`}</div>
                   {el.auction ? <div>{`경매종료: ${el.closedAt}`}</div> : <div>즉시 구매 상품</div>}
                 </div>
               </div>
@@ -192,7 +193,7 @@ const TradeContent = (): JSX.Element => {
                 <img className="postImg" src={el.images[0].path}></img>
                 <div className="infoContainer">
                   <div className="postTitle">{el.title}</div>
-                  <div>{`${el.productStatus}`}</div>
+                  <div>{`${translateProductStatus(el.productStatus)}`}</div>
                   {el.auction ? <div>{`경매종료: ${el.closedAt}`}</div> : <div>즉시 구매 상품</div>}
                 </div>
               </div>

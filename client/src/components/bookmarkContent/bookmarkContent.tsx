@@ -11,6 +11,7 @@ import Empty from "../common/Empty";
 import Loading from "../common/Loading";
 import Error from "../common/Error";
 import { useQuery, useQueryClient, useMutation } from "react-query";
+import { translateProductStatus } from "../../util/productStatus";
 //dto 정해지면 추가
 interface image {
   imageId: number;
@@ -264,6 +265,7 @@ const BookmarkContent = (): JSX.Element => {
                     >
                       {el.productResponseDto.title}
                     </div>
+                    <div>{translateProductStatus(el.productResponseDto.productStatus)}</div>
                     {el.productResponseDto.auction ? (
                       <div>{`거래 마감시간: ${el.productResponseDto.closedAt} `}</div>
                     ) : (
