@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import ChatInput from "./ChatInput";
-import * as Webstomp from "webstomp-client";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { currentChatRoomIdState, chatState } from "../recoil/chatState";
 import MessageBubble from "./MessageBubble";
@@ -10,6 +9,7 @@ import FormatTimeOrDate from "../hook/FormatTimeOrDate";
 import { webSocketConnectionState } from "../recoil/chatState";
 import moment from "moment";
 import { useSearchParams } from "react-router-dom";
+import { useWebSocketConnection } from "../hook/useWebSocketConnection"; // 커스텀 훅 import
 
 const Container = styled.div`
   display: flex;
@@ -64,77 +64,17 @@ interface MessageData {
 // console.log(MessageBubble);
 
 const ChatRoom = () => {
-  // URL의 searchParams를 사용해 roomId를 가져옵니다.
   const [searchParams] = useSearchParams();
-
-  // Recoil 상태 관리 라이브러리를 사용해 현재 채팅방의 ID를 가져옵니다.
   const chatRoomIdFromState = useRecoilValue(currentChatRoomIdState);
-
-  // URL의 searchParams에서 roomId를 가져오거나, 없을 경우 Recoil로부터 가져온 chatRoomId를 사용합니다.
   const roomId = searchParams.get("roomId") || chatRoomIdFromState;
-
-  // 채팅 메시지를 관리하는 로컬 상태입니다.
   const [messages, setMessages] = useState<MessageData[]>([]);
-
-  // WebStomp 클라이언트 인스턴스를 관리하는 로컬 상태입니다.
-  const [client, setClient] = useState<Webstomp.Client | null>(null);
-
-  // WebSocket 연결 상태를 관리하는 Recoil 상태입니다.
   const [, setIsConnected] = useRecoilState(webSocketConnectionState);
-
-  // 채팅 리스트를 관리하는 Recoil 상태입니다.
   const [, setChatList] = useRecoilState(chatState);
-
-  // 현재 시간을 YYYY년 MM월 DD일 a hh시 mm분 형식으로 가져옵니다.
   const currentTime = moment().format("YYYY년 MM월 DD일 a hh시 mm분");
-
-  // 로컬 스토리지에서 userId 값을 가져옵니다.
   const userIdFromLocalStorage = localStorage.getItem("Id");
-
-  // 문자열을 숫자로 변환합니다. 로컬 스토리지에 값이 없으면 null로 설정합니다.
   const Id = userIdFromLocalStorage ? parseInt(userIdFromLocalStorage, 10) : null;
 
-  useEffect(() => {
-    // 이전 메시지를 초기화합니다.
-    setMessages([]);
-
-    if (roomId) {
-      const socket = new WebSocket(process.env.REACT_APP_WEB_SOCKET_URL as string);
-      const stompClient = Webstomp.over(socket);
-
-      stompClient.connect(
-        {},
-        () => {
-          // 소켓 연결 확인 로그
-          console.log("Connected to the WebSocket server");
-          setIsConnected(true); // 연결되면 상태를 true로 변경
-          // ...
-
-          // 채팅 구독 메세지를 화면에 띄어줌
-          stompClient.subscribe(`/topic/chat/${roomId}`, (message) => {
-            const messageData: MessageData = JSON.parse(message.body);
-            setMessages((prevMessages) => [...prevMessages, messageData]);
-            setChatList((prevChatList) => [...prevChatList, messageData]); // 이 부분을 추가
-          });
-          // console.log(stompClient);
-        },
-        (error) => {
-          console.error("STOMP protocol error:", error); // 에러 로깅
-          setIsConnected(false); // 에러가 발생하면 상태를 false로 변경
-        },
-      );
-
-      setClient(stompClient);
-
-      // 소켓 닫기 확인 로그
-      return () => {
-        stompClient.disconnect(() => {
-          console.log("Disconnected from the WebSocket server");
-          setIsConnected(false); // 닫기가 발생하면 상태를 false로 변경
-        });
-      };
-    }
-  }, [roomId]);
+  const client = useWebSocketConnection(roomId, { setMessages, setChatList, setIsConnected }); // 커스텀 훅 사용
 
   useEffect(() => {
     const element = document.querySelector(".chatBox");
@@ -143,15 +83,11 @@ const ChatRoom = () => {
     }
   }, [messages]);
 
-  // InPut 내용을 소켓으로 Send
   const handleSendMessage = (message: string) => {
-    console.log("handleSendMessage called with message:", message);
     if (client && client.connected) {
       client.send(`/app/chat/${roomId}`, JSON.stringify({ content: message, senderId: Id }), {});
-      console.log("Message sent:", message);
     }
   };
-
   return (
     <>
       <Container>
