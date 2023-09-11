@@ -13,6 +13,7 @@ import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.mapper.ProductMapper;
 import main.wonprice.domain.product.service.ProductService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +52,7 @@ public class WishController {
         response.forEach(
                 dto -> dto.setProductResponseDto(productMapper.fromEntity(productService.findOneById(dto.getProductId()))));
 
-        return ResponseEntity.ok(response);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/wishes/{wish-id}")
@@ -62,7 +63,7 @@ public class WishController {
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
 
-    @DeleteMapping("/wishes")
+    @PatchMapping("/wishes")
     public ResponseEntity deleteWishes(@RequestBody WishDeleteDto deleteDto) {
 
         List<Boolean> checkBox = deleteDto.getCheckBox();
