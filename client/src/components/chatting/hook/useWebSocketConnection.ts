@@ -1,11 +1,15 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import * as Webstomp from "webstomp-client";
+import { getUserId } from "../../../util/auth";
 
 interface MessageData {
   body: {
     content: string;
-    senderId: number | null; // 수정된 부분
+    senderId: number | null;
     createdAt?: string;
+    messageId?: number | null;
+    memberId?: number | null;
   }; // 필요한 다른 필드
 }
 
@@ -21,6 +25,7 @@ export const useWebSocketConnection = (
   { setMessages, setChatList, setIsConnected }: UseWebSocketConnectionProps,
 ) => {
   const [client, setClient] = useState<Webstomp.Client | null>(null);
+  const memberId = getUserId();
 
   useEffect(() => {
     // 이전 메시지를 초기화합니다.
@@ -36,10 +41,30 @@ export const useWebSocketConnection = (
           console.log("Connected to the WebSocket server");
           setIsConnected(true);
 
-          stompClient.subscribe(`/topic/chat/${roomId}`, (message) => {
+          stompClient.subscribe(`/topic/chat/${roomId}`, async (message) => {
             const messageData: MessageData = JSON.parse(message.body);
+
+            // 이전 메시지를 저장합니다.
             setMessages((prevMessages) => [...prevMessages, messageData]);
+
+            // 채팅 목록을 업데이트합니다.
             setChatList((prevChatList) => [...prevChatList, messageData]);
+            console.log(Number(memberId));
+            console.log(messageData.body.messageId);
+
+            // 백엔드 서버에 HTTP POST 요청을 보냅니다.
+            const response = await axios.post(
+              `${process.env.REACT_APP_API_URL}/chat/sequence/${roomId}`,
+              {
+                memberId: Number(memberId),
+                messageId: messageData.body.messageId,
+              },
+            );
+            if (axios.isAxiosError(response)) {
+              console.log("Failed to update message read status.", response);
+            } else {
+              console.log("Message read status updated successfully.", response);
+            }
           });
         },
         (error) => {
