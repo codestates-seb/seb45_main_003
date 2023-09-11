@@ -3,11 +3,12 @@ import styled from "styled-components";
 import ChatInput from "./ChatInput";
 import * as Webstomp from "webstomp-client";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { currentChatRoomIdState } from "./chatState";
+import { currentChatRoomIdState, chatState } from "./chatState";
 import MessageBubble from "./MessageBubble";
 import ChatRoomHttp from "./ChatRoomHttp";
 import FormatTimeOrDate from "./FormatTimeOrDate";
 import { webSocketConnectionState } from "./chatState";
+import moment from "moment";
 
 const Container = styled.div`
   display: flex;
@@ -22,6 +23,20 @@ const Container = styled.div`
   border: 1px solid #e0e0e0;
   background: #f7f7f7;
   /* background-color: aqua; */
+
+  .startText {
+    color: #494949;
+    font-family: Pretendard Variable;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    padding: 0.9375rem;
+    .date {
+      padding: 0.9375rem;
+      font-size: 1rem;
+    }
+  }
 
   .chatBox {
     overflow-y: auto; /* 내용이 넘칠 경우 스크롤 표시 */
@@ -53,6 +68,8 @@ const ChatRoom = () => {
   const [client, setClient] = useState<Webstomp.Client | null>(null);
   const roomId = chatRoomId; // 실제 방 ID를 얻는 방법으로 대체하세요
   const [, setIsConnected] = useRecoilState(webSocketConnectionState);
+  const [, setChatList] = useRecoilState(chatState);
+  const currentTime = moment().format("YYYY년 MM월 DD일 a hh시 mm분");
 
   // 로컬 스토리지에서 userId 값을 가져옵니다.
   const userIdFromLocalStorage = localStorage.getItem("Id");
@@ -81,6 +98,7 @@ const ChatRoom = () => {
           stompClient.subscribe(`/topic/chat/${roomId}`, (message) => {
             const messageData: MessageData = JSON.parse(message.body);
             setMessages((prevMessages) => [...prevMessages, messageData]);
+            setChatList((prevChatList) => [...prevChatList, messageData]); // 이 부분을 추가
           });
           // console.log(stompClient);
         },
@@ -122,7 +140,10 @@ const ChatRoom = () => {
     <>
       <Container>
         <div className="chatBox" style={{ display: "flex", flexDirection: "column" }}>
-          {" "}
+          <div className="startText">
+            {" 어서오세요! \n 채팅을 시작해 보세요 "}
+            <div className="date"> {`- 현재 시간은 ${currentTime} 입니다. -`}</div>
+          </div>
           <ChatRoomHttp />
           {messages.map((message, index) => (
             <MessageBubble

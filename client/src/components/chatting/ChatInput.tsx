@@ -4,6 +4,8 @@ import SendIcon from "@mui/icons-material/Send";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { COLOR } from "../../constants/color";
+import { useRecoilState } from "recoil";
+import { chatState } from "./chatState";
 
 // import Button from "../../components/common/Button";
 
@@ -112,17 +114,31 @@ interface ChatInputProps {
   onSendMessage: (message: string) => void;
 }
 
+// Message 타입 정의
+interface MessageData {
+  body: {
+    content: string;
+    senderId: number | null;
+    createdAt?: string;
+  };
+}
+
+interface ChatInputProps {
+  onSendMessage: (message: string) => void;
+}
+
 const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
   const [message, setMessage] = useState<string>("");
+  const [, setChatList] = useRecoilState<MessageData[]>(chatState);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
 
-  const handleSendClick = () => {
-    onSendMessage(message);
-    setMessage("");
-  };
+  // const handleSendClick = () => {
+  //   onSendMessage(message);
+  //   setMessage("");
+  // };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -135,6 +151,26 @@ const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
       onSendMessage(message);
       setMessage("");
     }
+  };
+
+  const handleSendClick = () => {
+    if (message.trim() === "") return;
+
+    // 실제 메시지를 보내는 로직
+    onSendMessage(message);
+
+    // 새로운 메시지를 chatList에 추가
+    const newMessage: MessageData = {
+      body: {
+        content: message,
+        senderId: /* 사용자 ID */ null,
+        createdAt: new Date().toISOString(),
+      },
+    };
+    setChatList((prevChatList) => [...prevChatList, newMessage]);
+
+    // 입력 필드 초기화
+    setMessage("");
   };
 
   return (

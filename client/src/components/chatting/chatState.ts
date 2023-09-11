@@ -9,7 +9,9 @@ export type ChatList = {
 
   chatRoom: {
     memberId: number;
+    name: string;
     deletedAt: string;
+    path: string;
   };
   message: {
     messageId: number;

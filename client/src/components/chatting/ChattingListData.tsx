@@ -10,7 +10,6 @@ import { COLOR } from "../../constants/color";
 import { useQuery } from "react-query";
 import { webSocketConnectionState } from "./chatState";
 import SearchIcon from "@mui/icons-material/Search";
-import Img1 from "../../assets/images/Img2.svg";
 
 interface ChatList {
   chatRoomId: number;
@@ -19,7 +18,9 @@ interface ChatList {
   deletedAt: string | null;
   chatRoom: {
     memberId: number;
+    name: string;
     deletedAt: string | null;
+    path: string | undefined;
   };
   message: {
     messageId: number;
@@ -190,7 +191,7 @@ const ChattingListData: React.FC = () => {
   });
   // 채팅방 필터링
   const filteredChatList = chatList.filter((chat) => {
-    return chat.chatRoom.memberId.toString().includes(searchTerm);
+    return chat.chatRoom?.name?.toString().includes(searchTerm);
   });
 
   // 최신 메시지 기준으로 채팅방 정렬
@@ -234,8 +235,12 @@ const ChattingListData: React.FC = () => {
                 {/* <div>{chat.chatRoomId}</div> */}
 
                 <div className="idDate">
-                  <img className="ProfileImg" src={Img1} alt="" />
-                  <div className="memberId">아이디{chat.chatRoom.memberId}</div>
+                  <img
+                    className="ProfileImg"
+                    src={chat?.chatRoom?.path || "default_image_path_here"}
+                    alt=""
+                  />{" "}
+                  <div className="memberId">{chat.chatRoom.name}</div>
                   <div className="createdAt">
                     {FormatTimeOrDate(chat.message ? chat.message.createdAt : null)}{" "}
                   </div>
