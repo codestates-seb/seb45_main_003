@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ReactComponent as StartChat } from "../../assets/images/chatting/NoMessages.svg";
+import { ReactComponent as StartChat } from "../../../assets/images/chatting/NoMessages.svg";
 
 const Container = styled.div`
   display: flex;

@@ -8,7 +8,7 @@ const AuctionContentContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-  width: calc(100% - 14rem);
+  min-width: calc(100% - 18rem);
   .topContainer {
     padding: 1.25rem 1rem;
     border-bottom: 3px solid ${COLOR.darkText};
@@ -16,6 +16,10 @@ const AuctionContentContainer = styled.div`
       font-size: ${FONT_SIZE.font_32};
       font-weight: bold;
     }
+  }
+  .empty {
+    position: relative;
+    height: 25rem;
   }
   .auctionListContainer {
     display: flex;
