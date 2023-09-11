@@ -2,6 +2,7 @@ package main.wonprice.domain.chat.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.wonprice.domain.member.entity.Member;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -14,7 +15,9 @@ public class ChatParticipant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long chatParticipantId;
 
-    private Long memberId;
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     private LocalDateTime deletedAt;
 

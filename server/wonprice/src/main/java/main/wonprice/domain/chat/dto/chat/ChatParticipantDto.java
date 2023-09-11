@@ -24,7 +24,7 @@ public class ChatParticipantDto {
         this.chatRoomId = chatParticipant.getChatRoom().getChatRoomId();
         this.productId = chatParticipant.getChatRoom().getProductId();
 //        this.chatParticipantId = chatParticipant.getChatParticipantId();
-        this.memberId = chatParticipant.getMemberId();
+        this.memberId = chatParticipant.getMember().getMemberId();
         this.deletedAt = chatParticipant.getDeletedAt();
         this.chatRoom = chatParticipant.getChatRoom().getChatParticipantList().stream()
                 .map(o -> new ChatParticipantChatRoomDto(o))

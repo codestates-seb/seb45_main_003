@@ -9,11 +9,18 @@ import Loading from "../../components/common/Loading";
 import { CATEGORY } from "../../constants/category";
 import { COLOR } from "../../constants/color";
 import { API_PATHS } from "../../constants/path";
+import { usePagination } from "../../hooks/usePagination";
 import ErrorIndication from "../../pages/ErrorIndication";
 import Button from "../common/Button";
 import Empty from "../common/Empty";
+import Pagination from "../common/Pagination";
 import ListItem from "./ListItem";
 import SearchBar from "./SearchBar";
+
+export type Data = {
+  content: ProductData[];
+  totalPages: number;
+};
 
 export type ProductData = {
   auction: boolean;
@@ -37,6 +44,8 @@ export type ProductData = {
   modifiedAt?: string;
   deletedAt?: string;
   closedAt?: string;
+  sellerName?: string;
+  wishCount?: number;
 };
 
 const StyledList = styled.section`
@@ -50,12 +59,14 @@ const StyledList = styled.section`
   }
 
   .list {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
 
     li:not(.no_border) {
-      width: calc(25% - 0.875rem);
+      box-sizing: border-box;
+      width: calc(20% - 0.8rem);
       border: 1px solid ${COLOR.border};
       border-radius: 6px;
       overflow: hidden;
@@ -69,22 +80,54 @@ const StyledList = styled.section`
 `;
 
 const List = (): JSX.Element => {
+  const ITEMS_PER_VIEW = 10;
   const navigate = useNavigate();
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+
+  const {
+    currentPage,
+    totalPages,
+    setTotalPages,
+    pageChangeHandler,
+    prevPageHandler,
+    nextPageHandler,
+  } = usePagination();
+
   const currentCategory = location.pathname.slice(9);
-  const path =
-    location.pathname === "/product"
-      ? API_PATHS.products.default("")
-      : API_PATHS.products.category(CATEGORY[currentCategory].id);
-  const { isLoading, error, data, refetch } = useQuery<ProductData[]>("productList", async () => {
-    const response = await axios.get(path);
-    return response.data.content;
-  });
+  const { isLoading, error, data, refetch } = useQuery<Data>(
+    ["productList", currentPage],
+    async () => {
+      //쿼리스트링 불러오기
+      const currentPageParam = parseInt(searchParams.get("page") || "1");
+      const pageQueryParam = `?page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
+
+      //전체 상품과 카테고리 구분해서 호출
+      const path =
+        location.pathname === "/product"
+          ? API_PATHS.products.default("") + pageQueryParam
+          : API_PATHS.products.category(CATEGORY[currentCategory].id) + pageQueryParam;
+
+      const response = await axios.get(path);
+
+      // 토탈 페이지 정보가 변경될 때만 갱신
+      if (response.data?.totalPages !== totalPages) {
+        setTotalPages(response.data?.totalPages);
+      }
+
+      navigate(`?page=${currentPageParam}`);
+      return response.data;
+    },
+    {
+      staleTime: 60000,
+    },
+  );
   const isLogin = useRecoilValue(loginState);
 
+  //페이지넘버와 url이 변할때마다 데이터 갱신
   useEffect(() => {
     refetch();
-  }, [location.pathname]);
+  }, [location.pathname, currentPage]);
 
   if (isLoading) {
     return <Loading />;
@@ -117,9 +160,9 @@ const List = (): JSX.Element => {
         </div>
 
         <ul className="list">
-          {data && data.length > 0 ? (
+          {data && data.content?.length > 0 ? (
             <>
-              {data.map((el) => {
+              {data.content.map((el) => {
                 return <ListItem key={el.productId} data={el} />;
               })}
             </>
@@ -129,6 +172,15 @@ const List = (): JSX.Element => {
             </li>
           )}
         </ul>
+        <Pagination
+          {...{
+            currentPage,
+            totalPages,
+            pageChangeHandler,
+            prevPageHandler,
+            nextPageHandler,
+          }}
+        />
       </StyledList>
     </>
   );

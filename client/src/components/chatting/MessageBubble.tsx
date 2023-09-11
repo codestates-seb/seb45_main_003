@@ -12,7 +12,7 @@ const Bubble = styled.div<{ owner: "user" | "other" }>`
   max-width: 60%;
   padding: 0.75rem;
   border-radius: 0.5rem;
-  background-color: ${({ owner }) => (owner === "user" ? "#FFB300" : "#FFCD57")};
+  background-color: ${({ owner }) => (owner === "user" ? "#FFCD57" : "#FFCD57")};
   color: ${({ owner }) => (owner === "user" ? "#222222" : "#222222")};
 `;
 

@@ -56,7 +56,7 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<Page<ProductResponseDto>> findAllProduct(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size) {
+            @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
         Page<ProductResponseDto> productResponseDtoList = productService
                 .findAll(pageable)
@@ -69,7 +69,7 @@ public class ProductController {
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<Page<ProductResponseDto>> getProductCategory(@PathVariable Long categoryId,
                                                                        @RequestParam(defaultValue = "0") int page,
-                                                                       @RequestParam(defaultValue = "8") int size) {
+                                                                       @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
         Page<Product> products = productService.getProductsByCategory(categoryId, pageable);
         Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
@@ -81,7 +81,7 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponseDto>> getAvailableProducts(
             @RequestParam(name = "type", defaultValue = "all") String type,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size) {
+            @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
 
         Page<Product> products;
@@ -101,7 +101,7 @@ public class ProductController {
     // 거래 완료된 상품만 조회
     @GetMapping("/completed")
     public ResponseEntity<Page<ProductResponseDto>> getCompletedProducts(@RequestParam(defaultValue = "0") int page,
-                                                                         @RequestParam(defaultValue = "8") int size) {
+                                                                         @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
         // ProductStatus가 AFTER인 상품만 조회
         Page<Product> products = productService.getProductsByStatus(ProductStatus.AFTER, pageable);
@@ -126,7 +126,7 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponseDto>> searchProductsByTitle(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size) {
+            @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
         Page<Product> products = productService.searchProductsByTitle(keyword, pageable);
         Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
