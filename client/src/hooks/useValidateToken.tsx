@@ -12,6 +12,7 @@ export const useValidateToken = () => {
       const res = await authInstance.get(`/access`, {
         headers: {
           "ngrok-skip-browser-warning": "69420",
+          Refresh: refreshToken,
         },
       });
       if (res.status === 200) {
@@ -19,9 +20,7 @@ export const useValidateToken = () => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.status === 500) {
-          setLogin(false);
-        }
+        console.log(error);
       }
     }
   };

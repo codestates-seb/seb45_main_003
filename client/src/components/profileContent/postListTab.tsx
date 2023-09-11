@@ -144,7 +144,7 @@ const PostListTab = (): JSX.Element => {
             "ngrok-skip-browser-warning": "69420",
           },
         });
-        return res.data;
+        return res.data.slice().reverse();
       },
     },
     {

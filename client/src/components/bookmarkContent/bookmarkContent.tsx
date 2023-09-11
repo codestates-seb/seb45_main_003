@@ -162,7 +162,7 @@ const BookmarkContentContainer = styled.form`
 const BookmarkContent = (): JSX.Element => {
   const { register, handleSubmit, watch, setValue, getValues } = useForm<checkInputType>();
   const checkboxes = watch("checkboxes", []);
-  const selectAll = watch("selectAll", false);
+  // const selectAll = watch("selectAll", false);
   //전체 선택 함수
   const handleSelectAll = (checked: boolean) => {
     setValue("selectAll", checked);
@@ -176,18 +176,6 @@ const BookmarkContent = (): JSX.Element => {
     setValue("selectAll", checkedAll);
     setValue("checkboxes", checkedBoxes);
   };
-  //선택한 찜목록 취소 요청함수
-  const sendBookmarkMutation = useMutation(
-    async (data: checkInputType) => {
-      await authInstance.patch(`/wishes`, { checkbox: data.checkboxes });
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("bookmark");
-        setValue("checkboxes", changedCheckboxes);
-      },
-    },
-  );
   const navigate = useNavigate();
   const location = useLocation();
   const Id = location.pathname.slice(8);
@@ -217,14 +205,29 @@ const BookmarkContent = (): JSX.Element => {
     { refetchInterval: 30000, refetchIntervalInBackground: true },
   );
   //체크박스를 선택한적 있으면 해당체크박스를 refetch해도 유지, refetch는 30초마다
-  console.log(selectAll, checkboxes, bookmarkList, changedCheckboxes);
+  console.log(checkboxes, bookmarkList, changedCheckboxes);
   // 찜취소버튼으로 취소요청하는 함수
   const bookmarkMutation = useMutation(
     async (wishId: number) => {
       const deletedIndex = bookmarkList?.findIndex((el) => el.wishId === wishId);
       const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
       setChangedCheckboxes(checkedlist);
+      console.log(checkedlist);
       await authInstance.delete(`/wishes/${wishId}`);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("bookmark");
+        setValue("checkboxes", changedCheckboxes);
+        console.log(checkboxes);
+      },
+    },
+  );
+  //선택한 찜목록 취소 요청함수
+  const sendBookmarkMutation = useMutation(
+    async (data: checkInputType) => {
+      console.log(data.checkboxes);
+      await authInstance.patch(`/wishes`, { checkBox: data.checkboxes });
     },
     {
       onSuccess: () => {
