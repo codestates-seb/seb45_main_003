@@ -45,7 +45,7 @@ const ProfileContentContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: 575px;
+  min-width: 45rem;
   .topContainer {
     padding: 1.25rem 1rem;
     display: flex;
