@@ -1,5 +1,6 @@
 package main.wonprice.domain.picture.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import main.wonprice.domain.member.entity.Member;
@@ -17,5 +18,6 @@ public class MemberPicture extends Picture {
 
     @OneToOne
     @JoinColumn(name = "member_id")
+    @JsonIgnore
     private Member member;
 }

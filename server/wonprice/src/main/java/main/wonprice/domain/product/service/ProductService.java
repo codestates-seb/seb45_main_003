@@ -35,5 +35,7 @@ public interface ProductService {
     Page<Product> getProductsByStatusAndAuction(ProductStatus productStatus, boolean auction, Pageable pageable);
 
     Page<Product> searchProductsByTitle(String keyword, Pageable pageable);
+
+    Long getProductWishCount(Long productId);
 }
 

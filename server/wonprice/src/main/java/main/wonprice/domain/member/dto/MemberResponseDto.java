@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import main.wonprice.domain.member.entity.LoginType;
 import main.wonprice.domain.member.entity.MemberStatus;
+import main.wonprice.domain.picture.entity.MemberPicture;
 
 @Getter @Setter
 public class MemberResponseDto {
@@ -19,4 +20,6 @@ public class MemberResponseDto {
     private int postCount;
 
     private int tradeCount;
+
+    private MemberPicture picture;
 }

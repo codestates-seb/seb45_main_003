@@ -249,8 +249,6 @@ const UploadForm = () => {
     }
   };
 
-  console.log(`resdata`, resData);
-
   return (
     <>
       <StyledUploadForm>
@@ -286,7 +284,7 @@ const UploadForm = () => {
               id="title"
               type="text"
               formState={formState}
-              defaultValue={updateModeData.title}
+              defaultValue={isUpdateMode ? updateModeData.title : ""}
             />
 
             {!isUpdateMode && (
@@ -415,7 +413,7 @@ const UploadForm = () => {
               title="상품 설명"
               id="description"
               formState={formState}
-              defaultValue={updateModeData.description}
+              defaultValue={isUpdateMode ? updateModeData.description : ""}
             />
           </div>
           <Button

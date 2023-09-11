@@ -10,6 +10,8 @@ import main.wonprice.domain.chat.entity.Message;
 import main.wonprice.domain.chat.repository.ChatParticipantRepository;
 import main.wonprice.domain.chat.repository.ChatRoomRepository;
 import main.wonprice.domain.chat.repository.MessageRepository;
+import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,7 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatParticipantRepository chatParticipantRepository;
     private final MessageRepository messageRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public Long createChatRoom(ChatRoom chatRoom) {
@@ -37,7 +40,10 @@ public class ChatService {
     }
 
     public List<ChatParticipantDto> findMyChatRooms(Long memberId) {
-        List<ChatParticipant> findChatRooms = chatParticipantRepository.findByMemberId(memberId);
+
+        Member member = memberRepository.findById(memberId).orElseThrow();
+
+        List<ChatParticipant> findChatRooms = chatParticipantRepository.findByMember(member);
 
         List<ChatParticipantDto> response = findChatRooms.stream()
                 .map(o -> new ChatParticipantDto(o))
@@ -52,9 +58,9 @@ public class ChatService {
     public void deleteChatRoom(Long chatRoomId, Long memberId) {
         ChatRoom findChatRoom = findChatRoom(chatRoomId);
 
-        ChatParticipant deleteChatRoom = chatParticipantRepository.findByMemberIdAndChatRoom(memberId, findChatRoom);
+//        ChatParticipant deleteChatRoom = chatParticipantRepository.findByMemberAndChatRoom(memberId, findChatRoom);
 
-        deleteChatRoom.setDeletedAt(LocalDateTime.now());
+//        deleteChatRoom.setDeletedAt(LocalDateTime.now());
     }
 
     public List<MessageDto> findMessages(Long chatRoomId) {
