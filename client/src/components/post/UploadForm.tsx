@@ -1,11 +1,9 @@
 import { pickBy } from "lodash";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 import { styled } from "styled-components";
-import { loginState } from "../../atoms/atoms";
 import S3 from "../../aws-config";
 import { CATEGORY } from "../../constants/category";
 import { COLOR } from "../../constants/color";
@@ -188,7 +186,6 @@ const UploadForm = () => {
       : await authInstance.post(API_PATHS.products.default(""), data);
     return response.data;
   });
-  const isLogin = useRecoilValue(loginState);
 
   //Link를 통해 update mode state를 전달했을때 사용
   const location = useLocation();
@@ -196,12 +193,6 @@ const UploadForm = () => {
   const updateModeData = location.state ? location.state.updateModeData : null;
   const ACTION = !isUpdateMode ? "등록" : "수정";
   const [resData, setResData] = useState<ProductData>();
-
-  useEffect(() => {
-    if (!isLogin) {
-      navigate("/login");
-    }
-  }, [isLogin]);
 
   const onSubmit = async (data: FieldValues) => {
     try {
