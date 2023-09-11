@@ -10,9 +10,9 @@ const FormatTimeOrDate = (createdAt: string | null) => {
   const diffInHours = currentTime.diff(messageTime, "hours");
 
   if (diffInHours < 24) {
-    return messageTime.format("A h:mm");
+    return messageTime.format("a h:mm");
   } else {
-    return `${messageTime.format("MM-DD")}_${messageTime.format("A h:mm")}`;
+    return `${messageTime.format("MM-DD")} ${messageTime.format("a h:mm")}`;
   }
 };
 

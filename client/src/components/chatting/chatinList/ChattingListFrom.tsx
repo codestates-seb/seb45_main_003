@@ -1,14 +1,7 @@
 import React from "react";
 import { styled } from "styled-components";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import SearchComponent from "./SearchBar";
-import SearchIcon from "@mui/icons-material/Search";
 import ChattingListData from "./ChattingListData";
-import { COLOR } from "../../constants/color";
-
-interface ChattingListProps {
-  imgSrc: string;
-}
+import { COLOR } from "../../../constants/color";
 
 const Container = styled.div`
   display: flex;
@@ -29,6 +22,7 @@ const Container = styled.div`
     flex-direction: row;
     width: calc(100%);
     /* background-color: aqua; */
+    padding-bottom: 1rem;
     justify-content: space-between;
     align-items: center;
     .ProfileImg {
@@ -53,7 +47,7 @@ const Container = styled.div`
   }
   .SearchBar {
     margin-top: 0.625rem;
-    margin-bottom: 0.625rem;
+    margin-bottom: 1.875rem;
 
     display: flex;
     flex-direction: row;
@@ -75,22 +69,12 @@ const Container = styled.div`
   .data {
     width: 100%;
   }
-  /* @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  } */
 `;
 
-const ChattingListFrom = ({ imgSrc }: ChattingListProps): JSX.Element => {
+const ChattingListFrom = (): JSX.Element => {
   return (
     <>
       <Container>
-        <div className="ProfileBox">
-          <img className="ProfileImg" src={imgSrc} alt="" />
-          <NotificationsIcon className="Icon" />
-        </div>
-        <div className="SearchBar">
-          <SearchIcon /> <SearchComponent />
-        </div>
         <div className="data">
           <ChattingListData />
         </div>
