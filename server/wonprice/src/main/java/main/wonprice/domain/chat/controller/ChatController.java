@@ -75,8 +75,7 @@ public class ChatController {
     }
 
     @PostMapping("/chat/sequence/{room-id}")
-    public void updateSequence(@PathVariable("room-id") Long chatRoomId, SequenceRequest request) {
-
+    public void updateSequence(@PathVariable("room-id") Long chatRoomId, @RequestBody SequenceRequest request) {
         Member loginMember = memberService.findMember(request.getMemberId());
         ChatRoom findChatRoom = chatService.findChatRoom(chatRoomId);
 
