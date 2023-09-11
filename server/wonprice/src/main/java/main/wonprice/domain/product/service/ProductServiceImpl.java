@@ -92,10 +92,16 @@ public class ProductServiceImpl implements ProductService {
 
     // 상품 제목 키워드 별로 조회
     @Override
-    public Page<Product> searchProductsByTitle(String keyword, Pageable pageable) {
-        return productRepository.findByTitleContaining(keyword, pageable);
-    }
+    public Page<Product> searchProductsByTitle(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
 
+        Specification<Product> specification = Specification.where(ProductSpecification.notDeleted())
+                .and((root, query, criteriaBuilder) ->
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + keyword.toLowerCase() + "%")
+                );
+
+        return productRepository.findAll(specification, pageable);
+    }
 
     /*
         특정 상품 조회

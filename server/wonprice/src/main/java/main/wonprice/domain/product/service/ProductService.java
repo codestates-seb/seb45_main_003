@@ -34,7 +34,7 @@ public interface ProductService {
 
     Page<Product> getProductsByCategory(Long categoryId, Pageable pageable);
 
-    Page<Product> searchProductsByTitle(String keyword, Pageable pageable);
+    Page<Product> searchProductsByTitle(String keyword, int page, int size);
 
     Page<Product> getAvailableProducts(String type, int page, int size);
 
