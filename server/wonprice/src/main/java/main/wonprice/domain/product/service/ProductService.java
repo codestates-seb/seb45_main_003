@@ -6,13 +6,15 @@ import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.entity.ProductStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
 public interface ProductService {
     Product save(Product product);
 
-    Page<Product> findAll(Pageable pageable);
+    Page<Product> findAll(Specification<Product> spec, Pageable pageable);
 
     Product findOneById(Long productId);
 
@@ -28,6 +30,8 @@ public interface ProductService {
 
     public List<Product> findMemberBought(Pageable pageable, Long memberId);
 
+    Long getProductWishCount(Long productId);
+
     Page<Product> getProductsByCategory(Long categoryId, Pageable pageable);
 
     Page<Product> getProductsByStatus(ProductStatus status, Pageable pageable);
@@ -35,7 +39,5 @@ public interface ProductService {
     Page<Product> getProductsByStatusAndAuction(ProductStatus productStatus, boolean auction, Pageable pageable);
 
     Page<Product> searchProductsByTitle(String keyword, Pageable pageable);
-
-    Long getProductWishCount(Long productId);
 }
 
