@@ -61,7 +61,7 @@ const ListItem = (props: ItemProps): JSX.Element => {
     <StyledItem>
       <Link to={`${category}/${data.productId}`}>
         <div className="images">
-          <img src={data.images[0].path} alt="썸네일 이미지" />
+          <img src={data.images[0]?.path} alt="썸네일 이미지" />
         </div>
         <div className="title">
           <h3>{data.title}</h3>
