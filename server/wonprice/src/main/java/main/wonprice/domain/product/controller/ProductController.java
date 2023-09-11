@@ -12,10 +12,12 @@ import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.mapper.ProductMapper;
+import main.wonprice.domain.product.repository.ProductSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -58,8 +60,12 @@ public class ProductController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+
+        // 삭제되지 않은 상품만 검색하도록 스펙을 적용
+        Specification<Product> spec = ProductSpecification.notDeleted();
+
         Page<ProductResponseDto> productResponseDtoList = productService
-                .findAll(pageable)
+                .findAll(spec, pageable)
                 .map(productMapper::fromEntity);
 
         return ResponseEntity.ok(productResponseDtoList);
@@ -97,6 +103,7 @@ public class ProductController {
         Page<ProductResponseDto> productResponseDtoPage = products.map(productMapper::fromEntity);
         return ResponseEntity.ok(productResponseDtoPage);
     }
+
 
     // 거래 완료된 상품만 조회
     @GetMapping("/completed")
