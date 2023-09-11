@@ -1,6 +1,7 @@
 package main.wonprice.domain.member.controller;
 
 import lombok.AllArgsConstructor;
+import main.wonprice.domain.member.dto.WishDeleteDto;
 import main.wonprice.domain.member.dto.WishPostDto;
 import main.wonprice.domain.member.dto.WishResponseDto;
 import main.wonprice.domain.member.entity.Member;
@@ -12,6 +13,7 @@ import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.mapper.ProductMapper;
 import main.wonprice.domain.product.service.ProductService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,13 +52,23 @@ public class WishController {
         response.forEach(
                 dto -> dto.setProductResponseDto(productMapper.fromEntity(productService.findOneById(dto.getProductId()))));
 
-        return ResponseEntity.ok(response);
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/wishes/{wish-id}")
     public ResponseEntity deleteWish(@PathVariable("wish-id") Long wishId) {
 
         wishService.removeWish(wishId);
+
+        return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
+    }
+
+    @PatchMapping("/wishes")
+    public ResponseEntity deleteWishes(@RequestBody WishDeleteDto deleteDto) {
+
+        List<Boolean> checkBox = deleteDto.getCheckBox();
+
+        wishService.removeWishes(checkBox);
 
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
