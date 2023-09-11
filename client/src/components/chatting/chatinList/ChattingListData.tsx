@@ -11,12 +11,14 @@ import { useQuery } from "react-query";
 import { webSocketConnectionState } from "../recoil/chatState";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 
 interface ChatList {
   chatRoomId: number;
   memberId: number;
   productId: number;
   deletedAt: string | null;
+  path: string | undefined;
   chatRoom: {
     memberId: number;
     name: string;
@@ -215,8 +217,28 @@ const ChattingListData: React.FC = () => {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {(error as MyError).message}</div>;
 
+  // sortedChatList가 undefined이거나 비어 있는지 확인
+  const firstChat = sortedChatList && sortedChatList.length > 0 ? sortedChatList[0] : null;
+
   return (
     <>
+      <div className="some-container">
+        {firstChat ? (
+          <div key={firstChat.chatRoomId} className="ProfileBox">
+            <img
+              className="ProfileImg"
+              src={
+                firstChat.path ||
+                "https://wonprice-test1.s3.ap-northeast-2.amazonaws.com/default_profile.png"
+              }
+              alt=""
+            />
+            <NotificationsIcon className="Icon" />
+          </div>
+        ) : (
+          <div>No chats available</div>
+        )}
+      </div>{" "}
       <div className="SearchBar">
         <SearchIcon />
         <Box>
@@ -229,7 +251,6 @@ const ChattingListData: React.FC = () => {
           />
         </Box>
       </div>
-
       <ul>
         {sortedChatList.map((chat) => (
           <Container key={chat.chatRoomId} onClick={() => handleRoomClick(chat.chatRoomId)}>

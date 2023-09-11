@@ -6,6 +6,7 @@ export type ChatList = {
   memberId: number;
   productId: number;
   deletedAt: string;
+  path: string | undefined;
 
   chatRoom: {
     memberId: number;

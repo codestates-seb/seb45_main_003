@@ -1,6 +1,5 @@
 import React from "react";
 import { styled } from "styled-components";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import ChattingListData from "./ChattingListData";
 import { COLOR } from "../../../constants/color";
 
@@ -23,6 +22,7 @@ const Container = styled.div`
     flex-direction: row;
     width: calc(100%);
     /* background-color: aqua; */
+    padding-bottom: 1rem;
     justify-content: space-between;
     align-items: center;
     .ProfileImg {
@@ -69,20 +69,12 @@ const Container = styled.div`
   .data {
     width: 100%;
   }
-  /* @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  } */
 `;
 
 const ChattingListFrom = (): JSX.Element => {
   return (
     <>
       <Container>
-        <div className="ProfileBox">
-          <img className="ProfileImg" src={""} alt="" />
-          <NotificationsIcon className="Icon" />
-        </div>
-
         <div className="data">
           <ChattingListData />
         </div>
