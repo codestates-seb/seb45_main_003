@@ -25,8 +25,11 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     int countProductByBuyerIdAndStatus(Long memberId, ProductStatus status);
 
     // 카테고리 ID를 기반으로 상품 목록 조회
-    @Query("SELECT p FROM Product p WHERE p.category.categoryId = :categoryId")
-    Page<Product> findProductsByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
+//    @Query("SELECT p FROM Product p WHERE p.category.categoryId = :categoryId")
+//    Page<Product> findProductsByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
+
+    @Query("SELECT p FROM Product p WHERE p.category.categoryId = :categoryId AND p.deletedAt IS NULL")
+    Page<Product> findNotDeletedProductsByCategoryId(@Param("categoryId") Long categoryId, Pageable pageable);
 
     // 상품의 상태에 따라 검색하는 메서드
     Page<Product> findProductsByStatus(ProductStatus status, Pageable pageable);
