@@ -18,6 +18,9 @@ public class Wish {
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(nullable = true)
+    private LocalDateTime deletedAt;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
