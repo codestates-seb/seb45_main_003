@@ -32,7 +32,7 @@ public class ChatService {
     private final ChatParticipantRepository chatParticipantRepository;
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
-    private final ReadSequenceRepository readSequenceRepository;
+//    private final ReadSequenceRepository readSequenceRepository;
 
     @Transactional
     public Long createChatRoom(ChatRoom chatRoom) {
