@@ -111,13 +111,19 @@ public class ProductController {
 
     // 특정 상품 조회
     @GetMapping("/{productId}")
-    public ResponseEntity findOnProduct(@PathVariable Long productId) {
+    public ResponseEntity findOnProduct(@PathVariable Long productId,
+                                        @RequestHeader(name = "Authorization", required = false) String accessToken) {
         Product product = productService.findOneById(productId);
 
         log.info("product : " + product.getProductPictures());
 
-        ProductResponseDto productResponseDto = productMapper.fromEntity(product);
-        return ResponseEntity.ok(productResponseDto);
+        if (memberService.isLogin(accessToken)) {
+            ProductResponseDto productResponseDto = productMapper.fromEntity(product, memberService.findLoginMember());
+            return ResponseEntity.ok(productResponseDto);
+        } else {
+            ProductResponseDto productResponseDto = productMapper.fromEntity(product);
+            return ResponseEntity.ok(productResponseDto);
+        }
     }
 
     // 상품 title 키워드로 검색
