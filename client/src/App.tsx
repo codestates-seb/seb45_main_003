@@ -54,9 +54,12 @@ function App() {
           element: <PostsList />,
           children: [
             {
+              path: "search",
+              element: <PostsList />,
+            },
+            {
               path: ":category",
               element: <PostsList />,
-              children: [],
             },
           ],
         },
