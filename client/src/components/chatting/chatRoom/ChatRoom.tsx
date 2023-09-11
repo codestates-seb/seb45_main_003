@@ -10,6 +10,7 @@ import { webSocketConnectionState } from "../recoil/chatState";
 import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import { useWebSocketConnection } from "../hook/useWebSocketConnection"; // 커스텀 훅 import
+import { useChatList } from "../hook/useChatList"; // Import custom hook
 
 const Container = styled.div`
   display: flex;
@@ -64,6 +65,7 @@ interface MessageData {
 // console.log(MessageBubble);
 
 const ChatRoom = () => {
+  const { refetch } = useChatList();
   const [searchParams] = useSearchParams();
   const chatRoomIdFromState = useRecoilValue(currentChatRoomIdState);
   const roomId = searchParams.get("roomId") || chatRoomIdFromState;
@@ -86,6 +88,8 @@ const ChatRoom = () => {
   const handleSendMessage = (message: string) => {
     if (client && client.connected) {
       client.send(`/app/chat/${roomId}`, JSON.stringify({ content: message, senderId: Id }), {});
+      // Refetch the chat list
+      refetch();
     }
   };
   return (

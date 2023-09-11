@@ -55,8 +55,8 @@ const Container = styled.button`
   justify-content: start;
   margin-bottom: 1.25rem;
   .ProfileImg {
-    width: 1.875rem;
-    height: 1.875rem;
+    width: 1.5rem;
+    height: 1.5rem;
     flex-shrink: 0;
     border-radius: 3rem;
     border: 1px solid var(--muted-color, #bdbdbd);
@@ -169,6 +169,10 @@ const ChattingListData: React.FC = () => {
       fetchData();
     }
   }, [isLoggedIn]); // 로그인 상태가 변경될 때마다 useEffect를 실행합니다.
+
+  useEffect(() => {
+    console.log("Chat list has been updated:", chatList);
+  }, [chatList]);
 
   const fetchChatList = async () => {
     const accessToken = localStorage.getItem("accessToken");
