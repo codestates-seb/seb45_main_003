@@ -1,6 +1,7 @@
 package main.wonprice.domain.member.controller;
 
 import lombok.AllArgsConstructor;
+import main.wonprice.domain.member.dto.WishDeleteDto;
 import main.wonprice.domain.member.dto.WishPostDto;
 import main.wonprice.domain.member.dto.WishResponseDto;
 import main.wonprice.domain.member.entity.Member;
@@ -57,6 +58,16 @@ public class WishController {
     public ResponseEntity deleteWish(@PathVariable("wish-id") Long wishId) {
 
         wishService.removeWish(wishId);
+
+        return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
+    }
+
+    @DeleteMapping("/wishes")
+    public ResponseEntity deleteWishes(@RequestBody WishDeleteDto deleteDto) {
+
+        List<Boolean> checkBox = deleteDto.getCheckBox();
+
+        wishService.removeWishes(checkBox);
 
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
