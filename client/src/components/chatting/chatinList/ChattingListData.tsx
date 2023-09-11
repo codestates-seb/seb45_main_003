@@ -225,14 +225,7 @@ const ChattingListData: React.FC = () => {
       <div className="some-container">
         {firstChat ? (
           <div key={firstChat.chatRoomId} className="ProfileBox">
-            <img
-              className="ProfileImg"
-              src={
-                firstChat.path ||
-                "https://wonprice-test1.s3.ap-northeast-2.amazonaws.com/default_profile.png"
-              }
-              alt=""
-            />
+            <img className="ProfileImg" src={firstChat.path || "default_image_path_here"} alt="" />
             <NotificationsIcon className="Icon" />
           </div>
         ) : (
