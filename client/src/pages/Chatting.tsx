@@ -1,8 +1,12 @@
-// import ChattingList from "../components/chatting/ChattingList";
-import Img1 from "../assets/images/chatting/ProfilrImg.svg";
-import ChatRoom from "../components/chatting/ChatRoom";
-import ChattingListFrom from "../components/chatting/ChattingListFrom";
+import ChattingListFrom from "../components/chatting/chatinList/ChattingListFrom";
 import { styled } from "styled-components";
+import StartChatRoom from "../components/chatting/chatRoom/StartChatRoom";
+import { currentChatRoomIdState } from "../components/chatting/recoil/chatState";
+import { useRecoilValue } from "recoil";
+import ChatRoom from "../components/chatting/chatRoom/ChatRoom";
+import { useParams } from "react-router-dom";
+
+// ... 다른 import 문
 
 const Container = styled.div`
   display: flex;
@@ -20,11 +24,22 @@ const Container = styled.div`
 `;
 
 const Chatting = (): JSX.Element => {
+  const chatRoomId = useRecoilValue(currentChatRoomIdState);
+  const { id } = useParams<{ id: string }>(); // URL에서 id 파라미터를 가져옵니다.
+
   return (
     <>
       <Container>
-        <ChattingListFrom imgSrc={Img1} />
-        <ChatRoom />
+        <ChattingListFrom />
+        {chatRoomId ? (
+          id === chatRoomId.toString() ? (
+            <ChatRoom />
+          ) : (
+            <StartChatRoom />
+          )
+        ) : (
+          <StartChatRoom />
+        )}{" "}
       </Container>
     </>
   );
