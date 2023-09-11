@@ -1,10 +1,10 @@
 package main.wonprice.domain.member.service;
 
 import lombok.AllArgsConstructor;
+import main.wonprice.auth.jwt.JwtTokenizer;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.member.dto.MemberResponseDto;
 import main.wonprice.domain.member.entity.Member;
-import main.wonprice.domain.member.entity.MemberStatus;
 import main.wonprice.domain.member.repository.MemberRepository;
 import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.repository.ProductRepository;
@@ -30,6 +30,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
     private final CustomAuthorityUtils authorityUtils;
+    private final JwtTokenizer tokenizer;
 
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
@@ -141,6 +142,24 @@ public class MemberService {
         }
 
         return loginMember.get();
+    }
+
+    /*
+    로그인이 되어 있는지
+    되어 있다면 들어온 토큰 값은 유효한 지 검증
+    */
+    public boolean isLogin(String accessToken) {
+
+        if (accessToken == null) {
+            return false;
+        }
+        try { // 토큰 검증
+            String jws = accessToken.replace("Bearer ", "");
+            tokenizer.verifySignature(jws, tokenizer.encodeBase64SecretKey(tokenizer.getSecretKey()));
+        } catch (BusinessLogicException be) {
+            return false;
+        }
+        return true;
     }
 
     public void validatePassword(String password) {
