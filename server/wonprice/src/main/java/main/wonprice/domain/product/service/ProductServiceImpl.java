@@ -8,8 +8,12 @@ import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.repository.ProductRepository;
+import main.wonprice.domain.product.repository.ProductSpecification;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -47,33 +51,56 @@ public class ProductServiceImpl implements ProductService {
 
     // 전체 상품 조회
     @Override
-    public Page<Product> findAll(Pageable pageable) {
-        return productRepository.findAll(pageable);
+    public Page<Product> findAll(Specification<Product> spec, Pageable pageable) {
+        return productRepository.findAll(spec, pageable);
     }
-
 
     // 카테고리별 전체 상품 조회
     @Override
     public Page<Product> getProductsByCategory(Long categoryId, Pageable pageable) {
-        return productRepository.findProductsByCategoryId(categoryId, pageable);
+        return productRepository.findNotDeletedProductsByCategoryId(categoryId, pageable);
     }
 
-    // 상품 상태 별 조회 (거래중:BEFORE, 거래완료:AFTER)
+
+    // 거래 가능한 상품 중 경매 중인 상품 / 즉시 구매만 가능한 상품을 구분해서 조회 status : BEFORE
+    // 삭제된 게시글은 조회되지 않게..
     @Override
-    public Page<Product> getProductsByStatus(ProductStatus status, Pageable pageable) {
-        return productRepository.findProductsByStatus(status, pageable);
+    public Page<Product> getAvailableProducts(String type, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+
+        Specification<Product> specification = ProductSpecification.notDeletedAndStatus(ProductStatus.BEFORE);
+
+        if ("immediatelyBuy".equalsIgnoreCase(type)) {
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("auction"), false));
+        } else if ("auction".equalsIgnoreCase(type)) {
+            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("auction"), true));
+        }
+
+        return productRepository.findAll(specification, pageable);
     }
 
-    // 경매 중인 상품 / 즉시 구매만 가능한 상품을 구분해서 조회
+    // 거래 완료된 상품만 조회 status : AFTER
+    // 삭제된 게시글은 조회되지 않게..
     @Override
-    public Page<Product> getProductsByStatusAndAuction(ProductStatus status, boolean auction, Pageable pageable) {
-        return productRepository.findProductsByStatusAndAuction(status, auction, pageable);
+    public Page<Product> getCompletedProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+
+        Specification<Product> specification = ProductSpecification.notDeletedAndStatus(ProductStatus.AFTER);
+
+        return productRepository.findAll(specification, pageable);
     }
 
     // 상품 제목 키워드 별로 조회
     @Override
-    public Page<Product> searchProductsByTitle(String keyword, Pageable pageable) {
-        return productRepository.findByTitleContaining(keyword, pageable);
+    public Page<Product> searchProductsByTitle(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+
+        Specification<Product> specification = Specification.where(ProductSpecification.notDeleted())
+                .and((root, query, criteriaBuilder) ->
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("title")), "%" + keyword.toLowerCase() + "%")
+                );
+
+        return productRepository.findAll(specification, pageable);
     }
 
     /*
@@ -118,26 +145,26 @@ public class ProductServiceImpl implements ProductService {
     }
 
     // 상품의 찜 갯수
-    public Long getProductWishCount(Long productId){
+    public Long getProductWishCount(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new EntityNotFoundException("Product not found with Id: " + productId));
         return product.getWishCount();
     }
 
-//    회원이 등록한 상품 목록
+    //    회원이 등록한 상품 목록
     @Override
     public List<Product> findMembersProduct(Pageable pageable, Member member) {
 
         return productRepository.findAllBySeller(member, pageable).getContent();
     }
 
-//    회원이 판매 완료한 상품 목록
+    //    회원이 판매 완료한 상품 목록
     public List<Product> findMemberSold(Pageable pageable, Member member) {
 
         return productRepository.findAllBySellerAndStatus(member, ProductStatus.AFTER, pageable).getContent();
     }
 
-//    회원이 구매 완료한 상품 목록
+    //    회원이 구매 완료한 상품 목록
     @Override
     public List<Product> findMemberBought(Pageable pageable, Long memberId) {
         return productRepository.findAllByBuyerIdAndStatus(memberId, ProductStatus.AFTER, pageable).getContent();
