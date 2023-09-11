@@ -55,7 +55,7 @@ public class ProductServiceImpl implements ProductService {
     // 카테고리별 전체 상품 조회
     @Override
     public Page<Product> getProductsByCategory(Long categoryId, Pageable pageable) {
-        return productRepository.findProductsByCategoryId(categoryId, pageable);
+        return productRepository.findNotDeletedProductsByCategoryId(categoryId, pageable);
     }
 
     // 상품 상태 별 조회 (거래중:BEFORE, 거래완료:AFTER)
@@ -75,6 +75,7 @@ public class ProductServiceImpl implements ProductService {
     public Page<Product> searchProductsByTitle(String keyword, Pageable pageable) {
         return productRepository.findByTitleContaining(keyword, pageable);
     }
+
 
     /*
         특정 상품 조회
