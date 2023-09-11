@@ -135,7 +135,7 @@ const BookmarkContentContainer = styled.form`
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
-          align-items: center;
+          align-items: flex-start;
           gap: 0.625rem;
           font-size: ${FONT_SIZE.font_16};
           color: ${COLOR.mediumText};
@@ -160,13 +160,15 @@ const BookmarkContentContainer = styled.form`
 `;
 
 const BookmarkContent = (): JSX.Element => {
-  const { register, handleSubmit, watch, setValue } = useForm<checkInputType>();
+  const { register, handleSubmit, watch, setValue, getValues } = useForm<checkInputType>();
   const checkboxes = watch("checkboxes", []);
   const selectAll = watch("selectAll", false);
+  //전체 선택 함수
   const handleSelectAll = (checked: boolean) => {
     setValue("selectAll", checked);
     setValue("checkboxes", Array(bookmarkList?.length).fill(checked));
   };
+  //체크박스 관리 함수
   const handleCheckBox = (index: number, checked: boolean) => {
     const checkedBoxes = [...checkboxes];
     checkedBoxes[index] = checked;
@@ -174,14 +176,23 @@ const BookmarkContent = (): JSX.Element => {
     setValue("selectAll", checkedAll);
     setValue("checkboxes", checkedBoxes);
   };
-  const sendBookmarkList = (data: checkInputType) => {
-    console.log(data);
-  };
+  //선택한 찜목록 취소 요청함수
+  const sendBookmarkMutation = useMutation(
+    async (data: checkInputType) => {
+      await authInstance.patch(`/wishes`, { checkbox: data.checkboxes });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("bookmark");
+        setValue("checkboxes", changedCheckboxes);
+      },
+    },
+  );
   const navigate = useNavigate();
   const location = useLocation();
   const Id = location.pathname.slice(8);
   const loginUserId = localStorage.getItem("Id");
-  // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
+  //체크박스를 사용항 찜취소시에 체크박스 상태들을 저장해둘 상태
   const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
   const queryClient = useQueryClient();
   const {
@@ -205,7 +216,9 @@ const BookmarkContent = (): JSX.Element => {
     },
     { refetchInterval: 30000, refetchIntervalInBackground: true },
   );
+  //체크박스를 선택한적 있으면 해당체크박스를 refetch해도 유지, refetch는 30초마다
   console.log(selectAll, checkboxes, bookmarkList, changedCheckboxes);
+  // 찜취소버튼으로 취소요청하는 함수
   const bookmarkMutation = useMutation(
     async (wishId: number) => {
       const deletedIndex = bookmarkList?.findIndex((el) => el.wishId === wishId);
@@ -221,7 +234,9 @@ const BookmarkContent = (): JSX.Element => {
     },
   );
   return (
-    <BookmarkContentContainer onSubmit={handleSubmit(sendBookmarkList)}>
+    <BookmarkContentContainer
+      onSubmit={handleSubmit(() => sendBookmarkMutation.mutateAsync(getValues()))}
+    >
       <div className="topContainer">
         <p className="menuTitle">찜 목록</p>
         {loginUserId === Id && (
