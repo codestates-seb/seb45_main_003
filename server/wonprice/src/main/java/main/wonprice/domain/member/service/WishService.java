@@ -11,8 +11,10 @@ import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -43,7 +45,10 @@ public class WishService {
 
     public List<Wish> findMemberWish(Pageable pageable, Member member) {
 
-        return wishRepository.findByMember(pageable, member).getContent();
+        return wishRepository.findByMember(pageable, member)
+                .stream()
+                .filter(wish -> wish.getDeletedAt() != null)
+                .collect(Collectors.toList());
     }
 
     public void removeWish(Long wishId) {
@@ -63,6 +68,18 @@ public class WishService {
         // ----------------
 
         memberService.validateOwner(findWish.get().getMember().getMemberId());
-        wishRepository.deleteById(wishId);
+        wish.setDeletedAt(LocalDateTime.now());
+    }
+
+    public void removeWishes(List<Boolean> checkBox) {
+
+        Member loginMember = memberService.findLoginMember();
+        List<Wish> wishes = wishRepository.findByMember(loginMember);
+
+        for (int i = 0; i < checkBox.size(); i++) {
+            if (checkBox.get(i)) {
+                removeWish(wishes.get(i).getWishId());
+            }
+        }
     }
 }
