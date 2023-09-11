@@ -1,9 +1,10 @@
+// 채팅룸 컴포넌트
 import axios from "axios";
-import { currentChatRoomIdState } from "./chatState";
+import { currentChatRoomIdState } from "../recoil/chatState";
 import { useRecoilValue } from "recoil";
 import React, { useState, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
-import FormatTimeOrDate from "./FormatTimeOrDate";
+import FormatTimeOrDate from "../hook/FormatTimeOrDate";
 
 interface Message {
   messageId: number;

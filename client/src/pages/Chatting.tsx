@@ -1,12 +1,12 @@
 // import ChattingList from "../components/chatting/ChattingList";
 import Img1 from "../assets/images/chatting/ProfilrImg.svg";
 // import ChatRoom from "../components/chatting/ChatRoom";
-import ChattingListFrom from "../components/chatting/ChattingListFrom";
+import ChattingListFrom from "../components/chatting/chatinList/ChattingListFrom";
 import { styled } from "styled-components";
-import StartChatRoom from "../components/chatting/StartChatRoom";
-import { currentChatRoomIdState } from "../components/chatting/chatState";
+import StartChatRoom from "../components/chatting/chatRoom/StartChatRoom";
+import { currentChatRoomIdState } from "../components/chatting/recoil/chatState";
 import { useRecoilValue } from "recoil";
-import ChatRoom from "../components/chatting/ChatRoom";
+import ChatRoom from "../components/chatting/chatRoom/ChatRoom";
 
 const Container = styled.div`
   display: flex;

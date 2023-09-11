@@ -1,14 +1,14 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
 import axios from "axios";
 import { useRecoilState, useRecoilValue, RecoilState } from "recoil";
-import { loginState } from "../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
-import { chatListState } from "./chatState";
+import { loginState } from "../../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
+import { chatListState } from "../recoil/chatState";
 import styled from "styled-components";
-import { currentChatRoomIdState } from "./chatState";
-import FormatTimeOrDate from "./FormatTimeOrDate";
-import { COLOR } from "../../constants/color";
+import { currentChatRoomIdState } from "../recoil/chatState";
+import FormatTimeOrDate from "../hook/FormatTimeOrDate";
+import { COLOR } from "../../../constants/color";
 import { useQuery } from "react-query";
-import { webSocketConnectionState } from "./chatState";
+import { webSocketConnectionState } from "../recoil/chatState";
 import SearchIcon from "@mui/icons-material/Search";
 
 interface ChatList {

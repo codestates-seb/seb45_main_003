@@ -3,9 +3,9 @@ import styled from "styled-components"; // 수정된 부분
 import SendIcon from "@mui/icons-material/Send";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { COLOR } from "../../constants/color";
+import { COLOR } from "../../../constants/color";
 import { useRecoilState } from "recoil";
-import { chatState } from "./chatState";
+import { chatState } from "../recoil/chatState";
 
 // import Button from "../../components/common/Button";
 
@@ -134,11 +134,6 @@ const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
-
-  // const handleSendClick = () => {
-  //   onSendMessage(message);
-  //   setMessage("");
-  // };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {

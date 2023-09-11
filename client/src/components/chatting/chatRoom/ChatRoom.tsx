@@ -3,11 +3,11 @@ import styled from "styled-components";
 import ChatInput from "./ChatInput";
 import * as Webstomp from "webstomp-client";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { currentChatRoomIdState, chatState } from "./chatState";
+import { currentChatRoomIdState, chatState } from "../recoil/chatState";
 import MessageBubble from "./MessageBubble";
 import ChatRoomHttp from "./ChatRoomHttp";
-import FormatTimeOrDate from "./FormatTimeOrDate";
-import { webSocketConnectionState } from "./chatState";
+import FormatTimeOrDate from "../hook/FormatTimeOrDate";
+import { webSocketConnectionState } from "../recoil/chatState";
 import moment from "moment";
 
 const Container = styled.div`

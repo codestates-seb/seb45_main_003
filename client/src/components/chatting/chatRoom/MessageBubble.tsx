@@ -1,5 +1,5 @@
+// 말풍선 컴포넌트
 import styled from "styled-components";
-// import NoMessages from "../../assets/images/chatting/NoMessages.svg";
 
 const BubbleWrapper = styled.div<{ owner: "user" | "other" }>`
   display: flex;

@@ -2,7 +2,7 @@ import React from "react";
 import { styled } from "styled-components";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import ChattingListData from "./ChattingListData";
-import { COLOR } from "../../constants/color";
+import { COLOR } from "../../../constants/color";
 
 interface ChattingListProps {
   imgSrc: string;
