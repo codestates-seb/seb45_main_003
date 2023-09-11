@@ -1,6 +1,7 @@
 import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { RecoilRoot } from "recoil";
+import { useRecoilValue } from "recoil";
+import { loginState } from "./atoms/atoms";
 import Chatting from "./pages/Chatting";
 import CreatePost from "./pages/CreatePost";
 import ErrorIndication from "./pages/ErrorIndication";
@@ -13,6 +14,8 @@ import Review from "./pages/Review";
 import Root from "./pages/Root";
 
 function App() {
+  const isLogin = useRecoilValue(loginState);
+
   const routes: RouteObject[] = [
     // 1) 메인 홈 페이지
     // {
@@ -45,7 +48,7 @@ function App() {
         // 4) 게시물 작성
         {
           path: "/create-post",
-          element: <CreatePost />,
+          element: isLogin ? <CreatePost /> : <LogIn />,
         },
 
         // 5) 게시물 리스트 페이지
@@ -73,13 +76,13 @@ function App() {
         // 7) 채팅 페이지
         {
           path: "/chat/:id",
-          element: <Chatting />,
+          element: isLogin ? <Chatting /> : <LogIn />,
         },
 
         // 8) 후기,리뷰 페이지
         {
           path: "/review/:id",
-          element: <Review />,
+          element: isLogin ? <Review /> : <LogIn />,
         },
 
         // 9) 에러 페이지
@@ -93,11 +96,7 @@ function App() {
 
   const router = createBrowserRouter(routes);
 
-  return (
-    <RecoilRoot>
-      <RouterProvider router={router} />
-    </RecoilRoot>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;
