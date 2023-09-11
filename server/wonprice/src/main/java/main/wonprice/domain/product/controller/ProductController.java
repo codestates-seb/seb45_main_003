@@ -127,10 +127,9 @@ public class ProductController {
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
-        Page<Product> products = productService.searchProductsByTitle(keyword, pageable);
-        Page<ProductResponseDto> productResponseDtoList = products.map(productMapper::fromEntity);
-        return ResponseEntity.ok(productResponseDtoList);
+        Page<Product> products = productService.searchProductsByTitle(keyword, page, size);
+        Page<ProductResponseDto> productResponseDtoPage = products.map(productMapper::fromEntity);
+        return ResponseEntity.ok(productResponseDtoPage);
     }
 
     // 상품 게시글 삭제
