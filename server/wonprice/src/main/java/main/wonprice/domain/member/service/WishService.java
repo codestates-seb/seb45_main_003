@@ -25,7 +25,16 @@ public class WishService {
 
     public Wish addWish(Wish wish) {
         // 지연 코드 추가 ---
+
+        Member member = wish.getMember();
         Product product = wish.getProduct();
+
+        Boolean hasWish = wishRepository.existsByMemberAndProduct(member, product);
+
+        if(hasWish){
+            throw  new BusinessLogicException(ExceptionCode.WISH_ALREADY_EXISTS);
+        }
+
         product.setWishCount(product.getWishCount() +1);
         productRepository.save(product);
         // ----------------

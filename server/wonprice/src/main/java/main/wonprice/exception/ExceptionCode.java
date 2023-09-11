@@ -12,6 +12,7 @@ public enum ExceptionCode {
     MEMBER_NOT_AUTHORIZED(403, "Member not Authorized"),
     INVALID_PASSWORD(403, "Invalid Password"),
     WISH_NOT_FOUND(404, "Wish not found"),
+    WISH_ALREADY_EXISTS(409, "Wish already exists"),
     REVIEW_NOT_FOUND(404, "Review not found"),
     REVIEW_EXISTS(409, "Review exists");
 

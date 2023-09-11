@@ -6,7 +6,7 @@ type ItemDescriptionProps = {
 };
 
 const StyledItemDescription = styled.section`
-  width: 100%;
+  width: 60%;
 
   h2 {
     border-bottom: 3px solid ${COLOR.darkText};

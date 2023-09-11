@@ -3,6 +3,7 @@ package main.wonprice.domain.member.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.picture.entity.MemberPicture;
 import main.wonprice.domain.picture.entity.Picture;
@@ -67,6 +68,9 @@ public class Member {
     @OneToOne(mappedBy = "member")
     private MemberPicture picture; // 프로필 이미지
 
+    @OneToMany(mappedBy = "member")
+    private List<ChatParticipant> chatParticipant;
+
 //    @OneToMany(mappedBy = "seller")
 //    private List<ChatRoom> chatRooms = new ArrayList<>();
 
@@ -74,4 +78,12 @@ public class Member {
         this.name = name;
         this.email = email;
     }
+
+    @Column(nullable = false)
+    private Long writtenReviewsCount = 0L; // 사용자가 작성한 리뷰 개수
+
+    @Column(nullable = false)
+    private Long receivedReviewsCount = 0L; // 사용자가 받은 리뷰 개수
+
+    private int tradeCount; // 거래 완료 횟수
 }

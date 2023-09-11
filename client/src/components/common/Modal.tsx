@@ -20,7 +20,17 @@ const StyledModal = styled.div`
   align-items: center;
   justify-content: center;
 
+  h4 {
+    margin: 0 0 0.75rem;
+    font-size: 1.25rem;
+  }
+
   section {
+    display: flex;
+    flex-flow: column;
+    box-sizing: border-box;
+    min-width: 25rem;
+    min-height: 180px;
     position: relative;
     max-width: 37.5rem;
     background: #fff;
@@ -32,6 +42,14 @@ const StyledModal = styled.div`
       top: 0;
       right: 0;
       cursor: pointer;
+    }
+
+    .button,
+    button {
+      margin: auto 0 0 auto;
+      display: flex;
+      flex-flow: row;
+      gap: 0.5rem;
     }
   }
 `;

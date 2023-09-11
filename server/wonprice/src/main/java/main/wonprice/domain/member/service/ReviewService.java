@@ -36,6 +36,9 @@ public class ReviewService {
             product.setBuyerReview(true);
             product.getSeller().setReputation(product.getSeller().getReputation() + review.getScore());
 
+            review.getPostMember().setWrittenReviewsCount(review.getPostMember().getWrittenReviewsCount() + 1);
+            product.getSeller().setReceivedReviewsCount(product.getSeller().getReceivedReviewsCount() + 1);
+
             return repository.save(review);
         }
 //        판매자가 리뷰 작성
@@ -45,12 +48,13 @@ public class ReviewService {
 
             buyer.setReputation(buyer.getReputation() + review.getScore());
 
+            review.getPostMember().setWrittenReviewsCount(review.getPostMember().getWrittenReviewsCount() + 1);
+            buyer.setReceivedReviewsCount(buyer.getReceivedReviewsCount() + 1);
+
             return repository.save(review);
-        }
-        else if (product.getBuyerReview() || product.getSellerReview()) {
+        } else if (product.getBuyerReview() || product.getSellerReview()) {
             throw new BusinessLogicException(ExceptionCode.REVIEW_EXISTS);
-        }
-        else {
+        } else {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
         }
     }
