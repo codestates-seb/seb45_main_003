@@ -34,10 +34,10 @@ public interface ProductService {
 
     Page<Product> getProductsByCategory(Long categoryId, Pageable pageable);
 
-    Page<Product> getProductsByStatus(ProductStatus status, Pageable pageable);
-
-    Page<Product> getProductsByStatusAndAuction(ProductStatus productStatus, boolean auction, Pageable pageable);
-
     Page<Product> searchProductsByTitle(String keyword, Pageable pageable);
+
+    Page<Product> getAvailableProducts(String type, int page, int size);
+
+    Page<Product> getCompletedProducts(int page, int size);
 }
 
