@@ -7,9 +7,11 @@ import main.wonprice.domain.chat.dto.message.MessageDto;
 import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.chat.entity.Message;
+import main.wonprice.domain.chat.entity.ReadSequence;
 import main.wonprice.domain.chat.repository.ChatParticipantRepository;
 import main.wonprice.domain.chat.repository.ChatRoomRepository;
 import main.wonprice.domain.chat.repository.MessageRepository;
+import main.wonprice.domain.chat.repository.ReadSequenceRepository;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class ChatService {
     private final ChatParticipantRepository chatParticipantRepository;
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
+    private final ReadSequenceRepository readSequenceRepository;
 
     @Transactional
     public Long createChatRoom(ChatRoom chatRoom) {
@@ -62,7 +65,6 @@ public class ChatService {
 
 //        deleteChatRoom.setDeletedAt(LocalDateTime.now());
     }
-
     public List<MessageDto> findMessages(Long chatRoomId) {
         ChatRoom findChatRoom = findChatRoom(chatRoomId);
 
@@ -80,4 +82,14 @@ public class ChatService {
 
         return findChatRoom.orElseThrow();
     }
+
+    @Transactional
+    public void updateSequence(Member member, ChatRoom chatRoom, Long messageId) {
+
+        ChatParticipant findChatParticipant = chatParticipantRepository.findByMemberAndChatRoom(member, chatRoom);
+
+        findChatParticipant.setCurrentSequence(messageId);
+    }
+
+
 }
