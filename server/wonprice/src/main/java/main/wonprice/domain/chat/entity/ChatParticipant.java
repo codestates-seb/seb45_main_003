@@ -6,6 +6,7 @@ import main.wonprice.domain.member.entity.Member;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter @Setter
@@ -24,4 +25,14 @@ public class ChatParticipant {
     @ManyToOne
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
+
+    private Long currentSequence;
+
+
+    public Integer getUnreadMessages() {
+        return chatRoom.getMessages().stream()
+                .filter(message -> message.getMessageId() > currentSequence)
+                .collect(Collectors.toList())
+                .size();
+    }
 }

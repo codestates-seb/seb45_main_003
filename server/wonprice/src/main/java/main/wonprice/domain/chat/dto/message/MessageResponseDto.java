@@ -7,11 +7,13 @@ import java.time.LocalDateTime;
 
 @Getter
 public class MessageResponseDto {
+    private Long messageId;
     private Long senderId;
     private String content;
     private LocalDateTime createdAt;
 
     public MessageResponseDto(Message message) {
+        this.messageId = message.getMessageId();
         this.senderId = message.getSenderId();
         this.content = message.getContent();
         this.createdAt = message.getCreatedAt();
