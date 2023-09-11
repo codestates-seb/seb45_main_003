@@ -3,6 +3,7 @@ package main.wonprice.domain.member.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.picture.entity.MemberPicture;
 import main.wonprice.domain.picture.entity.Picture;
@@ -66,6 +67,9 @@ public class Member {
 
     @OneToOne(mappedBy = "member")
     private MemberPicture picture; // 프로필 이미지
+
+    @OneToMany(mappedBy = "member")
+    private List<ChatParticipant> chatParticipant;
 
 //    @OneToMany(mappedBy = "seller")
 //    private List<ChatRoom> chatRooms = new ArrayList<>();
