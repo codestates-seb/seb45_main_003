@@ -142,7 +142,7 @@ const StyledModal = styled.form`
 const ProfileContent = (): JSX.Element => {
   const loginUserId = localStorage.getItem("Id");
   const location = useLocation();
-  const Id = location.pathname.slice(9);
+  const Id = location.pathname.slice(8);
   const [pass, setPass] = useState(false);
   const {
     register,
@@ -161,7 +161,11 @@ const ProfileContent = (): JSX.Element => {
     error,
     data: profile,
   } = useQuery<Profile>("profile", async () => {
-    const res = await defaultInstance.get(`/members/${Id}`);
+    const res = await defaultInstance.get(`/members/${Id}`, {
+      headers: {
+        "ngrok-skip-browser-warning": "69420",
+      },
+    });
     return res.data;
   });
   const passwordMutation = useMutation(

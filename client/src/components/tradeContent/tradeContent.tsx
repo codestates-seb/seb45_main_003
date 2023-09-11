@@ -123,7 +123,7 @@ const TradeContent = (): JSX.Element => {
   const mypageMode = useRecoilValue(profileTabState);
   const loginUserId = localStorage.getItem("Id");
   const location = useLocation();
-  const Id = location.pathname.slice(9);
+  const Id = location.pathname.slice(8);
   const result = useQueries([
     {
       queryKey: "purchase",

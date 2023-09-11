@@ -179,7 +179,7 @@ const BookmarkContent = (): JSX.Element => {
   };
   const navigate = useNavigate();
   const location = useLocation();
-  const Id = location.pathname.slice(9);
+  const Id = location.pathname.slice(8);
   const loginUserId = localStorage.getItem("Id");
   // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
   const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
@@ -191,7 +191,11 @@ const BookmarkContent = (): JSX.Element => {
   } = useQuery<bookmark[]>(
     "bookmark",
     async () => {
-      const res = await defaultInstance.get(`/members/${Id}/wishes`);
+      const res = await defaultInstance.get(`/members/${Id}/wishes`, {
+        headers: {
+          "ngrok-skip-browser-warning": "69420",
+        },
+      });
       if (checkboxes.some((el) => el === true)) {
         setValue("checkboxes", checkboxes);
       } else {

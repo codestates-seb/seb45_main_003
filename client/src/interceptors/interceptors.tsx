@@ -21,19 +21,21 @@ const onErrorResponse = async (err: AxiosError | Error): Promise<AxiosError> => 
   const { response } = _err;
   const originalConfig = _err?.config;
 
-  if (response && (response.status === 401 || response?.status === 500)) {
+  if (response && response.status === 401) {
     try {
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/refresh`, {
         headers: {
           Refresh: localStorage.getItem("refreshToken"),
+          "ngrok-skip-browser-warning": "69420",
         },
       });
       if (res.status === 200) {
         localStorage.setItem("accessToken", res.headers["authorization"]);
+        console.log("refresh success");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 500) {
+        if (error.response?.status === 401) {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
           localStorage.removeItem("Id");

@@ -9,7 +9,12 @@ import Empty from "../common/Empty";
 import { useQueries } from "react-query";
 import Loading from "../common/Loading";
 import Error from "../common/Error";
+// import { usePagination } from "../../hooks/usePagination";
 
+// interface Data {
+//   content: products[];
+//   totalPages: number;
+// }
 interface image {
   imageId: number;
   path: string;
@@ -121,26 +126,46 @@ const PostListTab = (): JSX.Element => {
   const [menu, setMenu] = useState("cell");
   const navigate = useNavigate();
   const location = useLocation();
-  const Id = location.pathname.slice(9);
+  const Id = location.pathname.slice(8);
+  // const {
+  //   currentPage,
+  //   totalPages,
+  //   setTotalPages,
+  //   pageChangeHandler,
+  //   prevPageHandler,
+  //   nextPageHandler,
+  // } = usePagination();
   const result = useQueries([
     {
-      queryKey: "cellPost",
+      queryKey: ["cellPost"],
       queryFn: async () => {
-        const res = await defaultInstance.get(`/members/${Id}/products`);
+        const res = await defaultInstance.get(`/members/${Id}/products`, {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        });
         return res.data;
       },
     },
     {
-      queryKey: "leaveReview",
+      queryKey: ["leaveReview"],
       queryFn: async () => {
-        const res = await defaultInstance.get(`/members/${Id}/reviews/post`);
+        const res = await defaultInstance.get(`/members/${Id}/reviews/post`, {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        });
         return res.data;
       },
     },
     {
-      queryKey: "receivedReview",
+      queryKey: ["receivedReview"],
       queryFn: async () => {
-        const res = await defaultInstance.get(`/members/${Id}/reviews`);
+        const res = await defaultInstance.get(`/members/${Id}/reviews`, {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        });
         return res.data;
       },
     },
