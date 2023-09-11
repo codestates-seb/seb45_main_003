@@ -261,15 +261,17 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                 <span>{wishCount}</span>
               </div>
             </div>
-            <Button
-              $icon={<HeartIcon />}
-              $text="찜"
-              $design="yellow"
-              type="button"
-              onClick={() => {
-                isLogin ? handleWishlist(data.productId) : redirect;
-              }}
-            />
+            {isLogin && Number(userid) !== data.memberId && (
+              <Button
+                $icon={<HeartIcon />}
+                $text="찜"
+                $design="yellow"
+                type="button"
+                onClick={() => {
+                  isLogin ? handleWishlist(data.productId) : redirect;
+                }}
+              />
+            )}
           </div>
           {data.auction && (
             <div className="auction">
@@ -278,12 +280,14 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                   <span>현재 입찰가</span>
                   <span className="price_number">{data.currentAuctionPrice?.toLocaleString()}</span>
                 </div>
-                <Button
-                  $text="입찰하기"
-                  $design="black"
-                  type="button"
-                  onClick={isLogin ? undefined : redirect}
-                />
+                {isLogin && Number(userid) !== data.memberId && (
+                  <Button
+                    $text="입찰하기"
+                    $design="black"
+                    type="button"
+                    onClick={isLogin ? undefined : redirect}
+                  />
+                )}
               </div>
               <div className="create_at">
                 <div className="time">
@@ -305,12 +309,14 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
               <span className="price_number_title gray">즉시 구매가</span>
               <span className="price_number">{data.immediatelyBuyPrice.toLocaleString()}</span>
             </div>
-            <Button
-              $text="즉시구매"
-              $design="black"
-              type="button"
-              onClick={isLogin ? undefined : redirect}
-            />
+            {isLogin && Number(userid) !== data.memberId && (
+              <Button
+                $text="즉시구매"
+                $design="black"
+                type="button"
+                onClick={isLogin ? undefined : redirect}
+              />
+            )}
           </div>
         </div>
       </StyledItemStatus>
