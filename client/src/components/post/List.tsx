@@ -46,6 +46,9 @@ export type ProductData = {
   closedAt?: string;
   sellerName?: string;
   wishCount?: number;
+  sellerTradeCount?: number;
+  sellerWrittenReviewsCount?: number;
+  sellerReceivedReviewsCount?: number;
 };
 
 const StyledList = styled.section`
@@ -74,6 +77,12 @@ const StyledList = styled.section`
     }
   }
 
+  .list_top_right {
+    display: flex;
+    flex-flow: row;
+    gap: 0.75rem;
+  }
+
   .empty_message {
     margin: 1rem 0 0;
   }
@@ -100,13 +109,19 @@ const List = (): JSX.Element => {
     async () => {
       //쿼리스트링 불러오기
       const currentPageParam = parseInt(searchParams.get("page") || "1");
-      const pageQueryParam = `?page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
+      const currentKeywordParam = searchParams.get("keyword") || "";
+      const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
 
-      //전체 상품과 카테고리 구분해서 호출
-      const path =
-        location.pathname === "/product"
-          ? API_PATHS.products.default("") + pageQueryParam
-          : API_PATHS.products.category(CATEGORY[currentCategory].id) + pageQueryParam;
+      //전체 상품과 카테고리, 검색 여부 구분해서 호출
+      let path = "";
+
+      if (location.pathname === "/product") {
+        path = API_PATHS.products.default("") + `?${pageQueryParam}`;
+      } else if (location.pathname.includes("/search")) {
+        path = API_PATHS.products.search(currentKeywordParam) + `&${pageQueryParam}`;
+      } else {
+        path = API_PATHS.products.category(CATEGORY[currentCategory].id) + `?${pageQueryParam}`;
+      }
 
       const response = await axios.get(path);
 
@@ -115,7 +130,10 @@ const List = (): JSX.Element => {
         setTotalPages(response.data?.totalPages);
       }
 
-      navigate(`?page=${currentPageParam}`);
+      currentKeywordParam === ""
+        ? navigate(`?page=${currentPageParam}`)
+        : navigate(`?page=${currentPageParam}&keyword=${currentKeywordParam}`);
+
       return response.data;
     },
     {
@@ -124,10 +142,22 @@ const List = (): JSX.Element => {
   );
   const isLogin = useRecoilValue(loginState);
 
-  //페이지넘버와 url이 변할때마다 데이터 갱신
+  const printTitle = (path: string) => {
+    if (path === "/product") {
+      return "전체 상품";
+    }
+
+    if (path.includes("/search")) {
+      return "검색 결과";
+    }
+
+    return CATEGORY[currentCategory].value;
+  };
+
+  //페이지넘버, url, 검색데이터가 변할때마다 데이터 갱신
   useEffect(() => {
     refetch();
-  }, [location.pathname, currentPage]);
+  }, [location.pathname, location.search, currentPage]);
 
   if (isLoading) {
     return <Loading />;
@@ -141,9 +171,7 @@ const List = (): JSX.Element => {
     <>
       <StyledList>
         <div className="list_top">
-          <h1>
-            {location.pathname === "/product" ? "전체 상품" : CATEGORY[currentCategory].value}
-          </h1>
+          <h1>{printTitle(location.pathname)}</h1>
           <div className="list_top_right">
             <SearchBar></SearchBar>
             {isLogin && (
@@ -154,7 +182,7 @@ const List = (): JSX.Element => {
                 $design="black"
                 type="button"
                 $text="상품 등록하기"
-              ></Button>
+              />
             )}
           </div>
         </div>
