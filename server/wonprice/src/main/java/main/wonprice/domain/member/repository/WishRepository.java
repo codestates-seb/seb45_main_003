@@ -9,12 +9,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface WishRepository extends JpaRepository<Wish, Long> {
 
     Page<Wish> findByMember(Pageable pageable, Member member);
 
     List<Wish> findByMember(Member member);
+
+    Optional<Wish> findByMemberAndProduct(Member member, Product product);
 
     Boolean existsByMemberAndProduct(Member member, Product product);
 }
