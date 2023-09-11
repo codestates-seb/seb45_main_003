@@ -4,10 +4,13 @@ import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
 import { defaultInstance } from "../../interceptors/interceptors";
 import { useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { profileTabState } from "../../atoms/atoms";
 import Empty from "../common/Empty";
+import { useQueries } from "react-query";
+import Error from "../common/Error";
+import Loading from "../common/Loading";
+import { translateProductStatus } from "../../util/productStatus";
 
 interface image {
   imageId: number;
@@ -32,7 +35,7 @@ const TradeContentContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 14rem);
+  min-width: calc(100% - 18rem);
   min-height: calc(100% - 0.75rem);
   .topContainer {
     padding: 1.25rem 1rem;
@@ -44,7 +47,7 @@ const TradeContentContainer = styled.div`
   }
   .empty {
     position: relative;
-    height: 100%;
+    height: 25rem;
   }
   .tradeListContainer {
     display: flex;
@@ -120,40 +123,42 @@ const TradeContent = (): JSX.Element => {
   const mypageMode = useRecoilValue(profileTabState);
   const loginUserId = localStorage.getItem("Id");
   const location = useLocation();
-  const Id = location.pathname.slice(9);
-  const [salesList, setSalesList] = useState<products[]>([]);
-  const [purchaseList, setPurchaseList] = useState<products[]>([]);
-  const getPurchaseList = async () => {
-    const res = await defaultInstance.get(`/members/${Id}/purchase`);
-    setPurchaseList(res.data);
-  };
-  const getSalesList = async () => {
-    const res = await defaultInstance.get(`/members/${Id}/sell`);
-    setSalesList(res.data);
-  };
-  useEffect(() => {
-    if (mypageMode === "sales") {
-      getSalesList();
-    }
-    if (mypageMode === "purchase") {
-      getPurchaseList();
-    }
-  }, []);
+  const Id = location.pathname.slice(8);
+  const result = useQueries([
+    {
+      queryKey: "purchase",
+      queryFn: async () => {
+        const res = await defaultInstance.get(`/members/${Id}/purchase`);
+        return res.data;
+      },
+    },
+    {
+      queryKey: "sales",
+      queryFn: async () => {
+        const res = await defaultInstance.get(`/members/${Id}/sell`);
+        return res.data;
+      },
+    },
+  ]);
+  const purchaseList: products[] = result[0].data;
+  const salesList: products[] = result[1].data;
   return (
     <TradeContentContainer>
       <div className="topContainer">
         <p className="menuTitle">거래내역</p>
       </div>
       <div className="tradeListContainer">
+        {mypageMode === "purchase" && result[0].isLoading && <Loading />}
+        {mypageMode === "purchase" && result[0].isError && <Error />}
         {mypageMode === "purchase" &&
-          purchaseList.length !== 0 &&
+          purchaseList &&
           purchaseList.map((el) => (
             <div className="tradeContainer" key={el.productId}>
               <div className="leftSection">
                 <img className="postImg" src={el.images[0].path}></img>
                 <div className="infoContainer">
                   <div className="postTitle">{el.title}</div>
-                  <div>{`${el.productStatus}`}</div>
+                  <div>{`${translateProductStatus(el.productStatus)}`}</div>
                   {el.auction ? <div>{`경매종료: ${el.closedAt}`}</div> : <div>즉시 구매 상품</div>}
                 </div>
               </div>
@@ -178,15 +183,17 @@ const TradeContent = (): JSX.Element => {
               </div>
             </div>
           ))}
+        {mypageMode === "sales" && result[1].isLoading && <Loading />}
+        {mypageMode === "sales" && result[1].isError && <Error />}
         {mypageMode === "sales" &&
-          salesList.length !== 0 &&
+          salesList &&
           salesList.map((el) => (
             <div className="tradeContainer" key={el.productId}>
               <div className="leftSection">
                 <img className="postImg" src={el.images[0].path}></img>
                 <div className="infoContainer">
                   <div className="postTitle">{el.title}</div>
-                  <div>{`${el.productStatus}`}</div>
+                  <div>{`${translateProductStatus(el.productStatus)}`}</div>
                   {el.auction ? <div>{`경매종료: ${el.closedAt}`}</div> : <div>즉시 구매 상품</div>}
                 </div>
               </div>
@@ -212,10 +219,16 @@ const TradeContent = (): JSX.Element => {
             </div>
           ))}
       </div>
-      <div className="empty">
-        {mypageMode === "purchase" && purchaseList.length === 0 && <Empty />}
-        {mypageMode === "sales" && salesList.length === 0 && <Empty />}
-      </div>
+      {mypageMode === "purchase" && purchaseList && purchaseList.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
+      {mypageMode === "sales" && salesList && salesList.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
       <div className="pagenation">페이지네이션</div>
     </TradeContentContainer>
   );

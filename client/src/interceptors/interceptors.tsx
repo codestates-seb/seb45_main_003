@@ -26,17 +26,21 @@ const onErrorResponse = async (err: AxiosError | Error): Promise<AxiosError> => 
       const res = await axios.get(`${process.env.REACT_APP_API_URL}/refresh`, {
         headers: {
           Refresh: localStorage.getItem("refreshToken"),
+          "ngrok-skip-browser-warning": "69420",
         },
       });
       if (res.status === 200) {
         localStorage.setItem("accessToken", res.headers["authorization"]);
+        console.log("refresh success");
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        if (error.response?.status === 500) {
+        if (error.response?.status === 401) {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
           localStorage.removeItem("Id");
+          alert("로그인 시간이 만료되었습니다.");
+          return Promise.reject(_err);
         }
       }
     }
@@ -45,6 +49,11 @@ const onErrorResponse = async (err: AxiosError | Error): Promise<AxiosError> => 
       originalConfig.headers.Authorization = newAccessToken;
       return await axios(originalConfig);
     }
+  } else if (response && response.status === 406) {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("Id");
+    alert("다른 곳에서 로그인되었습니다.");
   }
   return Promise.reject(_err);
 };
