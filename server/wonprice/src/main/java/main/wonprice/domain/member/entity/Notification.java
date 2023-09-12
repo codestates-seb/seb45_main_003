@@ -26,7 +26,11 @@ public class Notification {
 
     @Column(nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+
+    @Column(nullable = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
+    private LocalDateTime deletedAt;
 
     @Column(nullable = false)
     private Boolean isRead;
@@ -34,7 +38,7 @@ public class Notification {
     @Column(nullable = true)
     private Long referenceId;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 }

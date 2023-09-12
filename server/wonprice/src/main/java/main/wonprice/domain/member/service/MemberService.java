@@ -163,6 +163,15 @@ public class MemberService {
         return true;
     }
 
+    /*
+     * 어드민인지 검증
+     */
+    public void isAdmin() {
+        boolean admin = findLoginMember().getRoles().contains("ADMIN");
+
+        if (!admin) throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
+    }
+
     public void validatePassword(String password) {
         Member loginMember = findLoginMember();
 

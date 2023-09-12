@@ -19,6 +19,7 @@ public enum ExceptionCode {
     CANNOT_ADD_YOUR_WISH(403, "Can't add your Wish"),
     REVIEW_NOT_FOUND(404, "Review not found"),
     REVIEW_EXISTS(409, "Review exists"),
+    NOTIFICATION_NOT_FOUND(404, "Notification not found"),
     FORBIDDEN_REQUEST(403, "Forbidden");
 
     private int status;

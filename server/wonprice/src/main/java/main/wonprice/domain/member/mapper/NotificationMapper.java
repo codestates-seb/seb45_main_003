@@ -1,6 +1,8 @@
 package main.wonprice.domain.member.mapper;
 
+import main.wonprice.domain.member.dto.NotificationPostDto;
 import main.wonprice.domain.member.dto.NotificationResponseDto;
+import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.Notification;
 import main.wonprice.domain.member.entity.NotificationType;
 import main.wonprice.domain.member.entity.Review;
@@ -30,6 +32,16 @@ public interface NotificationMapper {
                 .isRead(false)
                 .referenceId(review.getReviewId())
                 .member(review.getReceiveMember())
+                .build();
+    }
+
+    default Notification postDtoToNotification(NotificationPostDto postDto, Member receiveMember) {
+        return Notification.builder()
+                .content(postDto.getContent())
+                .notificationType(NotificationType.ADMIN)
+                .createdAt(LocalDateTime.now())
+                .isRead(false)
+                .member(receiveMember)
                 .build();
     }
 }
