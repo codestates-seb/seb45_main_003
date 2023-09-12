@@ -48,7 +48,7 @@ public class MessageController {
         Long messageId = messageService.saveMessage(message);
 
         /* 채팅 보낸 사용자 sequence 업데이트 */
-        chatService.updateSequence(findMember, findChatRoom, messageId);
+//        chatService.updateSequence(findMember, findChatRoom, messageId);
 
         MessageResponseDto messageResponseDto = new MessageResponseDto(message);
 
