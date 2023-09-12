@@ -26,7 +26,7 @@ public class Notification {
 
     @Column(nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     @Column(nullable = true)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
