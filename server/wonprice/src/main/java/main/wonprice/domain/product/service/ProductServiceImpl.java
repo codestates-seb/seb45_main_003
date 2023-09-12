@@ -169,4 +169,19 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> findMemberBought(Pageable pageable, Long memberId) {
         return productRepository.findAllByBuyerIdAndStatus(memberId, ProductStatus.AFTER, pageable).getContent();
     }
+
+    /*
+        입찰하기 요청 들어올 시
+        - product 의 현재 입찰가(currentAuctionPrice), 구매자(buyerId) 셋팅
+     */
+    @Override
+    public Product updateCurrentAuctionPrice(Long productId, Long currentAuctionPrice, Long memberId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product Not Found"));
+
+        product.setCurrentAuctionPrice(currentAuctionPrice);
+        product.setBuyerId(memberId);
+
+        return productRepository.save(product);
+    }
 }

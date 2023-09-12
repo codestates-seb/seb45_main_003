@@ -1,19 +1,31 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
-import { useValidateToken } from "../../hooks/useValidateToken";
-import { useRecoilValue } from "recoil";
-import { loginState } from "../../atoms/atoms";
-import { authInstance } from "../../interceptors/interceptors";
-import { useLocation } from "react-router-dom";
+import { defaultInstance } from "../../interceptors/interceptors";
+import { useLocation, useNavigate } from "react-router-dom";
+import { findCategory } from "../../util/category";
+import Empty from "../common/Empty";
+import { useQueries } from "react-query";
+import Loading from "../common/Loading";
+import Error from "../common/Error";
+// import { usePagination } from "../../hooks/usePagination";
+
+// interface Data {
+//   content: products[];
+//   totalPages: number;
+// }
+interface image {
+  imageId: number;
+  path: string;
+}
 
 interface products {
   productId: number;
   title: string;
   createAt: string;
-  img: string;
+  images: image[];
+  categoryId: number;
 }
 
 interface Review {
@@ -28,8 +40,9 @@ interface Review {
 const PostListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
+  min-height: 100%;
   .postlistMenuContainer {
     display: flex;
     flex-direction: row;
@@ -50,11 +63,20 @@ const PostListContainer = styled.div`
       }
     }
   }
+  .empty {
+    height: 25rem;
+    position: relative;
+  }
   .tabContent {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
+    .postImg {
+      width: 6.25rem;
+      height: 6.25rem;
+      padding: 0.5rem 0;
+    }
     .postContainer {
       display: flex;
       flex-direction: row;
@@ -62,6 +84,7 @@ const PostListContainer = styled.div`
       align-items: stretch;
       gap: 0.5rem;
       border-bottom: 1px solid ${COLOR.border};
+      cursor: pointer;
     }
     .infoContainer {
       display: flex;
@@ -100,51 +123,56 @@ const PostListTab = (): JSX.Element => {
     { value: "leaveReview", text: "작성한 거래 후기" },
     { value: "getReview", text: "받은 거래 후기" },
   ];
-  const [cellPost, setCellPost] = useState<products[]>([]);
-  const [leaveReview, setLeaveReview] = useState<Review[]>([]);
-  const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
-  const isLogin = useRecoilValue(loginState);
+  const navigate = useNavigate();
   const location = useLocation();
-  const Id = location.pathname.slice(9);
-  const { validateAccessToken } = useValidateToken();
-  // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
-  const getPostlist = async () => {
-    try {
-      const res = await authInstance.get(`/members/${Id}/products`);
-      setCellPost(res.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  const getLeaveReview = async () => {
-    try {
-      const res = await authInstance.get(`/members/${Id}/reviews/post`, {});
-      setLeaveReview(res.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  const getRecievedReview = async () => {
-    try {
-      const res = await authInstance.get(`/members/${Id}/reviews`);
-      setRecievedReview(res.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  useEffect(() => {
-    validateAccessToken();
-    getPostlist();
-    getLeaveReview();
-    getRecievedReview();
-  }, [isLogin, menu]);
+  const Id = location.pathname.slice(8);
+  // const {
+  //   currentPage,
+  //   totalPages,
+  //   setTotalPages,
+  //   pageChangeHandler,
+  //   prevPageHandler,
+  //   nextPageHandler,
+  // } = usePagination();
+  const result = useQueries([
+    {
+      queryKey: ["cellPost"],
+      queryFn: async () => {
+        const res = await defaultInstance.get(`/members/${Id}/products`, {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        });
+        return res.data.slice().reverse();
+      },
+    },
+    {
+      queryKey: ["leaveReview"],
+      queryFn: async () => {
+        const res = await defaultInstance.get(`/members/${Id}/reviews/post`, {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        });
+        return res.data;
+      },
+    },
+    {
+      queryKey: ["receivedReview"],
+      queryFn: async () => {
+        const res = await defaultInstance.get(`/members/${Id}/reviews`, {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        });
+        return res.data;
+      },
+    },
+  ]);
+  const cellPost: products[] = result[0].data;
+  const leaveReview: Review[] = result[1].data;
+  const recievedReview: Review[] = result[2].data;
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">
@@ -159,16 +187,25 @@ const PostListTab = (): JSX.Element => {
         ))}
       </ul>
       <div className="tabContent">
+        {menu === "cell" && result[0].isLoading && <Loading />}
+        {menu === "cell" && result[0].isError && <Error />}
         {menu === "cell" &&
+          cellPost &&
           cellPost.map((el) => (
-            <div className="postContainer" key={el.productId}>
-              <img src={el.img}></img>
+            <div
+              className="postContainer"
+              key={el.productId}
+              onClick={() => navigate(`/product/${findCategory(el.categoryId)}/${el.productId}`)}
+            >
+              <img className="postImg" src={el.images[0].path}></img>
               <div className="infoContainer">
                 <div className="postTitle">{el.title}</div>
                 <div className="createdAt">{el.createAt}</div>
               </div>
             </div>
           ))}
+        {menu === "leaveReview" && result[1].isLoading && <Loading />}
+        {menu === "leaveReview" && result[1].isError && <Error />}
         {menu === "leaveReview" &&
           leaveReview.map((el, idx) => (
             <div key={idx} className="postContainer">
@@ -180,10 +217,13 @@ const PostListTab = (): JSX.Element => {
                   <span className="author">{`작성자 id ${el.postMemberId}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
                 </div>
+                <div>{`평점: ${el.score}`}</div>
                 <p className="postContent">{el.content}</p>
               </div>
             </div>
           ))}
+        {menu === "getReview" && result[2].isLoading && <Loading />}
+        {menu === "getReview" && result[2].isError && <Error />}
         {menu === "getReview" &&
           recievedReview.map((el, idx) => (
             <div key={idx} className="postContainer">
@@ -195,11 +235,27 @@ const PostListTab = (): JSX.Element => {
                   <span className="author">{`작성자 id${el.postMemberId}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
                 </div>
+                <div>{`평점: ${el.score}`}</div>
                 <p className="postContent">{el.content}</p>
               </div>
             </div>
           ))}
       </div>
+      {menu === "cell" && cellPost && cellPost.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
+      {menu === "leaveReview" && leaveReview && leaveReview.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
+      {menu === "getReview" && recievedReview && recievedReview.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
     </PostListContainer>
   );
 };

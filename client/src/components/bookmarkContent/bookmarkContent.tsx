@@ -1,18 +1,40 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
-import { authInstance } from "../../interceptors/interceptors";
-import { useLocation } from "react-router-dom";
+import { authInstance, defaultInstance } from "../../interceptors/interceptors";
+import { useLocation, useNavigate } from "react-router-dom";
+import { findCategory } from "../../util/category";
+import Empty from "../common/Empty";
+import Loading from "../common/Loading";
+import Error from "../common/Error";
+import { useQuery, useQueryClient, useMutation } from "react-query";
+import { translateProductStatus } from "../../util/productStatus";
 //dto 정해지면 추가
+interface image {
+  imageId: number;
+  path: string;
+}
+
+interface products {
+  productId: number;
+  title: string;
+  closedAt: string;
+  images: image[];
+  categoryId: number;
+  productStatus: string;
+  auction: boolean;
+  immediatelyBuyPrice: number;
+  currentAuctionPrice: number;
+}
 
 type bookmark = {
   wishId: number;
   creadtedAt: string;
   productId: string;
+  productResponseDto: products;
 };
 
 type checkInputType = {
@@ -25,9 +47,10 @@ const BookmarkContentContainer = styled.form`
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
-  width: calc(100% - 14rem);
+  min-width: calc(100% - 18rem);
+  min-height: calc(100% - 0.75rem);
   .checkbox {
     width: 18px;
     height: 18px;
@@ -53,6 +76,10 @@ const BookmarkContentContainer = styled.form`
       color: ${COLOR.mediumText};
     }
   }
+  .empty {
+    position: relative;
+    height: 25rem;
+  }
   .bookmarkListContainer {
     display: flex;
     flex-direction: column;
@@ -62,27 +89,39 @@ const BookmarkContentContainer = styled.form`
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-end;
       border-bottom: 1px solid ${COLOR.border};
       padding: 1rem 0;
+      .postImg {
+        width: 6.25rem;
+        height: 6.25rem;
+      }
       .leftSection {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
         align-items: center;
         gap: 1rem;
-        .infoContainer {
+        .postInfo {
           display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: flex-start;
-          gap: 0.625rem;
-          font-size: ${FONT_SIZE.font_16};
-          color: ${COLOR.mediumText};
-          .postTitle {
-            color: ${COLOR.darkText};
-            font-size: ${FONT_SIZE.font_20};
-            font-weight: bold;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: flex-end;
+          gap: 1rem;
+          .infoContainer {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 0.625rem;
+            font-size: ${FONT_SIZE.font_16};
+            color: ${COLOR.mediumText};
+            .postTitle {
+              color: ${COLOR.darkText};
+              font-size: ${FONT_SIZE.font_20};
+              font-weight: bold;
+              cursor: pointer;
+            }
           }
         }
       }
@@ -90,13 +129,13 @@ const BookmarkContentContainer = styled.form`
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
-        align-items: center;
+        align-items: flex-end;
         gap: 1rem;
         .priceContainer {
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
-          align-items: center;
+          align-items: flex-start;
           gap: 0.625rem;
           font-size: ${FONT_SIZE.font_16};
           color: ${COLOR.mediumText};
@@ -121,13 +160,15 @@ const BookmarkContentContainer = styled.form`
 `;
 
 const BookmarkContent = (): JSX.Element => {
-  const { register, handleSubmit, watch, setValue } = useForm<checkInputType>();
+  const { register, handleSubmit, watch, setValue, getValues } = useForm<checkInputType>();
   const checkboxes = watch("checkboxes", []);
-  const selectAll = watch("selectAll", false);
+  // const selectAll = watch("selectAll", false);
+  //전체 선택 함수
   const handleSelectAll = (checked: boolean) => {
     setValue("selectAll", checked);
-    setValue("checkboxes", Array(bookmarklist.length).fill(checked));
+    setValue("checkboxes", Array(bookmarkList?.length).fill(checked));
   };
+  //체크박스 관리 함수
   const handleCheckBox = (index: number, checked: boolean) => {
     const checkedBoxes = [...checkboxes];
     checkedBoxes[index] = checked;
@@ -135,47 +176,70 @@ const BookmarkContent = (): JSX.Element => {
     setValue("selectAll", checkedAll);
     setValue("checkboxes", checkedBoxes);
   };
-  const sendBookmarkList = (data: checkInputType) => {
-    console.log(data);
-  };
-  const [bookmarklist, setBookmarklist] = useState<bookmark[]>([]);
+  const navigate = useNavigate();
   const location = useLocation();
-  const Id = location.pathname.slice(9);
+  const Id = location.pathname.slice(8);
   const loginUserId = localStorage.getItem("Id");
-  console.log(selectAll, checkboxes, bookmarklist);
-  // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
-  const getData = async () => {
-    try {
-      const res = await authInstance.get(`/members/${Id}/wishes`);
-      setBookmarklist(res.data);
-    } catch (error) {
-      //토큰 만료시 대응하는 함수
-      if (axios.isAxiosError(error)) {
-        console.log(error);
+  //체크박스를 사용항 찜취소시에 체크박스 상태들을 저장해둘 상태
+  const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
+  const queryClient = useQueryClient();
+  const {
+    isLoading,
+    isError,
+    data: bookmarkList,
+  } = useQuery<bookmark[]>(
+    "bookmark",
+    async () => {
+      const res = await defaultInstance.get(`/members/${Id}/wishes`, {
+        headers: {
+          "ngrok-skip-browser-warning": "69420",
+        },
+      });
+      if (checkboxes.some((el) => el === true)) {
+        setValue("checkboxes", checkboxes);
+      } else {
+        setValue("checkboxes", Array(bookmarkList?.length).fill(false));
       }
-    }
-  };
-  const cancleBookmark = async (wishId: number) => {
-    try {
-      const deletedIndex = bookmarklist.findIndex((el) => el.wishId === wishId);
+      return res.data;
+    },
+    { refetchInterval: 30000, refetchIntervalInBackground: true },
+  );
+  //체크박스를 선택한적 있으면 해당체크박스를 refetch해도 유지, refetch는 30초마다
+  console.log(checkboxes, bookmarkList, changedCheckboxes);
+  // 찜취소버튼으로 취소요청하는 함수
+  const bookmarkMutation = useMutation(
+    async (wishId: number) => {
+      const deletedIndex = bookmarkList?.findIndex((el) => el.wishId === wishId);
       const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
-      const res = await authInstance.delete(`/wishes/${wishId}`);
-      if (res.status === 200) {
-        getData();
-        setValue("checkboxes", checkedlist);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
-  };
-  useEffect(() => {
-    getData();
-    setValue("checkboxes", Array(bookmarklist.length).fill(false));
-  }, []);
+      setChangedCheckboxes(checkedlist);
+      console.log(checkedlist);
+      await authInstance.delete(`/wishes/${wishId}`);
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("bookmark");
+        setValue("checkboxes", changedCheckboxes);
+        console.log(checkboxes);
+      },
+    },
+  );
+  //선택한 찜목록 취소 요청함수
+  const sendBookmarkMutation = useMutation(
+    async (data: checkInputType) => {
+      console.log(data.checkboxes);
+      await authInstance.patch(`/wishes`, { checkBox: data.checkboxes });
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("bookmark");
+        setValue("checkboxes", changedCheckboxes);
+      },
+    },
+  );
   return (
-    <BookmarkContentContainer onSubmit={handleSubmit(sendBookmarkList)}>
+    <BookmarkContentContainer
+      onSubmit={handleSubmit(() => sendBookmarkMutation.mutateAsync(getValues()))}
+    >
       <div className="topContainer">
         <p className="menuTitle">찜 목록</p>
         {loginUserId === Id && (
@@ -193,8 +257,10 @@ const BookmarkContent = (): JSX.Element => {
         )}
       </div>
       <div className="bookmarkListContainer">
-        {bookmarklist &&
-          bookmarklist.map((el, index: number) => (
+        {isLoading && <Loading />}
+        {isError && <Error />}
+        {bookmarkList &&
+          bookmarkList.map((el, index: number) => (
             <div className="bookmarkContainer" key={el.productId}>
               <div className="leftSection">
                 {loginUserId === Id && (
@@ -206,21 +272,45 @@ const BookmarkContent = (): JSX.Element => {
                     key={el.productId}
                   ></input>
                 )}
-                <img></img>
-                <div className="infoContainer">
-                  <div className="postTitle">글제목</div>
-                  <div>{`거래 마감시간 `}</div>
+                <div className="postInfo">
+                  <img className="postImg" src={el.productResponseDto.images[0].path}></img>
+                  <div className="infoContainer">
+                    <div
+                      className="postTitle"
+                      onClick={() =>
+                        navigate(
+                          `/product/${findCategory(el.productResponseDto.categoryId)}/${
+                            el.productId
+                          }`,
+                        )
+                      }
+                    >
+                      {el.productResponseDto.title}
+                    </div>
+                    <div>{translateProductStatus(el.productResponseDto.productStatus)}</div>
+                    {el.productResponseDto.auction ? (
+                      <div>{`거래 마감시간: ${el.productResponseDto.closedAt} `}</div>
+                    ) : (
+                      <div>즉시 구매 상품</div>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="rightSection">
                 <div className="priceContainer">
-                  <div className="priceLabel">
-                    {`현재 입찰가`}
-                    <span className="price">{` 원`}</span>
-                  </div>
+                  {el.productResponseDto.auction && (
+                    <div className="priceLabel">
+                      {`현재 입찰가`}
+                      <span className="price">{`${el.productResponseDto.currentAuctionPrice.toLocaleString(
+                        "ko-KR",
+                      )} 원`}</span>
+                    </div>
+                  )}
                   <div className="priceLabel">
                     {`즉시 구매가`}
-                    <span className="price">{` 원`}</span>
+                    <span className="price">{`${el.productResponseDto.immediatelyBuyPrice.toLocaleString(
+                      "ko-KR",
+                    )} 원`}</span>
                   </div>
                 </div>
                 {loginUserId === Id && (
@@ -228,13 +318,18 @@ const BookmarkContent = (): JSX.Element => {
                     type="button"
                     $text="찜 취소"
                     $design="yellow"
-                    onClick={() => cancleBookmark(el.wishId)}
+                    onClick={() => bookmarkMutation.mutateAsync(el.wishId)}
                   />
                 )}
               </div>
             </div>
           ))}
       </div>
+      {bookmarkList && bookmarkList.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
       <div className="pagenation">페이지네이션</div>
     </BookmarkContentContainer>
   );

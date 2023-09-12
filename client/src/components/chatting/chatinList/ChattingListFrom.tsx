@@ -1,18 +1,12 @@
 import React from "react";
 import { styled } from "styled-components";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import SearchComponent from "./SearchBar";
-import SearchIcon from "@mui/icons-material/Search";
 import ChattingListData from "./ChattingListData";
-
-interface ChattingListProps {
-  imgSrc: string;
-}
+import { COLOR } from "../../../constants/color";
 
 const Container = styled.div`
   display: flex;
   width: 13.875rem;
-  height: 43.6875rem;
+  min-height: 43.6875rem;
   padding: 1.5rem 1rem;
   flex-direction: column;
   align-items: center;
@@ -22,13 +16,13 @@ const Container = styled.div`
 
   border-radius: 0.375rem;
   border: 1px solid var(--cool-gray-20, #dde1e6);
-  background: var(--default-white, #fff);
 
   .ProfileBox {
     display: flex;
     flex-direction: row;
     width: calc(100%);
     /* background-color: aqua; */
+    padding-bottom: 1rem;
     justify-content: space-between;
     align-items: center;
     .ProfileImg {
@@ -52,34 +46,35 @@ const Container = styled.div`
     }
   }
   .SearchBar {
+    margin-top: 0.625rem;
+    margin-bottom: 1.875rem;
+
     display: flex;
     flex-direction: row;
-    max-width: 11.875rem;
+    width: 85%;
+    /* max-width: 11.875rem; */
     max-height: 3rem;
     align-items: center;
-    padding: 0.75rem 1rem;
+    padding: 0.65rem 1rem;
     gap: 0.5rem;
     border-radius: 0.375rem;
+    border: 1px solid var(--cool-gray-20, #dde1e6);
+
+    &:hover,
+    &:focus {
+      border: 1px solid ${COLOR.primary};
+      outline: 1px solid ${COLOR.primary};
+    }
   }
   .data {
     width: 100%;
   }
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  }
 `;
 
-const ChattingListFrom = ({ imgSrc }: ChattingListProps): JSX.Element => {
+const ChattingListFrom = (): JSX.Element => {
   return (
     <>
       <Container>
-        <div className="ProfileBox">
-          <img className="ProfileImg" src={imgSrc} alt="" />
-          <NotificationsIcon className="Icon" />
-        </div>
-        <div className="SearchBar">
-          <SearchIcon /> <SearchComponent />
-        </div>
         <div className="data">
           <ChattingListData />
         </div>

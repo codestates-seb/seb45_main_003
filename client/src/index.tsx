@@ -1,6 +1,7 @@
 import axios from "axios";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { RecoilRoot } from "recoil";
 import App from "./App";
 import { GlobalFont } from "./styles/font";
 import { GlobalStyle } from "./styles/global";
@@ -14,7 +15,9 @@ root.render(
     <GlobalFont />
     <GlobalStyle />
     <QueryClientProvider client={queryClient}>
-      <App />
+      <RecoilRoot>
+        <App />
+      </RecoilRoot>
     </QueryClientProvider>
   </>,
 );
