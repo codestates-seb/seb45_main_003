@@ -18,7 +18,8 @@ public enum ExceptionCode {
     WISH_ALREADY_EXISTS(409, "Wish already exists"),
     CANNOT_ADD_YOUR_WISH(403, "Can't add your Wish"),
     REVIEW_NOT_FOUND(404, "Review not found"),
-    REVIEW_EXISTS(409, "Review exists");
+    REVIEW_EXISTS(409, "Review exists"),
+    FORBIDDEN_REQUEST(403, "Forbidden");
 
     private int status;
     private String message;

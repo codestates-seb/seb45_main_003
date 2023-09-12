@@ -13,7 +13,7 @@ public class ReviewResponseDto {
 
     private Long postMemberId;
 
-    private Long targetMemberId;
+    private Long receiveMemberId;
 
     private Long productId;
 
