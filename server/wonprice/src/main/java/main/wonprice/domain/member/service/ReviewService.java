@@ -7,15 +7,13 @@ import main.wonprice.domain.member.repository.ReviewRepository;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,7 +22,7 @@ public class ReviewService {
 
     private final ReviewRepository repository;
     private final MemberService memberService;
-//    private final NotificationService notificationService;
+    private final NotificationService notificationService;
 
     public Review createReview(Review review) {
 
@@ -45,7 +43,7 @@ public class ReviewService {
             product.getSeller().setReceivedReviewsCount(product.getSeller().getReceivedReviewsCount() + 1);
 
             Review savedReview = repository.save(review);
-//            notificationService.createNotification(review);
+            notificationService.createNotification(review);
             return savedReview;
         }
 //        판매자가 리뷰 작성
@@ -59,7 +57,7 @@ public class ReviewService {
             buyer.setReceivedReviewsCount(buyer.getReceivedReviewsCount() + 1);
 
             Review savedReview = repository.save(review);
-//            notificationService.createNotification(review);
+            notificationService.createNotification(review);
             return savedReview;
         } else if (product.getBuyerReview() || product.getSellerReview()) {
             throw new BusinessLogicException(ExceptionCode.REVIEW_EXISTS);
@@ -74,15 +72,15 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<Review> findReviews(Pageable pageable, Member member) {
+    public Page<Review> findReviews(Pageable pageable, Member member) {
 
-        return repository.findAllByReceiveMember(pageable, member).getContent();
+        return repository.findAllByReceiveMember(pageable, member);
     }
 
     @Transactional(readOnly = true)
-    public List<Review> findWroteReviews(Pageable pageable, Member member) {
+    public Page<Review> findWroteReviews(Pageable pageable, Member member) {
 
-        return repository.findAllByPostMember(pageable, member).getContent();
+        return repository.findAllByPostMember(pageable, member);
     }
 
     public Review updateReview(Review review) {
@@ -91,8 +89,16 @@ public class ReviewService {
 
         memberService.validateOwner(findReview.getPostMember().getMemberId());
 
-        findReview.setContent(review.getContent());
-        findReview.setScore(review.getScore());
+        if (review.getTitle() != null) {
+            findReview.setTitle(review.getTitle());
+        }
+        if (review.getContent() != null) {
+            findReview.setContent(review.getContent());
+        }
+        if (review.getScore() != null) {
+            findReview.setScore(review.getScore());
+        }
+
         return findReview;
     }
 

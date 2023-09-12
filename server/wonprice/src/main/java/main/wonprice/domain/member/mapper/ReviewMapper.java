@@ -28,7 +28,5 @@ public interface ReviewMapper {
         return responseDto;
     }
 
-    List<ReviewResponseDto> reviewsToResponseDtos(List<Review> reviews);
-
     Review patchDtoToReview(ReviewPatchDto patchDto);
 }

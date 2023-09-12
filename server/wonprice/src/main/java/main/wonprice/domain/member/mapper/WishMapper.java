@@ -30,5 +30,4 @@ public interface WishMapper {
 
         return responseDto;
     }
-    List<WishResponseDto> toResponseDtos(List<Wish> wishes);
 }
