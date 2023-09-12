@@ -13,6 +13,7 @@ type ButtonProp = {
 };
 const StyledButton = styled.button<ButtonProp>`
   display: flex;
+  gap: 0.25rem;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -44,7 +45,7 @@ const StyledButton = styled.button<ButtonProp>`
   border: ${(props) => {
     switch (props.$design) {
       case "outline":
-        return "1px solid" + COLOR.primary;
+        return "1px solid" + COLOR.darkText;
       default:
         return "1px solid transparent";
     }

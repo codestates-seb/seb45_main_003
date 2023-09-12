@@ -4,7 +4,7 @@ import S3 from "../../aws-config";
 import ImageInput from "../common/ImageInput";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { FieldValues, useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { authInstance } from "../../interceptors/interceptors";
 import { REQUIRED } from "../../constants/systemMessage";
 
@@ -43,7 +43,13 @@ const ProfileImgRegisterForm = (props: Props): JSX.Element => {
     clearErrors,
     maxImageCount,
   });
-  const mutation = useMutation(async (data: FieldValues) => await authInstance.post("url", data));
+  const queryClient = useQueryClient();
+  const Id = localStorage.getItem("Id");
+  const mutation = useMutation(
+    async (data: FieldValues) => await authInstance.post(`/members/${Id}/image`, data),
+    { onSuccess: () => queryClient.invalidateQueries("profile") },
+  );
+  //성공시 모드 변경후 프로필 다시 로딩
   const onSubmitImg = async (data: FieldValues) => {
     try {
       const imagePaths: string[] = [];
@@ -58,10 +64,10 @@ const ProfileImgRegisterForm = (props: Props): JSX.Element => {
         imagePaths.push(result.Location);
       }
       data = {
-        ...data,
-        images: imagePaths,
+        path: imagePaths[0],
       };
       mutation.mutateAsync(data);
+      console.log("실행되었음");
     } catch (error) {
       console.log(error);
     }
@@ -78,7 +84,7 @@ const ProfileImgRegisterForm = (props: Props): JSX.Element => {
         maximagecount={maxImageCount}
       />
       <div className="buttonContainer">
-        <Button type="button" $text="적용" $design="black" onSubmit={handleSubmit(onSubmitImg)} />
+        <Button type="submit" $text="적용" $design="black" onClick={handleSubmit(onSubmitImg)} />
         <Button
           type="button"
           $text="취소"

@@ -52,5 +52,13 @@ public class ProductResponseDto {
 
     private Long sellerReputation; // 판매자 평판
 
-    private Integer wishCount; // 받은 찜 개수
+    private int sellerTradeCount; // 판매자 거래 횟수
+
+    private Long sellerWrittenReviewsCount; // 판매자가 작성한 리뷰 개수
+
+    private Long sellerReceivedReviewsCount; // 판매자가 받은 리뷰 개수
+
+    private Long wishCount; // 상품이 받은 총 wish 갯수
+
+    private Boolean loginMembersWish; // 로그인한 회원이 해당 상품을 찜 했는지 여부 / 추후에 DTO 분리할게요
 }

@@ -8,6 +8,8 @@ import { COLOR } from "../../constants/color";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
+import { defaultInstance } from "../../interceptors/interceptors";
+import { FONT_SIZE } from "../../constants/font";
 
 //폼에서 사용하는 데이터
 interface SignupForm {
@@ -65,11 +67,15 @@ const StyledModal = styled.div`
   justify-content: space-between;
   align-items: stretch;
   gap: 2.3125rem;
-  .modalTextContainer {
+  .modalTitleContainer {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
+    .modalTitle {
+      font-size: ${FONT_SIZE.font_20};
+      font-weight: bold;
+    }
   }
   .modalButtonContainer {
     display: flex;
@@ -95,7 +101,7 @@ const SignupForm = (): JSX.Element => {
   //폼에 작성된 데이터들을 서버로 전송하는 함수
   const submitSignup = async (data: SignupData) => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/members`, data);
+      const response = await defaultInstance.post(`/members`, data);
       if (response.status === 201) {
         toggleModal();
       }
@@ -114,7 +120,7 @@ const SignupForm = (): JSX.Element => {
     //새로고침 방지
     event?.preventDefault();
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth/send`, {
+      const response = await defaultInstance.post(`/email/auth/send`, {
         email: data,
       });
       if (response.status === 200) {
@@ -136,7 +142,7 @@ const SignupForm = (): JSX.Element => {
     //새로고침 방지
     event?.preventDefault();
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/email/auth`, {
+      const response = await defaultInstance.post(`/email/auth`, {
         email: data.email,
         authCode: data.confirmcode,
       });
@@ -160,7 +166,6 @@ const SignupForm = (): JSX.Element => {
   const changeform = () => {
     setloginPageForm(!loginPageForm);
   };
-
   return (
     <>
       <StyledSignupForm onSubmit={handleSubmit(submitSignup)}>
@@ -279,8 +284,11 @@ const SignupForm = (): JSX.Element => {
       </StyledSignupForm>
       <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
         <StyledModal>
-          <div className="modalTextContainer">
-            <p>회원가입 되셨습니다!</p>
+          <div className="modalTitleContainer">
+            <p className="modalTitle">회원가입 성공</p>
+          </div>
+          <div className="modalMessageContainer">
+            <p className="modalText">새로운 회원이 되신것을 환영합니다.</p>
           </div>
           <div className="modalButtonContainer">
             <Button type="button" $text="확인" onClick={() => changeform()} $design="black" />

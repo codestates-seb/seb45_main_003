@@ -14,12 +14,18 @@ export const SUCCESS = {
   post: "상품 등록이 완료되었습니다.",
   review: "후기 작성이 완료되었습니다.",
   update: "상품 수정이 완료되었습니다.",
+  addWishlist: "찜 목록에 상품이 추가되었습니다.",
+  removeWishlist: "찜 목록에서 상품을 삭제했습니다",
+  delete: "상품을 삭제하였습니다.",
 };
 
 export const FAIL = {
   post: "상품 등록에 실패하였습니다.",
   review: "후기 작성에 실패하였습니다.",
   update: "상품 수정에 실패하였습니다.",
+  addWishlist: "상품을 찜 목록에 추가하지 못했습니다.",
+  removeWishlist: "상품을 찜 목록에서 삭제할 수 없습니다.",
+  delete: "상품 삭제에 실패했습니다.",
 };
 
 export const MAX = {
