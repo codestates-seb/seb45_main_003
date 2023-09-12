@@ -20,15 +20,15 @@ public interface ProductService {
 
     Product findExistsProduct(Long productId);
 
-    List<Product> findMembersProduct(Pageable pageable, Member member);
+    Page<Product> findMembersProduct(Pageable pageable, Member member);
 
     Product deleteOneById(Long productId,Member loginMember);
 
     Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member loginMember);
 
-    public List<Product> findMemberSold(Pageable pageable, Member member);
+    Page<Product> findMemberSold(Pageable pageable, Member member);
 
-    public List<Product> findMemberBought(Pageable pageable, Long memberId);
+    Page<Product> findMemberBought(Pageable pageable, Long memberId);
 
     Long getProductWishCount(Long productId);
 

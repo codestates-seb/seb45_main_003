@@ -8,7 +8,6 @@ import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.entity.ProductStatus;
 import org.mapstruct.Mapper;
 
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
@@ -99,6 +98,4 @@ public interface ProductMapper {
                         .anyMatch(wish -> wish.getMember() == loginMember))
                 .build();
     }
-
-    List<ProductResponseDto> toMypageProduct(List<Product> products);
 }
