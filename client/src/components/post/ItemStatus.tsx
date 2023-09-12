@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -149,36 +149,84 @@ const StyledItemStatus = styled.section`
     cursor: pointer;
     justify-content: center;
   }
+
+  @media (max-width: 30rem) {
+    .current_price,
+    .buy_it_now_price {
+      flex-flow: column;
+      align-items: flex-start;
+      gap: 1rem;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+
+  @media (max-width: 64rem) {
+    flex-flow: column;
+    gap: 1.5rem;
+
+    .custom_swiper.swiper {
+      max-width: unset;
+      width: 100% !important;
+    }
+
+    .item_status {
+      max-width: unset;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 01rem;
+    }
+
+    .price,
+    .time {
+      gap: 0.75rem;
+
+      & > span:first-child {
+        width: unset;
+      }
+    }
+  }
 `;
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
-  const [wishCount, setwishCount] = useState(0);
+  const initialWishCount = data?.wishCount || 0;
+  const initialLoginMembersWish = data?.loginMembersWish;
+  const [wishCount, setwishCount] = useState(initialWishCount);
+  const [loginMembersWish, setLoginMembersWish] = useState(initialLoginMembersWish);
   const isLogin = useRecoilValue(loginState);
   const userid = getUserId();
   const navigate = useNavigate();
-  const mutation = useMutation(async (id: object) => {
-    await authInstance.post(API_PATHS.wishes.add, id);
+  const mutation = useMutation(async (id: number) => {
+    loginMembersWish
+      ? await authInstance.delete(API_PATHS.wishes.default(id))
+      : await authInstance.post(API_PATHS.wishes.add, { productId: id });
   });
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
 
-  useEffect(() => {
-    if (data.wishCount) {
-      setwishCount(data.wishCount);
+  const addWishlist = async (id: number) => {
+    try {
+      await mutation.mutateAsync(id);
+      setwishCount((prev) => prev + 1);
+      setLoginMembersWish(true);
+      setModalMessage({ title: "찜하기 성공", description: SUCCESS.addWishlist });
+    } catch (error) {
+      setModalMessage({ title: "찜하기 실패", description: FAIL.addWishlist });
+    } finally {
+      setIsOpen(!isOpen);
     }
-  }, []);
-
-  const redirect = () => {
-    navigate("/login");
   };
 
-  const handleWishlist = async (id: number) => {
+  const removeWishlist = async (id: number) => {
     try {
-      await mutation.mutateAsync({ productId: id });
-      setwishCount((prev) => prev + 1);
-      setModalMessage({ title: "찜하기 성공", description: SUCCESS.wishlist });
+      await mutation.mutateAsync(id);
+      setwishCount((prev) => prev - 1);
+      setLoginMembersWish(false);
+      setModalMessage({ title: "찜 삭제 성공", description: SUCCESS.removeWishlist });
     } catch (error) {
-      setModalMessage({ title: "찜하기 실패", description: FAIL.wishlist });
+      setModalMessage({ title: "찜 삭제 실패", description: FAIL.removeWishlist });
     } finally {
       setIsOpen(!isOpen);
     }
@@ -218,32 +266,30 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
           <div className="title">
             <h1>{data.title}</h1>
             <div className="icon_box">
-              {userid === data.memberId.toString() && (
-                <>
-                  <div className="gray">
-                    <Link
-                      to={{ pathname: "/create-post" }}
-                      state={{ isUpdateMode: true, updateModeData: data }}
-                    >
-                      <EditIcon />
-                    </Link>
+              {isLogin && Number(userid) === data.memberId && (
+                <div className="gray">
+                  <Link
+                    to={{ pathname: "/create-post" }}
+                    state={{ isUpdateMode: true, updateModeData: data }}
+                  >
+                    <EditIcon />
+                  </Link>
 
-                    <DeleteIcon
-                      onClick={() => {
-                        setIsOpen(true);
-                        setModalMessage({
-                          title: "상품 삭제",
-                          description: "상품을 삭제하시겠습니까?",
-                        });
-                      }}
-                    />
-                  </div>
-                  <div className="gray">
-                    <ViewsIcon />
-                    <span>{data.views}</span>
-                  </div>
-                </>
+                  <DeleteIcon
+                    onClick={() => {
+                      setIsOpen(true);
+                      setModalMessage({
+                        title: "상품 삭제",
+                        description: "상품을 삭제하시겠습니까?",
+                      });
+                    }}
+                  />
+                </div>
               )}
+              <div className="gray">
+                <ViewsIcon />
+                <span>{data.views}</span>
+              </div>
             </div>
           </div>
 
@@ -264,11 +310,11 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             {isLogin && Number(userid) !== data.memberId && (
               <Button
                 $icon={<HeartIcon />}
-                $text="찜"
+                $text={loginMembersWish ? "찜 삭제" : "찜"}
                 $design="yellow"
                 type="button"
                 onClick={() => {
-                  isLogin ? handleWishlist(data.productId) : redirect;
+                  loginMembersWish ? removeWishlist(data.productId) : addWishlist(data.productId);
                 }}
               />
             )}
@@ -278,14 +324,18 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
               <div className="current_price">
                 <div className="price">
                   <span>현재 입찰가</span>
-                  <span className="price_number">{data.currentAuctionPrice?.toLocaleString()}</span>
+                  <span className="price_number">
+                    {data.currentAuctionPrice?.toLocaleString() + "원"}
+                  </span>
                 </div>
                 {isLogin && Number(userid) !== data.memberId && (
                   <Button
                     $text="입찰하기"
                     $design="black"
                     type="button"
-                    onClick={isLogin ? undefined : redirect}
+                    onClick={() => {
+                      isLogin ? undefined : navigate("/login");
+                    }}
                   />
                 )}
               </div>
@@ -307,14 +357,18 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
           <div className="buy_it_now_price">
             <div className="price">
               <span className="price_number_title gray">즉시 구매가</span>
-              <span className="price_number">{data.immediatelyBuyPrice.toLocaleString()}</span>
+              <span className="price_number">
+                {data.immediatelyBuyPrice.toLocaleString() + "원"}
+              </span>
             </div>
             {isLogin && Number(userid) !== data.memberId && (
               <Button
                 $text="즉시구매"
                 $design="black"
                 type="button"
-                onClick={isLogin ? undefined : redirect}
+                onClick={() => {
+                  isLogin ? undefined : navigate("/login");
+                }}
               />
             )}
           </div>
