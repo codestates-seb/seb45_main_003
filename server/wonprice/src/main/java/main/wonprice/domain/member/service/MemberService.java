@@ -10,6 +10,7 @@ import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,8 +54,8 @@ public class MemberService {
     }
 
 //    관리자용 전체 회원 목록
-    public List<Member> findMembers(Pageable pageable) {
-        return memberRepository.findAll(pageable).getContent();
+    public Page<Member> findMembers(Pageable pageable) {
+        return memberRepository.findAll(pageable);
     }
 
     public Member updateMember(Member member) {

@@ -105,8 +105,8 @@ public class MemberController {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        List<Member> members = memberService.findMembers(pageable);
-        List<MemberResponseDto> response = mapper.membersToResponseDtos(members);
+        Page<Member> members = memberService.findMembers(pageable);
+        Page<MemberResponseDto> response = members.map(mapper::memberToResponseDto);
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
