@@ -1,9 +1,12 @@
 package main.wonprice.domain.member.controller;
 
 import lombok.AllArgsConstructor;
+import main.wonprice.domain.member.dto.NotificationPostDto;
 import main.wonprice.domain.member.dto.NotificationResponseDto;
+import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.Notification;
 import main.wonprice.domain.member.mapper.NotificationMapper;
+import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.domain.member.service.NotificationService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,6 +25,7 @@ public class NotificationController {
 
     private final NotificationService notificationService;
     private final NotificationMapper mapper;
+    private final MemberService memberService;
 
 //    안읽은 알림 개수
     @GetMapping("/count")
@@ -73,5 +77,18 @@ public class NotificationController {
         notificationService.deleteNotifications();
 
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
+    }
+
+    @PostMapping("/announce")
+    public ResponseEntity postNotice(@RequestBody NotificationPostDto postDto) {
+
+        memberService.isAdmin();
+        Member receiveMember = memberService.findMember(postDto.getMemberId());
+        Notification notification = mapper.postDtoToNotification(postDto, receiveMember);
+
+        Notification savedNotification = notificationService.saveNotification(notification);
+        NotificationResponseDto response = mapper.notificationToResponseDto(savedNotification);
+
+        return new ResponseEntity(response, HttpStatus.CREATED);
     }
 }

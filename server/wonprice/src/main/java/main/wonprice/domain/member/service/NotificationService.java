@@ -26,6 +26,11 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationMapper mapper;
 
+    public Notification saveNotification(Notification notification) {
+
+        return notificationRepository.save(notification);
+    }
+
 //    안읽은 알림 개수
     public Long getUnreadCount() {
 
