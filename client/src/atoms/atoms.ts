@@ -1,5 +1,8 @@
 import { atom } from "recoil";
+import { recoilPersist } from "recoil-persist";
 import { DropdownState } from "../components/header/DropdownState";
+
+const { persistAtom } = recoilPersist();
 
 export const toSignup = atom<boolean>({
   key: "toSignup",
@@ -14,6 +17,7 @@ export const profileTabState = atom<string>({
 export const loginState = atom<boolean>({
   key: "loginState",
   default: false,
+  effects_UNSTABLE: [persistAtom],
 });
 
 export interface User {
