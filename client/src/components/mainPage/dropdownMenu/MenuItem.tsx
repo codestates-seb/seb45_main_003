@@ -1,7 +1,7 @@
 //드롭다운 메뉴 아이템
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { ReactComponent as AddButton } from "../../../assets/images/Add.svg";
+import AddButton from "../../../assets/images/Add.png";
 
 // import myImage from "../../../assets/images/Img1.png";
 
@@ -52,6 +52,11 @@ const ItemBox = styled.div`
   width: 100%;
   display: flex;
   flex-direction: row; /* background-color: aqua; */
+
+  .addButton {
+    height: 0.75rem;
+    width: 0.75rem;
+  }
 
   .Box {
     /* background-color: #b118df; */
@@ -128,7 +133,7 @@ const Item: React.FC<ItemProps> = ({ categories, linkTo }) => {
         <li className="ItemList">
           <ItemBox>
             <StyledLink className="Button" to={linkTo}>
-              <AddButton />
+              <img className="addButton" src={AddButton} />
               <div className="category">{categories}</div> {/* 텍스트 렌더링 */}
             </StyledLink>
           </ItemBox>
