@@ -54,8 +54,8 @@ public class ChatController {
     @GetMapping("/chat/{room-id}")
     public ResponseEntity getMessage(@PathVariable("room-id") Long chatRoomId, @RequestBody ChatGetRequest request) {
 
-        List<MessageDto> findMessages = chatService.findMessages(chatRoomId, request.getMemberId());
-//        ChatGetResponse findMessages = chatService.findMessages(chatRoomId, request.getMemberId());
+//        List<MessageDto> findMessages = chatService.findMessages(chatRoomId, request.getMemberId());
+        ChatGetResponse findMessages = chatService.findMessages(chatRoomId, request.getMemberId());
 
         /* 조회해서 list가 1이면 안읽음, 2면 읽음처리 */
 
