@@ -7,15 +7,13 @@ import main.wonprice.domain.member.repository.ReviewRepository;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -74,15 +72,15 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<Review> findReviews(Pageable pageable, Member member) {
+    public Page<Review> findReviews(Pageable pageable, Member member) {
 
-        return repository.findAllByReceiveMember(pageable, member).getContent();
+        return repository.findAllByReceiveMember(pageable, member);
     }
 
     @Transactional(readOnly = true)
-    public List<Review> findWroteReviews(Pageable pageable, Member member) {
+    public Page<Review> findWroteReviews(Pageable pageable, Member member) {
 
-        return repository.findAllByPostMember(pageable, member).getContent();
+        return repository.findAllByPostMember(pageable, member);
     }
 
     public Review updateReview(Review review) {
