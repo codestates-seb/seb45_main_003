@@ -235,7 +235,7 @@ const ChattingListData: React.FC = () => {
         ) : (
           <div>No chats available</div>
         )}
-      </div>{" "}
+      </div>
       <div className="SearchBar">
         <SearchIcon />
         <Box>

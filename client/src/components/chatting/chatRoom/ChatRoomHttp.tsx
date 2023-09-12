@@ -1,23 +1,26 @@
 // 채팅룸 컴포넌트
 import axios from "axios";
-import { currentChatRoomIdState } from "../recoil/chatState";
+import { currentChatRoomIdState, MessageData } from "../recoil/chatState";
 import { useRecoilValue } from "recoil";
 import React, { useState, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
 import FormatTimeOrDate from "../hook/FormatTimeOrDate";
+import { getUserId } from "../../../util/auth";
 
-interface Message {
-  messageId: number;
-  senderId: number | null; // 수정된 부분
-  content: string;
-  createdAt: string;
-}
+// interface MessageItem {
+//   messageList: {
+//     messageId: number | null;
+//     content: string;
+//     senderId: number | null;
+//     createdAt?: string;
+//   };
+// }
 
 const ChatRoomHttp: React.FC = () => {
   const chatRoomId = useRecoilValue(currentChatRoomIdState);
-  // const { chatRoomId } = useParams<{ chatRoomId: string }>();
-  const [messages, setMessages] = useState<Message[]>([]);
-  // console.log(chatRoomId);
+  const [messages, setMessages] = useState<MessageData>({ messageList: [], sequence: 0 });
+
+  const memberId = getUserId();
 
   // 로컬 스토리지에서 userId 값을 가져옵니다.
   const userIdFromLocalStorage = localStorage.getItem("Id");
@@ -29,35 +32,40 @@ const ChatRoomHttp: React.FC = () => {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat/${chatRoomId}`);
-        // console.log(fetchMessages);
-
-        setMessages(response.data);
+        const response = await axios.get<MessageData>(
+          `${process.env.REACT_APP_API_URL}/chat/${chatRoomId}`,
+          {
+            params: {
+              memberId: Number(memberId),
+            },
+          },
+        );
+        console.log(response.data);
+        if (response.data && Array.isArray(response.data.messageList)) {
+          setMessages(response.data);
+        } else {
+          console.error("Received data is not an array");
+        }
       } catch (error) {
         console.error("Failed to fetch messages:", error);
       }
     };
 
     fetchMessages();
-    // const intervalId = setInterval(fetchMessages, 50000); // 5초마다 메시지를 새로 가져옵니다.
-    const intervalId = setInterval(fetchMessages, 3600000); // 1시간마다 메시지를 새로 가져옵니다.
-
-    return () => {
-      clearInterval(intervalId); // 컴포넌트가 언마운트되면 인터벌을 제거합니다.
-    };
-  }, [chatRoomId]); // chatRoomId를 의존성으로 추가
+  }, [chatRoomId, memberId]);
+  console.log(messages);
 
   return (
     <div>
-      {messages.length === 0 ? (
+      {!messages || messages.messageList.length === 0 ? (
         <div>{/* <NoMessages /> */}</div>
       ) : (
-        messages.map((message) => (
+        messages.messageList.map((messageItem) => (
           <MessageBubble
-            key={message.messageId}
-            owner={message.senderId === Id ? "user" : "other"}
-            message={message.content}
-            time={FormatTimeOrDate(message.createdAt)}
+            key={messageItem.messageId}
+            owner={messageItem.senderId === Id ? "user" : "other"}
+            message={messageItem.content}
+            time={FormatTimeOrDate(messageItem.createdAt || null)}
           />
         ))
       )}
