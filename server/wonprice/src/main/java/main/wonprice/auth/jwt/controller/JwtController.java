@@ -31,7 +31,7 @@ public class JwtController {
     @GetMapping("/access")
     public ResponseEntity verifyTokenExpiration(HttpServletRequest request) {
 
-        jwtService.verifyAccessToken(request);
+        jwtService.verifyToken(request);
 
         return new ResponseEntity(HttpStatus.OK);
     }

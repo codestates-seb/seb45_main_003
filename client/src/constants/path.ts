@@ -27,6 +27,9 @@ export const API_PATHS = {
   },
   products: {
     default: (id: PathType) => createPath(id, "products"),
+    search: (keyword: PathType) => {
+      return `products/search?keyword=${keyword}`;
+    },
     category: (id: PathType) => createPath(id, "products/category"),
   },
   chat: (id: PathType) => createPath(id, "chat"),
