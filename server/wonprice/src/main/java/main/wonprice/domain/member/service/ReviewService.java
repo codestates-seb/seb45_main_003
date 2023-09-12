@@ -24,6 +24,7 @@ public class ReviewService {
 
     private final ReviewRepository repository;
     private final MemberService memberService;
+//    private final NotificationService notificationService;
 
     public Review createReview(Review review) {
 
@@ -31,15 +32,21 @@ public class ReviewService {
 
         Long reviewPostMemberId = review.getPostMember().getMemberId();
 
+//        본인에게 리뷰 작성
+        if (review.getReceiveMember() == review.getPostMember()) {
+            throw new BusinessLogicException(ExceptionCode.FORBIDDEN_REQUEST);
+        }
 //        구매자가 리뷰 작성
-        if (!product.getBuyerReview() && Objects.equals(reviewPostMemberId, product.getBuyerId())) {
+        else if (!product.getBuyerReview() && Objects.equals(reviewPostMemberId, product.getBuyerId())) {
             product.setBuyerReview(true);
             product.getSeller().setReputation(product.getSeller().getReputation() + review.getScore());
 
             review.getPostMember().setWrittenReviewsCount(review.getPostMember().getWrittenReviewsCount() + 1);
             product.getSeller().setReceivedReviewsCount(product.getSeller().getReceivedReviewsCount() + 1);
 
-            return repository.save(review);
+            Review savedReview = repository.save(review);
+//            notificationService.createNotification(review);
+            return savedReview;
         }
 //        판매자가 리뷰 작성
         else if (!product.getSellerReview() && Objects.equals(reviewPostMemberId, product.getSeller().getMemberId())) {
@@ -51,7 +58,9 @@ public class ReviewService {
             review.getPostMember().setWrittenReviewsCount(review.getPostMember().getWrittenReviewsCount() + 1);
             buyer.setReceivedReviewsCount(buyer.getReceivedReviewsCount() + 1);
 
-            return repository.save(review);
+            Review savedReview = repository.save(review);
+//            notificationService.createNotification(review);
+            return savedReview;
         } else if (product.getBuyerReview() || product.getSellerReview()) {
             throw new BusinessLogicException(ExceptionCode.REVIEW_EXISTS);
         } else {
@@ -67,19 +76,13 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public List<Review> findReviews(Pageable pageable, Member member) {
 
-        List<Review> reviews = repository.findAllByTargetMemberId(pageable, member.getMemberId()).getContent();
-        return reviews.stream()
-                .filter(review -> review.getDeletedAt() == null)
-                .collect(Collectors.toList());
+        return repository.findAllByReceiveMember(pageable, member).getContent();
     }
 
     @Transactional(readOnly = true)
     public List<Review> findWroteReviews(Pageable pageable, Member member) {
 
-        List<Review> reviews = repository.findAllByPostMember(pageable, member).getContent();
-        return reviews.stream()
-                .filter(review -> review.getDeletedAt() == null)
-                .collect(Collectors.toList());
+        return repository.findAllByPostMember(pageable, member).getContent();
     }
 
     public Review updateReview(Review review) {
@@ -89,6 +92,7 @@ public class ReviewService {
         memberService.validateOwner(findReview.getPostMember().getMemberId());
 
         findReview.setContent(review.getContent());
+        findReview.setScore(review.getScore());
         return findReview;
     }
 
@@ -97,8 +101,14 @@ public class ReviewService {
         Review findReview = findVerifiedReview(reviewId);
 
         memberService.validateOwner(findReview.getPostMember().getMemberId());
+        repository.deleteById(reviewId);
 
-        findReview.setDeletedAt(LocalDateTime.now());
+        if (findReview.getPostMember().getMemberId() == findReview.getProduct().getSeller().getMemberId()) {
+            findReview.getProduct().setSellerReview(false);
+        }
+        if (findReview.getPostMember().getMemberId() == findReview.getProduct().getBuyerId()) {
+            findReview.getProduct().setBuyerReview(false);
+        }
     }
 
     public Review findVerifiedReview(Long reviewId) {

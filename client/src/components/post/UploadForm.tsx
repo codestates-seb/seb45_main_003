@@ -74,7 +74,7 @@ const StyledUploadForm = styled.section`
         font-weight: 700;
       }
 
-      .input {
+      .input:not(.inline) {
         width: 100%;
         position: relative;
         display: flex;
@@ -88,7 +88,6 @@ const StyledUploadForm = styled.section`
 
     input[name="currentAuctionPrice"],
     input[name="immediatelyBuyPrice"] {
-      box-sizing: border-box;
       max-width: 15rem;
       width: 100%;
     }
@@ -100,7 +99,6 @@ const StyledUploadForm = styled.section`
 
   input[type="number"] {
     padding: 0.5rem 2rem 0.5rem 0.75rem;
-    box-sizing: border-box;
 
     & + span {
       color: ${COLOR.gray_800};
@@ -156,7 +154,7 @@ const StyledUploadForm = styled.section`
 
     textarea {
       width: 100%;
-      box-sizing: border-box;
+
       min-height: 18.75rem;
     }
   }

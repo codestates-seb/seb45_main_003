@@ -49,16 +49,28 @@ export type ProductData = {
   sellerTradeCount?: number;
   sellerWrittenReviewsCount?: number;
   sellerReceivedReviewsCount?: number;
+  loginMembersWish?: boolean;
 };
 
 const StyledList = styled.section`
   padding: 40px 0 4rem;
 
   .list_top {
-    margin: 1rem 0;
+    margin: 0 0 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+
+  .list_title {
+    display: flex;
+    flex-flow: row;
+    gap: 0.75rem;
+    align-items: flex-end;
+
+    span {
+      margin: 0 0 0.25rem;
+    }
   }
 
   .list {
@@ -68,7 +80,6 @@ const StyledList = styled.section`
     gap: 1rem;
 
     li:not(.no_border) {
-      box-sizing: border-box;
       width: calc(20% - 0.8rem);
       border: 1px solid ${COLOR.border};
       border-radius: 6px;
@@ -85,6 +96,52 @@ const StyledList = styled.section`
 
   .empty_message {
     margin: 1rem 0 0;
+  }
+
+  @media (max-width: 64rem) {
+    padding: 1.5rem 0 2.5rem;
+
+    .list {
+      li:not(.no_border) {
+        width: calc(50% - 0.5rem);
+      }
+    }
+
+    .list_top {
+      margin: 0 0 1rem;
+      flex-flow: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .list_top_right {
+      width: 100%;
+
+      & > div {
+        width: calc(100% - 8.875rem);
+
+        input {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .list {
+      li:not(.no_border) {
+        width: 100%;
+      }
+    }
+
+    .list_top_right {
+      display: flex;
+      flex-flow: column;
+
+      & > div {
+        width: 100%;
+      }
+    }
   }
 `;
 
@@ -171,7 +228,11 @@ const List = (): JSX.Element => {
     <>
       <StyledList>
         <div className="list_top">
-          <h1>{printTitle(location.pathname)}</h1>
+          <div className="list_title">
+            <h1>{printTitle(location.pathname)}</h1>
+            <span>( {currentPage + 1} 페이지 )</span>
+          </div>
+
           <div className="list_top_right">
             <SearchBar></SearchBar>
             {isLogin && (

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
@@ -6,13 +6,14 @@ import { defaultInstance } from "../../interceptors/interceptors";
 import { useLocation, useNavigate } from "react-router-dom";
 import { findCategory } from "../../util/category";
 import Empty from "../common/Empty";
-import { useQueries } from "react-query";
+import { useQuery } from "react-query";
 import Loading from "../common/Loading";
 import Error from "../common/Error";
-// import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
+import { usePagination } from "../../hooks/usePagination";
 
 // interface Data {
-//   content: products[];
+//   content: postContent[];
 //   totalPages: number;
 // }
 interface image {
@@ -20,15 +21,12 @@ interface image {
   path: string;
 }
 
-interface products {
+interface postContent {
   productId: number;
   title: string;
   createAt: string;
   images: image[];
   categoryId: number;
-}
-
-interface Review {
   postMemberId: number;
   targetMemberId: number;
   content: string;
@@ -36,6 +34,15 @@ interface Review {
   createdAt: string;
   img: string;
 }
+
+// interface Review {
+//   postMemberId: number;
+//   targetMemberId: number;
+//   content: string;
+//   score: number;
+//   createdAt: string;
+//   img: string;
+// }
 
 const PostListContainer = styled.div`
   display: flex;
@@ -127,52 +134,66 @@ const PostListTab = (): JSX.Element => {
   const navigate = useNavigate();
   const location = useLocation();
   const Id = location.pathname.slice(8);
-  // const {
-  //   currentPage,
-  //   totalPages,
-  //   setTotalPages,
-  //   pageChangeHandler,
-  //   prevPageHandler,
-  //   nextPageHandler,
-  // } = usePagination();
-  const result = useQueries([
-    {
-      queryKey: ["cellPost"],
-      queryFn: async () => {
-        const res = await defaultInstance.get(`/members/${Id}/products`, {
-          headers: {
-            "ngrok-skip-browser-warning": "69420",
-          },
-        });
-        return res.data.slice().reverse();
-      },
-    },
-    {
-      queryKey: ["leaveReview"],
-      queryFn: async () => {
-        const res = await defaultInstance.get(`/members/${Id}/reviews/post`, {
-          headers: {
-            "ngrok-skip-browser-warning": "69420",
-          },
-        });
-        return res.data;
-      },
-    },
-    {
-      queryKey: ["receivedReview"],
-      queryFn: async () => {
-        const res = await defaultInstance.get(`/members/${Id}/reviews`, {
-          headers: {
-            "ngrok-skip-browser-warning": "69420",
-          },
-        });
-        return res.data;
-      },
-    },
-  ]);
-  const cellPost: products[] = result[0].data;
-  const leaveReview: Review[] = result[1].data;
-  const recievedReview: Review[] = result[2].data;
+  const searchParams = new URLSearchParams(location.search);
+  const handleMenu = (value: string): void => {
+    setMenu(value);
+    navigate(`${location.pathname}?menu=${searchParams.get("menu")}&?tabmenu=${value}`);
+  };
+  const ITEMS_PER_VIEW = 10;
+  const {
+    currentPage,
+    totalPages,
+    setTotalPages,
+    pageChangeHandler,
+    prevPageHandler,
+    nextPageHandler,
+  } = usePagination();
+  const {
+    isLoading,
+    isError,
+    refetch,
+    data: result,
+  } = useQuery<postContent[]>(["postList", currentPage], async () => {
+    const currentPageParam = parseInt(searchParams.get("page") || "1");
+    const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
+    if (menu === "cell") {
+      const res = await defaultInstance.get(`/members/${Id}/products?${pageQueryParam}`, {
+        headers: {
+          "ngrok-skip-browser-warning": "69420",
+        },
+      });
+      if (res.data?.totalPages !== totalPages) {
+        setTotalPages(res.data?.totalPages);
+      }
+      navigate(`?menu=profile&?tabmenu=${menu}&?page=${currentPageParam}`);
+      return res.data.slice().reverse();
+    } else if (menu === "leaveReview") {
+      const res = await defaultInstance.get(`/members/${Id}/reviews/post?${pageQueryParam}`, {
+        headers: {
+          "ngrok-skip-browser-warning": "69420",
+        },
+      });
+      if (res.data?.totalPages !== totalPages) {
+        setTotalPages(res.data?.totalPages);
+      }
+      navigate(`?menu=profile&?tabmenu=${menu}&?page=${currentPageParam}`);
+      return res.data;
+    } else if (menu === "getReview") {
+      const res = await defaultInstance.get(`/members/${Id}/reviews?${pageQueryParam}`, {
+        headers: {
+          "ngrok-skip-browser-warning": "69420",
+        },
+      });
+      if (res.data?.totalPages !== totalPages) {
+        setTotalPages(res.data?.totalPages);
+      }
+      navigate(`?menu=profile&?tabmenu=${menu}&?page=${currentPageParam}`);
+      return res.data;
+    }
+  });
+  useEffect(() => {
+    refetch();
+  }, [location.pathname, location.search, currentPage]);
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">
@@ -180,18 +201,17 @@ const PostListTab = (): JSX.Element => {
           <li
             key={el.value}
             className={menu === el.value ? "select postlistTabMenu" : "postlistTabMenu"}
-            onClick={() => setMenu(el.value)}
+            onClick={() => handleMenu(el.value)}
           >
             {el.text}
           </li>
         ))}
       </ul>
       <div className="tabContent">
-        {menu === "cell" && result[0].isLoading && <Loading />}
-        {menu === "cell" && result[0].isError && <Error />}
+        {isLoading && <Loading />}
+        {isError && <Error />}
         {menu === "cell" &&
-          cellPost &&
-          cellPost.map((el) => (
+          result?.map((el) => (
             <div
               className="postContainer"
               key={el.productId}
@@ -204,10 +224,8 @@ const PostListTab = (): JSX.Element => {
               </div>
             </div>
           ))}
-        {menu === "leaveReview" && result[1].isLoading && <Loading />}
-        {menu === "leaveReview" && result[1].isError && <Error />}
         {menu === "leaveReview" &&
-          leaveReview.map((el, idx) => (
+          result?.map((el, idx) => (
             <div key={idx} className="postContainer">
               <img src={el.img}></img>
               <div className="infoContainer">
@@ -222,10 +240,8 @@ const PostListTab = (): JSX.Element => {
               </div>
             </div>
           ))}
-        {menu === "getReview" && result[2].isLoading && <Loading />}
-        {menu === "getReview" && result[2].isError && <Error />}
         {menu === "getReview" &&
-          recievedReview.map((el, idx) => (
+          result?.map((el, idx) => (
             <div key={idx} className="postContainer">
               <img src={el.img}></img>
               <div className="infoContainer">
@@ -241,21 +257,20 @@ const PostListTab = (): JSX.Element => {
             </div>
           ))}
       </div>
-      {menu === "cell" && cellPost && cellPost.length === 0 && (
+      {result?.length === 0 && (
         <div className="empty">
           <Empty />
         </div>
       )}
-      {menu === "leaveReview" && leaveReview && leaveReview.length === 0 && (
-        <div className="empty">
-          <Empty />
-        </div>
-      )}
-      {menu === "getReview" && recievedReview && recievedReview.length === 0 && (
-        <div className="empty">
-          <Empty />
-        </div>
-      )}
+      <Pagination
+        {...{
+          currentPage,
+          totalPages,
+          pageChangeHandler,
+          prevPageHandler,
+          nextPageHandler,
+        }}
+      />
     </PostListContainer>
   );
 };

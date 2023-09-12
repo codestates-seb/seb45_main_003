@@ -143,6 +143,7 @@ const ProfileContent = (): JSX.Element => {
   const loginUserId = localStorage.getItem("Id");
   const location = useLocation();
   const Id = location.pathname.slice(8);
+  //pathname은 쿼리문을 제외하고 가져옴
   const [pass, setPass] = useState(false);
   const {
     register,
@@ -204,11 +205,7 @@ const ProfileContent = (): JSX.Element => {
     toggleModal();
   };
   if (isLoading) {
-    return (
-      <>
-        <Loading />
-      </>
-    );
+    return <Loading />;
   }
   if (error) {
     return <Error />;

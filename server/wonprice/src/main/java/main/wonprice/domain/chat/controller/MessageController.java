@@ -34,7 +34,7 @@ public class MessageController {
     @SendTo("/topic/chat/{room-id}")
     public ResponseEntity sendMessage(@DestinationVariable("room-id") Long roomId, @RequestBody MessageSendRequest request) {
 
-//        Member findMember = memberService.findMember(request.getSenderId());
+        Member findMember = memberService.findMember(request.getSenderId());
         ChatRoom findChatRoom = chatService.findChatRoom(roomId);
 
         /* sender_id = logimMember.getEmail(), created_at = LocalDateTime.now(), chat_room_id = roomId , content = request.content */
@@ -48,7 +48,7 @@ public class MessageController {
         Long messageId = messageService.saveMessage(message);
 
         /* 채팅 보낸 사용자 sequence 업데이트 */
-//        chatService.updateSequence(findMember, findChatRoom, messageId);
+        chatService.updateSequence(findMember, findChatRoom, messageId);
 
         MessageResponseDto messageResponseDto = new MessageResponseDto(message);
 
