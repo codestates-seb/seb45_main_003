@@ -1,6 +1,7 @@
 package main.wonprice.domain.product.service;
 
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,6 @@ public interface ProductService {
 
     Page<Product> getCompletedProducts(int page, int size);
 
-    Product updateCurrentAuctionPrice(Long productId, Long currentAuctionPrice, Long memberId);
+    Product updateCurrentAuctionPrice(Long productId, BidRequestDto request);
 }
 
