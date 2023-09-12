@@ -12,10 +12,10 @@ import Error from "../common/Error";
 import Pagination from "../common/Pagination";
 import { usePagination } from "../../hooks/usePagination";
 
-interface Data {
-  content: postContent[];
-  totalPages: number;
-}
+// interface Data {
+//   content: postContent[];
+//   totalPages: number;
+// }
 interface image {
   imageId: number;
   path: string;
@@ -153,7 +153,7 @@ const PostListTab = (): JSX.Element => {
     isError,
     refetch,
     data: result,
-  } = useQuery<Data>(["postList", currentPage], async () => {
+  } = useQuery<postContent[]>(["postList", currentPage], async () => {
     const currentPageParam = parseInt(searchParams.get("page") || "1");
     const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
     if (menu === "cell") {
@@ -211,7 +211,7 @@ const PostListTab = (): JSX.Element => {
         {isLoading && <Loading />}
         {isError && <Error />}
         {menu === "cell" &&
-          result?.content.map((el) => (
+          result?.map((el) => (
             <div
               className="postContainer"
               key={el.productId}
@@ -225,7 +225,7 @@ const PostListTab = (): JSX.Element => {
             </div>
           ))}
         {menu === "leaveReview" &&
-          result?.content.map((el, idx) => (
+          result?.map((el, idx) => (
             <div key={idx} className="postContainer">
               <img src={el.img}></img>
               <div className="infoContainer">
@@ -241,7 +241,7 @@ const PostListTab = (): JSX.Element => {
             </div>
           ))}
         {menu === "getReview" &&
-          result?.content.map((el, idx) => (
+          result?.map((el, idx) => (
             <div key={idx} className="postContainer">
               <img src={el.img}></img>
               <div className="infoContainer">
@@ -257,7 +257,7 @@ const PostListTab = (): JSX.Element => {
             </div>
           ))}
       </div>
-      {result?.content.length === 0 && (
+      {result?.length === 0 && (
         <div className="empty">
           <Empty />
         </div>
