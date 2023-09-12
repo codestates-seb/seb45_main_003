@@ -14,6 +14,8 @@ const ProfileContainer = styled.div`
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
+  min-height: calc(100% - 1.5rem);
+  width: 100%;
 `;
 
 const Profile = (): JSX.Element => {

@@ -30,6 +30,7 @@ public class ReviewController {
     public ResponseEntity postReview(@RequestBody ReviewPostDto postDto) {
 
         Review review = mapper.postDtoToReview(postDto);
+        review.setReceiveMember(memberService.findMember(postDto.getReceiveMemberId()));
         review.setPostMember(memberService.findLoginMember());
         review.setProduct(productService.findOneById(postDto.getProductId()));
 

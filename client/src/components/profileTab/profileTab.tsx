@@ -3,6 +3,7 @@ import { styled } from "styled-components";
 import { profileTabState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ProfileTabContainer = styled.ul`
   flex: 0 0 14rem;
@@ -29,6 +30,7 @@ const ProfileTabContainer = styled.ul`
 `;
 
 const ProfileTab = (): JSX.Element => {
+  const navigate = useNavigate();
   const [tabState, setTabState] = useRecoilState(profileTabState);
   const tabMenu = [
     { value: "profile", text: "프로필" },
@@ -37,14 +39,18 @@ const ProfileTab = (): JSX.Element => {
     { value: "purchase", text: "구매내역" },
     { value: "sales", text: "판매내역" },
   ];
-
+  const location = useLocation();
+  const handleTab = (value: string): void => {
+    setTabState(value);
+    navigate(`${location.pathname}?menu=${value}`);
+  };
   return (
     <ProfileTabContainer>
       {tabMenu.map((el) => (
         <li
           key={el.value}
           className={tabState === el.value ? "tabMenu select" : "tabMenu"}
-          onClick={() => setTabState(el.value)}
+          onClick={() => handleTab(el.value)}
         >
           {el.text}
         </li>

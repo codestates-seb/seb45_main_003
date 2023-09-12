@@ -43,7 +43,7 @@ const Item = (): JSX.Element => {
       <ItemStatus data={data} />
       <section className="flex">
         <ItemDescription description={data.description} />
-        <Seller memberId={data.memberId} />
+        <Seller data={data} />
       </section>
     </StyledItem>
   );

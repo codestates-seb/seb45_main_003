@@ -2,7 +2,10 @@ package main.wonprice.domain.chat.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import main.wonprice.domain.chat.controller.dto.ChatGetRequest;
 import main.wonprice.domain.chat.controller.dto.ChatPostRequest;
+import main.wonprice.domain.chat.controller.dto.SequenceRequest;
+import main.wonprice.domain.chat.dto.chat.ChatGetResponse;
 import main.wonprice.domain.chat.dto.chat.ChatParticipantDto;
 import main.wonprice.domain.chat.dto.message.MessageDto;
 import main.wonprice.domain.chat.entity.ChatRoom;
@@ -49,10 +52,13 @@ public class ChatController {
     }
 
     @GetMapping("/chat/{room-id}")
-    public ResponseEntity getMessage(@PathVariable("room-id") Long chatRoomId) {
+    public ResponseEntity getMessage(@PathVariable("room-id") Long chatRoomId, @RequestParam Long memberId) {
 
-//        List<Message> findMessages = chatService.findMessages(chatRoomId);
-        List<MessageDto> findMessages = chatService.findMessages(chatRoomId);
+//        log.info("memberId : " + memberId);
+//        List<MessageDto> findMessages = chatService.findMessages(chatRoomId, request.getMemberId());
+        ChatGetResponse findMessages = chatService.findMessages(chatRoomId, memberId);
+
+        /* 조회해서 list가 1이면 안읽음, 2면 읽음처리 */
 
         return new ResponseEntity(findMessages, HttpStatus.OK);
     }
@@ -71,4 +77,11 @@ public class ChatController {
         chatService.deleteChatRoom(chatRoomId, loginMember.getMemberId());
     }
 
+    @PostMapping("/chat/sequence/{room-id}")
+    public void updateSequence(@PathVariable("room-id") Long chatRoomId, @RequestBody SequenceRequest request) {
+        Member loginMember = memberService.findMember(request.getMemberId());
+        ChatRoom findChatRoom = chatService.findChatRoom(chatRoomId);
+
+        chatService.updateSequence(loginMember, findChatRoom, request.getMessageId());
+    }
 }
