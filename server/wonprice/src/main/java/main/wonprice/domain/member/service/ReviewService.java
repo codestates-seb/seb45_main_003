@@ -24,7 +24,7 @@ public class ReviewService {
 
     private final ReviewRepository repository;
     private final MemberService memberService;
-    private final NotificationService notificationService;
+//    private final NotificationService notificationService;
 
     public Review createReview(Review review) {
 
@@ -45,7 +45,7 @@ public class ReviewService {
             product.getSeller().setReceivedReviewsCount(product.getSeller().getReceivedReviewsCount() + 1);
 
             Review savedReview = repository.save(review);
-            notificationService.createNotification(review);
+//            notificationService.createNotification(review);
             return savedReview;
         }
 //        판매자가 리뷰 작성
@@ -59,7 +59,7 @@ public class ReviewService {
             buyer.setReceivedReviewsCount(buyer.getReceivedReviewsCount() + 1);
 
             Review savedReview = repository.save(review);
-            notificationService.createNotification(review);
+//            notificationService.createNotification(review);
             return savedReview;
         } else if (product.getBuyerReview() || product.getSellerReview()) {
             throw new BusinessLogicException(ExceptionCode.REVIEW_EXISTS);

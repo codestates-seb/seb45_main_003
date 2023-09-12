@@ -76,8 +76,8 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<ChatParticipant> chatParticipant;
 
-    @OneToMany(mappedBy = "member")
-    private List<Notification> notifications = new ArrayList<>();
+//    @OneToMany(mappedBy = "member")
+//    private List<Notification> notifications = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "seller")
 //    private List<ChatRoom> chatRooms = new ArrayList<>();
