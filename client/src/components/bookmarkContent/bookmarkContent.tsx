@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
@@ -13,7 +13,13 @@ import Error from "../common/Error";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import { translateProductStatus } from "../../util/productStatus";
 import { usePagination } from "../../hooks/usePagination";
+import Pagination from "../common/Pagination";
 //dto 정해지면 추가
+// type Data = {
+//   content: bookmark[];
+//   totalPages: number;
+// };
+// 배포서버에 페이지네이션 쿼리 적용되면 추후 수정필요
 interface image {
   imageId: number;
   path: string;
@@ -184,6 +190,8 @@ const BookmarkContent = (): JSX.Element => {
   //체크박스를 사용항 찜취소시에 체크박스 상태들을 저장해둘 상태
   const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
   const queryClient = useQueryClient();
+  const searchParams = new URLSearchParams(location.search);
+  const ITEMS_PER_VIEW = 10;
   const {
     currentPage,
     totalPages,
@@ -195,16 +203,22 @@ const BookmarkContent = (): JSX.Element => {
   const {
     isLoading,
     isError,
+    refetch,
     data: bookmarkList,
   } = useQuery<bookmark[]>(
-    "bookmark",
+    ["bookmark", currentPage],
     async () => {
-      const res = await defaultInstance.get(`/members/${Id}/wishes`, {
+      const currentPageParam = parseInt(searchParams.get("page") || "1");
+      const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
+      const res = await defaultInstance.get(`/members/${Id}/wishes?${pageQueryParam}`, {
         headers: {
           "ngrok-skip-browser-warning": "69420",
         },
       });
-
+      if (res.data?.totalPages !== totalPages) {
+        setTotalPages(res.data?.totalPages);
+      }
+      navigate(`?menu=bookmark&?page=${currentPageParam}`);
       return res.data;
     },
     {
@@ -254,6 +268,9 @@ const BookmarkContent = (): JSX.Element => {
       },
     },
   );
+  useEffect(() => {
+    refetch();
+  }, [location.pathname, location.search, currentPage]);
   return (
     <BookmarkContentContainer
       onSubmit={handleSubmit(() => sendBookmarkMutation.mutateAsync(getValues()))}
@@ -349,7 +366,15 @@ const BookmarkContent = (): JSX.Element => {
           <Empty />
         </div>
       )}
-      <div className="pagenation">페이지네이션</div>
+      <Pagination
+        {...{
+          currentPage,
+          totalPages,
+          pageChangeHandler,
+          prevPageHandler,
+          nextPageHandler,
+        }}
+      />
     </BookmarkContentContainer>
   );
 };
