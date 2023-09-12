@@ -20,7 +20,9 @@ export const useValidateToken = () => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log(error);
+        if (error.status === 406 || 500) {
+          setLogin(false);
+        }
       }
     }
   };

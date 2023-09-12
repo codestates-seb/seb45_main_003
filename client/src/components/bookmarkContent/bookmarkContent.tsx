@@ -12,6 +12,7 @@ import Loading from "../common/Loading";
 import Error from "../common/Error";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import { translateProductStatus } from "../../util/productStatus";
+import { usePagination } from "../../hooks/usePagination";
 //dto 정해지면 추가
 interface image {
   imageId: number;
@@ -184,6 +185,14 @@ const BookmarkContent = (): JSX.Element => {
   const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
   const queryClient = useQueryClient();
   const {
+    currentPage,
+    totalPages,
+    setTotalPages,
+    pageChangeHandler,
+    prevPageHandler,
+    nextPageHandler,
+  } = usePagination();
+  const {
     isLoading,
     isError,
     data: bookmarkList,
@@ -195,31 +204,39 @@ const BookmarkContent = (): JSX.Element => {
           "ngrok-skip-browser-warning": "69420",
         },
       });
-      if (checkboxes.some((el) => el === true)) {
-        setValue("checkboxes", checkboxes);
-      } else {
-        setValue("checkboxes", Array(bookmarkList?.length).fill(false));
-      }
+
       return res.data;
     },
-    { refetchInterval: 30000, refetchIntervalInBackground: true },
+    {
+      refetchInterval: 30000,
+      refetchIntervalInBackground: true,
+      onSuccess: (data) => {
+        if (changedCheckboxes.length !== 0) {
+          setValue("checkboxes", changedCheckboxes);
+          setChangedCheckboxes([]);
+        }
+        if (checkboxes.length === 0 && changedCheckboxes.length === 0) {
+          setValue("checkboxes", Array(data.length).fill(false));
+        }
+        console.log(changedCheckboxes, checkboxes, data);
+      },
+    },
   );
   //체크박스를 선택한적 있으면 해당체크박스를 refetch해도 유지, refetch는 30초마다
-  console.log(checkboxes, bookmarkList, changedCheckboxes);
+  //추후 체크박스 수정하게 되면 손볼것
   // 찜취소버튼으로 취소요청하는 함수
   const bookmarkMutation = useMutation(
     async (wishId: number) => {
       const deletedIndex = bookmarkList?.findIndex((el) => el.wishId === wishId);
       const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
       setChangedCheckboxes(checkedlist);
-      console.log(checkedlist);
+      console.log(`changedcheckboxes : ${checkedlist}`);
       await authInstance.delete(`/wishes/${wishId}`);
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("bookmark");
         setValue("checkboxes", changedCheckboxes);
-        console.log(checkboxes);
+        queryClient.invalidateQueries("bookmark");
       },
     },
   );
@@ -231,8 +248,9 @@ const BookmarkContent = (): JSX.Element => {
     },
     {
       onSuccess: () => {
+        setChangedCheckboxes([]);
+        setValue("checkboxes", []);
         queryClient.invalidateQueries("bookmark");
-        setValue("checkboxes", changedCheckboxes);
       },
     },
   );
@@ -267,6 +285,7 @@ const BookmarkContent = (): JSX.Element => {
                   <input
                     type="checkbox"
                     className="checkbox"
+                    checked={checkboxes[index] || false}
                     {...register(`checkboxes.${index}`)}
                     onChange={(e) => handleCheckBox(index, e.currentTarget.checked)}
                     key={el.productId}
@@ -316,7 +335,7 @@ const BookmarkContent = (): JSX.Element => {
                 {loginUserId === Id && (
                   <Button
                     type="button"
-                    $text="찜 취소"
+                    $text="취소"
                     $design="yellow"
                     onClick={() => bookmarkMutation.mutateAsync(el.wishId)}
                   />
