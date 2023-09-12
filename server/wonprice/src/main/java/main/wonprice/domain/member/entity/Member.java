@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import main.wonprice.domain.chat.entity.ChatParticipant;
-import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.picture.entity.MemberPicture;
-import main.wonprice.domain.picture.entity.Picture;
 import main.wonprice.domain.product.entity.Product;
 
 import javax.persistence.*;
@@ -54,8 +52,11 @@ public class Member {
     @Column(nullable = true, name = "profile_image")
     private String image = null;
 
+    @OneToMany(mappedBy = "receiveMember")
+    private List<Review> receiveReviews = new ArrayList<>();
+
     @OneToMany(mappedBy = "postMember")
-    private List<Review> reviews = new ArrayList<>();
+    private List<Review> postReviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Bid> bids = new ArrayList<>();
