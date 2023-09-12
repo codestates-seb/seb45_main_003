@@ -58,7 +58,7 @@ public class WishService {
 
     public void removeWish(Long productId) {
 
-        Optional<Wish> findWish = wishRepository.findByProductProductId(productId);
+        Optional<Wish> findWish = wishRepository.findByProductProductIdAndMember(productId, memberService.findLoginMember());
 
         if (findWish.isEmpty()) {
             throw new BusinessLogicException(ExceptionCode.WISH_NOT_FOUND);
