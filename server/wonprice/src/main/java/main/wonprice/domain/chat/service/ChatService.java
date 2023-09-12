@@ -2,22 +2,20 @@ package main.wonprice.domain.chat.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import main.wonprice.domain.chat.dto.chat.ChatGetResponse;
 import main.wonprice.domain.chat.dto.chat.ChatParticipantDto;
 import main.wonprice.domain.chat.dto.message.MessageDto;
 import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.chat.entity.Message;
-import main.wonprice.domain.chat.entity.ReadSequence;
 import main.wonprice.domain.chat.repository.ChatParticipantRepository;
 import main.wonprice.domain.chat.repository.ChatRoomRepository;
 import main.wonprice.domain.chat.repository.MessageRepository;
-import main.wonprice.domain.chat.repository.ReadSequenceRepository;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -65,16 +63,23 @@ public class ChatService {
 
 //        deleteChatRoom.setDeletedAt(LocalDateTime.now());
     }
-    public List<MessageDto> findMessages(Long chatRoomId) {
+    public List<MessageDto> findMessages(Long chatRoomId, Long memberId) {
         ChatRoom findChatRoom = findChatRoom(chatRoomId);
+
+        Long currentSequence = findChatRoom.getChatParticipantList().stream()
+                .filter(o -> o.getMember().getMemberId() != memberId)
+                .collect(Collectors.toList())
+                .get(0).getCurrentSequence();
 
         List<Message> findMessages = messageRepository.findByChatRoom(findChatRoom);
 
-        List<MessageDto> response = findMessages.stream()
+        List<MessageDto> messageList = findMessages.stream()
                 .map(o -> new MessageDto(o))
                 .collect(Collectors.toList());
 
-        return response;
+        ChatGetResponse chatGetResponse = new ChatGetResponse(messageList, currentSequence);
+
+        return messageList;
     }
 
     public ChatRoom findChatRoom(Long chatRoomId) {
