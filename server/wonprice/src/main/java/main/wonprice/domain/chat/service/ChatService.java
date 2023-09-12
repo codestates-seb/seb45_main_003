@@ -50,7 +50,7 @@ public class ChatService {
                 .map(o -> new ChatParticipantDto(o))
                 .collect(Collectors.toList());
 
-        log.info("ChatParticipantDto : " + response.toString());
+//        log.info("ChatParticipantDto : " + response.toString());
 
         return response;
     }
@@ -77,6 +77,7 @@ public class ChatService {
                 .map(o -> new MessageDto(o))
                 .collect(Collectors.toList());
 
+//        log.info("ㄷㅍ : " + currentSequence);
         ChatGetResponse chatGetResponse = new ChatGetResponse(messageList, currentSequence);
 
         return chatGetResponse;
