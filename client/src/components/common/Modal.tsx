@@ -28,7 +28,7 @@ const StyledModal = styled.div`
   section {
     display: flex;
     flex-flow: column;
-    box-sizing: border-box;
+
     min-width: 25rem;
     min-height: 180px;
     position: relative;

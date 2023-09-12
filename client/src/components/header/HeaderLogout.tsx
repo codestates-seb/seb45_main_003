@@ -1,14 +1,12 @@
+import MenuIcon from "@mui/icons-material/Menu";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
-import { dropDownState } from "../../atoms/atoms";
-import MenuIcon from "@mui/icons-material/Menu";
-import React, { useEffect, useRef } from "react";
+import { dropDownState, toSignup } from "../../atoms/atoms";
 import MenuItem from "../mainPage/dropdownMenu/MenuItem";
 import { DropdownState } from "./DropdownState";
-import { useSetRecoilState } from "recoil";
-import { toSignup } from "../../atoms/atoms";
 
 // 헤더 하단으 경계 스타일
 const StyledBorder = styled.div`
@@ -23,7 +21,7 @@ const StyledHeader = styled.header`
   }
   .header-wrapper {
     width: calc(100% - 3rem);
-    padding: 1.25rem;
+    padding: 1.25rem 0;
     max-width: 90rem;
     margin: 0 auto;
     display: flex;

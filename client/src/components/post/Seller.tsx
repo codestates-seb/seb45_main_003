@@ -63,6 +63,11 @@ const StyledSeller = styled.section`
   button {
     padding: 1.25rem 0;
   }
+
+  @media (max-width: 64rem) {
+    width: 100%;
+    max-width: unset;
+  }
 `;
 
 const Seller = (props: SellerProps): JSX.Element => {
@@ -94,7 +99,7 @@ const Seller = (props: SellerProps): JSX.Element => {
         </div>
         <Button
           onClick={() => {
-            navigate(`/member/:${data.memberId}`);
+            navigate(`/member/${data.memberId}`);
           }}
           $text="프로필 방문하기"
           $design="outline"

@@ -23,7 +23,6 @@ const StyledImageInput = styled.div`
   }
 
   label[for="images"] {
-    box-sizing: border-box;
     display: flex;
     flex-flow: column;
     align-items: center;

@@ -18,6 +18,11 @@ export const usePagination = (): PaginationReturn => {
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1") - 1);
   const [totalPages, setTotalPages] = useState(0);
 
+  //페이징 버튼 클릭시 화면 최상단으로 이동
+  const scrollToTop = () => {
+    window.scrollTo(0, 0);
+  };
+
   //백엔드에서 보낸 page가 0으로 시작하기 때문에 currentPage의 값 조정
   const pageChangeHandler = (event: React.MouseEvent<HTMLButtonElement>, pageNumber: number) => {
     if (pageNumber === currentPage) {
@@ -26,12 +31,14 @@ export const usePagination = (): PaginationReturn => {
     }
     setCurrentPage(pageNumber);
     navigate(`?page=${pageNumber + 1}`);
+    scrollToTop();
   };
 
   const prevPageHandler = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
       navigate(`?page=${currentPage}`);
+      scrollToTop();
     }
   };
 
@@ -39,6 +46,7 @@ export const usePagination = (): PaginationReturn => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
       navigate(`?page=${currentPage + 2}`);
+      scrollToTop();
     }
   };
 
