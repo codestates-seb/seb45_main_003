@@ -1,5 +1,6 @@
 package main.wonprice.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 import main.wonprice.domain.product.entity.Product;
@@ -26,9 +27,11 @@ public class Review {
     private Long score;
 
     @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime deletedAt;
 
     @Column(nullable = false)
