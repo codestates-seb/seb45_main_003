@@ -91,8 +91,16 @@ public class ReviewService {
 
         memberService.validateOwner(findReview.getPostMember().getMemberId());
 
-        findReview.setContent(review.getContent());
-        findReview.setScore(review.getScore());
+        if (review.getTitle() != null) {
+            findReview.setTitle(review.getTitle());
+        }
+        if (review.getContent() != null) {
+            findReview.setContent(review.getContent());
+        }
+        if (review.getScore() != null) {
+            findReview.setScore(review.getScore());
+        }
+
         return findReview;
     }
 
