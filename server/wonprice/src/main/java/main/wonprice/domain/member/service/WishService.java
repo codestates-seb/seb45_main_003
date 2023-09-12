@@ -51,6 +51,7 @@ public class WishService {
         return wishRepository.save(wish);
     }
 
+    @Transactional(readOnly = true)
     public List<Wish> findMemberWish(Pageable pageable, Member member) {
 
         return wishRepository.findByMember(pageable, member).getContent();
