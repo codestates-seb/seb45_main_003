@@ -29,13 +29,10 @@ public class Review {
     @Column(nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = true)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime deletedAt;
-
-    @Column(nullable = false)
-    private Long targetMemberId;
+    
+    @ManyToOne
+    @JoinColumn(name = "receive_member_id")
+    private Member receiveMember;
 
     @ManyToOne
     @JoinColumn(name = "post_member_id")
