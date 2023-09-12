@@ -16,9 +16,10 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 90%; // 상대적인 단위로 변경
-  height: 43.6875rem;
   padding: 1.5rem 1rem;
-
+  min-height: 43.6875rem;
+  padding: 1.5rem 1rem;
+  height: 47.0625rem;
   justify-content: end;
 
   border-radius: 0.375rem;

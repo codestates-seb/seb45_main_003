@@ -7,6 +7,7 @@ export type ChatList = {
   productId: number;
   deletedAt: string;
   path: string | undefined;
+  unReadMessage: number;
 
   chatRoom: {
     memberId: number;
@@ -20,18 +21,33 @@ export type ChatList = {
     createdAt: string;
   };
 };
-
-export const chatListState = atom<ChatList[]>({
-  key: "chatListState",
-  default: [],
-});
-
 export type Message = {
   messageId: number;
   senderId: number;
   content: string;
   createdAt: string;
 };
+
+export interface MessageItem {
+  messageId: number | null;
+  content: string;
+  senderId: number | null;
+  createdAt?: string;
+}
+
+export interface MessageData {
+  messageList: MessageItem[];
+  sequence: number;
+}
+
+export const chatState = atom<MessageItem[]>({
+  key: "chatState",
+  default: [],
+});
+export const chatListState = atom<ChatList[]>({
+  key: "chatListState",
+  default: [],
+});
 
 export const chatRoomState = atom<ChatList[]>({
   key: "chatRoomState",
@@ -51,21 +67,4 @@ export const currentChatRoomIdState = atom<number | null>({
 export const webSocketConnectionState = atom({
   key: "webSocketConnection",
   default: false, // 초기값은 연결되지 않은 상태
-});
-
-export interface MessageItem {
-  messageId: number | null;
-  content: string;
-  senderId: number | null;
-  createdAt?: string;
-}
-
-export interface MessageData {
-  messageList: MessageItem[];
-  sequence: number;
-}
-
-export const chatState = atom<MessageItem[]>({
-  key: "chatState",
-  default: [],
 });
