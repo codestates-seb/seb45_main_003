@@ -63,7 +63,7 @@ public class ChatService {
 
 //        deleteChatRoom.setDeletedAt(LocalDateTime.now());
     }
-    public List<MessageDto> findMessages(Long chatRoomId, Long memberId) {
+    public ChatGetResponse findMessages(Long chatRoomId, Long memberId) {
         ChatRoom findChatRoom = findChatRoom(chatRoomId);
 
         Long currentSequence = findChatRoom.getChatParticipantList().stream()
@@ -79,7 +79,7 @@ public class ChatService {
 
         ChatGetResponse chatGetResponse = new ChatGetResponse(messageList, currentSequence);
 
-        return messageList;
+        return chatGetResponse;
     }
 
     public ChatRoom findChatRoom(Long chatRoomId) {
