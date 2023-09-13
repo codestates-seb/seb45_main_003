@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
+import main.wonprice.domain.chat.service.ChatService;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.domain.picture.service.PictureService;
@@ -36,6 +37,7 @@ public class ProductController {
     private final MemberService memberService;
     private final CategoryService categoryService;
     private final PictureService pictureService;
+    private final ChatService chatService;
 
     // 상품 등록
     @PostMapping
@@ -153,7 +155,7 @@ public class ProductController {
         }
 
         // 경매 상품인 경우, buyer_id가 있는지 확인하여 삭제 여부 결정
-        if(product.getAuction() && product.getBuyerId() != null){
+        if (product.getAuction() && product.getBuyerId() != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("경매가 진행 중인 상품은 삭제할 수 없습니다.");
         }
 
@@ -178,11 +180,28 @@ public class ProductController {
         }
 
         // 경매 중인 상품인 경우, buyer_id가 있는지 확인하여 수정 여부 결정
-        if(updateProduct.getAuction() && updateProduct.getBuyerId() != null){
+        if (updateProduct.getAuction() && updateProduct.getBuyerId() != null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("경매가 진행 중인 상품은 수정할 수 없습니다.");
         }
 
         ProductResponseDto productResponseDto = productMapper.fromEntity(updateProduct);
         return ResponseEntity.ok(productResponseDto);
+    }
+
+
+    // 대표 - 즉시구매
+    @PostMapping("/buy/{productId}")
+    public ResponseEntity buyProduct(@PathVariable Long productId) {
+        Member buyer = memberService.findLoginMember();
+
+        /* buyer == seller일 경우 구매 못하게 막는 로직 필요 */
+
+        Product product = productService.immediatelyBuy(productId, buyer);
+        Long chatRoomId = chatService.createChatRoom(product.getProductId());
+
+        chatService.insertChatParticipant(chatRoomId, product.getSeller());
+        chatService.insertChatParticipant(chatRoomId, buyer);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
