@@ -2,6 +2,7 @@ package main.wonprice.domain.product.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import main.wonprice.auth.jwt.service.JwtService;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.member.entity.Member;
@@ -34,6 +35,7 @@ public class ProductController {
     private final MemberService memberService;
     private final CategoryService categoryService;
     private final PictureService pictureService;
+    private final JwtService jwtService;
 
     // 상품 등록
     @PostMapping
@@ -115,7 +117,7 @@ public class ProductController {
 
         log.info("product : " + product.getProductPictures());
 
-        if (memberService.isLogin(accessToken)) {
+        if (jwtService.isLogin(accessToken)) {
             ProductResponseDto productResponseDto = productMapper.fromEntity(product, memberService.findLoginMember());
             return ResponseEntity.ok(productResponseDto);
         } else {
