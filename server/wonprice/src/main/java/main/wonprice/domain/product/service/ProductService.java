@@ -41,5 +41,7 @@ public interface ProductService {
     Product updateCurrentAuctionPrice(Long productId, BidRequestDto request);
 
     void updateCompletedProduct(Long productId);
+
+    List<Product> getCompletedAuction();
 }
 

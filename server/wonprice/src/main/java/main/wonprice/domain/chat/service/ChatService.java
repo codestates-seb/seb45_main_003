@@ -34,7 +34,12 @@ public class ChatService {
 //    private final ReadSequenceRepository readSequenceRepository;
 
     @Transactional
-    public Long createChatRoom(ChatRoom chatRoom) {
+    public Long createChatRoom(Long productId) {
+
+        /* 대표 아래 Mapper 수정 예정 */
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.setProductId(productId);
+        chatRoom.setCreatedAt(LocalDateTime.now());
 
         ChatRoom saveChatRoom = chatRoomRepository.save(chatRoom);
 
@@ -99,5 +104,17 @@ public class ChatService {
         findChatParticipant.setCurrentSequence(messageId);
     }
 
+    @Transactional
+    public void insertChatParticipant(Long chatRoomId, Member member) {
+        ChatRoom findChatRoom = findChatRoom(chatRoomId);
 
+        /* 대표 아래 매퍼 수정 예정 */
+
+        ChatParticipant chatParticipant = new ChatParticipant();
+        chatParticipant.setMember(member);
+        chatParticipant.setChatRoom(findChatRoom);
+        chatParticipant.setCurrentSequence(0L);
+
+        chatParticipantRepository.save(chatParticipant);
+    }
 }
