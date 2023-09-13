@@ -19,7 +19,7 @@ public class NotificationResponseDto {
     private NotificationType notificationType;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
-    private LocalDateTime cratedAt;
+    private LocalDateTime createdAt;
 
     private Boolean isRead;
 

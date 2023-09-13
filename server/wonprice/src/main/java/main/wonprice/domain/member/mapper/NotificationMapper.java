@@ -18,7 +18,7 @@ public interface NotificationMapper {
                 .notificationId(notification.getNotificationId())
                 .content(notification.getContent())
                 .notificationType(notification.getNotificationType())
-                .cratedAt(notification.getCreatedAt())
+                .createdAt(notification.getCreatedAt())
                 .isRead(notification.getIsRead())
                 .referenceId(notification.getReferenceId())
                 .build();
