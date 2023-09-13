@@ -8,6 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 const ProfileTabContainer = styled.ul`
   flex: 0 0 14rem;
   width: 14rem;
+  height: 18.75rem;
   border-radius: 6px;
   border: 1px solid ${COLOR.gray_300};
   background-color: white;
@@ -16,13 +17,14 @@ const ProfileTabContainer = styled.ul`
   justify-content: flex-start;
   align-items: stretch;
   .tabMenu {
-    height: 1.25rem;
+    height: 3.75rem;
     font-size: ${FONT_SIZE.font_20};
     padding: 1.25rem 1.5rem;
+    text-align: left;
     &:hover {
       background-color: ${COLOR.primary};
     }
-    &.select {
+    &.selected {
       font-weight: bold;
       background-color: ${COLOR.secondary};
     }
@@ -49,7 +51,7 @@ const ProfileTab = (): JSX.Element => {
       {tabMenu.map((el) => (
         <li
           key={el.value}
-          className={tabState === el.value ? "tabMenu select" : "tabMenu"}
+          className={tabState === el.value ? "tabMenu selected" : "tabMenu"}
           onClick={() => handleTab(el.value)}
         >
           {el.text}
