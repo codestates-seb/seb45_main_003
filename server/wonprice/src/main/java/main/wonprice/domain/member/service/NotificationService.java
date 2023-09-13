@@ -66,7 +66,7 @@ public class NotificationService {
 //    모든 알림 읽음 표시
     public void setReadsTrue() {
 
-        notificationRepository.findAllByMemberAndIsRead(memberService.findLoginMember(), false)
+        notificationRepository.findAllByMember(memberService.findLoginMember())
                 .forEach(notification -> notification.setIsRead(true));
     }
 

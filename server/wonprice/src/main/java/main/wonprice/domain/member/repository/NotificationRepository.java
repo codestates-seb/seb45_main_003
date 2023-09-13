@@ -16,4 +16,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     Page<Notification> findByMemberAndDeletedAt(Member member, LocalDateTime localDateTime, Pageable pageable);
 
     List<Notification> findAllByMemberAndIsRead(Member member, Boolean isRead);
+
+    List<Notification> findAllByMember(Member member);
 }
