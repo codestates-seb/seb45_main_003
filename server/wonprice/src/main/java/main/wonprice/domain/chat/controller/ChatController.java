@@ -80,15 +80,15 @@ public class ChatController {
     public void deleteChatRoom(@PathVariable("room-id") Long chatRoomId) {
         Member loginMember = memberService.findLoginMember();
 
-        chatService.deleteChatRoom(chatRoomId, loginMember.getMemberId());
+        chatService.deleteChatRoom(chatRoomId, loginMember);
     }
 
-    @PostMapping("/chat/{room-id}")
-    public void InsertChatParticipant(@PathVariable("room-id") Long chatRoomId) {
-        Member loginMember = memberService.findLoginMember();
-
-        chatService.deleteChatRoom(chatRoomId, loginMember.getMemberId());
-    }
+//    @PostMapping("/chat/{room-id}")
+//    public void InsertChatParticipant(@PathVariable("room-id") Long chatRoomId) {
+//        Member loginMember = memberService.findLoginMember();
+//
+//        chatService.deleteChatRoom(chatRoomId, loginMember.getMemberId());
+//    }
 
     @PostMapping("/chat/sequence/{room-id}")
     public void updateSequence(@PathVariable("room-id") Long chatRoomId, @RequestBody SequenceRequest request) {

@@ -16,6 +16,7 @@ import main.wonprice.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -56,13 +57,14 @@ public class ChatService {
     }
 
     @Transactional
-    public void deleteChatRoom(Long chatRoomId, Long memberId) {
+    public void deleteChatRoom(Long chatRoomId, Member member) {
         ChatRoom findChatRoom = findChatRoom(chatRoomId);
 
-//        ChatParticipant deleteChatRoom = chatParticipantRepository.findByMemberAndChatRoom(memberId, findChatRoom);
+        ChatParticipant deleteChatRoom = chatParticipantRepository.findByMemberAndChatRoom(member, findChatRoom);
 
-//        deleteChatRoom.setDeletedAt(LocalDateTime.now());
+        deleteChatRoom.setDeletedAt(LocalDateTime.now());
     }
+
     public ChatGetResponse findMessages(Long chatRoomId, Long memberId) {
         ChatRoom findChatRoom = findChatRoom(chatRoomId);
 
