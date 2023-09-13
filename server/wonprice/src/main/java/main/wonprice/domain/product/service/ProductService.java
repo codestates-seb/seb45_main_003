@@ -43,5 +43,7 @@ public interface ProductService {
     void updateCompletedProduct(Long productId);
 
     List<Product> getCompletedAuction();
+
+    Product immediatelyBuy(Long productId, Member member);
 }
 

@@ -233,4 +233,16 @@ public class ProductServiceImpl implements ProductService {
 
         return checkCompletedAuction;
     }
+
+    // 대표 - 즉시구매
+    @Override
+    @Transactional
+    public Product immediatelyBuy(Long productId, Member member) {
+        Product findProduct = findExistsProduct(productId);
+
+        findProduct.setBuyerId(member.getMemberId());
+        findProduct.setStatus(ProductStatus.TRADE);
+
+        return findProduct;
+    }
 }
