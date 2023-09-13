@@ -288,7 +288,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
           <div className="title">
             <h1>{data.title}</h1>
             <div className="icon_box">
-              {isLogin && Number(userid) === data.memberId && (
+              {isLogin && Number(userid) === data.memberId && data.productStatus === "BEFORE" && (
                 <div className="gray">
                   <Link
                     to={{ pathname: "/create-post" }}
