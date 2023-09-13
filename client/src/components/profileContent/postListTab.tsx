@@ -11,6 +11,7 @@ import Loading from "../common/Loading";
 import ErrorIndication from "../../pages/ErrorIndication";
 import Pagination from "../common/Pagination";
 import { usePagination } from "../../hooks/usePagination";
+import { translateProductStatus } from "../../util/productStatus";
 
 interface Data {
   content: postContent[];
@@ -25,24 +26,18 @@ interface postContent {
   productId: number;
   title: string;
   createAt: string;
-  images: image[];
+  images?: image[];
   categoryId: number;
+  reviewId: number;
   postMemberId: number;
-  targetMemberId: number;
+  postMemberName: string;
   content: string;
   score: number;
   createdAt: string;
-  img: string;
+  productStatus: string;
+  productImages?: image[];
+  productTitle: string;
 }
-
-// interface Review {
-//   postMemberId: number;
-//   targetMemberId: number;
-//   content: string;
-//   score: number;
-//   createdAt: string;
-//   img: string;
-// }
 
 const PostListContainer = styled.div`
   display: flex;
@@ -80,8 +75,8 @@ const PostListContainer = styled.div`
     justify-content: flex-start;
     align-items: stretch;
     .postImg {
-      width: 6.25rem;
-      height: 6.25rem;
+      width: 9.375rem;
+      height: 9.375rem;
       padding: 1rem 0;
     }
     .postContainer {
@@ -91,7 +86,6 @@ const PostListContainer = styled.div`
       align-items: stretch;
       gap: 1rem;
       border-bottom: 1px solid ${COLOR.border};
-      cursor: pointer;
     }
     .infoContainer {
       display: flex;
@@ -106,6 +100,7 @@ const PostListContainer = styled.div`
         font-weight: bold;
         font-size: ${FONT_SIZE.font_20};
         color: ${COLOR.darkText};
+        cursor: pointer;
       }
       .productName {
         font-weight: bold;
@@ -136,9 +131,10 @@ const PostListTab = (): JSX.Element => {
   const Id = location.pathname.slice(8);
   const searchParams = new URLSearchParams(location.search);
   const handleMenu = (value: string): void => {
-    setMenu(value);
-    refetch();
-    navigate(`${location.pathname}?menu=${searchParams.get("menu")}&?tabmenu=${value}`);
+    if (menu !== value) {
+      setMenu(value);
+      navigate(`${location.pathname}?menu=${searchParams.get("menu")}&?tabmenu=${value}`);
+    }
   };
   const ITEMS_PER_VIEW = 10;
   const {
@@ -193,9 +189,13 @@ const PostListTab = (): JSX.Element => {
     }
   });
   //refetch되기전 화면에 그리는 과정에서 리뷰에서는 판매글에 없는 데이터가 있어서 오류 발생
+  //삼항연산자로 해결
   useEffect(() => {
     refetch();
   }, [location.pathname, location.search, currentPage]);
+  if (isError) {
+    return <ErrorIndication error={Error} />;
+  }
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">
@@ -211,27 +211,30 @@ const PostListTab = (): JSX.Element => {
       </ul>
       <div className="tabContent">
         {isLoading && <Loading />}
-        {isError && <ErrorIndication error={Error} />}
         {menu === "cell" &&
           result?.content.map((el) => (
-            <div
-              className="postContainer"
-              key={el.productId}
-              onClick={() => navigate(`/product/${findCategory(el.categoryId)}/${el.productId}`)}
-            >
-              <img className="postImg" src={el.images[0].path}></img>
+            <div className="postContainer" key={el.productId}>
+              <img className="postImg" src={el.images ? el.images[0].path : ""}></img>
               <div className="infoContainer">
-                <div className="postTitle">{el.title}</div>
+                <div
+                  className="postTitle"
+                  onClick={() =>
+                    navigate(`/product/${findCategory(el.categoryId)}/${el.productId}`)
+                  }
+                >
+                  {el.title}
+                </div>
                 <div className="createdAt">{el.createAt}</div>
+                <div>{translateProductStatus(el.productStatus)}</div>
               </div>
             </div>
           ))}
         {menu === "leaveReview" &&
           result?.content.map((el, idx) => (
             <div key={idx} className="postContainer">
-              <img src={el.images[0].path}></img>
+              {el.images && <img className="postImg" src={el.images[0].path}></img>}
               <div className="infoContainer">
-                <div className="postTitle">글제목</div>
+                <div className="postTitle">{el.title}</div>
                 <div className="productName">제품이름</div>
                 <div className="authorContainer">
                   <span className="author">{`작성자 id ${el.postMemberId}`}</span>
@@ -245,12 +248,12 @@ const PostListTab = (): JSX.Element => {
         {menu === "getReview" &&
           result?.content.map((el, idx) => (
             <div key={idx} className="postContainer">
-              <img src={el.img}></img>
+              {el.productImages && <img className="postImg" src={el.productImages[0].path}></img>}
               <div className="infoContainer">
-                <div className="postTitle">글제목</div>
-                <div className="productName">제품이름</div>
+                <div className="postTitle">{el.title}</div>
+                <div className="productName">{el.productTitle}</div>
                 <div className="authorContainer">
-                  <span className="author">{`작성자 id${el.postMemberId}`}</span>
+                  <span className="author">{`작성자 : ${el.postMemberName}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
                 </div>
                 <div>{`평점: ${el.score}`}</div>

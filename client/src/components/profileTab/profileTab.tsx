@@ -43,8 +43,15 @@ const ProfileTab = (): JSX.Element => {
   ];
   const location = useLocation();
   const handleTab = (value: string): void => {
-    setTabState(value);
-    navigate(`${location.pathname}?menu=${value}`);
+    //같은곳 누르면 리렌더링 안되게
+    if (value !== tabState) {
+      setTabState(value);
+      if (value === "profile") {
+        navigate(`${location.pathname}?menu=${value}&?tabmenu=cell&?page=1`);
+      } else {
+        navigate(`${location.pathname}?menu=${value}&?page=1`);
+      }
+    }
   };
   return (
     <ProfileTabContainer>
