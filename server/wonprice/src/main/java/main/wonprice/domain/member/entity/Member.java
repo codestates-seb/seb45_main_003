@@ -1,12 +1,11 @@
 package main.wonprice.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import main.wonprice.domain.chat.entity.ChatParticipant;
-import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.picture.entity.MemberPicture;
-import main.wonprice.domain.picture.entity.Picture;
 import main.wonprice.domain.product.entity.Product;
 
 import javax.persistence.*;
@@ -15,7 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @NoArgsConstructor
 public class Member {
 
@@ -36,9 +36,11 @@ public class Member {
     private String phone;
 
     @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime deletedAt;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -50,8 +52,11 @@ public class Member {
     @Column(nullable = true, name = "profile_image")
     private String image = null;
 
+    @OneToMany(mappedBy = "receiveMember")
+    private List<Review> receiveReviews = new ArrayList<>();
+
     @OneToMany(mappedBy = "postMember")
-    private List<Review> reviews = new ArrayList<>();
+    private List<Review> postReviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Bid> bids = new ArrayList<>();
@@ -70,6 +75,9 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private List<ChatParticipant> chatParticipant;
+
+    @OneToMany(mappedBy = "member")
+    private List<Notification> notifications = new ArrayList<>();
 
 //    @OneToMany(mappedBy = "seller")
 //    private List<ChatRoom> chatRooms = new ArrayList<>();

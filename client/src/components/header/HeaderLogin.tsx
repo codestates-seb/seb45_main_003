@@ -1,14 +1,15 @@
+import MenuIcon from "@mui/icons-material/Menu";
+import PersonIcon from "@mui/icons-material/Person";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
 import { dropDownState } from "../../atoms/atoms"; // loginState 추가
-import React, { useEffect, useRef } from "react";
-import ProfileButton from "./LoginProfile";
 import MenuItem from "../mainPage/dropdownMenu/MenuItem";
-import PersonIcon from "@mui/icons-material/Person";
-import MenuIcon from "@mui/icons-material/Menu";
 import { DropdownState } from "./DropdownState";
+import ProfileButton from "./LoginProfile";
+import Notifications from "../notification/notifictaion";
 // import axios from "axios";
 
 // 최 상단 헤더의 하단 경계선 스타일
@@ -28,7 +29,7 @@ const StyledHeader = styled.header`
   }
   .header-wrapper {
     width: calc(100% - 3rem);
-    padding: 1.25rem;
+    padding: 1.25rem 0;
     max-width: 90rem;
     margin: 0 auto;
     display: flex;
@@ -129,6 +130,10 @@ const HeaderLogin = (): JSX.Element => {
               {/* 로그아웃 버튼 */}
               {/* <button onClick={handleLogout}>로그아웃</button> */}
               <button className="ButtonStyle" onClick={showProfile}></button>
+              {/* 알림 버튼 */}
+              <button className="ButtonStyle">
+                <Notifications />
+              </button>
               {/* 프로필 드롭다운 버튼 */}
               <button className="ButtonStyle" onClick={showProfile}>
                 <PersonIcon />

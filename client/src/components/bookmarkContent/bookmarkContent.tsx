@@ -15,10 +15,10 @@ import { translateProductStatus } from "../../util/productStatus";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
 //dto 정해지면 추가
-// type Data = {
-//   content: bookmark[];
-//   totalPages: number;
-// };
+type Data = {
+  content: bookmark[];
+  totalPages: number;
+};
 // 배포서버에 페이지네이션 쿼리 적용되면 추후 수정필요
 interface image {
   imageId: number;
@@ -40,7 +40,7 @@ interface products {
 type bookmark = {
   wishId: number;
   creadtedAt: string;
-  productId: string;
+  productId: number;
   productResponseDto: products;
 };
 
@@ -173,7 +173,7 @@ const BookmarkContent = (): JSX.Element => {
   //전체 선택 함수
   const handleSelectAll = (checked: boolean) => {
     setValue("selectAll", checked);
-    setValue("checkboxes", Array(bookmarkList?.length).fill(checked));
+    setValue("checkboxes", Array(bookmarkList?.content.length).fill(checked));
   };
   //체크박스 관리 함수
   const handleCheckBox = (index: number, checked: boolean) => {
@@ -205,7 +205,7 @@ const BookmarkContent = (): JSX.Element => {
     isError,
     refetch,
     data: bookmarkList,
-  } = useQuery<bookmark[]>(
+  } = useQuery<Data>(
     ["bookmark", currentPage],
     async () => {
       const currentPageParam = parseInt(searchParams.get("page") || "1");
@@ -230,7 +230,7 @@ const BookmarkContent = (): JSX.Element => {
           setChangedCheckboxes([]);
         }
         if (checkboxes.length === 0 && changedCheckboxes.length === 0) {
-          setValue("checkboxes", Array(data.length).fill(false));
+          setValue("checkboxes", Array(data.content.length).fill(false));
         }
         console.log(changedCheckboxes, checkboxes, data);
       },
@@ -240,12 +240,12 @@ const BookmarkContent = (): JSX.Element => {
   //추후 체크박스 수정하게 되면 손볼것
   // 찜취소버튼으로 취소요청하는 함수
   const bookmarkMutation = useMutation(
-    async (wishId: number) => {
-      const deletedIndex = bookmarkList?.findIndex((el) => el.wishId === wishId);
+    async (productId: number) => {
+      const deletedIndex = bookmarkList?.content.findIndex((el) => el.productId === productId);
       const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
       setChangedCheckboxes(checkedlist);
       console.log(`changedcheckboxes : ${checkedlist}`);
-      await authInstance.delete(`/wishes/${wishId}`);
+      await authInstance.delete(`/wishes/${productId}`);
     },
     {
       onSuccess: () => {
@@ -294,74 +294,73 @@ const BookmarkContent = (): JSX.Element => {
       <div className="bookmarkListContainer">
         {isLoading && <Loading />}
         {isError && <Error />}
-        {bookmarkList &&
-          bookmarkList.map((el, index: number) => (
-            <div className="bookmarkContainer" key={el.productId}>
-              <div className="leftSection">
-                {loginUserId === Id && (
-                  <input
-                    type="checkbox"
-                    className="checkbox"
-                    checked={checkboxes[index] || false}
-                    {...register(`checkboxes.${index}`)}
-                    onChange={(e) => handleCheckBox(index, e.currentTarget.checked)}
-                    key={el.productId}
-                  ></input>
-                )}
-                <div className="postInfo">
-                  <img className="postImg" src={el.productResponseDto.images[0].path}></img>
-                  <div className="infoContainer">
-                    <div
-                      className="postTitle"
-                      onClick={() =>
-                        navigate(
-                          `/product/${findCategory(el.productResponseDto.categoryId)}/${
-                            el.productId
-                          }`,
-                        )
-                      }
-                    >
-                      {el.productResponseDto.title}
-                    </div>
-                    <div>{translateProductStatus(el.productResponseDto.productStatus)}</div>
-                    {el.productResponseDto.auction ? (
-                      <div>{`거래 마감시간: ${el.productResponseDto.closedAt} `}</div>
-                    ) : (
-                      <div>즉시 구매 상품</div>
-                    )}
+        {bookmarkList?.content.map((el, index: number) => (
+          <div className="bookmarkContainer" key={el.productId}>
+            <div className="leftSection">
+              {loginUserId === Id && (
+                <input
+                  type="checkbox"
+                  className="checkbox"
+                  checked={checkboxes[index] || false}
+                  {...register(`checkboxes.${index}`)}
+                  onChange={(e) => handleCheckBox(index, e.currentTarget.checked)}
+                  key={el.productId}
+                ></input>
+              )}
+              <div className="postInfo">
+                <img className="postImg" src={el.productResponseDto.images[0].path}></img>
+                <div className="infoContainer">
+                  <div
+                    className="postTitle"
+                    onClick={() =>
+                      navigate(
+                        `/product/${findCategory(el.productResponseDto.categoryId)}/${
+                          el.productId
+                        }`,
+                      )
+                    }
+                  >
+                    {el.productResponseDto.title}
                   </div>
+                  <div>{translateProductStatus(el.productResponseDto.productStatus)}</div>
+                  {el.productResponseDto.auction ? (
+                    <div>{`거래 마감시간: ${el.productResponseDto.closedAt} `}</div>
+                  ) : (
+                    <div>즉시 구매 상품</div>
+                  )}
                 </div>
               </div>
-              <div className="rightSection">
-                <div className="priceContainer">
-                  {el.productResponseDto.auction && (
-                    <div className="priceLabel">
-                      {`현재 입찰가`}
-                      <span className="price">{`${el.productResponseDto.currentAuctionPrice.toLocaleString(
-                        "ko-KR",
-                      )} 원`}</span>
-                    </div>
-                  )}
+            </div>
+            <div className="rightSection">
+              <div className="priceContainer">
+                {el.productResponseDto.auction && (
                   <div className="priceLabel">
-                    {`즉시 구매가`}
-                    <span className="price">{`${el.productResponseDto.immediatelyBuyPrice.toLocaleString(
+                    {`현재 입찰가`}
+                    <span className="price">{`${el.productResponseDto.currentAuctionPrice.toLocaleString(
                       "ko-KR",
                     )} 원`}</span>
                   </div>
-                </div>
-                {loginUserId === Id && (
-                  <Button
-                    type="button"
-                    $text="취소"
-                    $design="yellow"
-                    onClick={() => bookmarkMutation.mutateAsync(el.wishId)}
-                  />
                 )}
+                <div className="priceLabel">
+                  {`즉시 구매가`}
+                  <span className="price">{`${el.productResponseDto.immediatelyBuyPrice.toLocaleString(
+                    "ko-KR",
+                  )} 원`}</span>
+                </div>
               </div>
+              {loginUserId === Id && (
+                <Button
+                  type="button"
+                  $text="취소"
+                  $design="yellow"
+                  onClick={() => bookmarkMutation.mutateAsync(el.productId)}
+                />
+              )}
             </div>
-          ))}
+          </div>
+        ))}
       </div>
-      {bookmarkList && bookmarkList.length === 0 && (
+      {bookmarkList?.content.length === 0 && (
         <div className="empty">
           <Empty />
         </div>

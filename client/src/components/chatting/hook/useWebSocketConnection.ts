@@ -2,21 +2,12 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import * as Webstomp from "webstomp-client";
 import { getUserId } from "../../../util/auth";
-
-interface MessageData {
-  body: {
-    content: string;
-    senderId: number | null;
-    createdAt?: string;
-    messageId?: number | null;
-    memberId?: number | null;
-  }; // 필요한 다른 필드
-}
+import { MessageItem } from "../recoil/chatState";
 
 // 커스텀 훅의 타입 정의
 interface UseWebSocketConnectionProps {
-  setMessages: React.Dispatch<React.SetStateAction<MessageData[]>>;
-  setChatList: React.Dispatch<React.SetStateAction<MessageData[]>>;
+  setMessages: React.Dispatch<React.SetStateAction<MessageItem[]>>;
+  setChatList: React.Dispatch<React.SetStateAction<MessageItem[]>>;
   setIsConnected: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -42,7 +33,7 @@ export const useWebSocketConnection = (
           setIsConnected(true);
 
           stompClient.subscribe(`/topic/chat/${roomId}`, async (message) => {
-            const messageData: MessageData = JSON.parse(message.body);
+            const messageData = JSON.parse(message.body).body;
 
             // 이전 메시지를 저장합니다.
             setMessages((prevMessages) => [...prevMessages, messageData]);
@@ -50,14 +41,16 @@ export const useWebSocketConnection = (
             // 채팅 목록을 업데이트합니다.
             setChatList((prevChatList) => [...prevChatList, messageData]);
             console.log(Number(memberId));
-            console.log(messageData.body.messageId);
+            console.log(messageData);
+            console.log(messageData.messageId);
+            console.log("messageData", messageData);
 
             // 백엔드 서버에 HTTP POST 요청을 보냅니다.
             const response = await axios.post(
               `${process.env.REACT_APP_API_URL}/chat/sequence/${roomId}`,
               {
                 memberId: Number(memberId),
-                messageId: messageData.body.messageId,
+                messageId: messageData.messageId,
               },
             );
             if (axios.isAxiosError(response)) {

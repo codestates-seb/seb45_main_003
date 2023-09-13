@@ -34,7 +34,7 @@ public class MessageController {
     @SendTo("/topic/chat/{room-id}")
     public ResponseEntity sendMessage(@DestinationVariable("room-id") Long roomId, @RequestBody MessageSendRequest request) {
 
-//        Member findMember = memberService.findMember(request.getSenderId());
+        Member findMember = memberService.findMember(request.getSenderId());
         ChatRoom findChatRoom = chatService.findChatRoom(roomId);
 
         /* sender_id = logimMember.getEmail(), created_at = LocalDateTime.now(), chat_room_id = roomId , content = request.content */
