@@ -152,6 +152,7 @@ const List = (): JSX.Element => {
   const ITEMS_PER_VIEW = 10;
   const navigate = useNavigate();
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
 
   const getCategoryId = (pathname: string) => {
     const arr = pathname.split("/");
@@ -168,6 +169,7 @@ const List = (): JSX.Element => {
 
   const categoryId = getCategoryId(location.pathname);
   const path = getAPIPath(categoryId);
+  const keyword = searchParams.get("keyword");
 
   const {
     setTotalPages,
@@ -179,11 +181,24 @@ const List = (): JSX.Element => {
   } = usePagination();
 
   const { isLoading, error, data } = useQuery<Data>(
-    ["productList", { location, currentPage, size: ITEMS_PER_VIEW }],
+    [
+      "productList",
+      {
+        category: categoryId,
+        page: currentPage,
+        keyword,
+        size: ITEMS_PER_VIEW,
+      },
+    ],
     async () => {
-      const response = await axios.get(path, {
-        params: { page: currentPage, size: ITEMS_PER_VIEW },
-      });
+      const params = { page: Number(searchParams.get("page")) - 1, size: ITEMS_PER_VIEW };
+      const response = keyword
+        ? await axios.get(`/products/search`, {
+            params: { ...params, keyword: keyword },
+          })
+        : await axios.get(path, {
+            params: params,
+          });
 
       return response.data;
     },
