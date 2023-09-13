@@ -8,8 +8,9 @@ import javax.validation.constraints.NotBlank;
 @Getter
 public class ReviewPatchDto {
 
+    private String title;
+
     @Lob
-    @NotBlank
     private String content;
 
     private Long score;

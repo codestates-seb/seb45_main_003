@@ -12,7 +12,10 @@ import main.wonprice.domain.member.service.WishService;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.mapper.ProductMapper;
 import main.wonprice.domain.product.service.ProductService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,23 +45,26 @@ public class WishController {
     }
 
     @GetMapping("/members/{member-id}/wishes")
-    public ResponseEntity getMemberWish(Pageable pageable,
-                                             @PathVariable("member-id")Long memberId) {
+    public ResponseEntity getMemberWish(@RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "10") int size,
+                                        @PathVariable("member-id")Long memberId) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Member member = memberService.findMember(memberId);
 
-        List<Wish> wishes = wishService.findMemberWish(pageable, member);
-        List<WishResponseDto> response = mapper.toResponseDtos(wishes);
+        Page<Wish> wishes = wishService.findMemberWish(pageable, member);
+        Page<WishResponseDto> response = wishes.map(mapper::toResponseDto);
         response.forEach(
                 dto -> dto.setProductResponseDto(productMapper.fromEntity(productService.findOneById(dto.getProductId()))));
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/wishes/{wish-id}")
-    public ResponseEntity deleteWish(@PathVariable("wish-id") Long wishId) {
+    @DeleteMapping("/wishes/{product-id}")
+    public ResponseEntity deleteWishByProductId(@PathVariable("product-id") Long productId) {
 
-        wishService.removeWish(wishId);
+        wishService.removeWish(productId);
 
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }

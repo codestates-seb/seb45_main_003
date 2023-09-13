@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.domain.product.repository.ProductSpecification;
+import main.wonprice.exception.BusinessLogicException;
+import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -45,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
             product.setClosedAt(product.getClosedAt());
             product.setCurrentAuctionPrice(product.getCurrentAuctionPrice());
         }
-        product.setCreateAt(LocalDateTime.now());
+        product.setCreatedAt(LocalDateTime.now());
         return productRepository.save(product);
     }
 
@@ -66,7 +69,7 @@ public class ProductServiceImpl implements ProductService {
     // 삭제된 게시글은 조회되지 않게..
     @Override
     public Page<Product> getAvailableProducts(String type, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
 
         Specification<Product> specification = ProductSpecification.notDeletedAndStatus(ProductStatus.BEFORE);
 
@@ -83,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
     // 삭제된 게시글은 조회되지 않게..
     @Override
     public Page<Product> getCompletedProducts(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
 
         Specification<Product> specification = ProductSpecification.notDeletedAndStatus(ProductStatus.AFTER);
 
@@ -93,7 +96,7 @@ public class ProductServiceImpl implements ProductService {
     // 상품 제목 키워드 별로 조회
     @Override
     public Page<Product> searchProductsByTitle(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
 
         Specification<Product> specification = Specification.where(ProductSpecification.notDeleted())
                 .and((root, query, criteriaBuilder) ->
@@ -153,20 +156,72 @@ public class ProductServiceImpl implements ProductService {
 
     //    회원이 등록한 상품 목록
     @Override
-    public List<Product> findMembersProduct(Pageable pageable, Member member) {
+    public Page<Product> findMembersProduct(Pageable pageable, Member member) {
 
-        return productRepository.findAllBySeller(member, pageable).getContent();
+        return productRepository.findAllBySeller(member, pageable);
     }
 
     //    회원이 판매 완료한 상품 목록
-    public List<Product> findMemberSold(Pageable pageable, Member member) {
+    public Page<Product> findMemberSold(Pageable pageable, Member member) {
 
-        return productRepository.findAllBySellerAndStatus(member, ProductStatus.AFTER, pageable).getContent();
+        return productRepository.findAllBySellerAndStatus(member, ProductStatus.AFTER, pageable);
     }
 
     //    회원이 구매 완료한 상품 목록
     @Override
-    public List<Product> findMemberBought(Pageable pageable, Long memberId) {
-        return productRepository.findAllByBuyerIdAndStatus(memberId, ProductStatus.AFTER, pageable).getContent();
+    public Page<Product> findMemberBought(Pageable pageable, Long memberId) {
+        return productRepository.findAllByBuyerIdAndStatus(memberId, ProductStatus.AFTER, pageable);
+    }
+
+    /*
+        입찰하기 요청 들어올 시,
+        - product 의 현재 입찰가(currentAuctionPrice), 구매자(buyerId) 셋팅
+        - 그 밖의 예외처리
+     */
+    @Override
+    public Product updateCurrentAuctionPrice(Long productId, BidRequestDto request) {
+        // 존재하지 않는 상품일 경우 예외 처리
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product Not Found"));
+
+        // 판매자와 입찰자가 같을 경우 예외 처리
+        if (product.getSeller().getMemberId() == request.getMemberId()) {
+            throw new BusinessLogicException(ExceptionCode.SELLER_AND_BUYER_ARE_SAME);
+        }
+
+        // 내가 요청한 입찰가와 현재 상품의 입찰가 비교
+        Long requestedBidPrice = request.getCurrentAuctionPrice();
+        Long currentProductBidPrice = product.getCurrentAuctionPrice();
+
+        /*
+            #1 입찰가 유효성 검사
+            - 제시한 입찰가는 현재 상품 입찰가보다 낮은 가격일 수 없다.
+         */
+        if (requestedBidPrice < currentProductBidPrice) {
+            throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_1);
+        }
+
+        /*
+            #2 입찰가 유효성 검사
+            - 셋팅된 buyer가 없는 경우
+            -- 제시한 입찰가는 현재 상품 입찰가와 같거나 크면 된다.
+
+            - 셋팅된 buyer가 있는 경우
+            -- 제시한 입찰가는 현재 상품 입찰가보다 5% 이상이어야 한다.
+         */
+        if (product.getBuyerId() == null) {
+            if (requestedBidPrice < currentProductBidPrice) {
+                throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_2);
+            }
+        } else {
+            if (requestedBidPrice < (currentProductBidPrice * 1.05)) {
+                throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_2);
+            }
+        }
+
+        product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());
+        product.setBuyerId(request.getMemberId());
+
+        return productRepository.save(product);
     }
 }

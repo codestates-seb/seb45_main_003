@@ -14,6 +14,11 @@ export const profileTabState = atom<string>({
   default: "profile",
 });
 
+export const postListTabState = atom<string>({
+  key: "postListTabState",
+  default: "cell",
+});
+
 export const loginState = atom<boolean>({
   key: "loginState",
   default: false,
@@ -38,11 +43,6 @@ export const userState = atom<User | null>({
   key: "userState",
   default: null,
 });
-
-// export const dropDownState = atom<boolean>({
-//   key: "dropDownState",
-//   default: false,
-// });
 
 // 컨텐츠 100vh 유지를 위한 헤더,푸터 높이 저장
 export const headerHeightState = atom<number>({

@@ -5,7 +5,8 @@ import { COLOR } from "../../../constants/color";
 
 const Container = styled.div`
   display: flex;
-  width: 13.875rem;
+  width: 15.625rem;
+  height: 47.0625rem;
   min-height: 43.6875rem;
   padding: 1.5rem 1rem;
   flex-direction: column;
@@ -48,10 +49,8 @@ const Container = styled.div`
   .SearchBar {
     margin-top: 0.625rem;
     margin-bottom: 1.875rem;
-
     display: flex;
     flex-direction: row;
-    width: 85%;
     /* max-width: 11.875rem; */
     max-height: 3rem;
     align-items: center;

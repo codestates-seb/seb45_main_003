@@ -19,7 +19,7 @@ const SelectInput = (props: SelectInputProps): JSX.Element => {
       <p>{title}</p>
 
       <div className="input inline">
-        <div className="select">
+        <div className="custom_select">
           <select {...field}>
             <option value="">카테고리 선택</option>
             {Object.values(selectoptions).map((option) => {

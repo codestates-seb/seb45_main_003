@@ -8,7 +8,6 @@ import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.entity.ProductStatus;
 import org.mapstruct.Mapper;
 
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
@@ -17,6 +16,7 @@ public interface ProductMapper {
     default Product toEntity(ProductRequestDto productRequestDto, Member member, Category category) {
         Product.ProductBuilder productBuilder = Product.builder()
                 .seller(member)
+                .buyerId(null)
                 .category(category)
                 .title(productRequestDto.getTitle())
                 .description(productRequestDto.getDescription())
@@ -49,7 +49,7 @@ public interface ProductMapper {
                 .productStatus(product.getStatus())
                 .views(product.getViews())
                 .auction(product.getAuction())
-                .createAt(product.getCreateAt())
+                .createdAt(product.getCreatedAt())
                 .modifiedAt(product.getModifiedAt())
                 .deletedAt(product.getDeletedAt())
                 .currentAuctionPrice(product.getCurrentAuctionPrice())
@@ -80,7 +80,7 @@ public interface ProductMapper {
                 .productStatus(product.getStatus())
                 .views(product.getViews())
                 .auction(product.getAuction())
-                .createAt(product.getCreateAt())
+                .createdAt(product.getCreatedAt())
                 .modifiedAt(product.getModifiedAt())
                 .deletedAt(product.getDeletedAt())
                 .currentAuctionPrice(product.getCurrentAuctionPrice())
@@ -99,6 +99,4 @@ public interface ProductMapper {
                         .anyMatch(wish -> wish.getMember() == loginMember))
                 .build();
     }
-
-    List<ProductResponseDto> toMypageProduct(List<Product> products);
 }
