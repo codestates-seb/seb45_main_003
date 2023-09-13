@@ -15,6 +15,7 @@ import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +65,7 @@ public class ReviewController {
                                                 @RequestParam(defaultValue = "10") int size,
                                                 @PathVariable("member-id")Long memberId) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Member member = memberService.findMember(memberId);
 
@@ -79,7 +80,7 @@ public class ReviewController {
                                              @RequestParam(defaultValue = "10") int size,
                                              @PathVariable("member-id") Long memberId) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Member findMember = memberService.findMember(memberId);
 
