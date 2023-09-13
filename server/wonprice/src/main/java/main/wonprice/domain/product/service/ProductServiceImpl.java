@@ -156,21 +156,21 @@ public class ProductServiceImpl implements ProductService {
 
     //    회원이 등록한 상품 목록
     @Override
-    public List<Product> findMembersProduct(Pageable pageable, Member member) {
+    public Page<Product> findMembersProduct(Pageable pageable, Member member) {
 
-        return productRepository.findAllBySeller(member, pageable).getContent();
+        return productRepository.findAllBySeller(member, pageable);
     }
 
     //    회원이 판매 완료한 상품 목록
-    public List<Product> findMemberSold(Pageable pageable, Member member) {
+    public Page<Product> findMemberSold(Pageable pageable, Member member) {
 
-        return productRepository.findAllBySellerAndStatus(member, ProductStatus.AFTER, pageable).getContent();
+        return productRepository.findAllBySellerAndStatus(member, ProductStatus.AFTER, pageable);
     }
 
     //    회원이 구매 완료한 상품 목록
     @Override
-    public List<Product> findMemberBought(Pageable pageable, Long memberId) {
-        return productRepository.findAllByBuyerIdAndStatus(memberId, ProductStatus.AFTER, pageable).getContent();
+    public Page<Product> findMemberBought(Pageable pageable, Long memberId) {
+        return productRepository.findAllByBuyerIdAndStatus(memberId, ProductStatus.AFTER, pageable);
     }
 
     /*

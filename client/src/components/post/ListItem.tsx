@@ -61,7 +61,7 @@ const ListItem = (props: ItemProps): JSX.Element => {
     <StyledItem>
       <Link to={`${category}/${data.productId}`}>
         <div className="images">
-          <img src={data.images[0].path} alt="썸네일 이미지" />
+          <img src={data.images[0]?.path} alt="썸네일 이미지" />
         </div>
         <div className="title">
           <h3>{data.title}</h3>
@@ -77,12 +77,12 @@ const ListItem = (props: ItemProps): JSX.Element => {
           <p className="gray">
             <span>현재 입찰가</span>
             <span className="price_number">
-              {data.auction ? data.currentAuctionPrice?.toLocaleString() : "-"}
+              {data.auction ? data.currentAuctionPrice?.toLocaleString() + "원" : "-"}
             </span>
           </p>
           <p className="gray">
             <span>즉시 구매가</span>
-            <span className="price_number">{data.immediatelyBuyPrice.toLocaleString()}</span>
+            <span className="price_number">{data.immediatelyBuyPrice.toLocaleString() + "원"}</span>
           </p>
         </div>
       </Link>

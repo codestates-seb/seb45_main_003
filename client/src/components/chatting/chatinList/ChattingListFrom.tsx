@@ -6,6 +6,7 @@ import { COLOR } from "../../../constants/color";
 const Container = styled.div`
   display: flex;
   width: 13.875rem;
+  height: 47.0625rem;
   min-height: 43.6875rem;
   padding: 1.5rem 1rem;
   flex-direction: column;

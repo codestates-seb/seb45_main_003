@@ -18,7 +18,7 @@ public interface ReviewMapper {
 
         responseDto.setReviewId(review.getReviewId());
         responseDto.setPostMemberId(review.getPostMember().getMemberId());
-        responseDto.setTargetMemberId(review.getTargetMemberId());
+        responseDto.setReceiveMemberId(review.getReceiveMember().getMemberId());
         responseDto.setProductId(review.getProduct().getProductId());
         responseDto.setScore(review.getScore());
         responseDto.setTitle(review.getTitle());
@@ -27,8 +27,6 @@ public interface ReviewMapper {
 
         return responseDto;
     }
-
-    List<ReviewResponseDto> reviewsToResponseDtos(List<Review> reviews);
 
     Review patchDtoToReview(ReviewPatchDto patchDto);
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import ChatInput from "./ChatInput";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { currentChatRoomIdState, chatState } from "../recoil/chatState";
+import { currentChatRoomIdState, chatState, MessageItem } from "../recoil/chatState";
 import MessageBubble from "./MessageBubble";
 import ChatRoomHttp from "./ChatRoomHttp";
 import FormatTimeOrDate from "../hook/FormatTimeOrDate";
@@ -10,14 +10,16 @@ import { webSocketConnectionState } from "../recoil/chatState";
 import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import { useWebSocketConnection } from "../hook/useWebSocketConnection"; // 커스텀 훅 import
+import { useChatList } from "../hook/useChatList"; // Import custom hook
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 90%; // 상대적인 단위로 변경
-  height: 43.6875rem;
   padding: 1.5rem 1rem;
-
+  min-height: 43.6875rem;
+  padding: 1.5rem 1rem;
+  height: 47.0625rem;
   justify-content: end;
 
   border-radius: 0.375rem;
@@ -54,20 +56,14 @@ const Container = styled.div`
     width: 95%; // 상대적인 단위로 변경
   }
 `;
-interface MessageData {
-  body: {
-    content: string;
-    senderId: number | null; // 수정된 부분
-    createdAt?: string;
-  }; // 필요한 다른 필드
-}
 // console.log(MessageBubble);
 
 const ChatRoom = () => {
+  const { refetch } = useChatList();
   const [searchParams] = useSearchParams();
   const chatRoomIdFromState = useRecoilValue(currentChatRoomIdState);
   const roomId = searchParams.get("roomId") || chatRoomIdFromState;
-  const [messages, setMessages] = useState<MessageData[]>([]);
+  const [messages, setMessages] = useState<MessageItem[]>([]);
   const [, setIsConnected] = useRecoilState(webSocketConnectionState);
   const [, setChatList] = useRecoilState(chatState);
   const currentTime = moment().format("YYYY년 MM월 DD일 a hh시 mm분");
@@ -86,6 +82,8 @@ const ChatRoom = () => {
   const handleSendMessage = (message: string) => {
     if (client && client.connected) {
       client.send(`/app/chat/${roomId}`, JSON.stringify({ content: message, senderId: Id }), {});
+      // Refetch the chat list
+      refetch();
     }
   };
   return (
@@ -100,9 +98,9 @@ const ChatRoom = () => {
           {messages.map((message, index) => (
             <MessageBubble
               key={index}
-              owner={message.body.senderId === Id ? "user" : "other"}
-              message={message.body.content}
-              time={FormatTimeOrDate(message.body.createdAt || null) || "Unknown time"}
+              owner={message.senderId === Id ? "user" : "other"}
+              message={message.content}
+              time={FormatTimeOrDate(message.createdAt || null) || "Unknown time"}
             />
           ))}
         </div>

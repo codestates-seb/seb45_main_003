@@ -34,7 +34,7 @@ const Root = (): JSX.Element => {
   useEffect(() => {
     if (accessToken) {
       validateAccessToken();
-      // console.log("실행됨");
+      console.log("실행됨");
     }
   }, [location.pathname]);
 
