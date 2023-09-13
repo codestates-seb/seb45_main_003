@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -213,5 +214,13 @@ public class ProductServiceImpl implements ProductService {
         product.setBuyerId(request.getMemberId());
 
         return productRepository.save(product);
+    }
+
+    @Override
+    @Transactional
+    public void updateCompletedProduct(Long productId) {
+        Product findProduct = productRepository.findById(productId).orElseThrow();
+
+        findProduct.setStatus(ProductStatus.AFTER);
     }
 }

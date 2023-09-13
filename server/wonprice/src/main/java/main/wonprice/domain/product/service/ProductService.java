@@ -39,5 +39,7 @@ public interface ProductService {
     Page<Product> getCompletedProducts(int page, int size);
 
     Product updateCurrentAuctionPrice(Long productId, BidRequestDto request);
+
+    void updateCompletedProduct(Long productId);
 }
 
