@@ -24,4 +24,6 @@ public class NotificationResponseDto {
     private Boolean isRead;
 
     private Long referenceId;
+
+    private Long categoryId;
 }
