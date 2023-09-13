@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -223,5 +224,23 @@ public class ProductServiceImpl implements ProductService {
         product.setBuyerId(request.getMemberId());
 
         return productRepository.save(product);
+    }
+
+
+    // 대표 - 채팅방 안에서 "거래 완료" 버튼 클릭 시 해당 Product AFTER로 Update
+    @Override
+    @Transactional
+    public void updateCompletedProduct(Long productId) {
+        Product findProduct = productRepository.findById(productId).orElseThrow();
+
+        findProduct.setStatus(ProductStatus.AFTER);
+    }
+
+    // 대표 - 현재 시간이 경매 종료 시간을 지났을 경우 해당 값을 찾기 위한 로직
+    @Override
+    public List<Product> getCompletedAuction() {
+        List<Product> checkCompletedAuction = productRepository.findByClosedAtIsBeforeAndStatus(LocalDateTime.now(), ProductStatus.BEFORE);
+
+        return checkCompletedAuction;
     }
 }
