@@ -50,19 +50,19 @@ interface ProfileListProps {
   linkTo: string;
 }
 
-interface ChildComponentProps {
-  totalUnreadMessages: number;
-}
+// interface ChildComponentProps {
+//   totalUnreadMessages: number;
+// }
 
-export const UnreadMessages: React.FC<ChildComponentProps> = ({ totalUnreadMessages }) => {
-  return (
-    <div>
-      <h2>Total Unread Messages in Child: {totalUnreadMessages}</h2>
-    </div>
-  );
-};
+// export const UnreadMessages: React.FC<ChildComponentProps> = ({ totalUnreadMessages }) => {
+//   return (
+//     <div>
+//       <h2>Total Unread Messages in Child: {totalUnreadMessages}</h2>
+//     </div>
+//   );
+// };
 
-console.log = UnreadMessages;
+// console.log = UnreadMessages;
 
 const ProfileList: React.FC<ProfileListProps> = ({ icon, text, count, linkTo }) => {
   return (
