@@ -7,7 +7,6 @@ import main.wonprice.auth.filter.JwtVerificationFilter;
 import main.wonprice.auth.handler.CustomAccessDeniedHandler;
 import main.wonprice.auth.handler.CustomAuthenticationFailureHandler;
 import main.wonprice.auth.handler.CustomAuthenticationSuccessHandler;
-import main.wonprice.auth.jwt.JwtTokenizer;
 import main.wonprice.auth.jwt.service.JwtService;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.member.repository.MemberRepository;
@@ -16,7 +15,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -32,7 +30,6 @@ import java.util.List;
 @AllArgsConstructor
 public class SecurityConfig {
 
-    private final JwtTokenizer jwtTokenizer;
     private final CustomAuthorityUtils authorityUtils;
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
@@ -61,6 +58,13 @@ public class SecurityConfig {
                 .apply(new CustomFilterConfigurer())
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
+                                .antMatchers("/members/all").hasRole("ADMIN")
+
+                                .antMatchers("/notifications/announce").hasRole("ADMIN")
+                                .antMatchers("/notifications/*").hasRole("USER")
+
+                                .antMatchers(HttpMethod.PATCH).hasRole("USER")
+                                .antMatchers(HttpMethod.DELETE).hasRole("USER")
 //                        .antMatchers(HttpMethod.GET, "/members/all").hasRole("ADMIN")
 //                        .antMatchers(HttpMethod.PATCH, "/members/*").hasRole("USER")
 //                        .antMatchers(HttpMethod.DELETE, "/members/*").hasRole("USER")
@@ -96,12 +100,12 @@ public class SecurityConfig {
 
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
-            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer, jwtService);
+            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtService);
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new CustomAuthenticationSuccessHandler(memberRepository));
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new CustomAuthenticationFailureHandler());
             jwtAuthenticationFilter.setFilterProcessesUrl("/members/login");
 
-            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils);
+            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtService, authorityUtils);
 
             builder
                     .addFilter(jwtAuthenticationFilter)
