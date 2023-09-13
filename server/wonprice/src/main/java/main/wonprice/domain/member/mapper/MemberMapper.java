@@ -13,8 +13,6 @@ public interface MemberMapper {
 
     Member postDtoToMember(MemberPostDto postDto);
 
-    List<MemberResponseDto> membersToResponseDtos(List<Member> members);
-
     Member patchDtoToMember(MemberPatchDto patchDto);
 
     MemberResponseDto memberToResponseDto(Member member);

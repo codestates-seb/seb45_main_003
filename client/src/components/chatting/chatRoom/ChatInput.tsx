@@ -3,6 +3,9 @@ import styled from "styled-components"; // 수정된 부분
 import SendIcon from "@mui/icons-material/Send";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import { COLOR } from "../../../constants/color";
+import { useRecoilState } from "recoil";
+import { chatState, MessageItem } from "../recoil/chatState";
 
 // import Button from "../../components/common/Button";
 
@@ -12,10 +15,12 @@ const Container = styled.div`
   justify-content: center;
   gap: 0.75rem;
   max-height: 3.75rem;
+  padding: 0 1.875rem;
+
   .chat-input-container {
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center; /* 중앙 정렬 */
     background: #fff;
     width: fit-content;
@@ -25,6 +30,12 @@ const Container = styled.div`
     background: #fff;
 
     width: calc(100% - 3rem);
+
+    &:hover,
+    &:focus {
+      border: 1px solid ${COLOR.primary};
+      outline: 1px solid ${COLOR.primary};
+    }
   }
 
   .input {
@@ -35,6 +46,13 @@ const Container = styled.div`
     border: none;
     background: none;
     outline: none; /* 이 부분을 추가 */
+
+    &:hover,
+    &:focus {
+      border: none;
+      outline: none;
+    }
+
     .this-page .input:focus {
       outline: none;
     }
@@ -48,9 +66,9 @@ const Container = styled.div`
       color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
     }
   }
-  @media (max-width: 64rem) {
+  /* @media (max-width: 64rem) {
     width: calc(100% - 2rem);
-  }
+  } */
 `;
 
 const Button = styled.button`
@@ -96,16 +114,25 @@ interface ChatInputProps {
   onSendMessage: (message: string) => void;
 }
 
+// Message 타입 정의
+// interface MessageData {
+//   body: {
+//     content: string;
+//     senderId: number | null;
+//     createdAt?: string;
+//   };
+// }
+
+interface ChatInputProps {
+  onSendMessage: (message: string) => void;
+}
+
 const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
   const [message, setMessage] = useState<string>("");
+  const [, setChatList] = useRecoilState<MessageItem[]>(chatState);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
-  };
-
-  const handleSendClick = () => {
-    onSendMessage(message);
-    setMessage("");
   };
 
   const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -119,6 +146,25 @@ const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
       onSendMessage(message);
       setMessage("");
     }
+  };
+
+  const handleSendClick = () => {
+    if (message.trim() === "") return;
+
+    // 실제 메시지를 보내는 로직
+    onSendMessage(message);
+
+    // 새로운 메시지를 chatList에 추가
+    const newMessage: MessageItem = {
+      content: message,
+      senderId: null, // 여기에 실제 사용자 ID를 넣을 수 있습니다.
+      createdAt: new Date().toISOString(),
+      messageId: null, // 이 값도 실제 메시지 ID로 변경할 수 있습니다.
+    };
+    setChatList((prevChatList) => [...prevChatList, newMessage]);
+
+    // 입력 필드 초기화
+    setMessage("");
   };
 
   return (

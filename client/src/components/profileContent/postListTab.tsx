@@ -1,22 +1,32 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
-import { useValidateToken } from "../../hooks/useValidateToken";
-import { useRecoilValue } from "recoil";
-import { loginState } from "../../atoms/atoms";
-import { authInstance } from "../../interceptors/interceptors";
-import { useLocation } from "react-router-dom";
+import { defaultInstance } from "../../interceptors/interceptors";
+import { useLocation, useNavigate } from "react-router-dom";
+import { findCategory } from "../../util/category";
+import Empty from "../common/Empty";
+import { useQuery } from "react-query";
+import Loading from "../common/Loading";
+import Error from "../common/Error";
+import Pagination from "../common/Pagination";
+import { usePagination } from "../../hooks/usePagination";
 
-interface products {
+// interface Data {
+//   content: postContent[];
+//   totalPages: number;
+// }
+interface image {
+  imageId: number;
+  path: string;
+}
+
+interface postContent {
   productId: number;
   title: string;
   createAt: string;
-  img: string;
-}
-
-interface Review {
+  images: image[];
+  categoryId: number;
   postMemberId: number;
   targetMemberId: number;
   content: string;
@@ -25,11 +35,21 @@ interface Review {
   img: string;
 }
 
+// interface Review {
+//   postMemberId: number;
+//   targetMemberId: number;
+//   content: string;
+//   score: number;
+//   createdAt: string;
+//   img: string;
+// }
+
 const PostListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: stretch;
+  min-height: 100%;
   .postlistMenuContainer {
     display: flex;
     flex-direction: row;
@@ -50,11 +70,20 @@ const PostListContainer = styled.div`
       }
     }
   }
+  .empty {
+    height: 25rem;
+    position: relative;
+  }
   .tabContent {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
+    .postImg {
+      width: 6.25rem;
+      height: 6.25rem;
+      padding: 0.5rem 0;
+    }
     .postContainer {
       display: flex;
       flex-direction: row;
@@ -62,6 +91,7 @@ const PostListContainer = styled.div`
       align-items: stretch;
       gap: 0.5rem;
       border-bottom: 1px solid ${COLOR.border};
+      cursor: pointer;
     }
     .infoContainer {
       display: flex;
@@ -100,51 +130,70 @@ const PostListTab = (): JSX.Element => {
     { value: "leaveReview", text: "작성한 거래 후기" },
     { value: "getReview", text: "받은 거래 후기" },
   ];
-  const [cellPost, setCellPost] = useState<products[]>([]);
-  const [leaveReview, setLeaveReview] = useState<Review[]>([]);
-  const [recievedReview, setRecievedReview] = useState<Review[]>([]);
   const [menu, setMenu] = useState("cell");
-  const isLogin = useRecoilValue(loginState);
+  const navigate = useNavigate();
   const location = useLocation();
-  const Id = location.pathname.slice(9);
-  const { validateAccessToken } = useValidateToken();
-  // 추후 Id는 주소에 있는 id로 가져오게 변경해야함
-  const getPostlist = async () => {
-    try {
-      const res = await authInstance.get(`/members/${Id}/products`);
-      setCellPost(res.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
-      }
-    }
+  const Id = location.pathname.slice(8);
+  const searchParams = new URLSearchParams(location.search);
+  const handleMenu = (value: string): void => {
+    setMenu(value);
+    navigate(`${location.pathname}?menu=${searchParams.get("menu")}&?tabmenu=${value}`);
   };
-  const getLeaveReview = async () => {
-    try {
-      const res = await authInstance.get(`/members/${Id}/reviews/post`, {});
-      setLeaveReview(res.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
+  const ITEMS_PER_VIEW = 10;
+  const {
+    currentPage,
+    totalPages,
+    setTotalPages,
+    pageChangeHandler,
+    prevPageHandler,
+    nextPageHandler,
+  } = usePagination();
+  const {
+    isLoading,
+    isError,
+    refetch,
+    data: result,
+  } = useQuery<postContent[]>(["postList", currentPage], async () => {
+    const currentPageParam = parseInt(searchParams.get("page") || "1");
+    const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
+    if (menu === "cell") {
+      const res = await defaultInstance.get(`/members/${Id}/products?${pageQueryParam}`, {
+        headers: {
+          "ngrok-skip-browser-warning": "69420",
+        },
+      });
+      if (res.data?.totalPages !== totalPages) {
+        setTotalPages(res.data?.totalPages);
       }
-    }
-  };
-  const getRecievedReview = async () => {
-    try {
-      const res = await authInstance.get(`/members/${Id}/reviews`);
-      setRecievedReview(res.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.log(error);
+      navigate(`?menu=profile&?tabmenu=${menu}&?page=${currentPageParam}`);
+      return res.data.slice().reverse();
+    } else if (menu === "leaveReview") {
+      const res = await defaultInstance.get(`/members/${Id}/reviews/post?${pageQueryParam}`, {
+        headers: {
+          "ngrok-skip-browser-warning": "69420",
+        },
+      });
+      if (res.data?.totalPages !== totalPages) {
+        setTotalPages(res.data?.totalPages);
       }
+      navigate(`?menu=profile&?tabmenu=${menu}&?page=${currentPageParam}`);
+      return res.data;
+    } else if (menu === "getReview") {
+      const res = await defaultInstance.get(`/members/${Id}/reviews?${pageQueryParam}`, {
+        headers: {
+          "ngrok-skip-browser-warning": "69420",
+        },
+      });
+      if (res.data?.totalPages !== totalPages) {
+        setTotalPages(res.data?.totalPages);
+      }
+      navigate(`?menu=profile&?tabmenu=${menu}&?page=${currentPageParam}`);
+      return res.data;
     }
-  };
+  });
   useEffect(() => {
-    validateAccessToken();
-    getPostlist();
-    getLeaveReview();
-    getRecievedReview();
-  }, [isLogin, menu]);
+    refetch();
+  }, [location.pathname, location.search, currentPage]);
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">
@@ -152,17 +201,23 @@ const PostListTab = (): JSX.Element => {
           <li
             key={el.value}
             className={menu === el.value ? "select postlistTabMenu" : "postlistTabMenu"}
-            onClick={() => setMenu(el.value)}
+            onClick={() => handleMenu(el.value)}
           >
             {el.text}
           </li>
         ))}
       </ul>
       <div className="tabContent">
+        {isLoading && <Loading />}
+        {isError && <Error />}
         {menu === "cell" &&
-          cellPost.map((el) => (
-            <div className="postContainer" key={el.productId}>
-              <img src={el.img}></img>
+          result?.map((el) => (
+            <div
+              className="postContainer"
+              key={el.productId}
+              onClick={() => navigate(`/product/${findCategory(el.categoryId)}/${el.productId}`)}
+            >
+              <img className="postImg" src={el.images[0].path}></img>
               <div className="infoContainer">
                 <div className="postTitle">{el.title}</div>
                 <div className="createdAt">{el.createAt}</div>
@@ -170,7 +225,7 @@ const PostListTab = (): JSX.Element => {
             </div>
           ))}
         {menu === "leaveReview" &&
-          leaveReview.map((el, idx) => (
+          result?.map((el, idx) => (
             <div key={idx} className="postContainer">
               <img src={el.img}></img>
               <div className="infoContainer">
@@ -180,12 +235,13 @@ const PostListTab = (): JSX.Element => {
                   <span className="author">{`작성자 id ${el.postMemberId}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
                 </div>
+                <div>{`평점: ${el.score}`}</div>
                 <p className="postContent">{el.content}</p>
               </div>
             </div>
           ))}
         {menu === "getReview" &&
-          recievedReview.map((el, idx) => (
+          result?.map((el, idx) => (
             <div key={idx} className="postContainer">
               <img src={el.img}></img>
               <div className="infoContainer">
@@ -195,11 +251,26 @@ const PostListTab = (): JSX.Element => {
                   <span className="author">{`작성자 id${el.postMemberId}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
                 </div>
+                <div>{`평점: ${el.score}`}</div>
                 <p className="postContent">{el.content}</p>
               </div>
             </div>
           ))}
       </div>
+      {result?.length === 0 && (
+        <div className="empty">
+          <Empty />
+        </div>
+      )}
+      <Pagination
+        {...{
+          currentPage,
+          totalPages,
+          pageChangeHandler,
+          prevPageHandler,
+          nextPageHandler,
+        }}
+      />
     </PostListContainer>
   );
 };

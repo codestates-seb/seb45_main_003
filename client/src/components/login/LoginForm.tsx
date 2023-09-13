@@ -6,6 +6,7 @@ import { styled } from "styled-components";
 import { loginState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import Button from "../common/Button";
+import { defaultInstance } from "../../interceptors/interceptors";
 
 //폼에서 사용하는 데이터
 interface LoginForm {
@@ -46,7 +47,7 @@ const LogInForm = (): JSX.Element => {
   //로그인 시도 함수
   const submitLogin = async (body: LoginData) => {
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/members/login`, body);
+      const response = await defaultInstance.post(`/members/login`, body);
       if (response.status === 200) {
         const headers = response.headers;
         const accessToken = headers["authorization"];

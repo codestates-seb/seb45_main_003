@@ -1,4 +1,5 @@
 import { createGlobalStyle } from "styled-components";
+import arrow from "../assets/images/SelectArrow.svg";
 import { COLOR } from "../constants/color";
 import { FONT_SIZE } from "../constants/font";
 import "./font.ts";
@@ -6,6 +7,7 @@ import "./font.ts";
 export const GlobalStyle = createGlobalStyle`
 body,
 textarea, input {
+  color: ${COLOR.darkText};
   margin: 0;
   font-family: "Pretendard";
   -webkit-font-smoothing: antialiased;
@@ -72,20 +74,37 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance: none;margin: 0
 textarea {
   resize: none;
 }
-select {
-  font-family: "Pretendard";
-  font-size: ${FONT_SIZE.font_16};
-  padding: 0.5rem 0.75rem;
-  width: 15rem;
-  border-radius: 6px;
-  border: 1px solid ${COLOR.border};
-  background: ${COLOR.gray_100};
-  outline: none;
-  -webkit-appearance:none; 
-  -moz-appearance:none; 
-  appearance:none;
+.select {
+  display: flex;
   position: relative;
+  
+  select {
+    font-family: "Pretendard";
+    font-size: ${FONT_SIZE.font_16};
+    padding: 0.5rem 0.75rem;
+    width: 15rem;
+    border-radius: 6px;
+    border: 1px solid ${COLOR.border};
+    background: ${COLOR.gray_100};
+    outline: none;
+    -webkit-appearance:none; 
+    -moz-appearance:none; 
+    appearance:none;
+  }
+
+  &::after {
+    content: ""; 
+    width: 1.5rem ;
+    height: 1.5rem;
+    background: url(${arrow}) no-repeat; 
+    position: absolute;
+    top: 50%;
+    right: .5rem;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
 }
+
 
 button{
   cursor: pointer;
@@ -95,6 +114,8 @@ button{
   }
 }
 * {
+  
+    &,
     &:after,
     &:before {
     box-sizing: border-box;

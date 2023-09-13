@@ -10,12 +10,13 @@ import main.wonprice.domain.member.mapper.ReviewMapper;
 import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.domain.member.service.ReviewService;
 import main.wonprice.domain.product.service.ProductServiceImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -30,6 +31,7 @@ public class ReviewController {
     public ResponseEntity postReview(@RequestBody ReviewPostDto postDto) {
 
         Review review = mapper.postDtoToReview(postDto);
+        review.setReceiveMember(memberService.findMember(postDto.getReceiveMemberId()));
         review.setPostMember(memberService.findLoginMember());
         review.setProduct(productService.findOneById(postDto.getProductId()));
 
@@ -49,25 +51,31 @@ public class ReviewController {
     }
 
     @GetMapping("/members/{member-id}/reviews/post")
-    public ResponseEntity fingMemberwroteReview(Pageable pageable,
-                                                     @PathVariable("member-id")Long memberId) {
+    public ResponseEntity fingMemberwroteReview(@RequestParam(defaultValue = "0") int page,
+                                                @RequestParam(defaultValue = "10") int size,
+                                                @PathVariable("member-id")Long memberId) {
+
+        Pageable pageable = PageRequest.of(page, size);
 
         Member member = memberService.findMember(memberId);
 
-        List<Review> reviews = reviewService.findWroteReviews(pageable, member);
-        List<ReviewResponseDto> response = mapper.reviewsToResponseDtos(reviews);
+        Page<Review> reviews = reviewService.findWroteReviews(pageable, member);
+        Page<ReviewResponseDto> response = reviews.map(mapper::reviewToResponseDto);
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
 
     @GetMapping("/members/{member-id}/reviews")
-    public ResponseEntity findMembersReviews(Pageable pageable,
+    public ResponseEntity findMembersReviews(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size,
                                              @PathVariable("member-id") Long memberId) {
+
+        Pageable pageable = PageRequest.of(page, size);
 
         Member findMember = memberService.findMember(memberId);
 
-        List<Review> reviews = reviewService.findReviews(pageable, findMember);
-        List<ReviewResponseDto> response = mapper.reviewsToResponseDtos(reviews);
+        Page<Review> reviews = reviewService.findReviews(pageable, findMember);
+        Page<ReviewResponseDto> response = reviews.map(mapper::reviewToResponseDto);
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
