@@ -17,8 +17,5 @@ public class ReviewPostDto {
     private Long score;
 
     @NotBlank
-    private Long receiveMemberId;
-
-    @NotBlank
     private Long productId;
 }
