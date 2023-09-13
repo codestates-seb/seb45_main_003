@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import React from "react";
 // import { red } from "@mui/material/colors";
 
 const ItemBox = styled.div`
@@ -49,12 +50,25 @@ interface ProfileListProps {
   linkTo: string;
 }
 
+interface ChildComponentProps {
+  totalUnreadMessages: number;
+}
+
+export const UnreadMessages: React.FC<ChildComponentProps> = ({ totalUnreadMessages }) => {
+  return (
+    <div>
+      <h2>Total Unread Messages in Child: {totalUnreadMessages}</h2>
+    </div>
+  );
+};
+
+console.log = UnreadMessages;
+
 const ProfileList: React.FC<ProfileListProps> = ({ icon, text, count, linkTo }) => {
   return (
     <>
       <ItemBox>
         <StyledLink className="Button" to={linkTo}>
-          {" "}
           <div className="IconImg">{icon}</div> {/* 아이콘 렌더링 */}
           <div className="Text">{text}</div> {/* 텍스트 렌더링 */}
           <div className="count">{count}</div> {/* 카운트 렌더링 */}

@@ -6,12 +6,11 @@ import { chatListState } from "../recoil/chatState";
 import styled from "styled-components";
 import { currentChatRoomIdState } from "../recoil/chatState";
 import FormatTimeOrDate from "../hook/FormatTimeOrDate";
-// import { COLOR } from "../../../constants/color";
 import { useQuery } from "react-query";
-import { webSocketConnectionState } from "../recoil/chatState";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+// import { webSocketConnectionState } from "../recoil/chatState";
 
 interface ChatList {
   chatRoomId: number;
@@ -37,10 +36,51 @@ interface MyError {
   message: string;
   // 다른 필드들...
 }
+const TotalUnread = styled.div`
+  position: static;
+  display: flex;
+  &:hover {
+    color: #ffcd57;
+  }
+  .notification-bar {
+    display: flex;
+    height: 1.25rem;
+    width: 1.25rem;
+    border-radius: 12px;
+    background: #ffb300;
+    color: var(--default-white, #fff);
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-family: Roboto;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    box-shadow: 1px 1px 5px 0px rgba(0, 0, 0, 0.25);
+  }
+`;
+
+const ChatList = styled.div`
+  height: 34.375rem;
+  overflow-y: auto;
+  /* 내용이 넘칠 경우 스크롤 표시 */
+
+  &::-webkit-scrollbar {
+    width: 0;
+  }
+  /* &::-webkit-scrollbar-track {
+    background: #ffffff;
+    border-radius: 100vw;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #ffb300;
+    border-radius: 100vw;
+    border: 0.2rem solid #ffffff;
+  } */
+`;
 
 const Container = styled.button`
   width: 100%;
-  margin-bottom: 0.9375rem;
+  margin-bottom: 1.875rem;
   padding: 0;
   border: none;
   border-radius: 0.375rem;
@@ -48,6 +88,7 @@ const Container = styled.button`
   min-width: 11.875rem;
   min-height: 3rem;
   background: #f7f7f7;
+
   .ProfileImg {
     border-radius: 24.556px;
     height: 1.5rem;
@@ -144,12 +185,21 @@ const Box = styled.div`
 `;
 
 const ChattingListData: React.FC = () => {
+  // const isConnected = useRecoilValue(webSocketConnectionState); // 웹소켓 연결 상태
+
   const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [, setCurrentChatRoomId] = useRecoilState(currentChatRoomIdState);
   const isLoggedIn = useRecoilValue(loginState);
-  const isConnected = useRecoilValue(webSocketConnectionState); // 웹소켓 연결 상태
   const navigate = useNavigate();
+  // State for storing the total number of unread messages.
+  const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
+
+  // 모든 알림 갯수
+  useEffect(() => {
+    const total = chatList.reduce((acc, chat) => acc + (chat.unReadMessage || 0), 0);
+    setTotalUnreadMessages(total);
+  }, [chatList]);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -196,9 +246,22 @@ const ChattingListData: React.FC = () => {
     return response.data;
   };
 
+  // const { error, isLoading } = useQuery("chatList", fetchChatList, {
+  //   refetchInterval: isConnected ? 5000 : undefined, // 웹소켓 연결 상태에 따라 폴링 간격을 설정 5초 설정
+  //   enabled: isLoggedIn && isConnected, // 로그인과 웹소켓 연결이 모두 되어 있을 때만 쿼리 활성화
+
+  //   onError: (err) => {
+  //     console.log("An error occurred:", err);
+  //   },
+  //   onSuccess: (data) => {
+  //     setChatList(data);
+  //   },
+  // });
+
   const { error, isLoading } = useQuery("chatList", fetchChatList, {
-    refetchInterval: isConnected ? 5000 : undefined, // 웹소켓 연결 상태에 따라 폴링 간격을 설정 5초 설정
-    enabled: isLoggedIn && isConnected, // 로그인과 웹소켓 연결이 모두 되어 있을 때만 쿼리 활성화
+    refetchInterval: 5000, // Always refetch at an interval of 5 seconds
+    enabled: isLoggedIn, // Only enable query when logged in
+
     onError: (err) => {
       console.log("An error occurred:", err);
     },
@@ -206,6 +269,7 @@ const ChattingListData: React.FC = () => {
       setChatList(data);
     },
   });
+
   // 채팅방 필터링
   const filteredChatList = chatList.filter((chat) => {
     return chat.chatRoom?.name?.toString().includes(searchTerm);
@@ -239,7 +303,12 @@ const ChattingListData: React.FC = () => {
         {firstChat ? (
           <div key={firstChat.chatRoomId} className="ProfileBox">
             <img className="ProfileImg" src={firstChat.path || "default_image_path_here"} alt="" />
-            <NotificationsIcon className="Icon" />
+            <TotalUnread>
+              <NotificationsIcon />
+              {totalUnreadMessages > 0 && (
+                <div className="notification-bar">{totalUnreadMessages}</div>
+              )}
+            </TotalUnread>
           </div>
         ) : (
           <div>채팅을 찾을수 없습니다.</div>
@@ -259,41 +328,42 @@ const ChattingListData: React.FC = () => {
       </div>
       <ul>
         {/* 채팅방 리스트 항목 */}
-        {sortedChatList.map((chat) => (
-          <Container key={chat.chatRoomId} onClick={() => handleRoomClick(chat.chatRoomId)}>
-            <li key={chat.chatRoomId}>
-              <div className="chatRoom">
-                <div className="idDate">
-                  <div className="profile">
-                    <img
-                      className="ProfileImg"
-                      src={chat?.chatRoom?.path || "default_image_path_here"}
-                      alt=""
-                      style={{
-                        width: "1.5rem",
-                        height: "1.5rem",
-                        objectFit: "fill",
-                      }}
-                    />
-                    <div className="memberId">{chat.chatRoom.name}</div>
+        <ChatList>
+          {sortedChatList.map((chat) => (
+            <Container key={chat.chatRoomId} onClick={() => handleRoomClick(chat.chatRoomId)}>
+              <li key={chat.chatRoomId}>
+                <div className="chatRoom">
+                  <div className="idDate">
+                    <div className="profile">
+                      <img
+                        className="ProfileImg"
+                        src={chat?.chatRoom?.path || "default_image_path_here"}
+                        alt=""
+                        style={{
+                          width: "1.5rem",
+                          height: "1.5rem",
+                          objectFit: "fill",
+                        }}
+                      />
+                      <div className="memberId">{chat.chatRoom.name}</div>
+                    </div>
+                    {chat.unReadMessage > 0 && (
+                      <div className="unReadMessage">{chat.unReadMessage}</div>
+                    )}
                   </div>
-                  {chat.unReadMessage > 0 && (
-                    <div className="unReadMessage">{chat.unReadMessage}</div>
-                  )}
+                  <div className="messageAt">
+                    <div className="message">
+                      {chat.message ? chat.message.content : "채팅을 시작해보세요!"}
+                    </div>
+                    <div className="createdAt">
+                      {FormatTimeOrDate(chat.message ? chat.message.createdAt : null)}
+                    </div>
+                  </div>
                 </div>
-
-                <div className="messageAt">
-                  <div className="message">
-                    {chat.message ? chat.message.content : "채팅을 시작해보세요!"}
-                  </div>
-                  <div className="createdAt">
-                    {FormatTimeOrDate(chat.message ? chat.message.createdAt : null)}
-                  </div>
-                </div>
-              </div>
-            </li>
-          </Container>
-        ))}
+              </li>
+            </Container>
+          ))}
+        </ChatList>
       </ul>
     </>
   );
