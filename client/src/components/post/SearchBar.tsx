@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { ReactComponent as SearchIcon } from "../../assets/images/Search.svg";
+import { loginState } from "../../atoms/atoms";
 
 const StyledSearchBar = styled.div`
   position: relative;
@@ -21,6 +23,7 @@ const StyledSearchBar = styled.div`
 const SearchBar = (): JSX.Element => {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState("");
+  const isLogin = useRecoilValue(loginState);
 
   const handleSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
@@ -29,7 +32,7 @@ const SearchBar = (): JSX.Element => {
   };
 
   return (
-    <StyledSearchBar>
+    <StyledSearchBar className={isLogin ? "login" : ""}>
       <SearchIcon />
       <input
         onKeyUp={handleSubmit}

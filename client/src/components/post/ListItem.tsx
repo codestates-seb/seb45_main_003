@@ -70,7 +70,9 @@ const ListItem = (props: ItemProps): JSX.Element => {
               ? data.productStatus === "BEFORE"
                 ? formatTime(data.closedAt) + " 경매종료"
                 : AUCTION.end
-              : AUCTION.isnot}
+              : data.productStatus === "BEFORE"
+              ? AUCTION.isnot
+              : AUCTION.end}
           </p>
         </div>
         <div className="price">

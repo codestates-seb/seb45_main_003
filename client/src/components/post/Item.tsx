@@ -1,4 +1,5 @@
-import { useQuery } from "react-query";
+import { useEffect } from "react";
+import { useQuery, useQueryClient } from "react-query";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { API_PATHS } from "../../constants/path";
@@ -33,12 +34,24 @@ const StyledItem = styled.article`
 const Item = (): JSX.Element => {
   const location = useLocation();
   const itemNumber = location.pathname.split("/");
-  const { isLoading, error, data } = useQuery("productData", async () => {
-    const response = await authInstance.get(
-      API_PATHS.products.default(itemNumber[itemNumber.length - 1]),
-    );
-    return response.data;
-  });
+  const queryClient = useQueryClient();
+  const { isLoading, error, data } = useQuery(
+    ["productData", location],
+    async () => {
+      const response = await authInstance.get(
+        API_PATHS.products.default(itemNumber[itemNumber.length - 1]),
+      );
+      return response.data;
+    },
+    {
+      staleTime: Infinity,
+    },
+  );
+
+  //컴포넌트가 마운트 될 때마다 쿼리 다시 실행
+  useEffect(() => {
+    queryClient.invalidateQueries("productData");
+  }, []);
 
   if (isLoading) {
     return <Loading />;

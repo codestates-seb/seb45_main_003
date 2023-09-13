@@ -1,5 +1,6 @@
 import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
 import { COLOR } from "../../constants/color";
@@ -39,7 +40,9 @@ const MobileHeader = () => {
 
   return (
     <StyledHeader>
-      <Logo className="logo" />
+      <Link to="/">
+        <Logo className="logo" />
+      </Link>
       <button>
         <MenuIcon
           className="menu_icon"
