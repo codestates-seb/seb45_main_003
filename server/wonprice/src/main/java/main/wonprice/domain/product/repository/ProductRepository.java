@@ -11,6 +11,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
 
@@ -41,6 +44,8 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
     Page<Product> findByTitleContaining(String keyword, Pageable pageable);
 
     // 삭제되지 않은 모든 상품들만 조회하게 필터링 후 검색하는 메서드
-
     Page<Product> findAll(Specification<Product> spec, Pageable pageable);
+
+    // ㄷㅍ - 현재 시간이 경매종료 시간보다 지난 Product 조회
+    List<Product> findByClosedAtIsBeforeAndStatus(LocalDateTime now, ProductStatus Status);
 }
