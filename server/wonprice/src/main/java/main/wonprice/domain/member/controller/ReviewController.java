@@ -10,9 +10,12 @@ import main.wonprice.domain.member.mapper.ReviewMapper;
 import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.domain.member.service.ReviewService;
 import main.wonprice.domain.product.service.ProductServiceImpl;
+import main.wonprice.exception.BusinessLogicException;
+import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +34,16 @@ public class ReviewController {
     public ResponseEntity postReview(@RequestBody ReviewPostDto postDto) {
 
         Review review = mapper.postDtoToReview(postDto);
-        review.setReceiveMember(memberService.findMember(postDto.getReceiveMemberId()));
-        review.setPostMember(memberService.findLoginMember());
+        Member loginMember = memberService.findLoginMember();
+        review.setPostMember(loginMember);
         review.setProduct(productService.findOneById(postDto.getProductId()));
+
+//        리뷰 작성자가 판매자인지 구매자인지 식별
+        if (loginMember == review.getProduct().getSeller()) {
+            review.setReceiveMember(memberService.findMember(review.getProduct().getBuyerId()));
+        } else if (loginMember == memberService.findMember(review.getProduct().getBuyerId())) {
+            review.setReceiveMember(review.getProduct().getSeller());
+        } else throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
 
         Review createdReview = reviewService.createReview(review);
         ReviewResponseDto response = mapper.reviewToResponseDto(createdReview);
@@ -55,7 +65,7 @@ public class ReviewController {
                                                 @RequestParam(defaultValue = "10") int size,
                                                 @PathVariable("member-id")Long memberId) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Member member = memberService.findMember(memberId);
 
@@ -70,7 +80,7 @@ public class ReviewController {
                                              @RequestParam(defaultValue = "10") int size,
                                              @PathVariable("member-id") Long memberId) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Member findMember = memberService.findMember(memberId);
 

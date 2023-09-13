@@ -14,6 +14,9 @@ import main.wonprice.domain.chat.mapper.ChatMapper;
 import main.wonprice.domain.chat.service.ChatService;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.service.ProductService;
+import main.wonprice.domain.product.service.ProductServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +30,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final MemberService memberService;
+    private final ProductServiceImpl productService;
     private final ChatMapper chatMapper;
 
     @PostMapping("/chat")
@@ -76,15 +80,15 @@ public class ChatController {
     public void deleteChatRoom(@PathVariable("room-id") Long chatRoomId) {
         Member loginMember = memberService.findLoginMember();
 
-        chatService.deleteChatRoom(chatRoomId, loginMember.getMemberId());
+        chatService.deleteChatRoom(chatRoomId, loginMember);
     }
 
-    @PostMapping("/chat/{room-id}")
-    public void InsertChatParticipant(@PathVariable("room-id") Long chatRoomId) {
-        Member loginMember = memberService.findLoginMember();
-
-        chatService.deleteChatRoom(chatRoomId, loginMember.getMemberId());
-    }
+//    @PostMapping("/chat/{room-id}")
+//    public void InsertChatParticipant(@PathVariable("room-id") Long chatRoomId) {
+//        Member loginMember = memberService.findLoginMember();
+//
+//        chatService.deleteChatRoom(chatRoomId, loginMember.getMemberId());
+//    }
 
     @PostMapping("/chat/sequence/{room-id}")
     public void updateSequence(@PathVariable("room-id") Long chatRoomId, @RequestBody SequenceRequest request) {
@@ -92,5 +96,14 @@ public class ChatController {
         ChatRoom findChatRoom = chatService.findChatRoom(chatRoomId);
 
         chatService.updateSequence(loginMember, findChatRoom, request.getMessageId());
+    }
+
+    @PostMapping("/chat/completed/{room-id}")
+    public ResponseEntity completedChat(@PathVariable("room-id") Long chatRoomId) {
+        Long productId = chatService.findChatRoom(chatRoomId).getProductId();
+
+        productService.updateCompletedProduct(productId);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

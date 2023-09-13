@@ -1,14 +1,12 @@
 package main.wonprice.domain.product.service;
 
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
-import main.wonprice.domain.product.entity.ProductStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.Query;
-
 import java.util.List;
 
 public interface ProductService {
@@ -39,5 +37,9 @@ public interface ProductService {
     Page<Product> getAvailableProducts(String type, int page, int size);
 
     Page<Product> getCompletedProducts(int page, int size);
+
+    Product updateCurrentAuctionPrice(Long productId, BidRequestDto request);
+
+    void updateCompletedProduct(Long productId);
 }
 
