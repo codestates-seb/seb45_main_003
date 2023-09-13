@@ -40,7 +40,7 @@ export type ProductData = {
   categoryId: number;
   views: number;
   action: boolean;
-  createAt: string;
+  createdAt: string;
   modifiedAt?: string;
   deletedAt?: string;
   closedAt?: string;
@@ -118,7 +118,11 @@ const StyledList = styled.section`
       width: 100%;
 
       & > div {
-        width: calc(100% - 8.875rem);
+        width: 100%;
+
+        &.login {
+          width: calc(100% - 8.875rem);
+        }
 
         input {
           width: 100%;
@@ -234,7 +238,7 @@ const List = (): JSX.Element => {
           </div>
 
           <div className="list_top_right">
-            <SearchBar></SearchBar>
+            <SearchBar />
             {isLogin && (
               <Button
                 onClick={() => {
