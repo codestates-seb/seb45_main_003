@@ -2,7 +2,7 @@ import React, { useEffect, useState, ChangeEvent } from "react";
 import axios from "axios";
 import { useRecoilState, useRecoilValue, RecoilState } from "recoil";
 import { loginState } from "../../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
-import { chatListState } from "../recoil/chatState";
+import { chatListState, totalUnreadMessagesState } from "../recoil/chatState";
 import styled from "styled-components";
 import { currentChatRoomIdState } from "../recoil/chatState";
 import FormatTimeOrDate from "../hook/FormatTimeOrDate";
@@ -186,14 +186,13 @@ const Box = styled.div`
 
 const ChattingListData: React.FC = () => {
   // const isConnected = useRecoilValue(webSocketConnectionState); // 웹소켓 연결 상태
-
   const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [, setCurrentChatRoomId] = useRecoilState(currentChatRoomIdState);
   const isLoggedIn = useRecoilValue(loginState);
   const navigate = useNavigate();
   // State for storing the total number of unread messages.
-  const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
+  const [totalUnreadMessages, setTotalUnreadMessages] = useRecoilState(totalUnreadMessagesState);
 
   // 모든 알림 갯수
   useEffect(() => {

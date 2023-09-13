@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import React from "react";
-// import { red } from "@mui/material/colors";
+import { totalUnreadMessagesState } from "../chatting/recoil/chatState";
+import { useRecoilValue } from "recoil";
 
 const ItemBox = styled.div`
   align-self: stretch;
@@ -50,20 +51,6 @@ interface ProfileListProps {
   linkTo: string;
 }
 
-// interface ChildComponentProps {
-//   totalUnreadMessages: number;
-// }
-
-// export const UnreadMessages: React.FC<ChildComponentProps> = ({ totalUnreadMessages }) => {
-//   return (
-//     <div>
-//       <h2>Total Unread Messages in Child: {totalUnreadMessages}</h2>
-//     </div>
-//   );
-// };
-
-// console.log = UnreadMessages;
-
 const ProfileList: React.FC<ProfileListProps> = ({ icon, text, count, linkTo }) => {
   return (
     <>
@@ -80,6 +67,8 @@ const ProfileList: React.FC<ProfileListProps> = ({ icon, text, count, linkTo }) 
 
 // 사용 예시
 const ProfileButton = () => {
+  const totalUnreadMessages = useRecoilValue(totalUnreadMessagesState);
+
   return (
     <Container>
       <ProfileList
@@ -91,7 +80,7 @@ const ProfileButton = () => {
       <ProfileList
         icon={<ChatBubbleIcon />} // 아이콘 컴포넌트
         text="Messages" // 텍스트
-        count={10} // 카운트
+        count={totalUnreadMessages} // 카운트
         linkTo={`/chat/${localStorage.getItem("Id")}`}
       />
     </Container>
