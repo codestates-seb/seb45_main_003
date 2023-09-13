@@ -8,8 +8,6 @@ import main.wonprice.domain.product.dto.BidResponseDto;
 import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.service.ProductService;
-import main.wonprice.exception.BusinessLogicException;
-import main.wonprice.exception.ExceptionCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -29,12 +27,7 @@ public class BidController {
     @MessageMapping("/bid/{productId}")
     @SendTo("/topic/bid/{productId}")
     public ResponseEntity sendBid(@DestinationVariable("productId") Long productId, @RequestBody BidRequestDto request) {
-        Product product = productService.updateCurrentAuctionPrice(productId, request.getCurrentAuctionPrice(), request.getMemberId());
-
-        // 판매자와 입찰자가 같을 경우 예외 처리
-        if (product.getSeller().getMemberId() == request.getMemberId()) {
-            throw new BusinessLogicException(ExceptionCode.SELLER_AND_BUYER_ARE_SAME);
-        }
+        Product product = productService.updateCurrentAuctionPrice(productId, request);
 
         Member member = memberService.getMemberById(product.getBuyerId());
 

@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.domain.product.repository.ProductSpecification;
+import main.wonprice.exception.BusinessLogicException;
+import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -171,16 +174,43 @@ public class ProductServiceImpl implements ProductService {
     }
 
     /*
-        입찰하기 요청 들어올 시
+        입찰하기 요청 들어올 시,
         - product 의 현재 입찰가(currentAuctionPrice), 구매자(buyerId) 셋팅
+        - 그 밖의 예외처리
      */
     @Override
-    public Product updateCurrentAuctionPrice(Long productId, Long currentAuctionPrice, Long memberId) {
+    public Product updateCurrentAuctionPrice(Long productId,  BidRequestDto request) {
+        // 존재하지 않는 상품일 경우 예외 처리
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product Not Found"));
 
-        product.setCurrentAuctionPrice(currentAuctionPrice);
-        product.setBuyerId(memberId);
+        // 판매자와 입찰자가 같을 경우 예외 처리
+        if (product.getSeller().getMemberId() == request.getMemberId()) {
+            throw new BusinessLogicException(ExceptionCode.SELLER_AND_BUYER_ARE_SAME);
+        }
+
+        // 내가 요청한 입찰가와 현재 상품의 입찰가 비교
+        Long requestedBidPrice = request.getCurrentAuctionPrice();
+        Long currentProductBidPrice = product.getCurrentAuctionPrice();
+
+        /*
+            #1 입찰가 유효성 검사
+            - 제시한 입찰가는 현재 상품 입찰가보다 낮은 가격일 수 없다.
+         */
+        if(requestedBidPrice < currentProductBidPrice){
+            throw  new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_1);
+        }
+
+        /*
+            #2 입찰가 유효성 검사
+            - 제시한 입찰가는 현재 상품 입찰가의 5% 이상이어야 한다.
+         */
+        if(requestedBidPrice < (currentProductBidPrice * 1.05)) {
+            throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_2);
+        }
+
+        product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());
+        product.setBuyerId(request.getMemberId());
 
         return productRepository.save(product);
     }
