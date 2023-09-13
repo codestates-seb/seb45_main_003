@@ -75,7 +75,7 @@ const ProfileButton = () => {
         icon={<PersonIcon />} // 아이콘 컴포넌트
         text="Profile" // 텍스트
         count={10} // 카운트
-        linkTo={`/member/${localStorage.getItem("Id")}`}
+        linkTo={`/member/${localStorage.getItem("Id")}?menu=profile&?tabmenu=cell&?page=1`}
       />
       <ProfileList
         icon={<ChatBubbleIcon />} // 아이콘 컴포넌트
