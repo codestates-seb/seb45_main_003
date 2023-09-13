@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
@@ -8,10 +8,12 @@ import { findCategory } from "../../util/category";
 import Empty from "../common/Empty";
 import { useQuery } from "react-query";
 import Loading from "../common/Loading";
-import ErrorIndication from "../../pages/ErrorIndication";
+// import ErrorIndication from "../../pages/ErrorIndication";
 import Pagination from "../common/Pagination";
 import { usePagination } from "../../hooks/usePagination";
 import { translateProductStatus } from "../../util/productStatus";
+import { useRecoilState } from "recoil";
+import { postListTabState } from "../../atoms/atoms";
 
 interface Data {
   content: postContent[];
@@ -25,7 +27,6 @@ interface image {
 interface postContent {
   productId: number;
   title: string;
-  createAt: string;
   images?: image[];
   categoryId: number;
   reviewId: number;
@@ -36,7 +37,7 @@ interface postContent {
   createdAt: string;
   productStatus: string;
   productImages?: image[];
-  productTitle: string;
+  reviewTitle: string;
 }
 
 const PostListContainer = styled.div`
@@ -125,7 +126,7 @@ const PostListTab = (): JSX.Element => {
     { value: "leaveReview", text: "작성한 거래 후기" },
     { value: "getReview", text: "받은 거래 후기" },
   ];
-  const [menu, setMenu] = useState("cell");
+  const [menu, setMenu] = useRecoilState(postListTabState);
   const navigate = useNavigate();
   const location = useLocation();
   const Id = location.pathname.slice(8);
@@ -147,7 +148,6 @@ const PostListTab = (): JSX.Element => {
   } = usePagination();
   const {
     isLoading,
-    isError,
     refetch,
     data: result,
   } = useQuery<Data>(["postList", currentPage], async () => {
@@ -192,10 +192,12 @@ const PostListTab = (): JSX.Element => {
   //삼항연산자로 해결
   useEffect(() => {
     refetch();
+    const tabmenu = searchParams.get("tabmenu");
+    if (tabmenu !== null) {
+      setMenu(tabmenu);
+    }
   }, [location.pathname, location.search, currentPage]);
-  if (isError) {
-    return <ErrorIndication error={Error} />;
-  }
+
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">
@@ -212,8 +214,8 @@ const PostListTab = (): JSX.Element => {
       <div className="tabContent">
         {isLoading && <Loading />}
         {menu === "cell" &&
-          result?.content.map((el) => (
-            <div className="postContainer" key={el.productId}>
+          result?.content.map((el, idx) => (
+            <div className="postContainer" key={idx}>
               <img className="postImg" src={el.images ? el.images[0].path : ""}></img>
               <div className="infoContainer">
                 <div
@@ -224,7 +226,7 @@ const PostListTab = (): JSX.Element => {
                 >
                   {el.title}
                 </div>
-                <div className="createdAt">{el.createAt}</div>
+                <div className="createdAt">{el.createdAt}</div>
                 <div>{translateProductStatus(el.productStatus)}</div>
               </div>
             </div>
@@ -234,8 +236,8 @@ const PostListTab = (): JSX.Element => {
             <div key={idx} className="postContainer">
               {el.images && <img className="postImg" src={el.images[0].path}></img>}
               <div className="infoContainer">
-                <div className="postTitle">{el.title}</div>
-                <div className="productName">제품이름</div>
+                <div className="postTitle">{el.reviewTitle}</div>
+                <div className="productName">{el.title}</div>
                 <div className="authorContainer">
                   <span className="author">{`작성자 id ${el.postMemberId}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
@@ -250,8 +252,8 @@ const PostListTab = (): JSX.Element => {
             <div key={idx} className="postContainer">
               {el.productImages && <img className="postImg" src={el.productImages[0].path}></img>}
               <div className="infoContainer">
-                <div className="postTitle">{el.title}</div>
-                <div className="productName">{el.productTitle}</div>
+                <div className="postTitle">{el.reviewTitle}</div>
+                <div className="productName">{el.title}</div>
                 <div className="authorContainer">
                   <span className="author">{`작성자 : ${el.postMemberName}`}</span>
                   <span className="createdAt">{el.createdAt}</span>
