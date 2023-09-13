@@ -205,4 +205,12 @@ public class MemberService {
 
         return responseDto;
     }
+
+
+    /*
+        경매 부분 product buyer_id 를 참고해서 해당 회원의 name을 가지고 오기 위한 메서드
+     */
+    public Member getMemberById(Long memberId){
+        return memberRepository.findById(memberId).orElseThrow( () -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+    }
 }
