@@ -17,6 +17,10 @@ const StyledItemDescription = styled.section`
   p {
     color: ${COLOR.mediumText};
   }
+
+  @media (max-width: 64rem) {
+    width: 100%;
+  }
 `;
 
 const ItemDescription = ({ description }: ItemDescriptionProps) => {

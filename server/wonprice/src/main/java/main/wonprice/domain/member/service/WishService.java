@@ -9,14 +9,13 @@ import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -52,14 +51,14 @@ public class WishService {
     }
 
     @Transactional(readOnly = true)
-    public List<Wish> findMemberWish(Pageable pageable, Member member) {
+    public Page<Wish> findMemberWish(Pageable pageable, Member member) {
 
-        return wishRepository.findByMember(pageable, member).getContent();
+        return wishRepository.findByMember(pageable, member);
     }
 
-    public void removeWish(Long wishId) {
+    public void removeWish(Long productId) {
 
-        Optional<Wish> findWish = wishRepository.findById(wishId);
+        Optional<Wish> findWish = wishRepository.findByProductProductIdAndMember(productId, memberService.findLoginMember());
 
         if (findWish.isEmpty()) {
             throw new BusinessLogicException(ExceptionCode.WISH_NOT_FOUND);
@@ -74,7 +73,7 @@ public class WishService {
         // ----------------
 
         memberService.validateOwner(wish.getMember().getMemberId());
-        wishRepository.deleteById(wishId);
+        wishRepository.deleteByProductProductId(productId);
     }
 
     /*

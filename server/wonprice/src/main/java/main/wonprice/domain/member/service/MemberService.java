@@ -10,6 +10,7 @@ import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -53,8 +54,8 @@ public class MemberService {
     }
 
 //    관리자용 전체 회원 목록
-    public List<Member> findMembers(Pageable pageable) {
-        return memberRepository.findAll(pageable).getContent();
+    public Page<Member> findMembers(Pageable pageable) {
+        return memberRepository.findAll(pageable);
     }
 
     public Member updateMember(Member member) {
@@ -162,6 +163,15 @@ public class MemberService {
         return true;
     }
 
+    /*
+     * 어드민인지 검증
+     */
+    public void isAdmin() {
+        boolean admin = findLoginMember().getRoles().contains("ADMIN");
+
+        if (!admin) throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
+    }
+
     public void validatePassword(String password) {
         Member loginMember = findLoginMember();
 
@@ -194,5 +204,13 @@ public class MemberService {
         responseDto.setTradeCount(productRepository.countProductByBuyerIdAndStatus(member.getMemberId(), ProductStatus.AFTER));
 
         return responseDto;
+    }
+
+
+    /*
+        경매 부분 product buyer_id 를 참고해서 해당 회원의 name을 가지고 오기 위한 메서드
+     */
+    public Member getMemberById(Long memberId){
+        return memberRepository.findById(memberId).orElseThrow( () -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 }
