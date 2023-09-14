@@ -4,10 +4,7 @@ import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.member.dto.NotificationPostDto;
 import main.wonprice.domain.member.dto.NotificationResponseDto;
-import main.wonprice.domain.member.entity.Member;
-import main.wonprice.domain.member.entity.Notification;
-import main.wonprice.domain.member.entity.NotificationType;
-import main.wonprice.domain.member.entity.Review;
+import main.wonprice.domain.member.entity.*;
 import main.wonprice.domain.product.entity.Product;
 import org.mapstruct.Mapper;
 
@@ -18,6 +15,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
 
+//    product 제외 responseDto
     default NotificationResponseDto notificationToResponseDto(Notification notification) {
         return NotificationResponseDto.builder()
                 .notificationId(notification.getNotificationId())
@@ -26,18 +24,6 @@ public interface NotificationMapper {
                 .createdAt(notification.getCreatedAt())
                 .isRead(notification.getIsRead())
                 .referenceId(notification.getReferenceId())
-                .build();
-    }
-
-    default NotificationResponseDto notificationToResponseDto(Notification notification, Product product) {
-        return NotificationResponseDto.builder()
-                .notificationId(notification.getNotificationId())
-                .content(notification.getContent())
-                .notificationType(notification.getNotificationType())
-                .createdAt(notification.getCreatedAt())
-                .isRead(notification.getIsRead())
-                .referenceId(notification.getReferenceId())
-                .categoryId(product.getCategory().getCategoryId())
                 .build();
     }
 
@@ -77,6 +63,26 @@ public interface NotificationMapper {
                             .isRead(false)
                             .member(participant.getMember())
                             .build()
+            );
+        }
+
+        return notifications;
+    }
+
+//    찜 했던 상품 정보 수정 시 알림 생성
+    default List<Notification> wishProductToNotification(Product product) {
+
+        List<Notification> notifications = new ArrayList<>();
+
+        for (Wish wish : product.getWishes()) {
+
+            notifications.add(
+                    Notification.builder()
+                            .notificationType(NotificationType.PRODUCT)
+                            .referenceId(product.getProductId())
+                            .createdAt(LocalDateTime.now())
+                            .isRead(false)
+                            .member(wish.getMember()).build()
             );
         }
 

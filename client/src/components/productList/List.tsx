@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import { loginState } from "../../atoms/atoms";
-import Loading from "../../components/common/Loading";
 import { CATEGORY } from "../../constants/category";
 import { COLOR } from "../../constants/color";
 import { usePagination } from "../../hooks/usePagination";
@@ -12,9 +11,10 @@ import ErrorIndication from "../../pages/ErrorIndication";
 import { findCategory } from "../../util/category";
 import Button from "../common/Button";
 import Empty from "../common/Empty";
+import Loading from "../common/Loading";
 import Pagination from "../common/Pagination";
+import SearchBar from "../product/SearchBar";
 import ListItem from "./ListItem";
-import SearchBar from "./SearchBar";
 
 export type Data = {
   content: ProductData[];

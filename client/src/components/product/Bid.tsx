@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { Client } from "webstomp-client";
-import { AUCTION, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
+import { AUCTION, MAX, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
 import { getUserId } from "../../util/auth";
 import { allowOnlyNumber } from "../../util/number";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 import TextInput from "../common/TextInput";
-import { ProductData } from "./List";
+import { ProductData } from "../productList/List";
 
 type BidProps = {
   data: ProductData;
@@ -90,6 +90,10 @@ const Bid = (props: BidProps) => {
                   min: {
                     value: minValue,
                     message: MIN.bid(5),
+                  },
+                  max: {
+                    value: data.immediatelyBuyPrice,
+                    message: MAX.bid,
                   },
                 }}
                 defaultValue={minValue.toString()}

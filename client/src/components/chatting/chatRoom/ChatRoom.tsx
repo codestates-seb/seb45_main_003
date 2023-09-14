@@ -86,6 +86,7 @@ const ChatRoom = () => {
       refetch();
     }
   };
+  // console.log(messages);
   return (
     <>
       <Container>
@@ -101,6 +102,7 @@ const ChatRoom = () => {
               owner={message.senderId === Id ? "user" : "other"}
               message={message.content}
               time={FormatTimeOrDate(message.createdAt || null) || "Unknown time"}
+              isRead={message.senderId !== Id}
             />
           ))}
         </div>

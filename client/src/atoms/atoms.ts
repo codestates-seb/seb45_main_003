@@ -12,6 +12,7 @@ export const toSignup = atom<boolean>({
 export const profileTabState = atom<string>({
   key: "profileTabState",
   default: "profile",
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const postListTabState = atom<string>({

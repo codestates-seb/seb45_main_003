@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+// import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
@@ -95,10 +95,11 @@ const BookmarkContentContainer = styled.form`
     .bookmarkContainer {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: flex-end;
       border-bottom: 1px solid ${COLOR.border};
       padding: 1rem 0;
+      gap: 1rem;
       .postImg {
         width: 6.25rem;
         height: 6.25rem;
@@ -115,7 +116,29 @@ const BookmarkContentContainer = styled.form`
           justify-content: flex-start;
           align-items: flex-end;
           gap: 1rem;
+        }
+      }
+      .rightSection {
+        min-width: calc(100% - 134px);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: stretch;
+        gap: 1rem;
+        .postTitle {
+          color: ${COLOR.darkText};
+          font-size: ${FONT_SIZE.font_20};
+          font-weight: bold;
+          cursor: pointer;
+        }
+        .exceptTitle {
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: stretch;
+          gap: 0.5rem;
           .infoContainer {
+            width: 230px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -123,39 +146,34 @@ const BookmarkContentContainer = styled.form`
             gap: 0.625rem;
             font-size: ${FONT_SIZE.font_16};
             color: ${COLOR.mediumText};
-            .postTitle {
-              color: ${COLOR.darkText};
-              font-size: ${FONT_SIZE.font_20};
-              font-weight: bold;
-              cursor: pointer;
-            }
           }
-        }
-      }
-      .rightSection {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-end;
-        align-items: flex-end;
-        gap: 1rem;
-        .priceContainer {
-          display: flex;
-          flex-direction: column;
-          justify-content: flex-end;
-          align-items: flex-start;
-          gap: 0.625rem;
-          font-size: ${FONT_SIZE.font_16};
-          color: ${COLOR.mediumText};
-          .priceLabel {
+          .exceptTitleRight {
+            width: calc(100% - 238px);
             display: flex;
             flex-direction: row;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 0.5rem;
-          }
-          .price {
-            color: ${COLOR.darkText};
-            font-weight: bold;
+            justify-content: space-between;
+            align-items: flex-end;
+            .priceContainer {
+              max-width: calc(100% - 66.23px);
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: flex-start;
+              gap: 0.625rem;
+              font-size: ${FONT_SIZE.font_16};
+              color: ${COLOR.mediumText};
+              .priceLabel {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;
+                align-items: center;
+                gap: 0.5rem;
+              }
+              .price {
+                color: ${COLOR.darkText};
+                font-weight: bold;
+              }
+            }
           }
         }
       }
@@ -178,6 +196,8 @@ const BookmarkContent = (): JSX.Element => {
   //체크박스 관리 함수
   const handleCheckBox = (index: number, checked: boolean) => {
     const checkedBoxes = [...checkboxes];
+    console.log("checkedBoxes:", checkedBoxes);
+    console.log("checkbox", checkboxes);
     checkedBoxes[index] = checked;
     const checkedAll = checkedBoxes.every(Boolean);
     setValue("selectAll", checkedAll);
@@ -188,7 +208,7 @@ const BookmarkContent = (): JSX.Element => {
   const Id = location.pathname.slice(8);
   const loginUserId = localStorage.getItem("Id");
   //체크박스를 사용항 찜취소시에 체크박스 상태들을 저장해둘 상태
-  const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
+  // const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
   const queryClient = useQueryClient();
   const searchParams = new URLSearchParams(location.search);
   const ITEMS_PER_VIEW = 10;
@@ -203,10 +223,9 @@ const BookmarkContent = (): JSX.Element => {
   const {
     isLoading,
     isError,
-    refetch,
     data: bookmarkList,
   } = useQuery<Data>(
-    ["bookmark", currentPage],
+    ["bookmark", { currentPage }],
     async () => {
       const currentPageParam = parseInt(searchParams.get("page") || "1");
       const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
@@ -215,41 +234,47 @@ const BookmarkContent = (): JSX.Element => {
           "ngrok-skip-browser-warning": "69420",
         },
       });
-      if (res.data?.totalPages !== totalPages) {
-        setTotalPages(res.data?.totalPages);
-      }
-      navigate(`?menu=bookmark&?page=${currentPageParam}`);
+      navigate(`?menu=bookmark&page=${currentPageParam}`);
       return res.data;
     },
     {
       refetchInterval: 30000,
       refetchIntervalInBackground: true,
       onSuccess: (data) => {
-        if (changedCheckboxes.length !== 0) {
-          setValue("checkboxes", changedCheckboxes);
-          setChangedCheckboxes([]);
-        }
-        if (checkboxes.length === 0 && changedCheckboxes.length === 0) {
+        // if (changedCheckboxes.length !== 0) {
+        //   setValue("checkboxes", changedCheckboxes);
+        //   setChangedCheckboxes([]);
+        // }
+        if (checkboxes.length !== data.content.length) {
           setValue("checkboxes", Array(data.content.length).fill(false));
         }
-        console.log(changedCheckboxes, checkboxes, data);
+        if (checkboxes.some((el) => el === true)) {
+          setValue("checkboxes", checkboxes);
+        }
+        if (checkboxes.length === 0) {
+          setValue("checkboxes", Array(data.content.length).fill(false));
+        }
+        setTotalPages(data.totalPages);
+        console.log(checkboxes);
       },
     },
   );
   //체크박스를 선택한적 있으면 해당체크박스를 refetch해도 유지, refetch는 30초마다
   //추후 체크박스 수정하게 되면 손볼것
+  // 체크박스는 찜 개별취소버튼 클릭시 풀립니다.
+  // 못고침
   // 찜취소버튼으로 취소요청하는 함수
   const bookmarkMutation = useMutation(
     async (productId: number) => {
-      const deletedIndex = bookmarkList?.content.findIndex((el) => el.productId === productId);
-      const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
-      setChangedCheckboxes(checkedlist);
-      console.log(`changedcheckboxes : ${checkedlist}`);
+      // const deletedIndex = bookmarkList?.content.findIndex((el) => el.productId === productId);
+      // const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
+      // setChangedCheckboxes(checkedlist);
+      // console.log(`changedcheckboxes : ${checkedlist}`);
       await authInstance.delete(`/wishes/${productId}`);
     },
     {
       onSuccess: () => {
-        setValue("checkboxes", changedCheckboxes);
+        // setValue("checkboxes", changedCheckboxes);
         queryClient.invalidateQueries("bookmark");
       },
     },
@@ -258,19 +283,17 @@ const BookmarkContent = (): JSX.Element => {
   const sendBookmarkMutation = useMutation(
     async (data: checkInputType) => {
       console.log(data.checkboxes);
-      await authInstance.patch(`/wishes`, { checkBox: data.checkboxes });
+      await authInstance.patch(`/wishes`, { checkBox: data.checkboxes, currentPage: currentPage });
     },
     {
       onSuccess: () => {
-        setChangedCheckboxes([]);
-        setValue("checkboxes", []);
-        queryClient.invalidateQueries("bookmark");
+        // setChangedCheckboxes([]);
+        // setValue("checkboxes", []);
+        // queryClient.invalidateQueries("bookmark");
+        window.location.reload();
       },
     },
   );
-  useEffect(() => {
-    refetch();
-  }, [location.pathname, location.search, currentPage]);
   return (
     <BookmarkContentContainer
       onSubmit={handleSubmit(() => sendBookmarkMutation.mutateAsync(getValues()))}
@@ -283,8 +306,9 @@ const BookmarkContent = (): JSX.Element => {
               type="checkbox"
               className="checkbox"
               id="selectAll"
-              {...register("selectAll")}
-              onChange={(e) => handleSelectAll(e.target.checked)}
+              {...register("selectAll", {
+                onChange: (e) => handleSelectAll(e.target.checked),
+              })}
             ></input>
             <p className="optionName">전체 선택</p>
             <Button type="submit" $text="선택 취소" $design="yellow" />
@@ -302,26 +326,33 @@ const BookmarkContent = (): JSX.Element => {
                   type="checkbox"
                   className="checkbox"
                   checked={checkboxes[index] || false}
-                  {...register(`checkboxes.${index}`)}
-                  onChange={(e) => handleCheckBox(index, e.currentTarget.checked)}
+                  {...register(`checkboxes.${index}`, {
+                    onChange: (e) => {
+                      handleCheckBox(index, e.currentTarget.checked);
+                      console.log(e.target.value);
+                      console.log(checkboxes);
+                    },
+                  })}
                   key={el.productId}
                 ></input>
               )}
               <div className="postInfo">
                 <img className="postImg" src={el.productResponseDto.images[0].path}></img>
+              </div>
+            </div>
+            <div className="rightSection">
+              <div
+                className="postTitle"
+                onClick={() =>
+                  navigate(
+                    `/product/${findCategory(el.productResponseDto.categoryId)}/${el.productId}`,
+                  )
+                }
+              >
+                {el.productResponseDto.title}
+              </div>
+              <div className="exceptTitle">
                 <div className="infoContainer">
-                  <div
-                    className="postTitle"
-                    onClick={() =>
-                      navigate(
-                        `/product/${findCategory(el.productResponseDto.categoryId)}/${
-                          el.productId
-                        }`,
-                      )
-                    }
-                  >
-                    {el.productResponseDto.title}
-                  </div>
                   <div>{translateProductStatus(el.productResponseDto.productStatus)}</div>
                   {el.productResponseDto.auction ? (
                     <div>{`거래 마감시간: ${el.productResponseDto.closedAt} `}</div>
@@ -329,33 +360,33 @@ const BookmarkContent = (): JSX.Element => {
                     <div>즉시 구매 상품</div>
                   )}
                 </div>
-              </div>
-            </div>
-            <div className="rightSection">
-              <div className="priceContainer">
-                {el.productResponseDto.auction && (
-                  <div className="priceLabel">
-                    {`현재 입찰가`}
-                    <span className="price">{`${el.productResponseDto.currentAuctionPrice.toLocaleString(
-                      "ko-KR",
-                    )} 원`}</span>
+                <div className="exceptTitleRight">
+                  <div className="priceContainer">
+                    {el.productResponseDto.auction && (
+                      <div className="priceLabel">
+                        {`현재 입찰가`}
+                        <span className="price">{`${el.productResponseDto.currentAuctionPrice.toLocaleString(
+                          "ko-KR",
+                        )} 원`}</span>
+                      </div>
+                    )}
+                    <div className="priceLabel">
+                      {`즉시 구매가`}
+                      <span className="price">{`${el.productResponseDto.immediatelyBuyPrice.toLocaleString(
+                        "ko-KR",
+                      )} 원`}</span>
+                    </div>
                   </div>
-                )}
-                <div className="priceLabel">
-                  {`즉시 구매가`}
-                  <span className="price">{`${el.productResponseDto.immediatelyBuyPrice.toLocaleString(
-                    "ko-KR",
-                  )} 원`}</span>
+                  {loginUserId === Id && (
+                    <Button
+                      type="button"
+                      $text="취소"
+                      $design="yellow"
+                      onClick={() => bookmarkMutation.mutateAsync(el.productId)}
+                    />
+                  )}
                 </div>
               </div>
-              {loginUserId === Id && (
-                <Button
-                  type="button"
-                  $text="취소"
-                  $design="yellow"
-                  onClick={() => bookmarkMutation.mutateAsync(el.productId)}
-                />
-              )}
             </div>
           </div>
         ))}
