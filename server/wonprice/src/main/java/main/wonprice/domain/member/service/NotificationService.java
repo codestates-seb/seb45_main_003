@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.member.entity.Notification;
+import main.wonprice.domain.member.entity.NotificationType;
 import main.wonprice.domain.member.entity.Review;
 import main.wonprice.domain.member.mapper.NotificationMapper;
 import main.wonprice.domain.member.repository.NotificationRepository;
@@ -98,6 +99,9 @@ public class NotificationService {
         List<Bid> bids = bidRepository.findAllByProductProductId(product.getProductId());
 
         List<Notification> notifications = mapper.bidToNotification(product, bids);
+
+//        기존 판매글의 입찰 알람 삭제
+        notificationRepository.deleteAllByMemberAndNotificationTypeAndReferenceId(product.getSeller(), NotificationType.PRODUCT, product.getProductId());
 
         return notificationRepository.saveAll(notifications);
     }
