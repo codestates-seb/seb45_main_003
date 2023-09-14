@@ -18,11 +18,11 @@ public class ReviewResponseDto {
 
     private String postMemberName;
 
-    private String productTitle;
+    private String title;
 
     private List<ProductPicture> productImages;
 
-    private String title;
+    private String reviewTitle;
 
     @Lob
     private String content;

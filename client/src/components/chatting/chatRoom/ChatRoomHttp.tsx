@@ -1,5 +1,6 @@
 // 채팅룸 컴포넌트
 import axios from "axios";
+import styled from "styled-components";
 import { currentChatRoomIdState, MessageData } from "../recoil/chatState";
 import { useRecoilValue } from "recoil";
 import React, { useState, useEffect } from "react";
@@ -7,14 +8,11 @@ import MessageBubble from "./MessageBubble";
 import FormatTimeOrDate from "../hook/FormatTimeOrDate";
 import { getUserId } from "../../../util/auth";
 
-// interface MessageItem {
-//   messageList: {
-//     messageId: number | null;
-//     content: string;
-//     senderId: number | null;
-//     createdAt?: string;
-//   };
-// }
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+`;
 
 const ChatRoomHttp: React.FC = () => {
   const chatRoomId = useRecoilValue(currentChatRoomIdState);
@@ -28,6 +26,12 @@ const ChatRoomHttp: React.FC = () => {
 
   // 문자열을 숫자로 변환합니다. 로컬 스토리지에 값이 없으면 null로 설정합니다.
   const Id = userIdFromLocalStorage ? parseInt(userIdFromLocalStorage, 10) : null;
+  useEffect(() => {
+    const element = document.querySelector(".chatBox");
+    if (element) {
+      element.scrollTop = element.scrollHeight;
+    }
+  }, [messages]);
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -53,22 +57,24 @@ const ChatRoomHttp: React.FC = () => {
 
     fetchMessages();
   }, [chatRoomId, memberId]);
-  console.log(messages);
+  // console.log(messages);
 
   return (
     <div>
-      {!messages || messages.messageList.length === 0 ? (
-        <div>{/* <NoMessages /> */}</div>
-      ) : (
-        messages.messageList.map((messageItem) => (
-          <MessageBubble
-            key={messageItem.messageId}
-            owner={messageItem.senderId === Id ? "user" : "other"}
-            message={messageItem.content}
-            time={FormatTimeOrDate(messageItem.createdAt || null)}
-          />
-        ))
-      )}
+      <Container>
+        {!messages || messages.messageList.length === 0 ? (
+          <div>{/* <NoMessages /> */}</div>
+        ) : (
+          messages.messageList.map((messageItem) => (
+            <MessageBubble
+              key={messageItem.messageId}
+              owner={messageItem.senderId === Id ? "user" : "other"}
+              message={messageItem.content}
+              time={FormatTimeOrDate(messageItem.createdAt || null)}
+            />
+          ))
+        )}
+      </Container>
     </div>
   );
 };

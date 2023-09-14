@@ -14,6 +14,7 @@ import main.wonprice.domain.product.service.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,8 +59,11 @@ public class MemberController {
 
     // 회원 게시물 목록 조회
     @GetMapping("/{member-id}/products")
-    public ResponseEntity findMembersProduct(Pageable pageable,
-                                                  @PathVariable("member-id") Long memberId) {
+    public ResponseEntity findMembersProduct(@RequestParam(defaultValue = "0") int page,
+                                             @RequestParam(defaultValue = "10") int size,
+                                             @PathVariable("member-id") Long memberId) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Member member = memberService.findMember(memberId);
 
@@ -75,7 +79,7 @@ public class MemberController {
                                           @RequestParam(defaultValue = "10") int size,
                                           @PathVariable("member-id") Long memberId) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Member member = memberService.findMember(memberId);
         Page<Product> products = productService.findMemberSold(pageable, member);
@@ -90,7 +94,7 @@ public class MemberController {
                                               @RequestParam(defaultValue = "10") int size,
                                               @PathVariable("member-id") Long memberId) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Page<Product> products = productService.findMemberBought(pageable, memberId);
         Page<ProductResponseDto> response = products.map(productMapper::fromEntity);
@@ -103,7 +107,7 @@ public class MemberController {
     public ResponseEntity getMembers(@RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "10") int size) {
 
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Page<Member> members = memberService.findMembers(pageable);
         Page<MemberResponseDto> response = members.map(mapper::memberToResponseDto);
