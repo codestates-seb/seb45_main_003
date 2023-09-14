@@ -37,7 +37,7 @@ public class Product {
 
     private Boolean auction; // 경매 여부
 
-    private LocalDateTime createAt; // 거래 시작 시간 (작성시간)
+    private LocalDateTime createdAt; // 거래 시작 시간 (작성시간)
 
     private LocalDateTime deletedAt; // 글 삭제 시간
 

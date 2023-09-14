@@ -51,7 +51,7 @@ public class ProductServiceImpl implements ProductService {
             product.setClosedAt(product.getClosedAt());
             product.setCurrentAuctionPrice(product.getCurrentAuctionPrice());
         }
-        product.setCreateAt(LocalDateTime.now());
+        product.setCreatedAt(LocalDateTime.now());
         return productRepository.save(product);
     }
 
@@ -72,7 +72,7 @@ public class ProductServiceImpl implements ProductService {
     // 삭제된 게시글은 조회되지 않게..
     @Override
     public Page<Product> getAvailableProducts(String type, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
 
         Specification<Product> specification = ProductSpecification.notDeletedAndStatus(ProductStatus.BEFORE);
 
@@ -89,7 +89,7 @@ public class ProductServiceImpl implements ProductService {
     // 삭제된 게시글은 조회되지 않게..
     @Override
     public Page<Product> getCompletedProducts(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
 
         Specification<Product> specification = ProductSpecification.notDeletedAndStatus(ProductStatus.AFTER);
 
@@ -99,7 +99,7 @@ public class ProductServiceImpl implements ProductService {
     // 상품 제목 키워드 별로 조회
     @Override
     public Page<Product> searchProductsByTitle(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
 
         Specification<Product> specification = Specification.where(ProductSpecification.notDeleted())
                 .and((root, query, criteriaBuilder) ->
@@ -182,7 +182,7 @@ public class ProductServiceImpl implements ProductService {
         - 그 밖의 예외처리
      */
     @Override
-    public Product updateCurrentAuctionPrice(Long productId,  BidRequestDto request) {
+    public Product updateCurrentAuctionPrice(Long productId, BidRequestDto request) {
         // 존재하지 않는 상품일 경우 예외 처리
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product Not Found"));
@@ -200,16 +200,26 @@ public class ProductServiceImpl implements ProductService {
             #1 입찰가 유효성 검사
             - 제시한 입찰가는 현재 상품 입찰가보다 낮은 가격일 수 없다.
          */
-        if(requestedBidPrice < currentProductBidPrice){
-            throw  new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_1);
+        if (requestedBidPrice < currentProductBidPrice) {
+            throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_1);
         }
 
         /*
             #2 입찰가 유효성 검사
-            - 제시한 입찰가는 현재 상품 입찰가의 5% 이상이어야 한다.
+            - 셋팅된 buyer가 없는 경우
+            -- 제시한 입찰가는 현재 상품 입찰가와 같거나 크면 된다.
+
+            - 셋팅된 buyer가 있는 경우
+            -- 제시한 입찰가는 현재 상품 입찰가보다 5% 이상이어야 한다.
          */
-        if(requestedBidPrice < (currentProductBidPrice * 1.05)) {
-            throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_2);
+        if (product.getBuyerId() == null) {
+            if (requestedBidPrice < currentProductBidPrice) {
+                throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_2);
+            }
+        } else {
+            if (requestedBidPrice < (currentProductBidPrice * 1.05)) {
+                throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_2);
+            }
         }
 
         product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());

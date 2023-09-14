@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { ReactComponent as CloseIcon } from "../../assets/images/Close.svg";
+import { COLOR } from "../../constants/color";
 
 interface ModalProp {
   isOpen: boolean;
@@ -51,6 +52,26 @@ const StyledModal = styled.div`
       flex-flow: row;
       gap: 0.5rem;
     }
+
+    .input {
+      position: relative;
+      margin: 1rem 0;
+
+      input[type="text"] {
+        width: 100%;
+        padding: 0.5rem 2.25rem 0.5rem 0.75rem;
+
+        & + span {
+          position: absolute;
+          top: 0.5rem;
+          right: 0.75rem;
+        }
+      }
+      .error_message {
+        margin: 0.5rem 0 0;
+        color: ${COLOR.invalid};
+      }
+    }
   }
 `;
 
@@ -58,7 +79,7 @@ const Modal = ({ isOpen, closeModal, toggleModal, children }: ModalProp): JSX.El
   return (
     <>
       {isOpen && (
-        <StyledModal onClick={closeModal}>
+        <StyledModal onMouseDown={closeModal}>
           <section className="modal">
             <div className="close-button" onClick={toggleModal}>
               <CloseIcon />

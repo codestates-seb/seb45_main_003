@@ -3,7 +3,9 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
-// import { red } from "@mui/material/colors";
+import React from "react";
+import { totalUnreadMessagesState } from "../chatting/recoil/chatState";
+import { useRecoilValue } from "recoil";
 
 const ItemBox = styled.div`
   align-self: stretch;
@@ -54,7 +56,6 @@ const ProfileList: React.FC<ProfileListProps> = ({ icon, text, count, linkTo }) 
     <>
       <ItemBox>
         <StyledLink className="Button" to={linkTo}>
-          {" "}
           <div className="IconImg">{icon}</div> {/* 아이콘 렌더링 */}
           <div className="Text">{text}</div> {/* 텍스트 렌더링 */}
           <div className="count">{count}</div> {/* 카운트 렌더링 */}
@@ -66,18 +67,20 @@ const ProfileList: React.FC<ProfileListProps> = ({ icon, text, count, linkTo }) 
 
 // 사용 예시
 const ProfileButton = () => {
+  const totalUnreadMessages = useRecoilValue(totalUnreadMessagesState);
+
   return (
     <Container>
       <ProfileList
         icon={<PersonIcon />} // 아이콘 컴포넌트
         text="Profile" // 텍스트
         count={10} // 카운트
-        linkTo={`/member/${localStorage.getItem("Id")}`}
+        linkTo={`/member/${localStorage.getItem("Id")}?menu=profile&?tabmenu=cell&?page=1`}
       />
       <ProfileList
         icon={<ChatBubbleIcon />} // 아이콘 컴포넌트
         text="Messages" // 텍스트
-        count={10} // 카운트
+        count={totalUnreadMessages} // 카운트
         linkTo={`/chat/${localStorage.getItem("Id")}`}
       />
     </Container>

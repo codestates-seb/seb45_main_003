@@ -1,5 +1,6 @@
 package main.wonprice.domain.member.mapper;
 
+import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.member.dto.NotificationPostDto;
 import main.wonprice.domain.member.dto.NotificationResponseDto;
@@ -11,6 +12,7 @@ import main.wonprice.domain.product.entity.Product;
 import org.mapstruct.Mapper;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -61,26 +63,23 @@ public interface NotificationMapper {
     }
 
     default List<Notification> chatRoomToNotification(ChatRoom chatRoom, Product product) {
-        Notification notification1 =
-                Notification.builder()
-                        .content(product.getTitle() + "에 대한 채팅방이 열렸습니다.")
-                        .notificationType(NotificationType.CHATTING)
-                        .referenceId(chatRoom.getChatRoomId())
-                        .createdAt(LocalDateTime.now())
-                        .isRead(false)
-                        .member(chatRoom.getChatParticipantList().get(0).getMember())
-                        .build();
 
-        Notification notification2 =
-                Notification.builder()
-                        .content(product.getTitle() + "에 대한 채팅방이 열렸습니다.")
-                        .notificationType(NotificationType.CHATTING)
-                        .referenceId(chatRoom.getChatRoomId())
-                        .createdAt(LocalDateTime.now())
-                        .isRead(false)
-                        .member(chatRoom.getChatParticipantList().get(1).getMember())
-                        .build();
+        List<Notification> notifications = new ArrayList<>();
 
-        return List.of(notification1, notification2);
+        for (ChatParticipant participant : chatRoom.getChatParticipantList()) {
+
+            notifications.add(
+                    Notification.builder()
+                            .content(product.getTitle() + "에 대한 채팅방이 열렸습니다.")
+                            .notificationType(NotificationType.CHATTING)
+                            .referenceId(chatRoom.getChatRoomId())
+                            .createdAt(LocalDateTime.now())
+                            .isRead(false)
+                            .member(participant.getMember())
+                            .build()
+            );
+        }
+
+        return notifications;
     }
 }

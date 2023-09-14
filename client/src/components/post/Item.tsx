@@ -33,12 +33,18 @@ const StyledItem = styled.article`
 const Item = (): JSX.Element => {
   const location = useLocation();
   const itemNumber = location.pathname.split("/");
-  const { isLoading, error, data } = useQuery("productData", async () => {
-    const response = await authInstance.get(
-      API_PATHS.products.default(itemNumber[itemNumber.length - 1]),
-    );
-    return response.data;
-  });
+  const { isLoading, error, data } = useQuery(
+    ["productData", location],
+    async () => {
+      const response = await authInstance.get(
+        API_PATHS.products.default(itemNumber[itemNumber.length - 1]),
+      );
+      return response.data;
+    },
+    {
+      staleTime: Infinity,
+    },
+  );
 
   if (isLoading) {
     return <Loading />;

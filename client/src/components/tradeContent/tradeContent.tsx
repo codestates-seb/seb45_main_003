@@ -3,21 +3,27 @@ import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
 import { defaultInstance } from "../../interceptors/interceptors";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { profileTabState } from "../../atoms/atoms";
 import Empty from "../common/Empty";
-import { useQueries } from "react-query";
+import { useQuery } from "react-query";
 import Error from "../common/Error";
 import Loading from "../common/Loading";
 import { translateProductStatus } from "../../util/productStatus";
+import { usePagination } from "../../hooks/usePagination";
+import { useEffect } from "react";
+import Pagination from "../common/Pagination";
 
 interface image {
   imageId: number;
   path: string;
 }
-
-interface products {
+interface Data {
+  content: postContent[];
+  totalPages: number;
+}
+interface postContent {
   productId: number;
   title: string;
   closedAt: string;
@@ -124,35 +130,55 @@ const TradeContent = (): JSX.Element => {
   const loginUserId = localStorage.getItem("Id");
   const location = useLocation();
   const Id = location.pathname.slice(8);
-  const result = useQueries([
-    {
-      queryKey: "purchase",
-      queryFn: async () => {
-        const res = await defaultInstance.get(`/members/${Id}/purchase`);
-        return res.data;
-      },
-    },
-    {
-      queryKey: "sales",
-      queryFn: async () => {
-        const res = await defaultInstance.get(`/members/${Id}/sell`);
-        return res.data;
-      },
-    },
-  ]);
-  const purchaseList: products[] = result[0].data;
-  const salesList: products[] = result[1].data;
+  const searchParams = new URLSearchParams(location.search);
+  const navigate = useNavigate();
+  const ITEMS_PER_VIEW = 10;
+  const {
+    currentPage,
+    totalPages,
+    setTotalPages,
+    pageChangeHandler,
+    prevPageHandler,
+    nextPageHandler,
+  } = usePagination();
+  const {
+    isLoading,
+    refetch,
+    isError,
+    data: result,
+  } = useQuery<Data>(["tradeData", currentPage], async () => {
+    const currentPageParam = parseInt(searchParams.get("page") || "1");
+    const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
+    if (mypageMode === "purchase") {
+      const res = await defaultInstance.get(`/members/${Id}/purchase?${pageQueryParam}`);
+      if (res.data?.totalPages !== totalPages) {
+        setTotalPages(res.data?.totalPages);
+      }
+      navigate(`?menu=${mypageMode}&?page=${currentPageParam}`);
+      return res.data;
+    } else if (mypageMode === "sales") {
+      const res = await defaultInstance.get(`/members/${Id}/sell?${pageQueryParam}`);
+      if (res.data?.totalPages !== totalPages) {
+        setTotalPages(res.data?.totalPages);
+      }
+      navigate(`?menu=${mypageMode}&?page=${currentPageParam}`);
+      return res.data;
+    }
+  });
+  useEffect(() => {
+    refetch();
+  }, [location.pathname, location.search, currentPage]);
+
   return (
     <TradeContentContainer>
       <div className="topContainer">
         <p className="menuTitle">거래내역</p>
       </div>
       <div className="tradeListContainer">
-        {mypageMode === "purchase" && result[0].isLoading && <Loading />}
-        {mypageMode === "purchase" && result[0].isError && <Error />}
+        {isLoading && <Loading />}
+        {isError && <Error error={Error} />}
         {mypageMode === "purchase" &&
-          purchaseList &&
-          purchaseList.map((el) => (
+          result?.content.map((el) => (
             <div className="tradeContainer" key={el.productId}>
               <div className="leftSection">
                 <img className="postImg" src={el.images[0].path}></img>
@@ -183,11 +209,8 @@ const TradeContent = (): JSX.Element => {
               </div>
             </div>
           ))}
-        {mypageMode === "sales" && result[1].isLoading && <Loading />}
-        {mypageMode === "sales" && result[1].isError && <Error />}
         {mypageMode === "sales" &&
-          salesList &&
-          salesList.map((el) => (
+          result?.content.map((el) => (
             <div className="tradeContainer" key={el.productId}>
               <div className="leftSection">
                 <img className="postImg" src={el.images[0].path}></img>
@@ -219,17 +242,20 @@ const TradeContent = (): JSX.Element => {
             </div>
           ))}
       </div>
-      {mypageMode === "purchase" && purchaseList && purchaseList.length === 0 && (
+      {result?.content.length === 0 && (
         <div className="empty">
           <Empty />
         </div>
       )}
-      {mypageMode === "sales" && salesList && salesList.length === 0 && (
-        <div className="empty">
-          <Empty />
-        </div>
-      )}
-      <div className="pagenation">페이지네이션</div>
+      <Pagination
+        {...{
+          currentPage,
+          totalPages,
+          pageChangeHandler,
+          prevPageHandler,
+          nextPageHandler,
+        }}
+      />
     </TradeContentContainer>
   );
 };
