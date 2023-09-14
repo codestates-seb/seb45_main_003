@@ -7,7 +7,7 @@ import MessageBubble from "./MessageBubble";
 import ChatRoomHttp from "./ChatRoomHttp";
 import FormatTimeOrDate from "../hook/FormatTimeOrDate";
 import { webSocketConnectionState } from "../recoil/chatState";
-import moment from "moment";
+// import moment from "moment";
 import { useSearchParams } from "react-router-dom";
 import { useWebSocketConnection } from "../hook/useWebSocketConnection"; // 커스텀 훅 import
 import { useChatList } from "../hook/useChatList"; // Import custom hook
@@ -66,7 +66,7 @@ const ChatRoom = () => {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [, setIsConnected] = useRecoilState(webSocketConnectionState);
   const [, setChatList] = useRecoilState(chatState);
-  const currentTime = moment().format("YYYY년 MM월 DD일 a hh시 mm분");
+  // const currentTime = moment().format("YYYY년 MM월 DD일 a hh시 mm분");
   const userIdFromLocalStorage = localStorage.getItem("Id");
   const Id = userIdFromLocalStorage ? parseInt(userIdFromLocalStorage, 10) : null;
 
@@ -91,10 +91,10 @@ const ChatRoom = () => {
     <>
       <Container>
         <div className="chatBox" style={{ display: "flex", flexDirection: "column" }}>
-          <div className="startText">
+          {/* <div className="startText">
             {" 어서오세요! \n 채팅을 시작해 보세요 "}
             <div className="date"> {`- 현재 시간은 ${currentTime} 입니다. -`}</div>
-          </div>
+          </div> */}
           <ChatRoomHttp />
           {messages.map((message, index) => (
             <MessageBubble

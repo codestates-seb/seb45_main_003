@@ -193,6 +193,7 @@ const ChattingListData: React.FC = () => {
   const navigate = useNavigate();
   // State for storing the total number of unread messages.
   const [totalUnreadMessages, setTotalUnreadMessages] = useRecoilState(totalUnreadMessagesState);
+  // 새로운 채팅이 추가된 채팅방의 ID를 저장하는 상태 변수
 
   // 모든 알림 갯수
   useEffect(() => {

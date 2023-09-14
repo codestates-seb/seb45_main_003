@@ -54,13 +54,16 @@ interface ProfileListProps {
 }
 
 const ProfileList: React.FC<ProfileListProps> = ({ icon, text, count, linkTo, onClickfunc }) => {
+  const totalUnreadMessages = useRecoilValue(totalUnreadMessagesState);
+
   return (
     <>
       <ItemBox>
         <StyledLink className="Button" onClick={onClickfunc} to={linkTo}>
           <div className="IconImg">{icon}</div> {/* 아이콘 렌더링 */}
           <div className="Text">{text}</div> {/* 텍스트 렌더링 */}
-          <div className="count">{count}</div> {/* 카운트 렌더링 */}
+          {totalUnreadMessages > 0 && <div className="count">{count}</div>}
+          {/* 카운트 렌더링 */}
         </StyledLink>{" "}
       </ItemBox>
     </>

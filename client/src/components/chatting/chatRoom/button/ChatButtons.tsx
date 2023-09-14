@@ -6,6 +6,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { getUserId } from "../../../../util/auth";
 import { useModal } from "../../../../hooks/useModal";
 import { ReactComponent as Sun } from "../../../../assets/images/chatting/Sun.svg";
+import { ReactComponent as CloseButton } from "../../../../assets/images/chatting/Close.svg";
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -20,15 +21,16 @@ const ModalContainer = styled.div`
 `;
 
 const ModalContent = styled.div`
+  padding: 0.875rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1.5625rem;
   width: 45.5625rem;
-  height: 20.5625rem;
+  height: 340px;
   flex-shrink: 0;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   border: 0.0625rem solid #e0e0e0;
   background: #f7f7f7;
   .ModalText {
@@ -57,6 +59,7 @@ const ModalContent = styled.div`
     flex-direction: row;
     gap: 2.5rem;
     .ButtonModal {
+      margin-bottom: 1.4375rem;
       background-color: #ffb300;
       color: #fff;
       &:hover {
@@ -64,6 +67,17 @@ const ModalContent = styled.div`
         background-color: #ffb300;
       }
     }
+  }
+  .CloseButton {
+    border: none;
+    background: none;
+  }
+  .Close {
+    margin-left: 43.1875rem;
+  }
+  .Sun {
+    width: 5.125rem;
+    height: 5.125rem;
   }
 `;
 
@@ -127,8 +141,11 @@ const ChatButtons: React.FC<ChatButtonsProps> = ({ roomId, initialStatus }) => {
   const memberId = getUserId();
   const { isOpen, toggleModal } = useModal();
 
-  const handleTradeComplete = async () => {
+  const ModalButton = async () => {
     toggleModal(); // 모달을 열고
+  };
+
+  const handleTradeComplete = async () => {
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/chat/completed/${roomId}`,
@@ -159,7 +176,10 @@ const ChatButtons: React.FC<ChatButtonsProps> = ({ roomId, initialStatus }) => {
       {isOpen && (
         <ModalContainer>
           <ModalContent>
-            <Sun />
+            <button className="CloseButton" onClick={toggleModal}>
+              <CloseButton className="Close" />
+            </button>
+            <Sun className="Sun" />
             <div className="ModalText">
               <div className="ModalText">
                 거래를 <div className="textColor">&nbsp; 완료</div>하고 후기를 작성 하시겠습니까?
@@ -170,7 +190,7 @@ const ChatButtons: React.FC<ChatButtonsProps> = ({ roomId, initialStatus }) => {
               <Button className="ButtonModal" onClick={toggleModal}>
                 나중에 하기
               </Button>
-              <Button className="ButtonModal" onClick={toggleModal}>
+              <Button className="ButtonModal" onClick={handleTradeComplete}>
                 확인
               </Button>
             </div>
@@ -179,7 +199,7 @@ const ChatButtons: React.FC<ChatButtonsProps> = ({ roomId, initialStatus }) => {
       )}
       {status === "ACTIVE" ? (
         <Button>
-          <span onClick={handleTradeComplete}>거래 완료</span>
+          <span onClick={ModalButton}>거래 완료</span>
           <CheckCircleOutlineIcon className="Icon" />
         </Button>
       ) : (
