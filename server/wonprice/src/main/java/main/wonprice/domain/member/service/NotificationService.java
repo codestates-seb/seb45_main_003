@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -100,8 +101,14 @@ public class NotificationService {
 
         List<Notification> notifications = mapper.bidToNotification(product, bids);
 
-//        기존 판매글의 입찰 알람 삭제
-        notificationRepository.deleteAllByMemberAndNotificationTypeAndReferenceId(product.getSeller(), NotificationType.PRODUCT, product.getProductId());
+//        기존 판매글의 입찰 알람 삭제 표시
+//        notificationRepository.deleteAllByMemberAndNotificationTypeAndReferenceId(product.getSeller(), NotificationType.PRODUCT, product.getProductId());
+        List<Notification> notificationList = notificationRepository
+                .findAllByMemberAndNotificationTypeAndReferenceId(product.getSeller(), NotificationType.PRODUCT, product.getProductId());
+
+        for (Notification notification : notificationList) {
+            notification.setDeletedAt(LocalDateTime.now());
+        }
 
         return notificationRepository.saveAll(notifications);
     }
