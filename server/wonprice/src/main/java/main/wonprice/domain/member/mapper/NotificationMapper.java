@@ -5,6 +5,7 @@ import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.member.dto.NotificationPostDto;
 import main.wonprice.domain.member.dto.NotificationResponseDto;
 import main.wonprice.domain.member.entity.*;
+import main.wonprice.domain.product.entity.Bid;
 import main.wonprice.domain.product.entity.Product;
 import org.mapstruct.Mapper;
 
@@ -86,6 +87,42 @@ public interface NotificationMapper {
                             .member(wish.getMember()).build()
             );
         }
+
+        return notifications;
+    }
+
+    default List<Notification> bidToNotification(Product product, List<Bid> bids) {
+
+        List<Notification> notifications = new ArrayList<>();
+
+        for (Bid bid : bids) {
+
+            if (product.getBuyerId() == bid.getMember().getMemberId()) {
+                continue;
+            }
+
+            notifications.add(
+                    Notification.builder()
+                            .content(product.getTitle() + "에 새로운 입찰이 들어왔습니다")
+                            .notificationType(NotificationType.PRODUCT)
+                            .createdAt(LocalDateTime.now())
+                            .isRead(false)
+                            .referenceId(product.getProductId())
+                            .member(bid.getMember())
+                            .build()
+            );
+        }
+
+        notifications.add(
+                Notification.builder()
+                        .content(product.getTitle() + "에 새로운 입찰이 들어왔습니다")
+                        .notificationType(NotificationType.PRODUCT)
+                        .createdAt(LocalDateTime.now())
+                        .isRead(false)
+                        .referenceId(product.getProductId())
+                        .member(product.getSeller())
+                        .build()
+        );
 
         return notifications;
     }
