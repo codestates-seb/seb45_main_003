@@ -1,4 +1,3 @@
-import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonIcon from "@mui/icons-material/Person";
 import { Link } from "react-router-dom";
@@ -85,7 +84,7 @@ const MobileSidebar = ({ onClose }: MobileSidebarProps) => {
             <Link to={`/member/${userId}`} onClick={handleClose}>
               프로필
             </Link>
-            <ChatBubbleIcon />
+            |
             <Link to={`/chat/${userId}`} onClick={handleClose}>
               채팅
             </Link>
@@ -102,16 +101,11 @@ const MobileSidebar = ({ onClose }: MobileSidebarProps) => {
           return (
             <li key={category}>
               <Link to={CATEGORY[category].path} onClick={handleClose}>
-                {category}
+                {CATEGORY[category].value}
               </Link>
             </li>
           );
         })}
-        <li key="all">
-          <Link to={`/product`} onClick={handleClose}>
-            View All
-          </Link>
-        </li>
       </ul>
     </StyledMobileSidebar>
   );

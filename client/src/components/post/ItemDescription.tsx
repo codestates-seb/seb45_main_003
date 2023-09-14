@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { COLOR } from "../../constants/color";
+import { formatDescription } from "../../util/text";
 
 type ItemDescriptionProps = {
   description: string;
@@ -27,7 +28,7 @@ const ItemDescription = ({ description }: ItemDescriptionProps) => {
   return (
     <StyledItemDescription>
       <h2>상품 설명</h2>
-      <p>{description}</p>
+      <p>{formatDescription(description)}</p>
     </StyledItemDescription>
   );
 };

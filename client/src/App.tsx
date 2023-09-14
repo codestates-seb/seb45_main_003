@@ -51,25 +51,19 @@ function App() {
           element: isLogin ? <CreatePost /> : <LogIn />,
         },
 
-        // 5) 게시물 리스트 페이지
+        // 5) 게시물 리스트, 검색결과 페이지
         {
-          path: "/product",
+          path: "search",
           element: <PostsList />,
-          children: [
-            {
-              path: "search",
-              element: <PostsList />,
-            },
-            {
-              path: ":category",
-              element: <PostsList />,
-            },
-          ],
+        },
+        {
+          path: ":category",
+          element: <PostsList />,
         },
 
         // 6) 게시글 상세 페이지
         {
-          path: "/product/:category/:item",
+          path: "/product/:item",
           element: <PostInformation />,
         },
 
