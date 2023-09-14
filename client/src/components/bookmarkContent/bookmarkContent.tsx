@@ -196,6 +196,8 @@ const BookmarkContent = (): JSX.Element => {
   //체크박스 관리 함수
   const handleCheckBox = (index: number, checked: boolean) => {
     const checkedBoxes = [...checkboxes];
+    console.log("checkedBoxes:", checkedBoxes);
+    console.log("checkbox", checkboxes);
     checkedBoxes[index] = checked;
     const checkedAll = checkedBoxes.every(Boolean);
     setValue("selectAll", checkedAll);
@@ -243,9 +245,17 @@ const BookmarkContent = (): JSX.Element => {
         //   setValue("checkboxes", changedCheckboxes);
         //   setChangedCheckboxes([]);
         // }
-        setValue("checkboxes", Array(data.content.length).fill(false));
+        if (checkboxes.length !== data.content.length) {
+          setValue("checkboxes", Array(data.content.length).fill(false));
+        }
+        if (checkboxes.some((el) => el === true)) {
+          setValue("checkboxes", checkboxes);
+        }
+        if (checkboxes.length === 0) {
+          setValue("checkboxes", Array(data.content.length).fill(false));
+        }
         setTotalPages(data.totalPages);
-        console.log(checkboxes, getValues());
+        console.log(checkboxes);
       },
     },
   );
@@ -279,7 +289,8 @@ const BookmarkContent = (): JSX.Element => {
       onSuccess: () => {
         // setChangedCheckboxes([]);
         // setValue("checkboxes", []);
-        queryClient.invalidateQueries("bookmark");
+        // queryClient.invalidateQueries("bookmark");
+        window.location.reload();
       },
     },
   );
@@ -295,8 +306,9 @@ const BookmarkContent = (): JSX.Element => {
               type="checkbox"
               className="checkbox"
               id="selectAll"
-              {...register("selectAll")}
-              onChange={(e) => handleSelectAll(e.target.checked)}
+              {...register("selectAll", {
+                onChange: (e) => handleSelectAll(e.target.checked),
+              })}
             ></input>
             <p className="optionName">전체 선택</p>
             <Button type="submit" $text="선택 취소" $design="yellow" />
@@ -314,8 +326,13 @@ const BookmarkContent = (): JSX.Element => {
                   type="checkbox"
                   className="checkbox"
                   checked={checkboxes[index] || false}
-                  {...register(`checkboxes.${index}`)}
-                  onChange={(e) => handleCheckBox(index, e.currentTarget.checked)}
+                  {...register(`checkboxes.${index}`, {
+                    onChange: (e) => {
+                      handleCheckBox(index, e.currentTarget.checked);
+                      console.log(e.target.value);
+                      console.log(checkboxes);
+                    },
+                  })}
                   key={el.productId}
                 ></input>
               )}
