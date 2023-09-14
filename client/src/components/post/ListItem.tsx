@@ -5,6 +5,7 @@ import { FONT_SIZE } from "../../constants/font";
 import { AUCTION } from "../../constants/systemMessage";
 import { findCategory } from "../../util/category";
 import { formatTime } from "../../util/date";
+import ProductStatus from "../common/ProductStatus";
 import { ProductData } from "./List";
 
 type ItemProps = {
@@ -65,15 +66,9 @@ const ListItem = (props: ItemProps): JSX.Element => {
         </div>
         <div className="title">
           <h3>{data.title}</h3>
-          <p className="gray">
-            {data.auction
-              ? data.productStatus === "BEFORE"
-                ? formatTime(data.closedAt) + " 경매종료"
-                : AUCTION.end
-              : data.productStatus === "BEFORE"
-              ? AUCTION.isnot
-              : AUCTION.end}
-          </p>
+          <div className="gray">
+            <ProductStatus data={data} />
+          </div>
         </div>
         <div className="price">
           <p className="gray">

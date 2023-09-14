@@ -23,6 +23,7 @@ import { allowOnlyNumber } from "../../util/number";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 import TextInput from "../common/TextInput";
+import ProductStatus from "../common/ProductStatus";
 import { CustomSwiperProps } from "../mainPage/carousel/Carousel";
 import DeleteButton from "./DeleteButton";
 import { ProductData } from "./List";
@@ -320,15 +321,9 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             </div>
           </div>
 
-          <p className="gray date_or_status">
-            {data.auction
-              ? data.productStatus === "BEFORE"
-                ? formatTime(data.closedAt) + " 경매종료"
-                : AUCTION.end
-              : data.productStatus === "BEFORE"
-              ? AUCTION.isnot
-              : AUCTION.end}
-          </p>
+          <div className="gray date_or_status">
+            <ProductStatus data={data} />
+          </div>
           <div className="add_wishlist">
             <WishCount
               isLogin={isLogin}
