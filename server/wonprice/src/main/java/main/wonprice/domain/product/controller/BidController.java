@@ -35,6 +35,7 @@ public class BidController {
         bidResponseDto.setProductId(product.getProductId());
         bidResponseDto.setCurrentAuctionPrice(product.getCurrentAuctionPrice());
         bidResponseDto.setName(member.getName());
+        bidResponseDto.setBuyerId(product.getBuyerId());
 
         return new ResponseEntity(bidResponseDto, HttpStatus.OK);
     }
