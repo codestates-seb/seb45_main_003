@@ -47,9 +47,9 @@ const ProfileTab = (): JSX.Element => {
     if (value !== tabState) {
       setTabState(value);
       if (value === "profile") {
-        navigate(`${location.pathname}?menu=${value}&?tabmenu=cell&?page=1`);
+        navigate(`${location.pathname}?menu=${value}&tabmenu=cell&page=1`);
       } else {
-        navigate(`${location.pathname}?menu=${value}&?page=1`);
+        navigate(`${location.pathname}?menu=${value}&page=1`);
       }
     }
   };

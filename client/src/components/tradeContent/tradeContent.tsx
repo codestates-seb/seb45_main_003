@@ -12,7 +12,6 @@ import Error from "../common/Error";
 import Loading from "../common/Loading";
 import { translateProductStatus } from "../../util/productStatus";
 import { usePagination } from "../../hooks/usePagination";
-import { useEffect } from "react";
 import Pagination from "../common/Pagination";
 
 interface image {
@@ -143,31 +142,29 @@ const TradeContent = (): JSX.Element => {
   } = usePagination();
   const {
     isLoading,
-    refetch,
     isError,
     data: result,
-  } = useQuery<Data>(["tradeData", currentPage], async () => {
-    const currentPageParam = parseInt(searchParams.get("page") || "1");
-    const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
-    if (mypageMode === "purchase") {
-      const res = await defaultInstance.get(`/members/${Id}/purchase?${pageQueryParam}`);
-      if (res.data?.totalPages !== totalPages) {
-        setTotalPages(res.data?.totalPages);
+  } = useQuery<Data>(
+    ["tradeData", { currentPage }],
+    async () => {
+      const currentPageParam = parseInt(searchParams.get("page") || "1");
+      const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
+      if (mypageMode === "purchase") {
+        const res = await defaultInstance.get(`/members/${Id}/purchase?${pageQueryParam}`);
+        navigate(`?menu=${mypageMode}&page=${currentPageParam}`);
+        return res.data;
+      } else if (mypageMode === "sales") {
+        const res = await defaultInstance.get(`/members/${Id}/sell?${pageQueryParam}`);
+        navigate(`?menu=${mypageMode}&page=${currentPageParam}`);
+        return res.data;
       }
-      navigate(`?menu=${mypageMode}&?page=${currentPageParam}`);
-      return res.data;
-    } else if (mypageMode === "sales") {
-      const res = await defaultInstance.get(`/members/${Id}/sell?${pageQueryParam}`);
-      if (res.data?.totalPages !== totalPages) {
-        setTotalPages(res.data?.totalPages);
-      }
-      navigate(`?menu=${mypageMode}&?page=${currentPageParam}`);
-      return res.data;
-    }
-  });
-  useEffect(() => {
-    refetch();
-  }, [location.pathname, location.search, currentPage]);
+    },
+    {
+      onSuccess: (data) => {
+        setTotalPages(data.totalPages);
+      },
+    },
+  );
 
   return (
     <TradeContentContainer>

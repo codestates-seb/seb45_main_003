@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
@@ -203,10 +203,9 @@ const BookmarkContent = (): JSX.Element => {
   const {
     isLoading,
     isError,
-    refetch,
     data: bookmarkList,
   } = useQuery<Data>(
-    ["bookmark", currentPage],
+    ["bookmark", { currentPage }],
     async () => {
       const currentPageParam = parseInt(searchParams.get("page") || "1");
       const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
@@ -218,7 +217,7 @@ const BookmarkContent = (): JSX.Element => {
       if (res.data?.totalPages !== totalPages) {
         setTotalPages(res.data?.totalPages);
       }
-      navigate(`?menu=bookmark&?page=${currentPageParam}`);
+      navigate(`?menu=bookmark&page=${currentPageParam}`);
       return res.data;
     },
     {
@@ -268,9 +267,6 @@ const BookmarkContent = (): JSX.Element => {
       },
     },
   );
-  useEffect(() => {
-    refetch();
-  }, [location.pathname, location.search, currentPage]);
   return (
     <BookmarkContentContainer
       onSubmit={handleSubmit(() => sendBookmarkMutation.mutateAsync(getValues()))}
