@@ -7,10 +7,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-        highlight_sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        highlight_sql: true
   mail:
     host: smtp.gmail.com
     port: 587
@@ -23,10 +23,10 @@ spring:
             enable: true
           auth: true
 
-logging:
-  level:
-    org.hibernate.SQL: debug
-    org.hibernate.type.descriptor.sql: trace
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
+#    org.hibernate.type.descriptor.sql: trace
 
 mail:
   address:

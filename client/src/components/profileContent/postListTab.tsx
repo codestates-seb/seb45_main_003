@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
@@ -134,7 +133,7 @@ const PostListTab = (): JSX.Element => {
   const handleMenu = (value: string): void => {
     if (menu !== value) {
       setMenu(value);
-      navigate(`${location.pathname}?menu=${searchParams.get("menu")}&?tabmenu=${value}`);
+      navigate(`${location.pathname}?menu=${searchParams.get("menu")}&tabmenu=${value}&page=1`);
     }
   };
   const ITEMS_PER_VIEW = 10;
@@ -146,58 +145,45 @@ const PostListTab = (): JSX.Element => {
     prevPageHandler,
     nextPageHandler,
   } = usePagination();
-  const {
-    isLoading,
-    refetch,
-    data: result,
-  } = useQuery<Data>(["postList", currentPage], async () => {
-    const currentPageParam = parseInt(searchParams.get("page") || "1");
-    const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
-    if (menu === "cell") {
-      const res = await defaultInstance.get(`/members/${Id}/products?${pageQueryParam}`, {
-        headers: {
-          "ngrok-skip-browser-warning": "69420",
-        },
-      });
-      if (res.data?.totalPages !== totalPages) {
-        setTotalPages(res.data?.totalPages);
+  const { isLoading, data: result } = useQuery<Data>(
+    ["postList", { menu, currentPage }],
+    async () => {
+      const currentPageParam = parseInt(searchParams.get("page") || "1");
+      const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
+      if (menu === "cell") {
+        const res = await defaultInstance.get(`/members/${Id}/products?${pageQueryParam}`, {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        });
+        navigate(`?menu=profile&tabmenu=${menu}&page=${currentPageParam}`);
+        return res.data;
+      } else if (menu === "leaveReview") {
+        const res = await defaultInstance.get(`/members/${Id}/reviews/post?${pageQueryParam}`, {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        });
+        navigate(`?menu=profile&tabmenu=${menu}&page=${currentPageParam}`);
+        return res.data;
+      } else if (menu === "getReview") {
+        const res = await defaultInstance.get(`/members/${Id}/reviews?${pageQueryParam}`, {
+          headers: {
+            "ngrok-skip-browser-warning": "69420",
+          },
+        });
+        navigate(`?menu=profile&tabmenu=${menu}&page=${currentPageParam}`);
+        return res.data;
       }
-      navigate(`?menu=profile&?tabmenu=${menu}&?page=${currentPageParam}`);
-      return res.data;
-    } else if (menu === "leaveReview") {
-      const res = await defaultInstance.get(`/members/${Id}/reviews/post?${pageQueryParam}`, {
-        headers: {
-          "ngrok-skip-browser-warning": "69420",
-        },
-      });
-      if (res.data?.totalPages !== totalPages) {
-        setTotalPages(res.data?.totalPages);
-      }
-      navigate(`?menu=profile&?tabmenu=${menu}&?page=${currentPageParam}`);
-      return res.data;
-    } else if (menu === "getReview") {
-      const res = await defaultInstance.get(`/members/${Id}/reviews?${pageQueryParam}`, {
-        headers: {
-          "ngrok-skip-browser-warning": "69420",
-        },
-      });
-      if (res.data?.totalPages !== totalPages) {
-        setTotalPages(res.data?.totalPages);
-      }
-      navigate(`?menu=profile&?tabmenu=${menu}&?page=${currentPageParam}`);
-      return res.data;
-    }
-  });
+    },
+    {
+      onSuccess: (data) => {
+        setTotalPages(data.totalPages);
+      },
+    },
+  );
   //refetch되기전 화면에 그리는 과정에서 리뷰에서는 판매글에 없는 데이터가 있어서 오류 발생
   //삼항연산자로 해결
-  useEffect(() => {
-    refetch();
-    const tabmenu = searchParams.get("tabmenu");
-    if (tabmenu !== null) {
-      setMenu(tabmenu);
-    }
-  }, [location.pathname, location.search, currentPage]);
-
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">

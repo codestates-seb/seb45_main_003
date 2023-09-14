@@ -2,6 +2,7 @@ package main.wonprice.domain.product.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import main.wonprice.auth.jwt.service.JwtService;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.member.entity.Member;
@@ -10,9 +11,7 @@ import main.wonprice.domain.picture.service.PictureService;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
-import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.mapper.ProductMapper;
-import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.domain.product.repository.ProductSpecification;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,6 +35,7 @@ public class ProductController {
     private final MemberService memberService;
     private final CategoryService categoryService;
     private final PictureService pictureService;
+    private final JwtService jwtService;
 
     // 상품 등록
     @PostMapping
@@ -60,7 +60,7 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponseDto>> findAllProduct(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
 
         // 삭제되지 않은 상품만 검색하도록 스펙을 적용
         Specification<Product> spec = ProductSpecification.notDeleted();
@@ -77,7 +77,7 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponseDto>> getProductCategory(@PathVariable Long categoryId,
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
 
         Page<Product> products = productService.getProductsByCategory(categoryId, pageable);
 
@@ -117,7 +117,7 @@ public class ProductController {
 
         log.info("product : " + product.getProductPictures());
 
-        if (memberService.isLogin(accessToken)) {
+        if (jwtService.isLogin(accessToken)) {
             ProductResponseDto productResponseDto = productMapper.fromEntity(product, memberService.findLoginMember());
             return ResponseEntity.ok(productResponseDto);
         } else {

@@ -2,8 +2,9 @@ package main.wonprice.auth.filter;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import main.wonprice.auth.jwt.JwtTokenizer;
+import main.wonprice.auth.jwt.service.JwtService;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,15 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
+@AllArgsConstructor
 public class JwtVerificationFilter extends OncePerRequestFilter { // request 당 한 번만 실행되는 Security Filter
 
-    private final JwtTokenizer jwtTokenizer;
+    private final JwtService jwtService;
     private final CustomAuthorityUtils authorityUtils;
-
-    public JwtVerificationFilter(JwtTokenizer jwtTokenizer, CustomAuthorityUtils authorityUtils) {
-        this.jwtTokenizer = jwtTokenizer;
-        this.authorityUtils = authorityUtils;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -60,11 +57,13 @@ public class JwtVerificationFilter extends OncePerRequestFilter { // request 당
 
     private Map<String, Object> verifyJws(HttpServletRequest request) {
 
+        log.info("verify Token");
+
         String jws = request.getHeader("Authorization").replace("Bearer ", "");
-        String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
+        String base64EncodedSecretKey = jwtService.encodeBase64SecretKey(jwtService.getSecretKey());
 
         /* JWT에서 Claims를 parsing 할 수 있다 -> 내부적으로 Signature 검증에 성공했다 */
-        Map<String, Object> claims = jwtTokenizer.getClaims(jws, base64EncodedSecretKey).getBody();
+        Map<String, Object> claims = jwtService.getClaims(jws, base64EncodedSecretKey).getBody();
 
         return claims;
     }

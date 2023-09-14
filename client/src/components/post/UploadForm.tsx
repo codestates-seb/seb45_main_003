@@ -14,6 +14,7 @@ import { useImageUpload } from "../../hooks/useImageUpload";
 import { useModal } from "../../hooks/useModal";
 import { authInstance } from "../../interceptors/interceptors";
 import { findCategory } from "../../util/category";
+import { allowOnlyNumber } from "../../util/number";
 import Button from "../common/Button";
 import ImageInput from "../common/ImageInput";
 import Modal from "../common/Modal";
@@ -97,7 +98,8 @@ const StyledUploadForm = styled.section`
     display: none;
   }
 
-  input[type="number"] {
+  #currentAuctionPrice,
+  #immediatelyBuyPrice {
     padding: 0.5rem 2rem 0.5rem 0.75rem;
 
     & + span {
@@ -330,10 +332,11 @@ const UploadForm = () => {
                     register={register}
                     options={{
                       required: REQUIRED.currentAuctionPrice,
+                      onChange: (event) => allowOnlyNumber(event),
                     }}
                     title="경매시작가"
                     id="currentAuctionPrice"
-                    type="number"
+                    type="text"
                     formState={formState}
                   />
                 )}
@@ -342,10 +345,11 @@ const UploadForm = () => {
                   register={register}
                   options={{
                     required: REQUIRED.immediatelyBuyPrice,
+                    onChange: (event) => allowOnlyNumber(event),
                   }}
                   title="즉시구매가"
                   id="immediatelyBuyPrice"
-                  type="number"
+                  type="text"
                   formState={formState}
                 />
 

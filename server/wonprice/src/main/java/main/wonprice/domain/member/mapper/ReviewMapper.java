@@ -6,7 +6,6 @@ import main.wonprice.domain.member.dto.ReviewResponseDto;
 import main.wonprice.domain.member.entity.Review;
 import org.mapstruct.Mapper;
 
-import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface ReviewMapper {
@@ -14,18 +13,17 @@ public interface ReviewMapper {
     Review postDtoToReview(ReviewPostDto postDto);
 
     default ReviewResponseDto reviewToResponseDto(Review review) {
-        ReviewResponseDto responseDto = new ReviewResponseDto();
 
-        responseDto.setReviewId(review.getReviewId());
-        responseDto.setPostMemberId(review.getPostMember().getMemberId());
-        responseDto.setReceiveMemberId(review.getReceiveMember().getMemberId());
-        responseDto.setProductId(review.getProduct().getProductId());
-        responseDto.setScore(review.getScore());
-        responseDto.setTitle(review.getTitle());
-        responseDto.setContent(review.getContent());
-        responseDto.setCreatedAt(review.getCreatedAt());
-
-        return responseDto;
+        return ReviewResponseDto.builder()
+                .reviewId(review.getReviewId())
+                .postMemberName(review.getPostMember().getName())
+                .title(review.getProduct().getTitle())
+                .productImages(review.getProduct().getProductPictures())
+                .reviewTitle(review.getTitle())
+                .content(review.getContent())
+                .score(review.getScore())
+                .createdAt(review.getCreatedAt())
+                .build();
     }
 
     Review patchDtoToReview(ReviewPatchDto patchDto);

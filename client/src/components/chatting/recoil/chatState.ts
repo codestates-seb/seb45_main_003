@@ -68,3 +68,8 @@ export const webSocketConnectionState = atom({
   key: "webSocketConnection",
   default: false, // 초기값은 연결되지 않은 상태
 });
+
+export const totalUnreadMessagesState = atom({
+  key: "totalUnreadMessagesState", // unique ID (with respect to other atoms/selectors)
+  default: 0, // default value (aka initial value)
+});
