@@ -25,7 +25,7 @@ const ProductStatus = ({ data }: ProductStatusProps) => {
       ) : data.productStatus === "BEFORE" ? (
         <>
           <p>{AUCTION.isnot}</p>
-          <ProductStatusIcon $status="end" $auction={false} />
+          <ProductStatusIcon $status="inProgress" $auction={false} />
         </>
       ) : (
         <>
