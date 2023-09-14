@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface BidRepository extends JpaRepository<Bid, Long> {
-    Bid findByProductIdAndMember(Long productId, Member member);
+    Bid findByProductProductIdAndMember(Long productId, Member member);
 
-    List<Bid> findAllByProductId(Long productId);
+    List<Bid> findAllByProductProductId(Long productId);
 
     Page<Bid> findAllByMemberMemberId(Pageable pageable, Long memberId);
 }

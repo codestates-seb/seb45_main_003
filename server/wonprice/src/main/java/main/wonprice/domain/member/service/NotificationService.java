@@ -94,8 +94,8 @@ public class NotificationService {
 //    입찰 시 기존 입찰했던 사람들, 판매글 주인에게 알림 생성
     public List<Notification> createNotificationWithBid(Bid bid) {
 
-        Product product = productRepository.findById(bid.getProductId()).orElseThrow();
-        List<Bid> bids = bidRepository.findAllByProductId(product.getProductId());
+        Product product = productRepository.findById(bid.getProduct().getProductId()).orElseThrow();
+        List<Bid> bids = bidRepository.findAllByProductProductId(product.getProductId());
 
         List<Notification> notifications = mapper.bidToNotification(product, bids);
 

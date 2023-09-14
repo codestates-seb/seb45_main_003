@@ -39,7 +39,7 @@ public class BidController {
         Member member = memberService.getMemberById(product.getBuyerId());
 
         // 기존의 입찰을 시도했던 회원인지 확인
-        Bid existsedBid = bidRepository.findByProductIdAndMember(productId, member);
+        Bid existsedBid = bidRepository.findByProductProductIdAndMember(productId, member);
         LocalDateTime now = LocalDateTime.now();
 
         if (existsedBid != null) {
@@ -51,7 +51,7 @@ public class BidController {
         } else {
             // 회원 기준으로 기존 레코드가 없는 경우 새로운 레코드 생성
             Bid bid = new Bid();
-            bid.setProductId(productId);
+            bid.setProduct(product);
             bid.setCreatedAt(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute()));
             bid.setPrice(request.getCurrentAuctionPrice());
             bid.setMember(member);

@@ -71,6 +71,9 @@ public class Product {
     @OneToMany(mappedBy = "product")
     private List<Wish> wishes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product")
+    private List<Bid> bids = new ArrayList<>();
+
     private Long wishCount; // 상품이 받은 찜 갯수
 
     public Product update(ProductRequestDto productRequestDto) {
