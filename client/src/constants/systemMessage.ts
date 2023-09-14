@@ -40,6 +40,7 @@ export const FAIL = {
 
 export const MAX = {
   imageSelect: (max: number) => `이미지는 최대 ${max}장까지 선택 가능합니다.`,
+  bid: `즉시구매가 이상으로 입찰할 수 없습니다.`,
 };
 
 export const MIN = {
