@@ -6,8 +6,7 @@ import { FONT_SIZE } from "../../constants/font";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const ProfileTabContainer = styled.ul`
-  flex: 0 0 14rem;
-  width: 14rem;
+  width: 10rem;
   height: 18.75rem;
   border-radius: 6px;
   border: 1px solid ${COLOR.gray_300};

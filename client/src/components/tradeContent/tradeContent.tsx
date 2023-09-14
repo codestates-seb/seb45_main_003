@@ -145,7 +145,7 @@ const TradeContent = (): JSX.Element => {
     isError,
     data: result,
   } = useQuery<Data>(
-    ["tradeData", { currentPage }],
+    ["tradeData", { currentPage, mypageMode }],
     async () => {
       const currentPageParam = parseInt(searchParams.get("page") || "1");
       const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
