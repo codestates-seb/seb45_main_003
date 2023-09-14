@@ -20,7 +20,6 @@ const StyledHeader = styled.header`
     background: none;
   }
   .header-wrapper {
-    width: calc(100% - 3rem);
     padding: 1.25rem 0;
     max-width: 90rem;
     margin: 0 auto;
@@ -44,7 +43,6 @@ const StyledHeader = styled.header`
     border-radius: 6px;
     margin: 0.375rem;
     max-width: 22rem;
-    width: 25%;
     display: flex;
     justify-content: center;
 
