@@ -2,27 +2,24 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import AddButton from "../../../assets/images/Add.png";
+import { CATEGORY } from "../../../constants/category";
 
 // import myImage from "../../../assets/images/Img1.png";
 
 const ItemContainer = styled.div`
   font-family: Pretendard Variable;
   display: flex;
-  padding: 1.5rem 0.9375rem;
+  padding: 1.5rem;
   flex-direction: column;
   align-items: center;
   gap: 0.9375rem;
   max-width: 18.75rem;
   min-width: 15rem; // 여기만
-  width: calc(100% - 3rem);
   display: flex;
   justify-content: center;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
   background-color: white;
   border-radius: 0.375rem;
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  }
 `;
 
 const Title = styled.div`
@@ -30,7 +27,7 @@ const Title = styled.div`
   /* padding: 0rem 11.8125rem 0.375rem 0rem; */
   align-items: center;
   align-self: stretch;
-
+  margin: 0 0 0.5rem;
   color: var(--text-color, #252b42);
   font-family: Pretendard Variable;
   font-size: 1.5rem;
@@ -38,10 +35,6 @@ const Title = styled.div`
   font-weight: 800;
   line-height: 2rem; /* 133.333% */
   letter-spacing: 0.2px;
-
-  @media (max-width: 56.25rem) {
-    width: calc(100% - 2rem);
-  }
 `;
 
 const ItemBox = styled.div`
@@ -82,25 +75,18 @@ const ItemBox = styled.div`
       color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
     }
   }
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  }
 `;
 
 const ListBox = styled.div`
-  gap: 1.25rem;
+  gap: 0.75rem;
   display: flex;
   flex-direction: column;
-  width: calc(100% - 3rem);
 
   .ItemList {
     /* padding-bottom: 1rem; */
     &:hover {
       color: #ffb300; // 텍스트의 호버 색상 (필요하다면)
     }
-  }
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
   }
 `;
 // 버튼 호버 스타일
@@ -149,12 +135,9 @@ const MenuItem = () => {
       <ItemContainer>
         <ListBox>
           <Title>Product Category</Title>
-          <Item categories="Books" linkTo="/product/books" />
-          <Item categories="Electronics" linkTo="/product/books" />
-          <Item categories="Clothing" linkTo="/product/clothing" />
-          <Item categories="Food" linkTo="/product/food" />
-          <Item categories="Cosmetic" linkTo="/product/cosmetic" />
-          <Item categories="View All" linkTo="/product" />
+          {Object.keys(CATEGORY).map((category) => {
+            return <Item categories={CATEGORY[category].value} linkTo={CATEGORY[category].path} />;
+          })}
         </ListBox>
       </ItemContainer>
     </>

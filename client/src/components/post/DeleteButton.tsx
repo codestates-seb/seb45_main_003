@@ -73,7 +73,7 @@ const DeleteButton = ({ data, modalMessage, setModalMessage }: DeleteButtonProps
               $text="확인"
               type="button"
               onClick={() => {
-                navigate("/product");
+                navigate(CATEGORY["all"].path);
               }}
             />
           )}

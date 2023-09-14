@@ -212,7 +212,7 @@ const List = (): JSX.Element => {
   const isLogin = useRecoilValue(loginState);
 
   const printTitle = (path: string) => {
-    if (path === "/product") {
+    if (path.includes("/all")) {
       return "전체 상품";
     }
 

@@ -438,7 +438,7 @@ const UploadForm = () => {
             type="button"
             onClick={() => {
               submitResult && resData
-                ? navigate(`/product/${findCategory(resData.categoryId)}/${resData.productId}`)
+                ? navigate(`/product/${resData.productId}`)
                 : setIsOpen(!isOpen);
             }}
           />
