@@ -63,6 +63,7 @@ const Notification = styled.div`
       align-items: stretch;
       font-size: ${FONT_SIZE.font_16};
       overflow: scroll;
+      cursor: default;
       .notification {
         display: flex;
         flex-direction: row;
@@ -70,8 +71,12 @@ const Notification = styled.div`
         align-items: center;
         border-bottom: 1px solid ${COLOR.border};
         padding: 1rem;
+        cursor: pointer;
         &:last-child {
           border-bottom: none;
+        }
+        &:first-child {
+          border-bottom: 1px solid ${COLOR.border};
         }
         &.isRead {
           color: ${COLOR.mediumText};
@@ -149,7 +154,7 @@ const Notifications = (): JSX.Element => {
           <NotificationsIcon className="noticiationIcon" />
         </div>
         {open && (
-          <ul className="notificationListContainer" onBlur={() => setOpen(!open)}>
+          <ul className="notificationListContainer">
             {isLoading ? (
               <Loading />
             ) : (
