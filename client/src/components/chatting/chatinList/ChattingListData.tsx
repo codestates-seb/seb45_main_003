@@ -245,18 +245,6 @@ const ChattingListData: React.FC = () => {
     return response.data;
   };
 
-  // const { error, isLoading } = useQuery("chatList", fetchChatList, {
-  //   refetchInterval: isConnected ? 5000 : undefined, // 웹소켓 연결 상태에 따라 폴링 간격을 설정 5초 설정
-  //   enabled: isLoggedIn && isConnected, // 로그인과 웹소켓 연결이 모두 되어 있을 때만 쿼리 활성화
-
-  //   onError: (err) => {
-  //     console.log("An error occurred:", err);
-  //   },
-  //   onSuccess: (data) => {
-  //     setChatList(data);
-  //   },
-  // });
-
   const { error, isLoading } = useQuery("chatList", fetchChatList, {
     refetchInterval: 5000, // Always refetch at an interval of 5 seconds
     enabled: isLoggedIn, // Only enable query when logged in
@@ -271,7 +259,9 @@ const ChattingListData: React.FC = () => {
 
   // 채팅방 필터링
   const filteredChatList = chatList.filter((chat) => {
-    return chat.chatRoom?.name?.toString().includes(searchTerm);
+    return (
+      chat.chatRoom?.name?.toString().includes(searchTerm) && chat.deletedAt === null // deletedAt이 null인 경우만 포함
+    );
   });
 
   // 최신 메시지 기준으로 채팅방 정렬
