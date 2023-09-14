@@ -17,10 +17,7 @@ import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.domain.product.repository.ProductSpecification;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +26,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -272,6 +270,13 @@ public class ProductServiceImpl implements ProductService {
 
         Page<Bid> bids = bidRepository.findAllByMemberMemberId(pageable, memberId);
 
-        return bids.map(bid -> productRepository.findById(bid.getProductId()).orElseThrow());
+//        return bids.map(bid -> productRepository.findByProductIdAndStatus(bid.getProduct().getProductId(), ProductStatus.BEFORE));
+        List<Product> products =
+                bids.map(Bid::getProduct)
+                        .stream()
+                        .filter(product -> product.getStatus() == ProductStatus.BEFORE)
+                        .collect(Collectors.toList());
+
+        return new PageImpl<>(products, pageable, pageable.getPageSize());
     }
 }
