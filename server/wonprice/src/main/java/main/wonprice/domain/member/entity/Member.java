@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.picture.entity.MemberPicture;
+import main.wonprice.domain.product.entity.Bid;
 import main.wonprice.domain.product.entity.Product;
 
 import javax.persistence.*;
