@@ -21,6 +21,7 @@ const StyledHeader = styled.header`
   }
   .header-wrapper {
     padding: 1.25rem 0;
+    width: calc(100% - 3rem);
     max-width: 90rem;
     margin: 0 auto;
     display: flex;
