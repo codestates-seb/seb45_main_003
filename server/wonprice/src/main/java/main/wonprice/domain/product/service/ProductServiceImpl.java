@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.member.service.NotificationService;
 import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.entity.Product;
@@ -32,6 +33,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final NotificationService notificationService;
 
     /*
         상품 등록
@@ -138,6 +140,7 @@ public class ProductServiceImpl implements ProductService {
     public Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member member) {
         Product product = findExistsProduct(productId);
         product.setModifiedAt(LocalDateTime.now());
+        notificationService.createdNotificationWithWishProduct(product);
         return productRepository.save(product.update(productRequestDto));
     }
 
