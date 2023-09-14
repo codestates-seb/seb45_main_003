@@ -14,6 +14,7 @@ import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.mapper.ProductMapper;
 import main.wonprice.domain.product.repository.ProductSpecification;
+import main.wonprice.exception.BusinessLogicException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,19 +44,23 @@ public class ProductController {
     // 상품 등록
     @PostMapping
     public ResponseEntity createProduct(@RequestBody ProductRequestDto productRequestDto) {
-        Member loginMember = memberService.findLoginMember();
-        Category category = categoryService.findById(productRequestDto.getCategoryId());
-        Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember, category));
+        try {
+            Member loginMember = memberService.findLoginMember();
+            Category category = categoryService.findById(productRequestDto.getCategoryId());
+            Product product = productService.save(productMapper.toEntity(productRequestDto, loginMember, category));
 
-        /* 대표 */
-        for (String imageUrl : productRequestDto.getImages()) {
-            log.info("imageUrl" + imageUrl);
-            pictureService.createPicture(imageUrl, product);
+            /* 대표 */
+            for (String imageUrl : productRequestDto.getImages()) {
+                log.info("imageUrl" + imageUrl);
+                pictureService.createPicture(imageUrl, product);
+            }
+            /* 대표 */
+
+            ProductResponseDto productResponseDto = productMapper.fromEntity(product);
+            return ResponseEntity.ok(productResponseDto);
+        } catch (BusinessLogicException ex) {
+            return ResponseEntity.badRequest().body(ex.getExceptionCode().getMessage());
         }
-        /* 대표 */
-
-        ProductResponseDto productResponseDto = productMapper.fromEntity(product);
-        return ResponseEntity.ok(productResponseDto);
     }
 
     // 전체 상품 조회

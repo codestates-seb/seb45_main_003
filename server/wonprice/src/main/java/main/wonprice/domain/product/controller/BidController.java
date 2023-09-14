@@ -2,6 +2,7 @@ package main.wonprice.domain.product.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import main.wonprice.domain.member.service.NotificationService;
 import main.wonprice.domain.product.entity.Bid;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
@@ -28,6 +29,7 @@ public class BidController {
     private final ProductService productService;
     private final MemberService memberService;
     private final BidRepository bidRepository;
+    private final NotificationService notificationService;
 
     @MessageMapping("/bid/{productId}")
     @SendTo("/topic/bid/{productId}")
@@ -37,28 +39,30 @@ public class BidController {
         Member member = memberService.getMemberById(product.getBuyerId());
 
         // 기존의 입찰을 시도했던 회원인지 확인
-        Bid existsedBid = bidRepository.findByProductIdAndMember(productId, member);
+        Bid existsedBid = bidRepository.findByProductProductIdAndMember(productId, member);
         LocalDateTime now = LocalDateTime.now();
 
         if (existsedBid != null) {
             // 회원 기준으로 기존 레코드가 존재하는 경우 업데이트
             existsedBid.setCreatedAt(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute()));
             existsedBid.setPrice(request.getCurrentAuctionPrice());
-            bidRepository.save(existsedBid);
+
+            notificationService.createNotificationWithBid(bidRepository.save(existsedBid));
         } else {
             // 회원 기준으로 기존 레코드가 없는 경우 새로운 레코드 생성
             Bid bid = new Bid();
-            bid.setProductId(productId);
+            bid.setProduct(product);
             bid.setCreatedAt(LocalDateTime.of(now.getYear(), now.getMonth(), now.getDayOfMonth(), now.getHour(), now.getMinute()));
             bid.setPrice(request.getCurrentAuctionPrice());
             bid.setMember(member);
-            bidRepository.save(bid);
+            notificationService.createNotificationWithBid(bidRepository.save(bid));
         }
 
         BidResponseDto bidResponseDto = new BidResponseDto();
         bidResponseDto.setProductId(product.getProductId());
         bidResponseDto.setCurrentAuctionPrice(product.getCurrentAuctionPrice());
         bidResponseDto.setName(member.getName());
+        bidResponseDto.setBuyerId(product.getBuyerId());
 
         return new ResponseEntity(bidResponseDto, HttpStatus.OK);
     }

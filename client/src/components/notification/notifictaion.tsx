@@ -4,7 +4,7 @@ import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { authInstance } from "../../interceptors/interceptors";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import ErrorIndication from "../../pages/ErrorIndication";
 import Loading from "../common/Loading";
 import { useRecoilState } from "recoil";
@@ -12,8 +12,9 @@ import { profileTabState } from "../../atoms/atoms";
 import { postListTabState } from "../../atoms/atoms";
 import { findCategory } from "../../util/category";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import { getUnReadCount, getNotifications } from "./notificationFunction";
 
-interface Data {
+interface notificationData {
   content: notification[];
   totalPages: number;
 }
@@ -81,22 +82,21 @@ const NotificationIcon = styled.div`
 `;
 
 const Notifications = (): JSX.Element => {
+  const [open, setOpen] = useState(false);
+  const [tabState, setTabState] = useRecoilState(profileTabState);
+  const [menu, setMenu] = useRecoilState(postListTabState);
   const ID = localStorage.getItem("Id");
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
   const openNotification = () => {
     setOpen(!open);
   };
-  const [tabState, setTabState] = useRecoilState(profileTabState);
-  const [menu, setMenu] = useRecoilState(postListTabState);
-  const queryClient = useQueryClient();
-  const { isLoading, data } = useQuery<Data>(
+  const { isLoading, data: notificationInfo } = useQuery<notificationData>(
     ["notification"],
-    async () => {
-      const res = await authInstance.get(`/notifications`);
-      return res.data;
+    getNotifications,
+    {
+      staleTime: 30000,
     },
-    { staleTime: 30000 },
   );
   const notificationMutation = useMutation(
     async (notification: notification) => {
@@ -110,7 +110,7 @@ const Notifications = (): JSX.Element => {
     if (notification.notificationType === "REVIEW") {
       setTabState("profile");
       setMenu("getReview");
-      const path = `/member/${ID}?menu=${tabState}&?tabmenu=${menu}&?page=1`;
+      const path = `/member/${ID}?menu=${tabState}&tabmenu=${menu}&page=1`;
       console.log(path);
       navigate(path);
     } else if (notification.notificationType === "PRODUCT") {
@@ -120,36 +120,30 @@ const Notifications = (): JSX.Element => {
     }
     notificationMutation.mutateAsync(notification);
   };
-  const [readCount, setReadCount] = useState<number>(0);
-  const getReadCount = async () => {
-    const res = await authInstance.get(`/notifications/count`);
-    setReadCount(res.data.unreadNotification);
-  };
-  useEffect(() => {
-    getReadCount();
-  }, []);
-  //   if (isError) {
-  //     return <ErrorIndication error={Error} />;
-  //   }
+  const getReadCount = useQuery(["readCount"], getUnReadCount);
   return (
     <NotificationIcon onClick={openNotification}>
       <div className="iconContainer">
-        <div className="readCount">{readCount !== 0 && readCount}</div>
+        {getReadCount.isLoading ? null : (
+          <div className="readCount">{getReadCount.data.unreadNotification}</div>
+        )}
         <NotificationsIcon className="noticiationIcon" />
       </div>
       {open && (
         <ul className="notificationListContainer">
-          {isLoading && <Loading />}
-          {data?.content.map((el, idx) => (
-            <li
-              className={el.isRead ? "isRead notification" : "notRead notification"}
-              key={idx}
-              onClick={() => navigatePost(el)}
-            >
-              <div>{el.content}</div>
-              {/* <div>{el.createdAt}</div> */}
-            </li>
-          ))}
+          {isLoading ? (
+            <Loading />
+          ) : (
+            notificationInfo?.content.map((el, idx) => (
+              <li
+                className={el.isRead ? "isRead notification" : "notRead notification"}
+                key={idx}
+                onClick={() => navigatePost(el)}
+              >
+                <div>{el.content}</div>
+              </li>
+            ))
+          )}
         </ul>
       )}
     </NotificationIcon>

@@ -6,8 +6,7 @@ import { FONT_SIZE } from "../../constants/font";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const ProfileTabContainer = styled.ul`
-  flex: 0 0 14rem;
-  width: 14rem;
+  width: 10rem;
   height: 18.75rem;
   border-radius: 6px;
   border: 1px solid ${COLOR.gray_300};
@@ -47,9 +46,9 @@ const ProfileTab = (): JSX.Element => {
     if (value !== tabState) {
       setTabState(value);
       if (value === "profile") {
-        navigate(`${location.pathname}?menu=${value}&?tabmenu=cell&?page=1`);
+        navigate(`${location.pathname}?menu=${value}&tabmenu=cell&page=1`);
       } else {
-        navigate(`${location.pathname}?menu=${value}&?page=1`);
+        navigate(`${location.pathname}?menu=${value}&page=1`);
       }
     }
   };

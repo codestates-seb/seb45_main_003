@@ -91,10 +91,10 @@ public class ChatController {
     }
 
     @DeleteMapping("/chat/{room-id}")
-    public void deleteChatRoom(@PathVariable("room-id") Long chatRoomId, @RequestBody MemberIdRequest request) {
+    public void deleteChatRoom(@PathVariable("room-id") Long chatRoomId, @RequestParam Long memberId) {
 //        Member loginMember = memberService.findLoginMember();
 
-        Member member = memberService.findMember(request.getMemberId());
+        Member member = memberService.findMember(memberId);
 
         chatService.deleteChatRoom(chatRoomId, member);
     }

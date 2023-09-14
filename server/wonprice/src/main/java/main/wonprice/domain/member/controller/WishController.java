@@ -74,7 +74,7 @@ public class WishController {
 
         List<Boolean> checkBox = deleteDto.getCheckBox();
 
-        wishService.removeWishes(checkBox);
+        wishService.removeWishes(checkBox, deleteDto.getCurrentPage());
 
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }

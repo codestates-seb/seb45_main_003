@@ -27,7 +27,7 @@ const SearchBar = (): JSX.Element => {
 
   const handleSubmit = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      navigate(`/product/search?page=1&keyword=${inputValue}`);
+      navigate(`/search?page=1&keyword=${inputValue}`);
     }
   };
 
