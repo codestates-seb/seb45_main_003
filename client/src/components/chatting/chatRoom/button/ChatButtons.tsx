@@ -71,6 +71,7 @@ const Button = styled.button`
   display: flex;
   height: 3.5419rem;
   width: 7.125rem;
+  min-width: 7.125rem;
   justify-content: center;
   align-items: center;
   gap: 0.375rem;
