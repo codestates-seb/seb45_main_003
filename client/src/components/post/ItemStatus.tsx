@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FieldValues, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -8,23 +9,24 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { ReactComponent as DeleteIcon } from "../../assets/images/Close.svg";
+import Webstomp, { Client } from "webstomp-client";
 import { ReactComponent as EditIcon } from "../../assets/images/Edit.svg";
-import { ReactComponent as HeartIcon } from "../../assets/images/Heart.svg";
 import { ReactComponent as ViewsIcon } from "../../assets/images/Views.svg";
 import { loginState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
-import { API_PATHS } from "../../constants/path";
-import { AUCTION, FAIL, SUCCESS } from "../../constants/systemMessage";
+import { AUCTION, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
-import { authInstance } from "../../interceptors/interceptors";
 import { getUserId } from "../../util/auth";
 import { formatTime } from "../../util/date";
+import { allowOnlyNumber } from "../../util/number";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
+import TextInput from "../common/TextInput";
 import { CustomSwiperProps } from "../mainPage/carousel/Carousel";
+import DeleteButton from "./DeleteButton";
 import { ProductData } from "./List";
+import WishCount from "./WishCount";
 
 type ItemStatusProps = {
   data: ProductData;
@@ -191,53 +193,83 @@ const StyledItemStatus = styled.section`
 `;
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
-  const initialWishCount = data?.wishCount || 0;
-  const initialLoginMembersWish = data?.loginMembersWish;
-  const [wishCount, setwishCount] = useState(initialWishCount);
-  const [loginMembersWish, setLoginMembersWish] = useState(initialLoginMembersWish);
+  const [currentAuctionPrice, setCurrentAuctionPrice] = useState(0);
+  const [minValue, setMinValue] = useState(currentAuctionPrice);
+
   const isLogin = useRecoilValue(loginState);
   const userid = getUserId();
   const navigate = useNavigate();
-  const mutation = useMutation(async (id: number) => {
-    loginMembersWish
-      ? await authInstance.delete(API_PATHS.wishes.default(id))
-      : await authInstance.post(API_PATHS.wishes.add, { productId: id });
-  });
+
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
+  const { register, handleSubmit, formState, reset } = useForm<FieldValues>();
 
-  const addWishlist = async (id: number) => {
-    try {
-      await mutation.mutateAsync(id);
-      setwishCount((prev) => prev + 1);
-      setLoginMembersWish(true);
-      setModalMessage({ title: "찜하기 성공", description: SUCCESS.addWishlist });
-    } catch (error) {
-      setModalMessage({ title: "찜하기 실패", description: FAIL.addWishlist });
-    } finally {
-      setIsOpen(!isOpen);
+  const [stompClient, setStompClient] = useState<Client | null>(null);
+
+  //소켓 연결
+  useEffect(() => {
+    if (data && data.currentAuctionPrice) {
+      setCurrentAuctionPrice(data.currentAuctionPrice);
     }
+
+    if (data) {
+      const socket = new WebSocket(process.env.REACT_APP_WEB_SOCKET_URL as string);
+      const stomp = Webstomp.over(socket);
+
+      stomp.connect({}, () => {
+        setStompClient(stomp);
+      });
+
+      return () => {
+        stomp.disconnect(() => {});
+      };
+    }
+  }, []);
+
+  //소켓 구독
+  useEffect(() => {
+    if (stompClient && data) {
+      stompClient.subscribe(`/topic/bid/${data.productId}`, (message) => {
+        const newCurrentAuctionPrice = JSON.parse(message.body).body.currentAuctionPrice;
+        setCurrentAuctionPrice(newCurrentAuctionPrice);
+        reset();
+      });
+    }
+  }, [stompClient, data]);
+
+  //최소가 변경
+  useEffect(() => {
+    setMinValue(currentAuctionPrice + Math.ceil((currentAuctionPrice * 0.05) / 10) * 10);
+  }, [currentAuctionPrice]);
+
+  //데이터 전송
+  const sendWebSocketMessage = async (bidData: FieldValues) => {
+    if (stompClient) {
+      stompClient.send(`/app/bid/${data.productId}`, JSON.stringify(bidData));
+    }
+    return data;
+  };
+  const { mutate, error } = useMutation(sendWebSocketMessage);
+
+  const openBidModal = () => {
+    setIsOpen(true);
+    setModalMessage({ title: "상품 입찰", description: AUCTION.bid });
   };
 
-  const removeWishlist = async (id: number) => {
-    try {
-      await mutation.mutateAsync(id);
-      setwishCount((prev) => prev - 1);
-      setLoginMembersWish(false);
-      setModalMessage({ title: "찜 삭제 성공", description: SUCCESS.removeWishlist });
-    } catch (error) {
-      setModalMessage({ title: "찜 삭제 실패", description: FAIL.removeWishlist });
-    } finally {
-      setIsOpen(!isOpen);
-    }
-  };
+  const onSubmit = (data: FieldValues) => {
+    const bidData = {
+      memberId: Number(userid),
+      currentAuctionPrice: Number(data.currentAuctionPrice),
+    };
 
-  const handleDelete = async (id: number) => {
-    try {
-      await authInstance.delete(API_PATHS.products.default(id));
-      setModalMessage({ title: "상품 삭제 성공", description: SUCCESS.delete });
-    } catch (error) {
-      setModalMessage({ title: "상품 삭제 실패", description: FAIL.delete });
+    mutate(bidData);
+
+    if (error) {
+      setModalMessage({ title: "상품 입찰 실패", description: SUCCESS.bid });
+    } else {
+      setCurrentAuctionPrice(bidData.currentAuctionPrice);
+      setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bid });
+      reset();
     }
   };
 
@@ -274,15 +306,10 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                   >
                     <EditIcon />
                   </Link>
-
-                  <DeleteIcon
-                    onClick={() => {
-                      setIsOpen(true);
-                      setModalMessage({
-                        title: "상품 삭제",
-                        description: "상품을 삭제하시겠습니까?",
-                      });
-                    }}
+                  <DeleteButton
+                    data={data}
+                    modalMessage={modalMessage}
+                    setModalMessage={setModalMessage}
                   />
                 </div>
               )}
@@ -298,26 +325,17 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
               ? data.productStatus === "BEFORE"
                 ? formatTime(data.closedAt) + " 경매종료"
                 : AUCTION.end
-              : AUCTION.isnot}
+              : data.productStatus === "BEFORE"
+              ? AUCTION.isnot
+              : AUCTION.end}
           </p>
           <div className="add_wishlist">
-            <div className="wishlist_box">
-              <div className="gray icon_box">
-                <HeartIcon />
-                <span>{wishCount}</span>
-              </div>
-            </div>
-            {isLogin && Number(userid) !== data.memberId && (
-              <Button
-                $icon={<HeartIcon />}
-                $text={loginMembersWish ? "찜 삭제" : "찜"}
-                $design="yellow"
-                type="button"
-                onClick={() => {
-                  loginMembersWish ? removeWishlist(data.productId) : addWishlist(data.productId);
-                }}
-              />
-            )}
+            <WishCount
+              isLogin={isLogin}
+              data={data}
+              setIsOpen={setIsOpen}
+              setModalMessage={setModalMessage}
+            />
           </div>
           {data.auction && (
             <div className="auction">
@@ -325,16 +343,16 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                 <div className="price">
                   <span>현재 입찰가</span>
                   <span className="price_number">
-                    {data.currentAuctionPrice?.toLocaleString() + "원"}
+                    {currentAuctionPrice?.toLocaleString() + "원"}
                   </span>
                 </div>
-                {isLogin && Number(userid) !== data.memberId && (
+                {isLogin && Number(userid) !== data.memberId && data.productStatus === "BEFORE" && (
                   <Button
                     $text="입찰하기"
                     $design="black"
                     type="button"
                     onClick={() => {
-                      isLogin ? undefined : navigate("/login");
+                      isLogin ? openBidModal() : navigate("/login");
                     }}
                   />
                 )}
@@ -342,7 +360,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
               <div className="create_at">
                 <div className="time">
                   <span className="gray">경매 시작 시간</span>
-                  <span className="price_number  gray">{formatTime(data.createAt)}</span>
+                  <span className="price_number  gray">{formatTime(data.createdAt)}</span>
                 </div>
               </div>
               {/* <div className="price">
@@ -361,7 +379,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                 {data.immediatelyBuyPrice.toLocaleString() + "원"}
               </span>
             </div>
-            {isLogin && Number(userid) !== data.memberId && (
+            {isLogin && Number(userid) !== data.memberId && data.productStatus === "BEFORE" && (
               <Button
                 $text="즉시구매"
                 $design="black"
@@ -379,40 +397,38 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
         <>
           <h4>{modalMessage.title}</h4>
           <p>{modalMessage.description}</p>
-          <div className="button">
-            {modalMessage.title === "상품 삭제" && (
-              <>
-                <Button
-                  $design="outline"
-                  $text="취소"
-                  type="button"
-                  onClick={() => {
-                    setIsOpen(!isOpen);
-                  }}
-                />
-                <Button
-                  $design="black"
-                  $text="확인"
-                  type="button"
-                  onClick={() => {
-                    handleDelete(data.productId);
-                  }}
-                />
-              </>
-            )}
-            {modalMessage.title !== "상품 삭제" && (
+          {modalMessage.title === "상품 입찰" ? (
+            <>
+              <TextInput
+                type="text"
+                id="currentAuctionPrice"
+                register={register}
+                title=""
+                options={{
+                  required: REQUIRED.bid,
+                  onChange: (event) => allowOnlyNumber(event),
+                  min: {
+                    value: minValue,
+                    message: MIN.bid(5),
+                  },
+                }}
+                defaultValue={minValue.toString()}
+                formState={formState}
+              />
+              <Button $design="black" $text="입찰" type="button" onClick={handleSubmit(onSubmit)} />
+            </>
+          ) : (
+            <div className="button">
               <Button
                 $design="black"
                 $text="확인"
                 type="button"
                 onClick={() => {
-                  modalMessage.title === "상품 삭제 성공"
-                    ? navigate("/product")
-                    : setIsOpen(!isOpen);
+                  setIsOpen(!isOpen);
                 }}
               />
-            )}
-          </div>
+            </div>
+          )}
         </>
       </Modal>
     </>
