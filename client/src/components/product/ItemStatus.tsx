@@ -154,6 +154,10 @@ const StyledItemStatus = styled.section`
     justify-content: center;
   }
 
+  .error_message {
+    font-size: ${FONT_SIZE.font_16};
+  }
+
   @media (max-width: 30rem) {
     .current_price,
     .buy_it_now_price {
