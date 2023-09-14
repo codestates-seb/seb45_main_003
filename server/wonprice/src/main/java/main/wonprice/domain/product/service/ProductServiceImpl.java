@@ -38,23 +38,33 @@ public class ProductServiceImpl implements ProductService {
     private final NotificationService notificationService;
     private final BidRepository bidRepository;
 
-    /*
-        상품 등록
-        - createAt(등록시간): now()
-     */
+    // 상품 등록
     @Override
     public Product save(Product product) {
+        // [상품의 카테고리가 존재하고, category_id가 null이 아닐 경우] 카테고리 등록
         if (product.getCategory().getCategoryId() != null) {
             Category category = categoryService.findById(product.getCategory().getCategoryId());
             product.setCategory(category);
         }
 
-        // auction(경매여부): true 일 경우에만 경매 종료일, 시작가 등록 가능 ,, 아닐 경우 null
+        // 상품 등록 시, [즉시구매가 >= 10억] 일 경우 예외처리
+        if (product.getImmediatelyBuyPrice() >= 1_000_000_000) {
+            throw new BusinessLogicException(ExceptionCode.PRODUCT_INVALID_PRICE);
+        }
+
+        // 경매 상품 등록 시, [auction(경매여부): true] 일 경우 경매 종료일, 시작가 등록
         if (product.getAuction()) {
             product.setClosedAt(product.getClosedAt());
             product.setCurrentAuctionPrice(product.getCurrentAuctionPrice());
         }
+
+        // 경매 상품 등록 시, [즉시 구매 가 <= 시작가] 일 경우 예외처리
+        if (product.getAuction() && product.getImmediatelyBuyPrice() <= product.getCurrentAuctionPrice()) {
+            throw new BusinessLogicException(ExceptionCode.PRODUCT_AUCTION_IMMEDIATELY_CURRENT_INVALID_PRICE);
+        }
+
         product.setCreatedAt(LocalDateTime.now());
+
         return productRepository.save(product);
     }
 
@@ -264,7 +274,7 @@ public class ProductServiceImpl implements ProductService {
         return findProduct;
     }
 
-//    회원 입찰 목록
+    //    회원 입찰 목록
     @Override
     public Page<Product> findMembersBidProducts(Pageable pageable, Long memberId) {
 
