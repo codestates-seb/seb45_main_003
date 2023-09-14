@@ -102,6 +102,19 @@ public class MemberController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{member-id}/bids")
+    public ResponseEntity findMembersBids(@RequestParam(defaultValue = "0") int page,
+                                              @RequestParam(defaultValue = "10") int size,
+                                              @PathVariable("member-id") Long memberId) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
+
+        Page<Product> products = productService.findMembersBidProducts(pageable, memberId);
+        Page<ProductResponseDto> response = products.map(productMapper::fromEntity);
+
+        return ResponseEntity.ok(response);
+    }
+
 //    회원 목록 조회
     @GetMapping("/all")
     public ResponseEntity getMembers(@RequestParam(defaultValue = "0") int page,

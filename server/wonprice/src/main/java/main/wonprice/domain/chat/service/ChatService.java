@@ -14,6 +14,7 @@ import main.wonprice.domain.chat.repository.ChatRoomRepository;
 import main.wonprice.domain.chat.repository.MessageRepository;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.repository.MemberRepository;
+import main.wonprice.domain.member.service.NotificationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +33,7 @@ public class ChatService {
     private final ChatParticipantRepository chatParticipantRepository;
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 //    private final ReadSequenceRepository readSequenceRepository;
 
     @Transactional
@@ -43,6 +45,7 @@ public class ChatService {
         chatRoom.setCreatedAt(LocalDateTime.now());
 
         ChatRoom saveChatRoom = chatRoomRepository.save(chatRoom);
+        notificationService.createNotificationWithChatRoom(saveChatRoom);
 
         return saveChatRoom.getChatRoomId();
     }
