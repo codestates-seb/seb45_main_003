@@ -30,7 +30,7 @@ export const SUCCESS = {
 export const FAIL = {
   post: "상품 등록에 실패했습니다.",
   review: "후기 작성에 실패했습니다.",
-  update: "상품 수정에 실패했습니다.",
+  update: "입찰자가 존재할 경우 상품을 수정할 수 없습니다.",
   addWishlist: "상품을 찜 목록에 추가하지 못했습니다.",
   removeWishlist: "상품을 찜 목록에서 삭제할 수 없습니다.",
   delete: "상품 삭제에 실패했습니다.",
