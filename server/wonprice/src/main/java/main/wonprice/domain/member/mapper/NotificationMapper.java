@@ -81,6 +81,7 @@ public interface NotificationMapper {
                             .notificationType(NotificationType.PRODUCT)
                             .referenceId(product.getProductId())
                             .createdAt(LocalDateTime.now())
+                            .content(product.getTitle() + " 상품 정보가 수정되었습니다")
                             .isRead(false)
                             .member(wish.getMember()).build()
             );
