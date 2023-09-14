@@ -18,6 +18,7 @@ import { formatTime } from "../../util/date";
 import ProductStatus from "../common/ProductStatus";
 import { CustomSwiperProps } from "../mainPage/carousel/Carousel";
 import Bid from "./Bid";
+import BuyNow from "./BuyNow";
 import DeleteButton from "./DeleteButton";
 import { ProductData } from "./List";
 import WishCount from "./WishCount";
@@ -311,65 +312,9 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             </div>
           )}
 
-          <div className="buy_it_now_price">
-            <div className="price">
-              <span className="price_number_title gray">즉시 구매가</span>
-              <span className="price_number">
-                {data.immediatelyBuyPrice.toLocaleString() + "원"}
-              </span>
-            </div>
-            {isLogin && Number(userid) !== data.memberId && data.productStatus === "BEFORE" && (
-              <Button
-                $text="즉시구매"
-                $design="black"
-                type="button"
-                onClick={() => {
-                  isLogin ? undefined : navigate("/login");
-                }}
-              />
-            )}
-          </div>
+          <BuyNow data={data} />
         </div>
       </StyledItemStatus>
-
-      <Modal {...{ isOpen, closeModal, toggleModal }}>
-        <>
-          <h4>{modalMessage.title}</h4>
-          <p>{modalMessage.description}</p>
-          {modalMessage.title === "상품 입찰" ? (
-            <>
-              <TextInput
-                type="text"
-                id="currentAuctionPrice"
-                register={register}
-                title=""
-                options={{
-                  required: REQUIRED.bid,
-                  onChange: (event) => allowOnlyNumber(event),
-                  min: {
-                    value: minValue,
-                    message: MIN.bid(5),
-                  },
-                }}
-                defaultValue={minValue.toString()}
-                formState={formState}
-              />
-              <Button $design="black" $text="입찰" type="button" onClick={handleSubmit(onSubmit)} />
-            </>
-          ) : (
-            <div className="button">
-              <Button
-                $design="black"
-                $text="확인"
-                type="button"
-                onClick={() => {
-                  setIsOpen(!isOpen);
-                }}
-              />
-            </div>
-          )}
-        </>
-      </Modal>
     </>
   );
 };
