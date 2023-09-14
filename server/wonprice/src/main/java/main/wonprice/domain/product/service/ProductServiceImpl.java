@@ -3,6 +3,8 @@ package main.wonprice.domain.product.service;
 import lombok.RequiredArgsConstructor;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
+import main.wonprice.domain.chat.entity.ChatRoom;
+import main.wonprice.domain.chat.entity.RoomStatus;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
@@ -18,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -223,5 +226,37 @@ public class ProductServiceImpl implements ProductService {
         product.setBuyerId(request.getMemberId());
 
         return productRepository.save(product);
+    }
+
+
+    // 대표 - 채팅방 안에서 "거래 완료" 버튼 클릭 시 해당 Product AFTER로 Update
+    @Override
+    @Transactional
+    public void updateCompletedProduct(Long productId, ChatRoom chatRoom) {
+        Product findProduct = productRepository.findById(productId).orElseThrow();
+
+        chatRoom.setStatus(RoomStatus.CLOSE);
+
+        findProduct.setStatus(ProductStatus.AFTER);
+    }
+
+    // 대표 - 현재 시간이 경매 종료 시간을 지났을 경우 해당 값을 찾기 위한 로직
+    @Override
+    public List<Product> getCompletedAuction() {
+        List<Product> checkCompletedAuction = productRepository.findByClosedAtIsBeforeAndStatus(LocalDateTime.now(), ProductStatus.BEFORE);
+
+        return checkCompletedAuction;
+    }
+
+    // 대표 - 즉시구매
+    @Override
+    @Transactional
+    public Product immediatelyBuy(Long productId, Member member) {
+        Product findProduct = findExistsProduct(productId);
+
+        findProduct.setBuyerId(member.getMemberId());
+        findProduct.setStatus(ProductStatus.TRADE);
+
+        return findProduct;
     }
 }

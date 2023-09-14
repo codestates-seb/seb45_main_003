@@ -7,9 +7,9 @@ import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
 import { dropDownState } from "../../atoms/atoms"; // loginState 추가
 import MenuItem from "../mainPage/dropdownMenu/MenuItem";
+import Notifications from "../notification/notifictaion";
 import { DropdownState } from "./DropdownState";
 import ProfileButton from "./LoginProfile";
-import Notifications from "../notification/notifictaion";
 // import axios from "axios";
 
 // 최 상단 헤더의 하단 경계선 스타일
@@ -51,9 +51,8 @@ const StyledHeader = styled.header`
     z-index: 2;
     border-radius: 0.375rem;
     /* border: 1px solid var(--cool-gray-20, #dde1e6); */
-    margin: 0.375rem;
+    margin: 0.375rem 0 0;
     max-width: 22rem;
-    width: 25%;
     display: flex;
     justify-content: center;
 
