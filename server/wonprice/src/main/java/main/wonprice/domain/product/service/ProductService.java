@@ -1,5 +1,6 @@
 package main.wonprice.domain.product.service;
 
+import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
@@ -40,7 +41,7 @@ public interface ProductService {
 
     Product updateCurrentAuctionPrice(Long productId, BidRequestDto request);
 
-    void updateCompletedProduct(Long productId);
+    void updateCompletedProduct(Long productId, ChatRoom chatRoom);
 
     List<Product> getCompletedAuction();
 

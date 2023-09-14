@@ -3,6 +3,8 @@ package main.wonprice.domain.product.service;
 import lombok.RequiredArgsConstructor;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
+import main.wonprice.domain.chat.entity.ChatRoom;
+import main.wonprice.domain.chat.entity.RoomStatus;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
@@ -220,8 +222,10 @@ public class ProductServiceImpl implements ProductService {
     // 대표 - 채팅방 안에서 "거래 완료" 버튼 클릭 시 해당 Product AFTER로 Update
     @Override
     @Transactional
-    public void updateCompletedProduct(Long productId) {
+    public void updateCompletedProduct(Long productId, ChatRoom chatRoom) {
         Product findProduct = productRepository.findById(productId).orElseThrow();
+
+        chatRoom.setStatus(RoomStatus.CLOSE);
 
         findProduct.setStatus(ProductStatus.AFTER);
     }
