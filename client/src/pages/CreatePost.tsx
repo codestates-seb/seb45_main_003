@@ -1,4 +1,4 @@
-import UploadForm from "../components/post/UploadForm";
+import UploadForm from "../components/product/UploadForm";
 
 const CreatePost = (): JSX.Element => {
   return <UploadForm />;

@@ -1,8 +1,8 @@
 //드롭다운 메뉴 아이템
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import AddButton from "../../../assets/images/Add.png";
-import { CATEGORY } from "../../../constants/category";
+import AddButton from "../../assets/images/Add.png";
+import { CATEGORY } from "../../constants/category";
 
 // import myImage from "../../../assets/images/Img1.png";
 

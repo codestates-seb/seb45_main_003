@@ -5,8 +5,8 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
 import { dropDownState, toSignup } from "../../atoms/atoms";
-import MenuItem from "../mainPage/dropdownMenu/MenuItem";
 import { DropdownState } from "./DropdownState";
+import MenuItem from "./MenuItem";
 
 // 헤더 하단으 경계 스타일
 const StyledBorder = styled.div`

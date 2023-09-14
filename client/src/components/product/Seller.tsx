@@ -1,9 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import NoProfileImage from "../../assets/images/NoProfileImage.png";
-import Button from "../../components/common/Button";
 import { COLOR } from "../../constants/color";
-import { ProductData } from "./List";
+import Button from "../common/Button";
+import { ProductData } from "../productList/List";
 
 type SellerProps = {
   data: ProductData;

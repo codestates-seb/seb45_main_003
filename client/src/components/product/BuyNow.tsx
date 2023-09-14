@@ -9,7 +9,7 @@ import { authInstance } from "../../interceptors/interceptors";
 import { getUserId } from "../../util/auth";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import { ProductData } from "./List";
+import { ProductData } from "../productList/List";
 
 type BuyNowProps = {
   data: ProductData;

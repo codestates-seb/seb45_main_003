@@ -9,7 +9,7 @@ import { useModal } from "../../hooks/useModal";
 import { authInstance } from "../../interceptors/interceptors";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import { ProductData } from "./List";
+import { ProductData } from "../productList/List";
 
 type DeleteButtonProps = {
   data: ProductData;

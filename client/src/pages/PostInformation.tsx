@@ -1,4 +1,4 @@
-import Item from "../components/post/Item";
+import Item from "../components/product/Item";
 
 const PostInformation = (): JSX.Element => {
   return (

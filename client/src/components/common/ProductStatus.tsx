@@ -1,6 +1,6 @@
 import { AUCTION } from "../../constants/systemMessage";
 import { formatTime } from "../../util/date";
-import { ProductData } from "../post/List";
+import { ProductData } from "../productList/List";
 import ProductStatusIcon from "./ProductStatusIcon";
 
 type ProductStatusProps = {
