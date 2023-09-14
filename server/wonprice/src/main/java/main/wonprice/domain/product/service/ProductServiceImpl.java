@@ -9,8 +9,10 @@ import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.NotificationService;
 import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
+import main.wonprice.domain.product.entity.Bid;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.entity.ProductStatus;
+import main.wonprice.domain.product.repository.BidRepository;
 import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.domain.product.repository.ProductSpecification;
 import main.wonprice.exception.BusinessLogicException;
@@ -36,6 +38,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
     private final NotificationService notificationService;
+    private final BidRepository bidRepository;
 
     /*
         상품 등록
@@ -261,5 +264,14 @@ public class ProductServiceImpl implements ProductService {
         findProduct.setStatus(ProductStatus.TRADE);
 
         return findProduct;
+    }
+
+//    회원 입찰 목록
+    @Override
+    public Page<Product> findMembersBidProducts(Pageable pageable, Long memberId) {
+
+        Page<Bid> bids = bidRepository.findAllByMemberMemberId(pageable, memberId);
+
+        return bids.map(bid -> productRepository.findById(bid.getProductId()).orElseThrow());
     }
 }

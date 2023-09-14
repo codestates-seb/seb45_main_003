@@ -46,5 +46,7 @@ public interface ProductService {
     List<Product> getCompletedAuction();
 
     Product immediatelyBuy(Long productId, Member member);
+
+    Page<Product> findMembersBidProducts(Pageable pageable, Long memberId);
 }
 
