@@ -53,13 +53,24 @@ const CategorySelect = () => {
           <StorefrontIcon />
           {isMobile ? "" : "경매중인 상품을 확인해보세요"}
         </p>
-        <div className="select">
+        <div className="custom_select">
           <select
             onChange={(event) => {
-              const path = CATEGORY[event?.target.value]?.path || "/product";
-              navigate(path);
+              const value = event?.target.value;
+
+              switch (value) {
+                case "카테고리 선택":
+                  break;
+                case "전체 상품":
+                  navigate("/product?page=1&size=10");
+                  break;
+                default:
+                  navigate(CATEGORY[value]?.path);
+                  break;
+              }
             }}
           >
+            <option defaultValue={"카테고리 선택"}>카테고리 선택</option>
             <option value="전체 상품">전체 상품</option>
             {Object.keys(CATEGORY).map((category) => {
               return (

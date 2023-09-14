@@ -16,7 +16,7 @@ const Container = styled.div`
 
 const ChatRoomHttp: React.FC = () => {
   const chatRoomId = useRecoilValue(currentChatRoomIdState);
-  const [messages, setMessages] = useState<MessageData>({ messageList: [], sequence: 0 });
+  const [messages, setMessages] = useState<MessageData>({ messageList: [], sequence: 0, status });
 
   const memberId = getUserId();
 
@@ -71,6 +71,7 @@ const ChatRoomHttp: React.FC = () => {
               owner={messageItem.senderId === Id ? "user" : "other"}
               message={messageItem.content}
               time={FormatTimeOrDate(messageItem.createdAt || null)}
+              isRead={messageItem.messageId! <= messages.sequence}
             />
           ))
         )}
@@ -78,5 +79,4 @@ const ChatRoomHttp: React.FC = () => {
     </div>
   );
 };
-
 export default ChatRoomHttp;

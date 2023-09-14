@@ -74,7 +74,7 @@ input[type=number]::-webkit-inner-spin-button{-webkit-appearance: none;margin: 0
 textarea {
   resize: none;
 }
-.select {
+.custom_select {
   display: flex;
   position: relative;
   

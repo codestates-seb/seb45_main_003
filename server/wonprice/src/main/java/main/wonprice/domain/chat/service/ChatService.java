@@ -8,6 +8,7 @@ import main.wonprice.domain.chat.dto.message.MessageDto;
 import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.chat.entity.Message;
+import main.wonprice.domain.chat.entity.RoomStatus;
 import main.wonprice.domain.chat.repository.ChatParticipantRepository;
 import main.wonprice.domain.chat.repository.ChatRoomRepository;
 import main.wonprice.domain.chat.repository.MessageRepository;
@@ -16,6 +17,7 @@ import main.wonprice.domain.member.repository.MemberRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,7 +35,12 @@ public class ChatService {
 //    private final ReadSequenceRepository readSequenceRepository;
 
     @Transactional
-    public Long createChatRoom(ChatRoom chatRoom) {
+    public Long createChatRoom(Long productId) {
+
+        /* 대표 아래 Mapper 수정 예정 */
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.setProductId(productId);
+        chatRoom.setCreatedAt(LocalDateTime.now());
 
         ChatRoom saveChatRoom = chatRoomRepository.save(chatRoom);
 
@@ -56,13 +63,14 @@ public class ChatService {
     }
 
     @Transactional
-    public void deleteChatRoom(Long chatRoomId, Long memberId) {
+    public void deleteChatRoom(Long chatRoomId, Member member) {
         ChatRoom findChatRoom = findChatRoom(chatRoomId);
 
-//        ChatParticipant deleteChatRoom = chatParticipantRepository.findByMemberAndChatRoom(memberId, findChatRoom);
+        ChatParticipant deleteChatRoom = chatParticipantRepository.findByMemberAndChatRoom(member, findChatRoom);
 
-//        deleteChatRoom.setDeletedAt(LocalDateTime.now());
+        deleteChatRoom.setDeletedAt(LocalDateTime.now());
     }
+
     public ChatGetResponse findMessages(Long chatRoomId, Long memberId) {
         ChatRoom findChatRoom = findChatRoom(chatRoomId);
 
@@ -73,12 +81,15 @@ public class ChatService {
 
         List<Message> findMessages = messageRepository.findByChatRoom(findChatRoom);
 
+        RoomStatus status = findChatRoom.getStatus();
+        LocalDateTime createdAt = findChatRoom.getCreatedAt();
+
         List<MessageDto> messageList = findMessages.stream()
                 .map(o -> new MessageDto(o))
                 .collect(Collectors.toList());
 
 //        log.info("ㄷㅍ : " + currentSequence);
-        ChatGetResponse chatGetResponse = new ChatGetResponse(messageList, currentSequence);
+        ChatGetResponse chatGetResponse = new ChatGetResponse(messageList, currentSequence, status, createdAt);
 
         return chatGetResponse;
     }
@@ -97,5 +108,17 @@ public class ChatService {
         findChatParticipant.setCurrentSequence(messageId);
     }
 
+    @Transactional
+    public void insertChatParticipant(Long chatRoomId, Member member) {
+        ChatRoom findChatRoom = findChatRoom(chatRoomId);
 
+        /* 대표 아래 매퍼 수정 예정 */
+
+        ChatParticipant chatParticipant = new ChatParticipant();
+        chatParticipant.setMember(member);
+        chatParticipant.setChatRoom(findChatRoom);
+        chatParticipant.setCurrentSequence(0L);
+
+        chatParticipantRepository.save(chatParticipant);
+    }
 }
