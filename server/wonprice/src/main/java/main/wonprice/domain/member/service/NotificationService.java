@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.member.entity.Notification;
+import main.wonprice.domain.member.entity.NotificationType;
 import main.wonprice.domain.member.entity.Review;
 import main.wonprice.domain.member.mapper.NotificationMapper;
 import main.wonprice.domain.member.repository.NotificationRepository;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -94,10 +96,19 @@ public class NotificationService {
 //    입찰 시 기존 입찰했던 사람들, 판매글 주인에게 알림 생성
     public List<Notification> createNotificationWithBid(Bid bid) {
 
-        Product product = productRepository.findById(bid.getProductId()).orElseThrow();
-        List<Bid> bids = bidRepository.findAllByProductId(product.getProductId());
+        Product product = productRepository.findById(bid.getProduct().getProductId()).orElseThrow();
+        List<Bid> bids = bidRepository.findAllByProductProductId(product.getProductId());
 
         List<Notification> notifications = mapper.bidToNotification(product, bids);
+
+//        기존 판매글의 입찰 알람 삭제 표시
+//        notificationRepository.deleteAllByMemberAndNotificationTypeAndReferenceId(product.getSeller(), NotificationType.PRODUCT, product.getProductId());
+        List<Notification> notificationList = notificationRepository
+                .findAllByMemberAndNotificationTypeAndReferenceId(product.getSeller(), NotificationType.PRODUCT, product.getProductId());
+
+        for (Notification notification : notificationList) {
+            notification.setDeletedAt(LocalDateTime.now());
+        }
 
         return notificationRepository.saveAll(notifications);
     }
