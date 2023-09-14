@@ -13,6 +13,7 @@ export const REQUIRED = {
 
 export const CONFIRM = {
   delete: "상품을 삭제하시겠습니까?",
+  buyItNow: "상품을 즉시 구매가에 구매하시겠습니까?",
 };
 
 export const SUCCESS = {
@@ -23,6 +24,7 @@ export const SUCCESS = {
   removeWishlist: "찜 목록에서 상품을 삭제했습니다",
   delete: "상품을 삭제하였습니다.",
   bid: "상품을 입찰하였습니다.",
+  buyItNow: "상품을 즉시구매가에 구매하였습니다.",
 };
 
 export const FAIL = {
@@ -33,6 +35,7 @@ export const FAIL = {
   removeWishlist: "상품을 찜 목록에서 삭제할 수 없습니다.",
   delete: "상품 삭제에 실패했습니다.",
   bid: "입찰에 실패했습니다.",
+  buyItNow: "즉시 구매에 실패했습니다.",
 };
 
 export const MAX = {

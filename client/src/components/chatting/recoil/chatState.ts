@@ -38,6 +38,8 @@ export interface MessageItem {
 export interface MessageData {
   messageList: MessageItem[];
   sequence: number;
+  status: string;
+  createdAt?: string;
 }
 
 export const chatState = atom<MessageItem[]>({

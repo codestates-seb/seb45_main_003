@@ -12,10 +12,9 @@ export interface PaginationReturn {
 }
 
 export const usePagination = (): PaginationReturn => {
-  const ITEMS_PER_VIEW = 10;
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
-  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) - 1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
 
   //카테고리 변경시 현재페이지 초기화
@@ -35,14 +34,14 @@ export const usePagination = (): PaginationReturn => {
       return;
     }
     setCurrentPage(pageNumber);
-    navigate(`?page=${pageNumber + 1}&size=${ITEMS_PER_VIEW}`);
+    navigate(`?page=${pageNumber + 1}`);
     scrollToTop();
   };
 
   const prevPageHandler = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
-      navigate(`?page=${currentPage}&size=${ITEMS_PER_VIEW}`);
+      navigate(`?page=${currentPage}`);
       scrollToTop();
     }
   };
@@ -50,7 +49,7 @@ export const usePagination = (): PaginationReturn => {
   const nextPageHandler = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
-      navigate(`?page=${currentPage + 2}&size=${ITEMS_PER_VIEW}`);
+      navigate(`?page=${currentPage + 2}`);
       scrollToTop();
     }
   };
