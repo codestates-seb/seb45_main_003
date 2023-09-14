@@ -4,6 +4,68 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components"; // 수정된 부분
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { getUserId } from "../../../../util/auth";
+import { useModal } from "../../../../hooks/useModal";
+import { ReactComponent as Sun } from "../../../../assets/images/chatting/Sun.svg";
+
+const ModalContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const ModalContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5625rem;
+  width: 45.5625rem;
+  height: 20.5625rem;
+  flex-shrink: 0;
+  border-radius: 6px;
+  border: 0.0625rem solid #e0e0e0;
+  background: #f7f7f7;
+  .ModalText {
+    color: #222;
+    font-family: Pretendard Variable;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    display: flex;
+    flex-direction: row;
+    .textColor {
+      color: #ffb300;
+    }
+  }
+  .ModalTextS {
+    color: #bdbdbd;
+    font-family: Pretendard Variable;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+  }
+  .ModalButton {
+    display: flex;
+    flex-direction: row;
+    gap: 2.5rem;
+    .ButtonModal {
+      background-color: #ffb300;
+      color: #fff;
+      &:hover {
+        color: #222;
+        background-color: #ffb300;
+      }
+    }
+  }
+`;
 
 const Button = styled.button`
   display: flex;
@@ -21,7 +83,7 @@ const Button = styled.button`
   font-size: 1rem;
   font-style: normal;
   font-weight: 700;
-  line-height: 20px; /* 125% */
+  line-height: 1.25rem; /* 125% */
   .IconClose {
     color: #ffb300;
   }
@@ -62,8 +124,10 @@ interface ChatButtonsProps {
 const ChatButtons: React.FC<ChatButtonsProps> = ({ roomId, initialStatus }) => {
   const [status, setStatus] = useState<string>(initialStatus); // 초기 상태는 initialStatus로 설정
   const memberId = getUserId();
+  const { isOpen, toggleModal } = useModal();
 
   const handleTradeComplete = async () => {
+    toggleModal(); // 모달을 열고
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/chat/completed/${roomId}`,
@@ -91,6 +155,27 @@ const ChatButtons: React.FC<ChatButtonsProps> = ({ roomId, initialStatus }) => {
 
   return (
     <div>
+      {isOpen && (
+        <ModalContainer>
+          <ModalContent>
+            <Sun />
+            <div className="ModalText">
+              <div className="ModalText">
+                거래를 <div className="textColor">&nbsp; 완료</div>하고 후기를 작성 하시겠습니까?
+              </div>
+            </div>
+            <div className="ModalTextS">후기는 후기작성 페이지에서 재 작성 가능합니다.</div>
+            <div className="ModalButton">
+              <Button className="ButtonModal" onClick={toggleModal}>
+                나중에 하기
+              </Button>
+              <Button className="ButtonModal" onClick={toggleModal}>
+                확인
+              </Button>
+            </div>
+          </ModalContent>
+        </ModalContainer>
+      )}
       {status === "ACTIVE" ? (
         <Button>
           <span onClick={handleTradeComplete}>거래 완료</span>
