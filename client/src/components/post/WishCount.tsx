@@ -3,22 +3,23 @@ import { useMutation } from "react-query";
 import { ReactComponent as HeartIcon } from "../../assets/images/Heart.svg";
 import { API_PATHS } from "../../constants/path";
 import { FAIL, SUCCESS } from "../../constants/systemMessage";
+import { useModal } from "../../hooks/useModal";
 import { authInstance } from "../../interceptors/interceptors";
 import { getUserId } from "../../util/auth";
 import Button from "../common/Button";
+import Modal from "../common/Modal";
 import { ProductData } from "./List";
 
 type WishCountProps = {
   data: ProductData;
   isLogin: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  setModalMessage: React.Dispatch<React.SetStateAction<{ title: string; description: string }>>;
 };
 
 const WishCount = (props: WishCountProps) => {
-  const { data, setIsOpen, isLogin, setModalMessage } = props;
+  const { data, isLogin } = props;
+  const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const userid = getUserId();
-
+  const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const [loginMembersWish, setLoginMembersWish] = useState(data.loginMembersWish || false);
   const [wishCount, setwishCount] = useState(data.wishCount || 0);
 
@@ -75,6 +76,21 @@ const WishCount = (props: WishCountProps) => {
           }}
         />
       )}
+      <Modal {...{ isOpen, closeModal, toggleModal }}>
+        <>
+          <h4>{modalMessage.title}</h4>
+          <p>{modalMessage.description}</p>
+
+          <Button
+            $design="black"
+            $text="확인"
+            type="button"
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
+          />
+        </>
+      </Modal>
     </>
   );
 };

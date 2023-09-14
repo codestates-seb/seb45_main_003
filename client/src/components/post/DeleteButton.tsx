@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as DeleteIcon } from "../../assets/images/Close.svg";
+import { CATEGORY } from "../../constants/category";
 import { API_PATHS } from "../../constants/path";
 import { CONFIRM, FAIL, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
@@ -11,11 +13,10 @@ import { ProductData } from "./List";
 
 type DeleteButtonProps = {
   data: ProductData;
-  modalMessage: { [key: string]: string };
-  setModalMessage: React.Dispatch<React.SetStateAction<{ title: string; description: string }>>;
 };
 
-const DeleteButton = ({ data, modalMessage, setModalMessage }: DeleteButtonProps) => {
+const DeleteButton = ({ data }: DeleteButtonProps) => {
+  const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const { mutate, error } = useMutation(async (id: number) => {
     await authInstance.delete(API_PATHS.products.default(id));
@@ -67,7 +68,7 @@ const DeleteButton = ({ data, modalMessage, setModalMessage }: DeleteButtonProps
               />
             </div>
           )}
-          {modalMessage.title === "상품 삭제 성공" && (
+          {modalMessage.title !== "상품 삭제" && (
             <Button
               $design="black"
               $text="확인"

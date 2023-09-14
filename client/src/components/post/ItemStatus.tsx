@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { FieldValues, useForm } from "react-hook-form";
-import { useMutation } from "react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import SwiperCore from "swiper";
@@ -15,16 +13,11 @@ import { ReactComponent as ViewsIcon } from "../../assets/images/Views.svg";
 import { loginState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
-import { AUCTION, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
-import { useModal } from "../../hooks/useModal";
 import { getUserId } from "../../util/auth";
 import { formatTime } from "../../util/date";
-import { allowOnlyNumber } from "../../util/number";
-import Button from "../common/Button";
-import Modal from "../common/Modal";
-import TextInput from "../common/TextInput";
 import ProductStatus from "../common/ProductStatus";
 import { CustomSwiperProps } from "../mainPage/carousel/Carousel";
+import Bid from "./Bid";
 import DeleteButton from "./DeleteButton";
 import { ProductData } from "./List";
 import WishCount from "./WishCount";
@@ -55,7 +48,7 @@ const StyledItemStatus = styled.section`
     max-width: 27.5rem;
     width: 40%;
 
-    & > div:not(:first-child) {
+    & > div:not(:first-child, .date_or_status) {
       padding: 1.5rem 0;
       border-top: 1px solid ${COLOR.border};
     }
@@ -134,6 +127,13 @@ const StyledItemStatus = styled.section`
   .date_or_status {
     margin: 1rem 0;
     font-size: ${FONT_SIZE.font_18};
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+
+    span {
+      margin: 0;
+    }
   }
 
   .wishlist_box {
@@ -171,12 +171,12 @@ const StyledItemStatus = styled.section`
     gap: 1.5rem;
 
     .custom_swiper.swiper {
-      max-width: unset;
+      max-width: 40rem;
       width: 100% !important;
     }
 
     .item_status {
-      max-width: unset;
+      max-width: 40rem;
       width: 100%;
       box-sizing: border-box;
       padding: 01rem;
@@ -195,16 +195,8 @@ const StyledItemStatus = styled.section`
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
   const [currentAuctionPrice, setCurrentAuctionPrice] = useState(0);
-  const [minValue, setMinValue] = useState(currentAuctionPrice);
-
   const isLogin = useRecoilValue(loginState);
   const userid = getUserId();
-  const navigate = useNavigate();
-
-  const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
-  const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
-  const { register, handleSubmit, formState, reset } = useForm<FieldValues>();
-
   const [stompClient, setStompClient] = useState<Client | null>(null);
 
   //소켓 연결
@@ -233,46 +225,9 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
       stompClient.subscribe(`/topic/bid/${data.productId}`, (message) => {
         const newCurrentAuctionPrice = JSON.parse(message.body).body.currentAuctionPrice;
         setCurrentAuctionPrice(newCurrentAuctionPrice);
-        reset();
       });
     }
   }, [stompClient, data]);
-
-  //최소가 변경
-  useEffect(() => {
-    setMinValue(currentAuctionPrice + Math.ceil((currentAuctionPrice * 0.05) / 10) * 10);
-  }, [currentAuctionPrice]);
-
-  //데이터 전송
-  const sendWebSocketMessage = async (bidData: FieldValues) => {
-    if (stompClient) {
-      stompClient.send(`/app/bid/${data.productId}`, JSON.stringify(bidData));
-    }
-    return data;
-  };
-  const { mutate, error } = useMutation(sendWebSocketMessage);
-
-  const openBidModal = () => {
-    setIsOpen(true);
-    setModalMessage({ title: "상품 입찰", description: AUCTION.bid });
-  };
-
-  const onSubmit = (data: FieldValues) => {
-    const bidData = {
-      memberId: Number(userid),
-      currentAuctionPrice: Number(data.currentAuctionPrice),
-    };
-
-    mutate(bidData);
-
-    if (error) {
-      setModalMessage({ title: "상품 입찰 실패", description: SUCCESS.bid });
-    } else {
-      setCurrentAuctionPrice(bidData.currentAuctionPrice);
-      setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bid });
-      reset();
-    }
-  };
 
   //슬라이드 관련 설정
   SwiperCore.use([Pagination]);
@@ -307,11 +262,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                   >
                     <EditIcon />
                   </Link>
-                  <DeleteButton
-                    data={data}
-                    modalMessage={modalMessage}
-                    setModalMessage={setModalMessage}
-                  />
+                  <DeleteButton data={data} />
                 </div>
               )}
               <div className="gray">
@@ -325,12 +276,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             <ProductStatus data={data} />
           </div>
           <div className="add_wishlist">
-            <WishCount
-              isLogin={isLogin}
-              data={data}
-              setIsOpen={setIsOpen}
-              setModalMessage={setModalMessage}
-            />
+            <WishCount isLogin={isLogin} data={data} />
           </div>
           {data.auction && (
             <div className="auction">
@@ -342,13 +288,11 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                   </span>
                 </div>
                 {isLogin && Number(userid) !== data.memberId && data.productStatus === "BEFORE" && (
-                  <Button
-                    $text="입찰하기"
-                    $design="black"
-                    type="button"
-                    onClick={() => {
-                      isLogin ? openBidModal() : navigate("/login");
-                    }}
+                  <Bid
+                    data={data}
+                    stompClient={stompClient}
+                    currentAuctionPrice={currentAuctionPrice}
+                    setCurrentAuctionPrice={setCurrentAuctionPrice}
                   />
                 )}
               </div>
