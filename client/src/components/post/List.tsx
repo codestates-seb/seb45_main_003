@@ -1,5 +1,4 @@
 import axios from "axios";
-import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -8,9 +7,9 @@ import { loginState } from "../../atoms/atoms";
 import Loading from "../../components/common/Loading";
 import { CATEGORY } from "../../constants/category";
 import { COLOR } from "../../constants/color";
-import { API_PATHS } from "../../constants/path";
 import { usePagination } from "../../hooks/usePagination";
 import ErrorIndication from "../../pages/ErrorIndication";
+import { findCategory } from "../../util/category";
 import Button from "../common/Button";
 import Empty from "../common/Empty";
 import Pagination from "../common/Pagination";
@@ -155,52 +154,61 @@ const List = (): JSX.Element => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
 
+  const getCategoryId = (pathname: string) => {
+    const arr = pathname.split("/");
+    const id = CATEGORY[arr[arr.length - 1]]?.id || 0;
+
+    return id;
+  };
+
+  const getAPIPath = (id: number) => {
+    const path = id === 0 ? "/products" : `/products/category/${id}`;
+
+    return path;
+  };
+
+  const categoryId = getCategoryId(location.pathname);
+  const path = getAPIPath(categoryId);
+  const keyword = searchParams.get("keyword");
+
   const {
+    setTotalPages,
     currentPage,
     totalPages,
-    setTotalPages,
     pageChangeHandler,
     prevPageHandler,
     nextPageHandler,
   } = usePagination();
 
-  const currentCategory = location.pathname.slice(9);
-  const { isLoading, error, data, refetch } = useQuery<Data>(
-    ["productList", currentPage],
+  const { isLoading, error, data } = useQuery<Data>(
+    [
+      "productList",
+      {
+        category: categoryId,
+        page: currentPage,
+        keyword,
+        size: ITEMS_PER_VIEW,
+      },
+    ],
     async () => {
-      //쿼리스트링 불러오기
-      const currentPageParam = parseInt(searchParams.get("page") || "1");
-      const currentKeywordParam = searchParams.get("keyword") || "";
-      const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
-
-      //전체 상품과 카테고리, 검색 여부 구분해서 호출
-      let path = "";
-
-      if (location.pathname === "/product") {
-        path = API_PATHS.products.default("") + `?${pageQueryParam}`;
-      } else if (location.pathname.includes("/search")) {
-        path = API_PATHS.products.search(currentKeywordParam) + `&${pageQueryParam}`;
-      } else {
-        path = API_PATHS.products.category(CATEGORY[currentCategory].id) + `?${pageQueryParam}`;
-      }
-
-      const response = await axios.get(path);
-
-      // 토탈 페이지 정보가 변경될 때만 갱신
-      if (response.data?.totalPages !== totalPages) {
-        setTotalPages(response.data?.totalPages);
-      }
-
-      currentKeywordParam === ""
-        ? navigate(`?page=${currentPageParam}`)
-        : navigate(`?page=${currentPageParam}&keyword=${currentKeywordParam}`);
+      const params = { page: Number(searchParams.get("page")) - 1, size: ITEMS_PER_VIEW };
+      const response = keyword
+        ? await axios.get(`/products/search`, {
+            params: { ...params, keyword: keyword },
+          })
+        : await axios.get(path, {
+            params: params,
+          });
 
       return response.data;
     },
     {
-      staleTime: 60000,
+      onSuccess: (data) => {
+        setTotalPages(data.totalPages);
+      },
     },
   );
+
   const isLogin = useRecoilValue(loginState);
 
   const printTitle = (path: string) => {
@@ -212,13 +220,12 @@ const List = (): JSX.Element => {
       return "검색 결과";
     }
 
-    return CATEGORY[currentCategory].value;
-  };
+    const categoryName = findCategory(categoryId);
 
-  //페이지넘버, url, 검색데이터가 변할때마다 데이터 갱신
-  useEffect(() => {
-    refetch();
-  }, [location.pathname, location.search, currentPage]);
+    if (categoryName) {
+      return CATEGORY[categoryName].value;
+    }
+  };
 
   if (isLoading) {
     return <Loading />;

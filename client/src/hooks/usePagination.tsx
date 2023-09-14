@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export interface PaginationReturn {
   currentPage: number;
@@ -12,11 +12,16 @@ export interface PaginationReturn {
 }
 
 export const usePagination = (): PaginationReturn => {
-  const location = useLocation();
+  const ITEMS_PER_VIEW = 10;
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
-  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1") - 1);
+  const [currentPage, setCurrentPage] = useState(Number(searchParams.get("page")) - 1);
   const [totalPages, setTotalPages] = useState(0);
+
+  //카테고리 변경시 현재페이지 초기화
+  useEffect(() => {
+    setCurrentPage(Number(searchParams.get("page")) - 1);
+  }, [location.pathname]);
 
   //페이징 버튼 클릭시 화면 최상단으로 이동
   const scrollToTop = () => {
@@ -30,14 +35,14 @@ export const usePagination = (): PaginationReturn => {
       return;
     }
     setCurrentPage(pageNumber);
-    navigate(`?page=${pageNumber + 1}`);
+    navigate(`?page=${pageNumber + 1}&size=${ITEMS_PER_VIEW}`);
     scrollToTop();
   };
 
   const prevPageHandler = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
-      navigate(`?page=${currentPage}`);
+      navigate(`?page=${currentPage}&size=${ITEMS_PER_VIEW}`);
       scrollToTop();
     }
   };
@@ -45,14 +50,10 @@ export const usePagination = (): PaginationReturn => {
   const nextPageHandler = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
-      navigate(`?page=${currentPage + 2}`);
+      navigate(`?page=${currentPage + 2}&size=${ITEMS_PER_VIEW}`);
       scrollToTop();
     }
   };
-
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [location.pathname]);
 
   return {
     currentPage,

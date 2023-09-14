@@ -9,7 +9,7 @@ import "swiper/css";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import * as Webstomp from "webstomp-client";
+import Webstomp, { Client } from "webstomp-client";
 import { ReactComponent as EditIcon } from "../../assets/images/Edit.svg";
 import { ReactComponent as ViewsIcon } from "../../assets/images/Views.svg";
 import { loginState } from "../../atoms/atoms";
@@ -203,40 +203,50 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const { register, handleSubmit, formState, reset } = useForm<FieldValues>();
-  const socket = new WebSocket(process.env.REACT_APP_WEB_SOCKET_URL as string);
 
+  const [stompClient, setStompClient] = useState<Client | null>(null);
+
+  //소켓 연결
   useEffect(() => {
     if (data && data.currentAuctionPrice) {
       setCurrentAuctionPrice(data.currentAuctionPrice);
     }
+
+    if (data) {
+      const socket = new WebSocket(process.env.REACT_APP_WEB_SOCKET_URL as string);
+      const stomp = Webstomp.over(socket);
+
+      stomp.connect({}, () => {
+        setStompClient(stomp);
+      });
+
+      return () => {
+        stomp.disconnect(() => {});
+      };
+    }
   }, []);
 
-  console.log(data);
+  //소켓 구독
+  useEffect(() => {
+    if (stompClient && data) {
+      stompClient.subscribe(`/topic/bid/${data.productId}`, (message) => {
+        const newCurrentAuctionPrice = JSON.parse(message.body).body.currentAuctionPrice;
+        setCurrentAuctionPrice(newCurrentAuctionPrice);
+        reset();
+      });
+    }
+  }, [stompClient, data]);
 
+  //최소가 변경
   useEffect(() => {
     setMinValue(currentAuctionPrice + Math.ceil((currentAuctionPrice * 0.05) / 10) * 10);
   }, [currentAuctionPrice]);
 
-  useEffect(() => {
-    if (data) {
-      const stompClient = Webstomp.over(socket);
-      stompClient.connect({}, () => {
-        stompClient?.subscribe(`/topic/bid/${data.productId}`, (messege) => {
-          setCurrentAuctionPrice(JSON.parse(messege.body).body.currentAuctionPrice);
-          reset();
-        });
-      });
-
-      return () => {
-        stompClient.disconnect(() => {});
-      };
-    }
-  }, [data]);
-
+  //데이터 전송
   const sendWebSocketMessage = async (bidData: FieldValues) => {
-    const stompClient = Webstomp.over(socket);
-    stompClient.send(`/app/bid/${data.productId}`, JSON.stringify(bidData));
-
+    if (stompClient) {
+      stompClient.send(`/app/bid/${data.productId}`, JSON.stringify(bidData));
+    }
     return data;
   };
   const { mutate, error } = useMutation(sendWebSocketMessage);
@@ -288,7 +298,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
           <div className="title">
             <h1>{data.title}</h1>
             <div className="icon_box">
-              {isLogin && Number(userid) === data.memberId && data.productStatus === "BEFORE" && (
+              {isLogin && Number(userid) === data.memberId && (
                 <div className="gray">
                   <Link
                     to={{ pathname: "/create-post" }}
@@ -336,7 +346,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                     {currentAuctionPrice?.toLocaleString() + "원"}
                   </span>
                 </div>
-                {isLogin && Number(userid) !== data.memberId && (
+                {isLogin && Number(userid) !== data.memberId && data.productStatus === "BEFORE" && (
                   <Button
                     $text="입찰하기"
                     $design="black"

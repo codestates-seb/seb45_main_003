@@ -62,7 +62,7 @@ const CategorySelect = () => {
                 case "카테고리 선택":
                   break;
                 case "전체 상품":
-                  navigate("/product");
+                  navigate("/product?page=1&size=10");
                   break;
                 default:
                   navigate(CATEGORY[value]?.path);
@@ -70,9 +70,7 @@ const CategorySelect = () => {
               }
             }}
           >
-            <option value="카테고리 선택" selected>
-              카테고리 선택
-            </option>
+            <option defaultValue={"카테고리 선택"}>카테고리 선택</option>
             <option value="전체 상품">전체 상품</option>
             {Object.keys(CATEGORY).map((category) => {
               return (
