@@ -6,6 +6,7 @@ import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.chat.entity.RoomStatus;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.domain.member.service.NotificationService;
 import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
@@ -35,10 +36,11 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final MemberService memberService;
     private final NotificationService notificationService;
     private final BidRepository bidRepository;
 
-    // 상품 등록
+    // [예외처리 및 리팩토링 완료] 상품 등록
     @Override
     public Product save(Product product) {
         // [상품의 카테고리가 존재하고, category_id가 null이 아닐 경우] 카테고리 등록
@@ -47,18 +49,18 @@ public class ProductServiceImpl implements ProductService {
             product.setCategory(category);
         }
 
-        // 상품 등록 시, [즉시구매가 >= 10억] 일 경우 예외처리
+        // 상품 등록 시, [즉시구매가 >= 10억 일 경우] 예외처리
         if (product.getImmediatelyBuyPrice() >= 1_000_000_000) {
             throw new BusinessLogicException(ExceptionCode.PRODUCT_INVALID_PRICE);
         }
 
-        // 경매 상품 등록 시, [auction(경매여부): true] 일 경우 경매 종료일, 시작가 등록
+        // 경매 상품 등록 시, [auction(경매여부): true 일 경우] 경매 종료일, 시작가 등록
         if (product.getAuction()) {
             product.setClosedAt(product.getClosedAt());
             product.setCurrentAuctionPrice(product.getCurrentAuctionPrice());
         }
 
-        // 경매 상품 등록 시, [즉시 구매 가 <= 시작가] 일 경우 예외처리
+        // 경매 상품 등록 시, [즉시 구매 가 <= 시작가 일 경우] 예외처리
         if (product.getAuction() && product.getImmediatelyBuyPrice() <= product.getCurrentAuctionPrice()) {
             throw new BusinessLogicException(ExceptionCode.PRODUCT_AUCTION_IMMEDIATELY_CURRENT_INVALID_PRICE);
         }
@@ -144,24 +146,33 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.save(product);
     }
 
-    /*
-        상품 정보 수정
-        - 상품을 등록한 판매자만 상품 정보 수정 가능
-        - createdAt(등록시간): now()
-     */
+    // [예외처리 및 리팩토링 완료] 상품 정보 수정
     @Override
-    public Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member member) {
+    public Product updateOneById(Long productId, ProductRequestDto productRequestDto) {
+        Member member = memberService.findLoginMember();
+
         Product product = findExistsProduct(productId);
         product.setModifiedAt(LocalDateTime.now());
+
+        // 상품 정보 수정 시, [로그인 회원 != 상품 판매자 일 경우] 예외처리
+        if (!product.getSeller().getMemberId().equals(member.getMemberId())) {
+            throw new BusinessLogicException(ExceptionCode.PRODUCT_SELLER_NOT_SAME);
+        }
+
+        // 경매 상품 수정 시, [입찰자가 존재할 경우] 예외처리
+        if (product.getAuction() && product.getBuyerId() != null) {
+            throw new BusinessLogicException(ExceptionCode.PRODUCT_AUCTION_INVALID_MODIFIED);
+        }
+
         notificationService.createdNotificationWithWishProduct(product);
         return productRepository.save(product.update(productRequestDto));
     }
 
-    // 상품이 존재하는지 확인하는 메서드
+    // [예외처리 및 리팩토링 완료] 상품이 존재하는지 확인하는 메서드
     @Override
     public Product findExistsProduct(Long productId) {
-        Optional<Product> product = productRepository.findById(productId);
-        return product.orElseThrow();
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.PRODUCT_NOT_FOUND));
     }
 
     // 상품의 찜 갯수
