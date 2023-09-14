@@ -1,12 +1,15 @@
 package main.wonprice.domain.member.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.member.entity.Notification;
 import main.wonprice.domain.member.entity.Review;
 import main.wonprice.domain.member.mapper.NotificationMapper;
 import main.wonprice.domain.member.repository.NotificationRepository;
+import main.wonprice.domain.product.entity.Bid;
 import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.repository.BidRepository;
 import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
@@ -23,11 +26,13 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 @Transactional
+@Slf4j
 public class NotificationService {
 
     private final MemberService memberService;
     private final NotificationRepository notificationRepository;
     private final ProductRepository productRepository;
+    private final BidRepository bidRepository;
     private final NotificationMapper mapper;
 
     public Notification saveNotification(Notification notification) {
@@ -86,8 +91,15 @@ public class NotificationService {
         return notification;
     }
 
-    public Notification createNotification(Product product) {
-        return null;
+//    입찰 시 기존 입찰했던 사람들, 판매글 주인에게 알림 생성
+    public List<Notification> createNotificationWithBid(Bid bid) {
+
+        Product product = productRepository.findById(bid.getProductId()).orElseThrow();
+        List<Bid> bids = bidRepository.findAllByProductId(product.getProductId());
+
+        List<Notification> notifications = mapper.bidToNotification(product, bids);
+
+        return notificationRepository.saveAll(notifications);
     }
 
     //    채팅방 생성 되었을 때 -> 즉시 구매 요청 / 내 입찰가로 낙찰 -> 채팅방 생성
@@ -99,14 +111,10 @@ public class NotificationService {
         return notificationRepository.saveAll(notifications);
     }
 
-    //    내가 입찰했던 경매에 다른 사람이 입찰 했을 때 알림 생성
-    public List<Notification> createNotification() {
-        return null;
-    }
-
     //   내가 찜했던 상품 정보가 변경 되었을 때 (입찰 제외) 알림 생성
     public List<Notification> createdNotificationWithWishProduct(Product product) {
 
+        log.info("create notifications");
         List<Notification> notifications = mapper.wishProductToNotification(product);
 
         return notificationRepository.saveAll(notifications);
