@@ -8,7 +8,7 @@ import { authInstance } from "../../interceptors/interceptors";
 import { getUserId } from "../../util/auth";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import { ProductData } from "./List";
+import { ProductData } from "../productList/List";
 
 type WishCountProps = {
   data: ProductData;
@@ -23,11 +23,12 @@ const WishCount = (props: WishCountProps) => {
   const [loginMembersWish, setLoginMembersWish] = useState(data.loginMembersWish || false);
   const [wishCount, setwishCount] = useState(data.wishCount || 0);
 
-  const { mutate, error } = useMutation(async (id: number) => {
+  const submitData = async (id: number) => {
     loginMembersWish
       ? await authInstance.delete(API_PATHS.wishes.default(id))
       : await authInstance.post(API_PATHS.wishes.add, { productId: id });
-  });
+  };
+  const { mutate, error } = useMutation(submitData);
 
   const addWishlist = async (id: number) => {
     mutate(id);
@@ -80,7 +81,6 @@ const WishCount = (props: WishCountProps) => {
         <>
           <h4>{modalMessage.title}</h4>
           <p>{modalMessage.description}</p>
-
           <Button
             $design="black"
             $text="확인"

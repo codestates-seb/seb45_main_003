@@ -38,7 +38,9 @@ public class ChatController {
     public ResponseEntity postChatRoom(@RequestBody ChatPostRequest request) {
 //        log.info("chatPostDto : " + request.getProductId());
 
-        return new ResponseEntity(chatService.createChatRoom(request.getProductId()), HttpStatus.OK);
+        Product product = productService.findOneById(request.getProductId());
+
+        return new ResponseEntity(chatService.createChatRoom(product), HttpStatus.OK);
     }
 
     @GetMapping("/chat")
@@ -91,10 +93,9 @@ public class ChatController {
     }
 
     @DeleteMapping("/chat/{room-id}")
-    public void deleteChatRoom(@PathVariable("room-id") Long chatRoomId, @RequestParam Long memberId) {
-//        Member loginMember = memberService.findLoginMember();
-
-        Member member = memberService.findMember(memberId);
+    public void deleteChatRoom(@PathVariable("room-id") Long chatRoomId) {
+        Member member = memberService.findLoginMember();
+//        Member member = memberService.findMember(memberId);
 
         chatService.deleteChatRoom(chatRoomId, member);
     }

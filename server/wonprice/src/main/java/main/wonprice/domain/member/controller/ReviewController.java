@@ -1,11 +1,13 @@
 package main.wonprice.domain.member.controller;
 
 import lombok.AllArgsConstructor;
+import main.wonprice.domain.member.dto.MemberResponseDto;
 import main.wonprice.domain.member.dto.ReviewPatchDto;
 import main.wonprice.domain.member.dto.ReviewPostDto;
 import main.wonprice.domain.member.dto.ReviewResponseDto;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.Review;
+import main.wonprice.domain.member.mapper.MemberMapper;
 import main.wonprice.domain.member.mapper.ReviewMapper;
 import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.domain.member.service.ReviewService;
@@ -29,6 +31,7 @@ public class ReviewController {
     private final MemberService memberService;
     private final ProductServiceImpl productService;
     private final ReviewMapper mapper;
+    private final MemberMapper memberMapper;
 
     @PostMapping("/reviews")
     public ResponseEntity postReview(@RequestBody ReviewPostDto postDto) {
@@ -111,4 +114,13 @@ public class ReviewController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    //    리뷰 작성 페이지에서 필요한 상대방 정보 응답
+    @GetMapping("/reviews/products/{product-id}")
+    public ResponseEntity getReviewReceiver(@PathVariable("product-id") Long productId) {
+
+        Member findMember = reviewService.findReviewReceiver(productId);
+        MemberResponseDto response = memberMapper.memberToResponseDto(findMember);
+
+        return new ResponseEntity(response, HttpStatus.OK);
+    }
 }

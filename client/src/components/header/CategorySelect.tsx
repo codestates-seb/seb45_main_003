@@ -1,4 +1,5 @@
 import StorefrontIcon from "@mui/icons-material/Storefront";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { CATEGORY } from "../../constants/category";
@@ -45,6 +46,8 @@ const StyledCategorySelect = styled.div`
 const CategorySelect = () => {
   const navigate = useNavigate();
   const { isMobile } = useMobile();
+  const initialCategory = "카테고리 선택";
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
 
   return (
     <StyledCategorySelect>
@@ -59,15 +62,17 @@ const CategorySelect = () => {
               const value = event?.target.value;
 
               switch (value) {
-                case "카테고리 선택":
+                case initialCategory:
                   break;
                 default:
+                  setSelectedCategory(initialCategory);
                   navigate(CATEGORY[value]?.path);
                   break;
               }
             }}
+            value={selectedCategory}
           >
-            <option defaultValue={"카테고리 선택"}>카테고리 선택</option>
+            <option defaultValue={initialCategory}>{initialCategory}</option>
             {Object.keys(CATEGORY).map((category) => {
               return (
                 <option value={category} key={category}>

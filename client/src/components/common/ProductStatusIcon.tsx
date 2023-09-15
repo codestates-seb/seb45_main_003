@@ -16,12 +16,15 @@ const StyledProductStatus = styled.span<ProductStatusProps>`
   font-weight: 600;
 
   background: ${(props) => {
-    switch (props.$status) {
-      case "inProgress":
-        return COLOR.valid;
-      default:
-        return COLOR.gray_500;
+    if (props.$auction && props.$status === "inProgress") {
+      return COLOR.invalid;
     }
+
+    if (!props.$auction && props.$status === "inProgress") {
+      return COLOR.valid;
+    }
+
+    return COLOR.gray_600;
   }};
 
   color: #fff;
@@ -33,9 +36,9 @@ const ProductStatusIcon = ({ ...props }: ProductStatusProps) => {
       {props.$auction
         ? props.$status === "inProgress"
           ? "경매 중"
-          : "경매 종료"
+          : "판매 종료"
         : props.$status === "inProgress"
-        ? "판매 중"
+        ? "즉시 구매"
         : "판매 종료"}
     </StyledProductStatus>
   );

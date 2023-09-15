@@ -37,4 +37,14 @@ export const CATEGORY: CategoryType = {
     value: "도서",
     path: "/books?page=1",
   },
+  props: {
+    id: 6,
+    value: "소품",
+    path: "/props?page=1",
+  },
+  etc: {
+    id: 7,
+    value: "기타",
+    path: "/etc?page=1",
+  },
 };

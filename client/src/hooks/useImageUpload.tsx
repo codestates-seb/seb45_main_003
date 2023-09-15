@@ -35,13 +35,13 @@ export const useImageUpload = ({ setError, clearErrors, maxImageCount }: UseImag
           type: "maxImageCount",
           message: MAX.imageSelect(MAX_IMAGE_COUNT),
         });
-        setImages((prev) => [...uniqueImages.slice(0, MAX_IMAGE_COUNT - prev.length), ...prev]);
+        setImages((prev) => [...prev, ...uniqueImages.slice(0, MAX_IMAGE_COUNT - prev.length)]);
 
         return;
       }
 
       clearErrors("images");
-      setImages((prev) => [...uniqueImages, ...prev]);
+      setImages((prev) => [...prev, ...uniqueImages]);
     }
   };
 
