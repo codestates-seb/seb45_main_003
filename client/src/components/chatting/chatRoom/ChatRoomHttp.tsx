@@ -45,7 +45,7 @@ const ChatRoomHttp: React.FC = () => {
             },
           },
         );
-        console.log(response.data);
+        // console.log(response.data);
         if (response.data && Array.isArray(response.data.messageList)) {
           setMessages(response.data);
         } else {

@@ -34,6 +34,7 @@ export interface MessageItem {
   content: string;
   senderId: number | null;
   createdAt?: string;
+  isRead?: boolean;
 }
 
 export interface MessageData {

@@ -24,7 +24,7 @@ export const useChatList = () => {
     "chatList",
     fetchChatList,
     {
-      refetchInterval: 5000,
+      refetchInterval: 1000,
     },
   );
 

@@ -66,7 +66,6 @@ const ChatRoom = () => {
   const [messages, setMessages] = useState<MessageItem[]>([]);
   const [, setIsConnected] = useRecoilState(webSocketConnectionState);
   const [, setChatList] = useRecoilState(chatState);
-  // const currentTime = moment().format("YYYY년 MM월 DD일 a hh시 mm분");
   const userIdFromLocalStorage = localStorage.getItem("Id");
   const Id = userIdFromLocalStorage ? parseInt(userIdFromLocalStorage, 10) : null;
 
@@ -91,10 +90,6 @@ const ChatRoom = () => {
     <>
       <Container>
         <div className="chatBox" style={{ display: "flex", flexDirection: "column" }}>
-          {/* <div className="startText">
-            {" 어서오세요! \n 채팅을 시작해 보세요 "}
-            <div className="date"> {`- 현재 시간은 ${currentTime} 입니다. -`}</div>
-          </div> */}
           <ChatRoomHttp />
           {messages.map((message, index) => (
             <MessageBubble
@@ -102,7 +97,7 @@ const ChatRoom = () => {
               owner={message.senderId === Id ? "user" : "other"}
               message={message.content}
               time={FormatTimeOrDate(message.createdAt || null) || "Unknown time"}
-              isRead={message.senderId !== Id}
+              isRead={message.isRead}
             />
           ))}
         </div>
