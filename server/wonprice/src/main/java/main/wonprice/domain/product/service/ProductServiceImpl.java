@@ -164,6 +164,11 @@ public class ProductServiceImpl implements ProductService {
             throw new BusinessLogicException(ExceptionCode.PRODUCT_AUCTION_INVALID_MODIFIED);
         }
 
+        // [상품 상태가 BEFORE 일 경우에만 수정 가능]하게 예외처리
+        if (!product.getStatus().equals(ProductStatus.BEFORE)) {
+            throw new BusinessLogicException(ExceptionCode.PRODUCT_STATUS_INVALID);
+        }
+
         notificationService.createdNotificationWithWishProduct(product);
         return productRepository.save(product.update(productRequestDto));
     }
