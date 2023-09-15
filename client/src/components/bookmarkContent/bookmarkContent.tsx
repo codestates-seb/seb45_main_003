@@ -6,7 +6,7 @@ import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
 import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import { useLocation, useNavigate } from "react-router-dom";
-import { findCategory } from "../../util/category";
+// import { findCategory } from "../../util/category";
 import Empty from "../common/Empty";
 import Loading from "../common/Loading";
 import Error from "../common/Error";
@@ -341,14 +341,7 @@ const BookmarkContent = (): JSX.Element => {
               </div>
             </div>
             <div className="rightSection">
-              <div
-                className="postTitle"
-                onClick={() =>
-                  navigate(
-                    `/product/${findCategory(el.productResponseDto.categoryId)}/${el.productId}`,
-                  )
-                }
-              >
+              <div className="postTitle" onClick={() => navigate(`/product/${el.productId}`)}>
                 {el.productResponseDto.title}
               </div>
               <div className="exceptTitle">

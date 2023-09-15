@@ -130,9 +130,9 @@ const HeaderLogin = (): JSX.Element => {
               {/* <button onClick={handleLogout}>로그아웃</button> */}
               <button className="ButtonStyle" onClick={showProfile}></button>
               {/* 알림 버튼 */}
-              <button className="ButtonStyle">
+              <div className="ButtonStyle">
                 <Notifications />
-              </button>
+              </div>
               {/* 프로필 드롭다운 버튼 */}
               <button className="ButtonStyle" onClick={showProfile}>
                 <PersonIcon />

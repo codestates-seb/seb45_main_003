@@ -165,6 +165,9 @@ const TradeContent = (): JSX.Element => {
       },
     },
   );
+  const navigateProduct = (productId: number) => {
+    navigate(`/product/${productId}`);
+  };
 
   return (
     <TradeContentContainer>
@@ -180,7 +183,9 @@ const TradeContent = (): JSX.Element => {
               <div className="leftSection">
                 <img className="postImg" src={el.images[0].path}></img>
                 <div className="infoContainer">
-                  <div className="postTitle">{el.title}</div>
+                  <div className="postTitle" onClick={() => navigateProduct(el.productId)}>
+                    {el.title}
+                  </div>
                   <div>{`${translateProductStatus(el.productStatus)}`}</div>
                   {el.auction ? <div>{`경매종료: ${el.closedAt}`}</div> : <div>즉시 구매 상품</div>}
                 </div>
@@ -212,7 +217,9 @@ const TradeContent = (): JSX.Element => {
               <div className="leftSection">
                 <img className="postImg" src={el.images[0].path}></img>
                 <div className="infoContainer">
-                  <div className="postTitle">{el.title}</div>
+                  <div className="postTitle" onClick={() => navigateProduct(el.productId)}>
+                    {el.title}
+                  </div>
                   <div>{`${translateProductStatus(el.productStatus)}`}</div>
                   {el.auction ? <div>{`경매종료: ${el.closedAt}`}</div> : <div>즉시 구매 상품</div>}
                 </div>

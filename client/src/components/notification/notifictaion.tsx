@@ -10,7 +10,7 @@ import Loading from "../common/Loading";
 import { useRecoilState } from "recoil";
 import { profileTabState } from "../../atoms/atoms";
 import { postListTabState } from "../../atoms/atoms";
-import { findCategory } from "../../util/category";
+// import { findCategory } from "../../util/category";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { getUnReadCount, getNotifications, removeReadNotifications } from "./notificationFunction";
 import { useRef } from "react";
@@ -101,6 +101,13 @@ const Notification = styled.div`
           color: ${COLOR.darkText};
         }
       }
+      .notificaionContent {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+      }
     }
   }
 `;
@@ -140,7 +147,7 @@ const Notifications = (): JSX.Element => {
       navigate(path);
     } else if (notification.notificationType === "PRODUCT") {
       if (notification.categoryId !== null) {
-        navigate(`/product/${findCategory(notification.categoryId)}/${notification.referenceId}`);
+        navigate(`/product/${notification.referenceId}`);
       }
     } else if (notification.notificationType === "CHAT") {
       navigate(`/chat/${ID}`);
@@ -208,7 +215,7 @@ const Notifications = (): JSX.Element => {
                         key={idx}
                         onClick={() => navigatePost(el)}
                       >
-                        <div>{el.content}</div>
+                        <div className="notificaionContent">{el.content}</div>
                       </li>
                     ))}
                 </ul>

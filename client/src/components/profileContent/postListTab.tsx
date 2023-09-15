@@ -3,7 +3,7 @@ import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { defaultInstance } from "../../interceptors/interceptors";
 import { useLocation, useNavigate } from "react-router-dom";
-import { findCategory } from "../../util/category";
+// import { findCategory } from "../../util/category";
 import Empty from "../common/Empty";
 import { useQuery } from "react-query";
 import Loading from "../common/Loading";
@@ -204,12 +204,7 @@ const PostListTab = (): JSX.Element => {
             <div className="postContainer" key={idx}>
               <img className="postImg" src={el.images ? el.images[0].path : ""}></img>
               <div className="infoContainer">
-                <div
-                  className="postTitle"
-                  onClick={() =>
-                    navigate(`/product/${findCategory(el.categoryId)}/${el.productId}`)
-                  }
-                >
+                <div className="postTitle" onClick={() => navigate(`/product/${el.productId}`)}>
                   {el.title}
                 </div>
                 <div className="createdAt">{el.createdAt}</div>
