@@ -12,9 +12,11 @@ import PostsList from "./pages/PostsList";
 import Profile from "./pages/Profile";
 import Review from "./pages/Review";
 import Root from "./pages/Root";
+import useFetchChatList from "./components/chatting/hook/useFetchChatList";
 
 function App() {
   const isLogin = useRecoilValue(loginState);
+  useFetchChatList(isLogin); // 메세지 알림을 위해 로그인 되면 폴링 되도록 설정
 
   const routes: RouteObject[] = [
     // 1) 메인 홈 페이지
@@ -51,25 +53,19 @@ function App() {
           element: isLogin ? <CreatePost /> : <LogIn />,
         },
 
-        // 5) 게시물 리스트 페이지
+        // 5) 게시물 리스트, 검색결과 페이지
         {
-          path: "/product",
+          path: "search",
           element: <PostsList />,
-          children: [
-            {
-              path: "search",
-              element: <PostsList />,
-            },
-            {
-              path: ":category",
-              element: <PostsList />,
-            },
-          ],
+        },
+        {
+          path: ":category",
+          element: <PostsList />,
         },
 
         // 6) 게시글 상세 페이지
         {
-          path: "/product/:category/:item",
+          path: "/product/:item",
           element: <PostInformation />,
         },
 

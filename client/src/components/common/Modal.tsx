@@ -10,7 +10,7 @@ interface ModalProp {
 }
 
 const StyledModal = styled.div`
-  z-index: 999;
+  z-index: 9999;
   position: fixed;
   top: 0;
   left: 0;

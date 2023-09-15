@@ -12,5 +12,6 @@ public class BidResponseDto {
     private Long currentAuctionPrice;
 
     private String name;
+    private Long buyerId;
 
 }

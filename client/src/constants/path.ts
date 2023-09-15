@@ -31,6 +31,9 @@ export const API_PATHS = {
       return `products/search?keyword=${keyword}`;
     },
     category: (id: PathType) => createPath(id, "products/category"),
+    buyItNow: (id: PathType) => {
+      return `products/buy/${id}`;
+    },
   },
   chat: (id: PathType) => createPath(id, "chat"),
   reviews: (id: PathType) => createPath(id, "reviews"),

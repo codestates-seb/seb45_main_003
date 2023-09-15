@@ -8,6 +8,7 @@ export type ChatList = {
   deletedAt: string;
   path: string | undefined;
   unReadMessage: number;
+  createdAt: string;
 
   chatRoom: {
     memberId: number;
@@ -33,6 +34,7 @@ export interface MessageItem {
   content: string;
   senderId: number | null;
   createdAt?: string;
+  isRead?: boolean;
 }
 
 export interface MessageData {

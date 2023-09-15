@@ -1,10 +1,11 @@
-package main.wonprice.domain.member.entity;
+package main.wonprice.domain.product.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import main.wonprice.domain.member.entity.Member;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
@@ -16,7 +17,9 @@ public class Bid {
 
     private Long productId;
 
-    private LocalDate createdAt;
+    private Long price;
+
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
