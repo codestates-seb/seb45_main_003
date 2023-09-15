@@ -1,9 +1,9 @@
+import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { styled } from "styled-components";
 import { profileTabState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
-import { useLocation, useNavigate } from "react-router-dom";
 
 const ProfileTabContainer = styled.ul`
   width: 10rem;
@@ -15,6 +15,9 @@ const ProfileTabContainer = styled.ul`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+  position: sticky;
+  top: 7.5rem;
+
   .tabMenu {
     height: 3.75rem;
     font-size: ${FONT_SIZE.font_20};
@@ -42,6 +45,8 @@ const ProfileTab = (): JSX.Element => {
   ];
   const location = useLocation();
   const handleTab = (value: string): void => {
+    window.scrollTo(0, 0);
+
     //같은곳 누르면 리렌더링 안되게
     if (value !== tabState) {
       setTabState(value);
