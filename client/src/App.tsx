@@ -47,7 +47,7 @@ function App() {
 
         // 4) 게시물 작성
         {
-          path: "/create-post",
+          path: "/write",
           element: isLogin ? <CreatePost /> : <LogIn />,
         },
 

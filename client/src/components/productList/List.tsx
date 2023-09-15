@@ -57,8 +57,10 @@ const StyledList = styled.section`
   .list_top {
     margin: 0 0 1rem;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-flow: column;
+    align-items: flex-start;
+
+    gap: 1rem;
   }
 
   .list_title {
@@ -89,8 +91,10 @@ const StyledList = styled.section`
   }
 
   .list_top_right {
+    width: 100%;
     display: flex;
     flex-flow: row;
+    justify-content: space-between;
     gap: 0.75rem;
   }
 
@@ -119,25 +123,12 @@ const StyledList = styled.section`
 
     .list_top {
       margin: 0 0 1rem;
-      flex-flow: column;
-      align-items: flex-start;
+
       gap: 0.75rem;
     }
 
     .list_top_right {
       width: 100%;
-
-      & > div {
-        width: 100%;
-
-        &.login {
-          width: calc(100% - 8.875rem);
-        }
-
-        input {
-          width: 100%;
-        }
-      }
     }
   }
 
@@ -151,11 +142,6 @@ const StyledList = styled.section`
     .list_top_right {
       display: flex;
       flex-flow: column;
-
-      input,
-      & > div.login {
-        width: 100%;
-      }
     }
   }
 `;
@@ -263,7 +249,7 @@ const List = (): JSX.Element => {
             {isLogin && (
               <Button
                 onClick={() => {
-                  navigate("/create-post");
+                  navigate("/write");
                 }}
                 $design="black"
                 type="button"

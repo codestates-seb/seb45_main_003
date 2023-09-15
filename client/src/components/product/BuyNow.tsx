@@ -17,9 +17,12 @@ type BuyNowProps = {
 
 const BuyNow = ({ data }: BuyNowProps) => {
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
-  const { mutate, error } = useMutation(async (id: number) => {
+
+  const postData = async (id: number) => {
     await authInstance.post(API_PATHS.products.buyItNow(id));
-  });
+  };
+
+  const { mutate, error } = useMutation(postData);
   const isLogin = useRecoilValue(loginState);
   const userid = getUserId();
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });

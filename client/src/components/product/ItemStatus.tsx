@@ -156,6 +156,7 @@ const StyledItemStatus = styled.section`
 
   .error_message {
     font-size: ${FONT_SIZE.font_16};
+    font-weight: 400;
   }
 
   @media (max-width: 30rem) {
