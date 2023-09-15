@@ -53,7 +53,12 @@ public class MemberService {
 
 //    관리자용 전체 회원 목록
     public Page<Member> findMembers(Pageable pageable) {
+        isAdmin();
         return memberRepository.findAll(pageable);
+    }
+    public List<Member> findMembers() {
+        isAdmin();
+        return memberRepository.findAll();
     }
 
     public Member updateMember(Member member) {
