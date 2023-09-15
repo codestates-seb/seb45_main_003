@@ -17,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/notifications")
@@ -89,6 +91,23 @@ public class NotificationController {
 
         Notification savedNotification = notificationService.saveNotification(notification);
         NotificationResponseDto response = mapper.notificationToResponseDto(savedNotification);
+
+        return new ResponseEntity(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/announce/all")
+    public ResponseEntity postNotices(@RequestBody NotificationPostDto postDto) {
+
+        memberService.isAdmin();
+        List<Member> receiveMembers = memberService.findMembers();
+        List<Notification> notifications = mapper.postDtosToNotifications(postDto, receiveMembers);
+
+        List<Notification> savedNotifications = notificationService.saveNotifications(notifications);
+        List<NotificationResponseDto> response =
+                savedNotifications
+                .stream()
+                .map(mapper::notificationToResponseDto)
+                .collect(Collectors.toList());
 
         return new ResponseEntity(response, HttpStatus.CREATED);
     }
