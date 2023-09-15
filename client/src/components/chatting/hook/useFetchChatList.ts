@@ -28,7 +28,7 @@ const useFetchChatList = (isLoggedIn: boolean) => {
 
   // 로그인 상태일 때 폴링
   const { error, isLoading } = useQuery("chatList", fetchChatList, {
-    refetchInterval: 1000, // 1초마다 다시 가져옴
+    refetchInterval: 30000, // 30초마다 다시 가져옴
     enabled: isLoggedIn, // 로그인 상태일 때만 활성화
 
     onError: (err) => {
