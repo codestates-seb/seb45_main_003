@@ -31,4 +31,6 @@ public class ReviewResponseDto {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt;
+
+    private Long productId;
 }
