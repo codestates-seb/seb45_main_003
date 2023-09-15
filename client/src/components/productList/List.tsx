@@ -34,11 +34,13 @@ export type ProductData = {
     },
   ];
   currentAuctionPrice?: number;
+  minBidPrice: number;
   immediatelyBuyPrice: number;
   productStatus: string;
   categoryId: number;
   views: number;
   action: boolean;
+  buyerId?: number;
   createdAt: string;
   modifiedAt?: string;
   deletedAt?: string;
@@ -171,6 +173,7 @@ const List = (): JSX.Element => {
 
   const {
     setTotalPages,
+    setCurrentPage,
     currentPage,
     totalPages,
     pageChangeHandler,
@@ -205,6 +208,7 @@ const List = (): JSX.Element => {
     {
       onSuccess: (data) => {
         setTotalPages(data.totalPages);
+        setCurrentPage(Number(searchParams.get("page")) - 1);
       },
     },
   );

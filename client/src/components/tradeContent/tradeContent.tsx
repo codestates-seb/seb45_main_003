@@ -1,17 +1,17 @@
-import { styled } from "styled-components";
-import { COLOR } from "../../constants/color";
-import { FONT_SIZE } from "../../constants/font";
-import Button from "../common/Button";
-import { defaultInstance } from "../../interceptors/interceptors";
+import { useQuery } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
+import { styled } from "styled-components";
 import { profileTabState } from "../../atoms/atoms";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
+import { usePagination } from "../../hooks/usePagination";
+import { defaultInstance } from "../../interceptors/interceptors";
+import { translateProductStatus } from "../../util/productStatus";
+import Button from "../common/Button";
 import Empty from "../common/Empty";
-import { useQuery } from "react-query";
 import Error from "../common/Error";
 import Loading from "../common/Loading";
-import { translateProductStatus } from "../../util/productStatus";
-import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
 
 interface image {
@@ -143,6 +143,7 @@ const TradeContent = (): JSX.Element => {
     currentPage,
     totalPages,
     setTotalPages,
+    setCurrentPage,
     pageChangeHandler,
     prevPageHandler,
     nextPageHandler,
@@ -169,6 +170,7 @@ const TradeContent = (): JSX.Element => {
     {
       onSuccess: (data) => {
         setTotalPages(data.totalPages);
+        setCurrentPage(Number(searchParams.get("page")) - 1);
       },
     },
   );
