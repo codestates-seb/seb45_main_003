@@ -23,6 +23,7 @@ public interface ReviewMapper {
                 .content(review.getContent())
                 .score(review.getScore())
                 .createdAt(review.getCreatedAt())
+                .productId(review.getProduct().getProductId())
                 .build();
     }
 
