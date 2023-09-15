@@ -1,11 +1,13 @@
 package main.wonprice.domain.member.controller;
 
 import lombok.AllArgsConstructor;
+import main.wonprice.domain.member.dto.MemberResponseDto;
 import main.wonprice.domain.member.dto.WishDeleteDto;
 import main.wonprice.domain.member.dto.WishPostDto;
 import main.wonprice.domain.member.dto.WishResponseDto;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.Wish;
+import main.wonprice.domain.member.mapper.MemberMapper;
 import main.wonprice.domain.member.mapper.WishMapper;
 import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.domain.member.service.WishService;
@@ -31,6 +33,7 @@ public class WishController {
     private final WishService wishService;
     private final WishMapper mapper;
     private final ProductMapper productMapper;
+    private final MemberMapper memberMapper;
 
     @PostMapping("/wishes/add")
     public ResponseEntity postWish(@RequestBody WishPostDto postDto) {
@@ -77,5 +80,15 @@ public class WishController {
         wishService.removeWishes(checkBox, deleteDto.getCurrentPage());
 
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
+    }
+
+//    리뷰 작성 페이지에서 필요한 상대방 정보 응답
+    @GetMapping("/wishes/{product-id}")
+    public ResponseEntity getReviewReceiver(@PathVariable("product-id") Long productId) {
+
+        Member findMember = wishService.findReviewReceiver(productId);
+        MemberResponseDto response = memberMapper.memberToResponseDto(findMember);
+
+        return new ResponseEntity(response, HttpStatus.OK);
     }
 }

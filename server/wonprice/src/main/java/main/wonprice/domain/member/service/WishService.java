@@ -97,4 +97,21 @@ public class WishService {
             }
         }
     }
+
+    public Member findReviewReceiver(Long productId) {
+
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+
+        if (optionalProduct.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.PRODUCT_NOT_FOUND);
+        }
+        Product product = optionalProduct.get();
+        Member loginMember = memberService.findLoginMember();
+
+        if (loginMember == product.getSeller()) {
+            return memberService.findMember(product.getBuyerId());
+        } else if (loginMember == memberService.findMember(product.getBuyerId())) {
+            return product.getSeller();
+        } else throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
+    }
 }
