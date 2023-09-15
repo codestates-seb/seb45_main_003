@@ -10,7 +10,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Empty from "../common/Empty";
 import Loading from "../common/Loading";
 import Error from "../common/Error";
-import { useQuery, useQueryClient, useMutation } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { translateProductStatus } from "../../util/productStatus";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
@@ -209,7 +209,7 @@ const BookmarkContent = (): JSX.Element => {
   const loginUserId = localStorage.getItem("Id");
   //체크박스를 사용항 찜취소시에 체크박스 상태들을 저장해둘 상태
   // const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const searchParams = new URLSearchParams(location.search);
   const ITEMS_PER_VIEW = 10;
   const {
@@ -245,9 +245,6 @@ const BookmarkContent = (): JSX.Element => {
         //   setValue("checkboxes", changedCheckboxes);
         //   setChangedCheckboxes([]);
         // }
-        if (checkboxes.length !== data.content.length) {
-          setValue("checkboxes", Array(data.content.length).fill(false));
-        }
         if (checkboxes.some((el) => el === true)) {
           setValue("checkboxes", checkboxes);
         }
@@ -275,7 +272,8 @@ const BookmarkContent = (): JSX.Element => {
     {
       onSuccess: () => {
         // setValue("checkboxes", changedCheckboxes);
-        queryClient.invalidateQueries("bookmark");
+        // queryClient.invalidateQueries("bookmark");
+        window.location.reload();
       },
     },
   );
