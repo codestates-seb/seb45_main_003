@@ -25,23 +25,29 @@ export const SUCCESS = {
   removeWishlist: "찜 목록에서 상품을 삭제했습니다",
   delete: "상품을 삭제하였습니다.",
   bid: "상품을 입찰하였습니다.",
+  bidimmediatelyBuyPrice: "즉시구매가와 같은 가격으로 입찰하여 경매가 종료되었습니다.",
   buyItNow: "상품을 즉시구매가에 구매하였습니다.",
 };
 
 export const FAIL = {
   post: "상품 등록에 실패했습니다.",
   review: "후기 작성에 실패했습니다.",
-  update: "입찰자가 존재할 경우 상품을 수정할 수 없습니다.",
+  update: "상품 수정에 실패했습니다.",
   addWishlist: "상품을 찜 목록에 추가하지 못했습니다.",
   removeWishlist: "상품을 찜 목록에서 삭제할 수 없습니다.",
   delete: "상품 삭제에 실패했습니다.",
   bid: "입찰에 실패했습니다.",
   buyItNow: "즉시 구매에 실패했습니다.",
+  edit: {
+    before: "입찰자가 있는 상품은 수정할 수 없습니다.",
+    trade: "구매자와 채팅중인 상품은 수정할 수 없습니다.",
+    after: "거래가 완료된 상품은 수정할 수 없습니다.",
+  },
 };
 
 export const MAX = {
   imageSelect: (max: number) => `이미지는 최대 ${max}장까지 선택 가능합니다.`,
-  bid: `즉시구매가 이상으로 입찰할 수 없습니다.`,
+  bid: `즉시구매가를 초과하여 입찰할 수 없습니다.`,
 };
 
 export const MIN = {
