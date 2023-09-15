@@ -6,11 +6,11 @@ import { FONT_SIZE } from "../../constants/font";
 import Button from "../common/Button";
 import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import { useLocation, useNavigate } from "react-router-dom";
-import { findCategory } from "../../util/category";
+// import { findCategory } from "../../util/category";
 import Empty from "../common/Empty";
 import Loading from "../common/Loading";
 import Error from "../common/Error";
-import { useQuery, useQueryClient, useMutation } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { translateProductStatus } from "../../util/productStatus";
 import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
@@ -56,7 +56,7 @@ const BookmarkContentContainer = styled.form`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 18rem);
+  min-width: calc(100% - 14rem);
   min-height: calc(100% - 0.75rem);
   .checkbox {
     width: 18px;
@@ -130,6 +130,11 @@ const BookmarkContentContainer = styled.form`
           font-size: ${FONT_SIZE.font_20};
           font-weight: bold;
           cursor: pointer;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
         }
         .exceptTitle {
           display: flex;
@@ -209,7 +214,7 @@ const BookmarkContent = (): JSX.Element => {
   const loginUserId = localStorage.getItem("Id");
   //체크박스를 사용항 찜취소시에 체크박스 상태들을 저장해둘 상태
   // const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
   const searchParams = new URLSearchParams(location.search);
   const ITEMS_PER_VIEW = 10;
   const {
@@ -245,9 +250,6 @@ const BookmarkContent = (): JSX.Element => {
         //   setValue("checkboxes", changedCheckboxes);
         //   setChangedCheckboxes([]);
         // }
-        if (checkboxes.length !== data.content.length) {
-          setValue("checkboxes", Array(data.content.length).fill(false));
-        }
         if (checkboxes.some((el) => el === true)) {
           setValue("checkboxes", checkboxes);
         }
@@ -275,7 +277,8 @@ const BookmarkContent = (): JSX.Element => {
     {
       onSuccess: () => {
         // setValue("checkboxes", changedCheckboxes);
-        queryClient.invalidateQueries("bookmark");
+        // queryClient.invalidateQueries("bookmark");
+        window.location.reload();
       },
     },
   );
@@ -341,14 +344,7 @@ const BookmarkContent = (): JSX.Element => {
               </div>
             </div>
             <div className="rightSection">
-              <div
-                className="postTitle"
-                onClick={() =>
-                  navigate(
-                    `/product/${findCategory(el.productResponseDto.categoryId)}/${el.productId}`,
-                  )
-                }
-              >
+              <div className="postTitle" onClick={() => navigate(`/product/${el.productId}`)}>
                 {el.productResponseDto.title}
               </div>
               <div className="exceptTitle">

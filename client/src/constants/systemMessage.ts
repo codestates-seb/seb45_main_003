@@ -9,6 +9,7 @@ export const REQUIRED = {
   closingTime: "경매 종료 시간은 필수입니다.",
   review: "후기 내용은 필수입니다.",
   bid: "입찰 가격을 입력해주세요.",
+  reputation: "평점을 입력해주세요.",
 };
 
 export const CONFIRM = {

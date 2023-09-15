@@ -47,7 +47,12 @@ const ProfileImgRegisterForm = (props: Props): JSX.Element => {
   const Id = localStorage.getItem("Id");
   const mutation = useMutation(
     async (data: FieldValues) => await authInstance.post(`/members/${Id}/image`, data),
-    { onSuccess: () => queryClient.invalidateQueries("profile") },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("profile");
+        props.setMode(false);
+      },
+    },
   );
   //성공시 모드 변경후 프로필 다시 로딩
   const onSubmitImg = async (data: FieldValues) => {
