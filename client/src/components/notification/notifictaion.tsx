@@ -12,8 +12,9 @@ import { profileTabState } from "../../atoms/atoms";
 import { postListTabState } from "../../atoms/atoms";
 import { findCategory } from "../../util/category";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { getUnReadCount, getNotifications } from "./notificationFunction";
+import { getUnReadCount, getNotifications, removeReadNotifications } from "./notificationFunction";
 import { useRef } from "react";
+import Button from "../common/Button";
 
 interface notificationData {
   content: notification[];
@@ -44,7 +45,7 @@ const Notification = styled.div`
       .readCount {
         font-size: ${FONT_SIZE.font_20};
         font-weight: bold;
-        color: ${COLOR.darkText};
+        color: ${COLOR.primary};
       }
     }
     .notificationListContainer {
@@ -56,7 +57,7 @@ const Notification = styled.div`
       background-color: ${COLOR.gray_100};
       border-radius: 6px;
       width: 18.75rem;
-      height: 263px;
+      height: 13rem;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
@@ -64,6 +65,20 @@ const Notification = styled.div`
       font-size: ${FONT_SIZE.font_16};
       overflow: scroll;
       cursor: default;
+      .emptymessage {
+        color: ${COLOR.darkText};
+      }
+      .deleteButtonContainer {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        gap: 1rem;
+        color: ${COLOR.darkText};
+        font-weight: bold;
+        font-size: ${FONT_SIZE.font_20};
+      }
       .notification {
         display: flex;
         flex-direction: row;
@@ -76,6 +91,7 @@ const Notification = styled.div`
           border-bottom: none;
         }
         &:first-child {
+          border-top: 1px solid ${COLOR.border};
           border-bottom: 1px solid ${COLOR.border};
         }
         &.isRead {
@@ -126,11 +142,21 @@ const Notifications = (): JSX.Element => {
       if (notification.categoryId !== null) {
         navigate(`/product/${findCategory(notification.categoryId)}/${notification.referenceId}`);
       }
+    } else if (notification.notificationType === "CHAT") {
+      navigate(`/chat/${ID}`);
     }
     notificationMutation.mutateAsync(notification);
   };
   const notificationRef = useRef<HTMLDivElement>(null);
   const getReadCount = useQuery(["readCount", { location }], getUnReadCount);
+  const notificationsMutation = useMutation(removeReadNotifications, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("notificaion");
+    },
+  });
+  const handleDelete = async () => {
+    notificationsMutation.mutateAsync();
+  };
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent): void => {
       if (notificationRef.current && !notificationRef.current.contains(e.target as Node)) {
@@ -142,33 +168,53 @@ const Notifications = (): JSX.Element => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [notificationRef]);
+  // if (getReadCount.isError) {
+  //   return <ErrorIndication error={Error} />;
+  // }
   return (
     <Notification ref={notificationRef}>
       <div className="icon">
         <div className="iconContainer" onClick={openNotification}>
-          {getReadCount.isLoading ? null : (
+          {getReadCount.isLoading || getReadCount.isError ? null : (
             <div className="readCount">
-              {getReadCount.data.unreadNotification !== 0 && getReadCount.data.unreadNotification}
+              {getReadCount.data &&
+                getReadCount.data.unreadNotification !== 0 &&
+                getReadCount.data.unreadNotification}
             </div>
           )}
           <NotificationsIcon className="noticiationIcon" />
         </div>
         {open && (
-          <ul className="notificationListContainer">
-            {isLoading ? (
-              <Loading />
+          <div className="notificationListContainer">
+            {notificationInfo?.content.length === 0 ? (
+              <div className="emptymessage">도착한 알림이 없습니다.</div>
             ) : (
-              notificationInfo?.content.map((el, idx) => (
-                <li
-                  className={el.isRead ? "isRead notification" : "notRead notification"}
-                  key={idx}
-                  onClick={() => navigatePost(el)}
-                >
-                  <div>{el.content}</div>
-                </li>
-              ))
+              <>
+                <div className="deleteButtonContainer">
+                  <div className="containerTitle">알림 보관함</div>
+                  <Button
+                    type="button"
+                    $text="읽은 알림 지우기"
+                    $design="black"
+                    onClick={() => handleDelete()}
+                  />
+                </div>
+                <ul className="notificationContainer">
+                  {isLoading && <Loading />}
+                  {notificationInfo?.content.length !== 0 &&
+                    notificationInfo?.content.map((el, idx) => (
+                      <li
+                        className={el.isRead ? "isRead notification" : "notRead notification"}
+                        key={idx}
+                        onClick={() => navigatePost(el)}
+                      >
+                        <div>{el.content}</div>
+                      </li>
+                    ))}
+                </ul>
+              </>
             )}
-          </ul>
+          </div>
         )}
       </div>
     </Notification>
