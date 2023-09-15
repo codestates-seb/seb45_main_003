@@ -33,6 +33,7 @@ public enum ExceptionCode {
     // 상품 수정
     PRODUCT_AUCTION_INVALID_MODIFIED(400, "입찰자가 존재하는 경매 상품은 수정할 수 없습니다."),
     PRODUCT_SELLER_NOT_SAME(400, "게시글을 수정할 권한이 없습니다."),
+    PRODUCT_STATUS_INVALID(400, "거래가 성사된 상품은 수정할 수 없습니다."),
 
     SELLER_AND_BUYER_ARE_SAME(400, "Seller and Buyer can NOT be the SAME."),
     INVALID_BID_PRICE_1(400, "제시하려는 입찰가는 현재 상품의 입찰가보다 낮은 가격일 수 없습니다."),
