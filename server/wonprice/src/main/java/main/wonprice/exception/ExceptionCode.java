@@ -29,6 +29,7 @@ public enum ExceptionCode {
     // 상품 등록
     PRODUCT_INVALID_PRICE(400, "상품의 등록 가격은 10억을 넘을 수 없습니다."),
     PRODUCT_AUCTION_IMMEDIATELY_CURRENT_INVALID_PRICE(400, "경매하려는 상품의 시작가는 즉시 구매가와 같거나 높은 가격일 수 없습니다."),
+    PRODUCT_NOT_FOUND(404, "Product not found"),
 
     SELLER_AND_BUYER_ARE_SAME(400, "Seller and Buyer can NOT be the SAME."),
     INVALID_BID_PRICE_1(400, "제시하려는 입찰가는 현재 상품의 입찰가보다 낮은 가격일 수 없습니다."),
