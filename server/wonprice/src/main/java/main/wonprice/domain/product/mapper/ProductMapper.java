@@ -43,6 +43,7 @@ public interface ProductMapper {
         return ProductResponseDto.builder()
                 .productId(product.getProductId())
                 .memberId(product.getSeller().getMemberId())
+                .buyerId(product.getBuyerId())
                 .title(product.getTitle())
                 .description(product.getDescription())
                 .immediatelyBuyPrice(product.getImmediatelyBuyPrice())
