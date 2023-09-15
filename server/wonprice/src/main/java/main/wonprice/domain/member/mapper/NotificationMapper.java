@@ -4,10 +4,8 @@ import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.member.dto.NotificationPostDto;
 import main.wonprice.domain.member.dto.NotificationResponseDto;
-import main.wonprice.domain.member.entity.Member;
-import main.wonprice.domain.member.entity.Notification;
-import main.wonprice.domain.member.entity.NotificationType;
-import main.wonprice.domain.member.entity.Review;
+import main.wonprice.domain.member.entity.*;
+import main.wonprice.domain.product.entity.Bid;
 import main.wonprice.domain.product.entity.Product;
 import org.mapstruct.Mapper;
 
@@ -18,6 +16,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
 
+//    product 제외 responseDto
     default NotificationResponseDto notificationToResponseDto(Notification notification) {
         return NotificationResponseDto.builder()
                 .notificationId(notification.getNotificationId())
@@ -26,18 +25,6 @@ public interface NotificationMapper {
                 .createdAt(notification.getCreatedAt())
                 .isRead(notification.getIsRead())
                 .referenceId(notification.getReferenceId())
-                .build();
-    }
-
-    default NotificationResponseDto notificationToResponseDto(Notification notification, Product product) {
-        return NotificationResponseDto.builder()
-                .notificationId(notification.getNotificationId())
-                .content(notification.getContent())
-                .notificationType(notification.getNotificationType())
-                .createdAt(notification.getCreatedAt())
-                .isRead(notification.getIsRead())
-                .referenceId(notification.getReferenceId())
-                .categoryId(product.getCategory().getCategoryId())
                 .build();
     }
 
@@ -79,6 +66,63 @@ public interface NotificationMapper {
                             .build()
             );
         }
+
+        return notifications;
+    }
+
+//    찜 했던 상품 정보 수정 시 알림 생성
+    default List<Notification> wishProductToNotification(Product product) {
+
+        List<Notification> notifications = new ArrayList<>();
+
+        for (Wish wish : product.getWishes()) {
+
+            notifications.add(
+                    Notification.builder()
+                            .notificationType(NotificationType.PRODUCT)
+                            .referenceId(product.getProductId())
+                            .createdAt(LocalDateTime.now())
+                            .content(product.getTitle() + " 상품 정보가 수정되었습니다")
+                            .isRead(false)
+                            .member(wish.getMember()).build()
+            );
+        }
+
+        return notifications;
+    }
+
+    default List<Notification> bidToNotification(Product product, List<Bid> bids) {
+
+        List<Notification> notifications = new ArrayList<>();
+
+        for (Bid bid : bids) {
+
+            if (product.getBuyerId() == bid.getMember().getMemberId()) {
+                continue;
+            }
+
+            notifications.add(
+                    Notification.builder()
+                            .content(product.getTitle() + "에 새로운 입찰이 들어왔습니다")
+                            .notificationType(NotificationType.PRODUCT)
+                            .createdAt(LocalDateTime.now())
+                            .isRead(false)
+                            .referenceId(product.getProductId())
+                            .member(bid.getMember())
+                            .build()
+            );
+        }
+
+        notifications.add(
+                Notification.builder()
+                        .content(product.getTitle() + "에 새로운 입찰이 들어왔습니다")
+                        .notificationType(NotificationType.PRODUCT)
+                        .createdAt(LocalDateTime.now())
+                        .isRead(false)
+                        .referenceId(product.getProductId())
+                        .member(product.getSeller())
+                        .build()
+        );
 
         return notifications;
     }

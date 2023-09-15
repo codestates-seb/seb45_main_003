@@ -13,7 +13,6 @@ import { FAIL, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { useModal } from "../../hooks/useModal";
 import { authInstance } from "../../interceptors/interceptors";
-import { findCategory } from "../../util/category";
 import { allowOnlyNumber } from "../../util/number";
 import Button from "../common/Button";
 import ImageInput from "../common/ImageInput";
@@ -58,15 +57,12 @@ const StyledUploadForm = styled.section`
       align-items: flex-start;
     }
 
-    .field {
+    .field,
+    .radio {
       display: flex;
       flex-flow: row;
       align-items: center;
       gap: 0.75rem;
-
-      &.radio input {
-        padding: 0.5rem 0;
-      }
 
       & > p:first-child {
         max-width: 10.125rem;
@@ -75,7 +71,7 @@ const StyledUploadForm = styled.section`
         font-weight: 700;
       }
 
-      .input:not(.inline) {
+      .input:not(.inline, .radio) {
         width: 100%;
         position: relative;
         display: flex;
@@ -129,7 +125,6 @@ const StyledUploadForm = styled.section`
   }
 
   input[type="time"] {
-    width: 7.5rem;
   }
 
   .select_date {
@@ -163,6 +158,29 @@ const StyledUploadForm = styled.section`
 
   button {
     margin: 1.5rem 1.5rem 1.5rem auto;
+  }
+
+  @media (max-width: 64rem) {
+    .box {
+      padding: 1rem 1rem 1.5rem;
+
+      .field {
+        flex-flow: column;
+        align-items: flex-start;
+
+        & > p:first-child {
+          width: 100%;
+          max-width: unset;
+        }
+      }
+    }
+    .description {
+      padding: 1rem;
+    }
+    button {
+      width: calc(100% - 2rem);
+      margin: 1rem;
+    }
   }
 `;
 
@@ -304,27 +322,29 @@ const UploadForm = () => {
               </div>
 
               <div className="box">
-                <div className="field radio">
+                <div className="field">
                   <p>판매 방식</p>
-                  <input
-                    type="radio"
-                    name="sales_method"
-                    id="auction"
-                    onClick={() => {
-                      setIsAuction(true);
-                    }}
-                    defaultChecked={true}
-                  />
-                  <label htmlFor="auction">경매</label>
-                  <input
-                    type="radio"
-                    name="sales_method"
-                    id="buy_it_now"
-                    onClick={() => {
-                      setIsAuction(false);
-                    }}
-                  />
-                  <label htmlFor="buy_it_now">즉시 구매</label>
+                  <div className="input radio">
+                    <input
+                      type="radio"
+                      name="sales_method"
+                      id="auction"
+                      onClick={() => {
+                        setIsAuction(true);
+                      }}
+                      defaultChecked={true}
+                    />
+                    <label htmlFor="auction">경매</label>
+                    <input
+                      type="radio"
+                      name="sales_method"
+                      id="buy_it_now"
+                      onClick={() => {
+                        setIsAuction(false);
+                      }}
+                    />
+                    <label htmlFor="buy_it_now">즉시 구매</label>
+                  </div>
                 </div>
 
                 {isAuction && (
@@ -333,6 +353,10 @@ const UploadForm = () => {
                     options={{
                       required: REQUIRED.currentAuctionPrice,
                       onChange: (event) => allowOnlyNumber(event),
+                      max: {
+                        value: 1000000000,
+                        message: "10억 이하의 금액만 입력할 수 있습니다.",
+                      },
                     }}
                     title="경매시작가"
                     id="currentAuctionPrice"
@@ -346,6 +370,10 @@ const UploadForm = () => {
                   options={{
                     required: REQUIRED.immediatelyBuyPrice,
                     onChange: (event) => allowOnlyNumber(event),
+                    max: {
+                      value: 1000000000,
+                      message: "10억 이하의 금액만 입력할 수 있습니다.",
+                    },
                   }}
                   title="즉시구매가"
                   id="immediatelyBuyPrice"
@@ -438,7 +466,7 @@ const UploadForm = () => {
             type="button"
             onClick={() => {
               submitResult && resData
-                ? navigate(`/product/${findCategory(resData.categoryId)}/${resData.productId}`)
+                ? navigate(`/product/${resData.productId}`)
                 : setIsOpen(!isOpen);
             }}
           />

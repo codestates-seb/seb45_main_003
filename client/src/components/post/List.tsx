@@ -84,6 +84,7 @@ const StyledList = styled.section`
       border-radius: 6px;
       overflow: hidden;
       list-style: none;
+      word-break: keep-all;
     }
   }
 
@@ -95,6 +96,16 @@ const StyledList = styled.section`
 
   .empty_message {
     margin: 1rem 0 0;
+  }
+
+  @media (max-width: 80rem) {
+    .price {
+      .gray {
+        display: flex;
+        align-items: flex-start;
+        flex-flow: column;
+      }
+    }
   }
 
   @media (max-width: 64rem) {
@@ -141,7 +152,8 @@ const StyledList = styled.section`
       display: flex;
       flex-flow: column;
 
-      & > div {
+      input,
+      & > div.login {
         width: 100%;
       }
     }
@@ -180,6 +192,19 @@ const List = (): JSX.Element => {
     nextPageHandler,
   } = usePagination();
 
+  const getData = async () => {
+    const params = { page: Number(searchParams.get("page")) - 1, size: ITEMS_PER_VIEW };
+    const response = keyword
+      ? await axios.get(`/products/search`, {
+          params: { ...params, keyword: keyword },
+        })
+      : await axios.get(path, {
+          params: params,
+        });
+
+    return response.data;
+  };
+
   const { isLoading, error, data } = useQuery<Data>(
     [
       "productList",
@@ -190,18 +215,7 @@ const List = (): JSX.Element => {
         size: ITEMS_PER_VIEW,
       },
     ],
-    async () => {
-      const params = { page: Number(searchParams.get("page")) - 1, size: ITEMS_PER_VIEW };
-      const response = keyword
-        ? await axios.get(`/products/search`, {
-            params: { ...params, keyword: keyword },
-          })
-        : await axios.get(path, {
-            params: params,
-          });
-
-      return response.data;
-    },
+    getData,
     {
       onSuccess: (data) => {
         setTotalPages(data.totalPages);
@@ -212,7 +226,7 @@ const List = (): JSX.Element => {
   const isLogin = useRecoilValue(loginState);
 
   const printTitle = (path: string) => {
-    if (path === "/product") {
+    if (path.includes("/all")) {
       return "전체 상품";
     }
 

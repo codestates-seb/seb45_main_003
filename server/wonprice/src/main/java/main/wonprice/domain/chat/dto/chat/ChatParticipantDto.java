@@ -20,6 +20,7 @@ public class ChatParticipantDto {
     private Long productId;
     private LocalDateTime deletedAt;
     private Integer unReadMessage;
+    private LocalDateTime createdAt;
     private ChatParticipantChatRoomDto chatRoom;
     private ChatParticipantMessagesDto message;
 
@@ -27,7 +28,7 @@ public class ChatParticipantDto {
         this.chatRoomId = chatParticipant.getChatRoom().getChatRoomId();
         this.productId = chatParticipant.getChatRoom().getProductId();
         this.unReadMessage = chatParticipant.getUnreadMessages();
-
+        this.createdAt = chatParticipant.getChatRoom().getCreatedAt();
         if(chatParticipant.getMember().getPicture() == null) {
             this.path = "https://wonprice-test1.s3.ap-northeast-2.amazonaws.com/default_profile.png";
         } else {

@@ -8,11 +8,13 @@ import main.wonprice.domain.chat.dto.message.MessageDto;
 import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.chat.entity.Message;
+import main.wonprice.domain.chat.entity.RoomStatus;
 import main.wonprice.domain.chat.repository.ChatParticipantRepository;
 import main.wonprice.domain.chat.repository.ChatRoomRepository;
 import main.wonprice.domain.chat.repository.MessageRepository;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.repository.MemberRepository;
+import main.wonprice.domain.member.service.NotificationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,12 +82,15 @@ public class ChatService {
 
         List<Message> findMessages = messageRepository.findByChatRoom(findChatRoom);
 
+        RoomStatus status = findChatRoom.getStatus();
+        LocalDateTime createdAt = findChatRoom.getCreatedAt();
+
         List<MessageDto> messageList = findMessages.stream()
                 .map(o -> new MessageDto(o))
                 .collect(Collectors.toList());
 
 //        log.info("ㄷㅍ : " + currentSequence);
-        ChatGetResponse chatGetResponse = new ChatGetResponse(messageList, currentSequence);
+        ChatGetResponse chatGetResponse = new ChatGetResponse(messageList, currentSequence, status, createdAt);
 
         return chatGetResponse;
     }
