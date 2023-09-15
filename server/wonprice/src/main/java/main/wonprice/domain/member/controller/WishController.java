@@ -82,13 +82,4 @@ public class WishController {
         return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
     }
 
-//    리뷰 작성 페이지에서 필요한 상대방 정보 응답
-    @GetMapping("/wishes/{product-id}")
-    public ResponseEntity getReviewReceiver(@PathVariable("product-id") Long productId) {
-
-        Member findMember = wishService.findReviewReceiver(productId);
-        MemberResponseDto response = memberMapper.memberToResponseDto(findMember);
-
-        return new ResponseEntity(response, HttpStatus.OK);
-    }
 }
