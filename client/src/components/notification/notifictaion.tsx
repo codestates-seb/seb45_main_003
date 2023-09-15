@@ -12,9 +12,11 @@ import { profileTabState } from "../../atoms/atoms";
 import { postListTabState } from "../../atoms/atoms";
 // import { findCategory } from "../../util/category";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { getUnReadCount, getNotifications, removeReadNotifications } from "./notificationFunction";
 import { useRef } from "react";
 import Button from "../common/Button";
+import axios from "axios";
+import { useSetRecoilState } from "recoil";
+import { loginState } from "../../atoms/atoms";
 
 interface notificationData {
   content: notification[];
@@ -120,12 +122,48 @@ const Notifications = (): JSX.Element => {
   const [open, setOpen] = useState(false);
   const [tabState, setTabState] = useRecoilState(profileTabState);
   const [menu, setMenu] = useRecoilState(postListTabState);
+  const setlogin = useSetRecoilState(loginState);
   const ID = localStorage.getItem("Id");
   const navigate = useNavigate();
   const location = useLocation();
   const queryClient = useQueryClient();
   const openNotification = () => {
     setOpen(!open);
+  };
+  const getUnReadCount = async () => {
+    try {
+      const res = await authInstance.get(`/notifications/count`);
+      return res.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 500) {
+          console.log(error);
+          setlogin(false);
+        }
+      }
+    }
+  };
+  const getNotifications = async () => {
+    try {
+      const res = await authInstance.get(`/notifications`);
+      return res.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          console.log(error);
+        }
+      }
+    }
+  };
+  const removeReadNotifications = async () => {
+    try {
+      const res = await authInstance.delete(`/notifications/delete`);
+      return res.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+      }
+    }
   };
   const {
     isLoading,

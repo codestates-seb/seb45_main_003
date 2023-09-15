@@ -10,6 +10,21 @@ import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 import TextInput from "../common/TextInput";
+// import { defaultInstance } from "../../interceptors/interceptors";
+
+// interface image {
+//   imageId: number;
+//   path: string;
+// }
+
+// interface productInfoForReview {
+//   title: string;
+//   images: image[];
+//   auction: boolean;
+//   closedAt: string;
+//   immediatelyBuyPrice:number;
+//   currentAuctionPrice:number;
+// }
 
 const StyledUploadForm = styled.section`
   padding: 2.5rem 0 4rem;
@@ -21,6 +36,13 @@ const ReviewForm = () => {
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
+  // const location = useLocation();
+  // const productId = location.pathname.slice(8);
+  // const getProductInfo = useQuery(["productInfo"], async () => {
+  //   const res = await defaultInstance.get(`/products/${productId}`);
+  //   return res.data;
+  // });
+
   const mutation = useMutation((data: FieldValues) => axios.post(API_PATHS.reviews(""), data, {}));
 
   const onSubmit = async (data: FieldValues) => {
@@ -45,7 +67,7 @@ const ReviewForm = () => {
             <img src="" alt="" />
             <div>
               <h3>후기 대상자 이름</h3>
-              <p>판매한 제품</p>
+              <p>거래한 제품</p>
             </div>
           </div>
 

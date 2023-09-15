@@ -170,10 +170,15 @@ const TradeContent = (): JSX.Element => {
       },
     },
   );
+  // const getReview = useQuery(["review"], async () => {
+  //   const res = await authInstance.get(`/members/${loginUserId}/reviews/post`);
+  // });
   const navigateProduct = (productId: number) => {
     navigate(`/product/${productId}`);
   };
-
+  const navigateReview = (productId: number) => {
+    navigate(`/review/${Id}?productId=${productId}`);
+  };
   return (
     <TradeContentContainer>
       <div className="topContainer">
@@ -212,7 +217,14 @@ const TradeContent = (): JSX.Element => {
                     )} 원`}</span>
                   </div>
                 </div>
-                {Id === loginUserId && <Button type="button" $text="후기" $design="yellow" />}
+                {Id === loginUserId && (
+                  <Button
+                    type="button"
+                    $text="후기"
+                    $design="yellow"
+                    onClick={() => navigateReview(el.productId)}
+                  />
+                )}
               </div>
             </div>
           ))}
