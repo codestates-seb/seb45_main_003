@@ -20,7 +20,7 @@ import Modal from "../common/Modal";
 import SelectInput from "../common/SelectInput";
 import TextArea from "../common/TextArea";
 import TextInput from "../common/TextInput";
-import { ProductData } from "./List";
+import { ProductData } from "../productList/List";
 
 const StyledUploadForm = styled.section`
   padding: 2.5rem 0 4rem;

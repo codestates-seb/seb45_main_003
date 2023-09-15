@@ -9,7 +9,7 @@ import { useModal } from "../../hooks/useModal";
 import { authInstance } from "../../interceptors/interceptors";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import { ProductData } from "./List";
+import { ProductData } from "../productList/List";
 
 type DeleteButtonProps = {
   data: ProductData;
@@ -18,9 +18,10 @@ type DeleteButtonProps = {
 const DeleteButton = ({ data }: DeleteButtonProps) => {
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
-  const { mutate, error } = useMutation(async (id: number) => {
+  const deleteData = async (id: number) => {
     await authInstance.delete(API_PATHS.products.default(id));
-  });
+  };
+  const { mutate, error } = useMutation(deleteData);
   const navigate = useNavigate();
 
   const handleDelete = async (id: number) => {

@@ -1,6 +1,6 @@
 import { AUCTION } from "../../constants/systemMessage";
 import { formatTime } from "../../util/date";
-import { ProductData } from "../post/List";
+import { ProductData } from "../productList/List";
 import ProductStatusIcon from "./ProductStatusIcon";
 
 type ProductStatusProps = {
@@ -25,7 +25,7 @@ const ProductStatus = ({ data }: ProductStatusProps) => {
       ) : data.productStatus === "BEFORE" ? (
         <>
           <p>{AUCTION.isnot}</p>
-          <ProductStatusIcon $status="end" $auction={false} />
+          <ProductStatusIcon $status="inProgress" $auction={false} />
         </>
       ) : (
         <>

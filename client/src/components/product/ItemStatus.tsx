@@ -17,10 +17,10 @@ import { getUserId } from "../../util/auth";
 import { formatTime } from "../../util/date";
 import ProductStatus from "../common/ProductStatus";
 import { CustomSwiperProps } from "../mainPage/carousel/Carousel";
+import { ProductData } from "../productList/List";
 import Bid from "./Bid";
 import BuyNow from "./BuyNow";
 import DeleteButton from "./DeleteButton";
-import { ProductData } from "./List";
 import WishCount from "./WishCount";
 
 type ItemStatusProps = {
@@ -152,6 +152,11 @@ const StyledItemStatus = styled.section`
     margin: 0 0 0 -0.25rem;
     cursor: pointer;
     justify-content: center;
+  }
+
+  .error_message {
+    font-size: ${FONT_SIZE.font_16};
+    font-weight: 400;
   }
 
   @media (max-width: 30rem) {
