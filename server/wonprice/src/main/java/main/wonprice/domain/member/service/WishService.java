@@ -10,7 +10,9 @@ import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -80,15 +82,18 @@ public class WishService {
     * 찜 목록에서 선택 삭제 하기
     * boolean 배열로 순서대로 요청
     */
-    public void removeWishes(List<Boolean> checkBox) {
+    public void removeWishes(List<Boolean> checkBox, int page) {
 
         log.info(checkBox.toString());
         Member loginMember = memberService.findLoginMember();
-        List<Wish> wishes = wishRepository.findByMember(loginMember);
+
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createdAt")));
+
+        List<Wish> wishes = findMemberWish(pageable, loginMember).getContent();
 
         for (int i = 0; i < checkBox.size(); i++) {
             if (checkBox.get(i)) {
-                removeWish(wishes.get(i).getWishId());
+                removeWish(wishes.get(i).getProduct().getProductId());
             }
         }
     }

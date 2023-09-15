@@ -3,19 +3,21 @@ package main.wonprice.domain.product.service;
 import lombok.RequiredArgsConstructor;
 import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
+import main.wonprice.domain.chat.entity.ChatRoom;
+import main.wonprice.domain.chat.entity.RoomStatus;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.member.service.NotificationService;
 import main.wonprice.domain.product.dto.BidRequestDto;
 import main.wonprice.domain.product.dto.ProductRequestDto;
+import main.wonprice.domain.product.entity.Bid;
 import main.wonprice.domain.product.entity.Product;
 import main.wonprice.domain.product.entity.ProductStatus;
+import main.wonprice.domain.product.repository.BidRepository;
 import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.domain.product.repository.ProductSpecification;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -32,24 +35,36 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+    private final NotificationService notificationService;
+    private final BidRepository bidRepository;
 
-    /*
-        상품 등록
-        - createAt(등록시간): now()
-     */
+    // 상품 등록
     @Override
     public Product save(Product product) {
+        // [상품의 카테고리가 존재하고, category_id가 null이 아닐 경우] 카테고리 등록
         if (product.getCategory().getCategoryId() != null) {
             Category category = categoryService.findById(product.getCategory().getCategoryId());
             product.setCategory(category);
         }
 
-        // auction(경매여부): true 일 경우에만 경매 종료일, 시작가 등록 가능 ,, 아닐 경우 null
+        // 상품 등록 시, [즉시구매가 >= 10억] 일 경우 예외처리
+        if (product.getImmediatelyBuyPrice() >= 1_000_000_000) {
+            throw new BusinessLogicException(ExceptionCode.PRODUCT_INVALID_PRICE);
+        }
+
+        // 경매 상품 등록 시, [auction(경매여부): true] 일 경우 경매 종료일, 시작가 등록
         if (product.getAuction()) {
             product.setClosedAt(product.getClosedAt());
             product.setCurrentAuctionPrice(product.getCurrentAuctionPrice());
         }
+
+        // 경매 상품 등록 시, [즉시 구매 가 <= 시작가] 일 경우 예외처리
+        if (product.getAuction() && product.getImmediatelyBuyPrice() <= product.getCurrentAuctionPrice()) {
+            throw new BusinessLogicException(ExceptionCode.PRODUCT_AUCTION_IMMEDIATELY_CURRENT_INVALID_PRICE);
+        }
+
         product.setCreatedAt(LocalDateTime.now());
+
         return productRepository.save(product);
     }
 
@@ -138,6 +153,7 @@ public class ProductServiceImpl implements ProductService {
     public Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member member) {
         Product product = findExistsProduct(productId);
         product.setModifiedAt(LocalDateTime.now());
+        notificationService.createdNotificationWithWishProduct(product);
         return productRepository.save(product.update(productRequestDto));
     }
 
@@ -230,8 +246,10 @@ public class ProductServiceImpl implements ProductService {
     // 대표 - 채팅방 안에서 "거래 완료" 버튼 클릭 시 해당 Product AFTER로 Update
     @Override
     @Transactional
-    public void updateCompletedProduct(Long productId) {
+    public void updateCompletedProduct(Long productId, ChatRoom chatRoom) {
         Product findProduct = productRepository.findById(productId).orElseThrow();
+
+        chatRoom.setStatus(RoomStatus.CLOSE);
 
         findProduct.setStatus(ProductStatus.AFTER);
     }
@@ -242,5 +260,33 @@ public class ProductServiceImpl implements ProductService {
         List<Product> checkCompletedAuction = productRepository.findByClosedAtIsBeforeAndStatus(LocalDateTime.now(), ProductStatus.BEFORE);
 
         return checkCompletedAuction;
+    }
+
+    // 대표 - 즉시구매
+    @Override
+    @Transactional
+    public Product immediatelyBuy(Long productId, Member member) {
+        Product findProduct = findExistsProduct(productId);
+
+        findProduct.setBuyerId(member.getMemberId());
+        findProduct.setStatus(ProductStatus.TRADE);
+
+        return findProduct;
+    }
+
+    //    회원 입찰 목록
+    @Override
+    public Page<Product> findMembersBidProducts(Pageable pageable, Long memberId) {
+
+        Page<Bid> bids = bidRepository.findAllByMemberMemberId(pageable, memberId);
+
+//        return bids.map(bid -> productRepository.findByProductIdAndStatus(bid.getProduct().getProductId(), ProductStatus.BEFORE));
+        List<Product> products =
+                bids.map(Bid::getProduct)
+                        .stream()
+                        .filter(product -> product.getStatus() == ProductStatus.BEFORE)
+                        .collect(Collectors.toList());
+
+        return new PageImpl<>(products, pageable, pageable.getPageSize());
     }
 }

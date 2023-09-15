@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.chat.controller.dto.ChatGetRequest;
 import main.wonprice.domain.chat.controller.dto.ChatPostRequest;
+import main.wonprice.domain.chat.controller.dto.MemberIdRequest;
 import main.wonprice.domain.chat.controller.dto.SequenceRequest;
 import main.wonprice.domain.chat.dto.chat.ChatGetResponse;
 import main.wonprice.domain.chat.dto.chat.ChatParticipantDto;
@@ -74,13 +75,6 @@ public class ChatController {
         return new ResponseEntity(findMessages, HttpStatus.OK);
     }
 
-    @DeleteMapping("/chat/{room-id}")
-    public void deleteChatRoom(@PathVariable("room-id") Long chatRoomId) {
-        Member loginMember = memberService.findLoginMember();
-
-        chatService.deleteChatRoom(chatRoomId, loginMember);
-    }
-
 //    @PostMapping("/chat/{room-id}")
 //    public void InsertChatParticipant(@PathVariable("room-id") Long chatRoomId) {
 //        Member loginMember = memberService.findLoginMember();
@@ -96,11 +90,21 @@ public class ChatController {
         chatService.updateSequence(loginMember, findChatRoom, request.getMessageId());
     }
 
+    @DeleteMapping("/chat/{room-id}")
+    public void deleteChatRoom(@PathVariable("room-id") Long chatRoomId, @RequestParam Long memberId) {
+//        Member loginMember = memberService.findLoginMember();
+
+        Member member = memberService.findMember(memberId);
+
+        chatService.deleteChatRoom(chatRoomId, member);
+    }
+
     @PostMapping("/chat/completed/{room-id}")
     public ResponseEntity completedChat(@PathVariable("room-id") Long chatRoomId) {
-        Long productId = chatService.findChatRoom(chatRoomId).getProductId();
+        ChatRoom chatRoom = chatService.findChatRoom(chatRoomId);
+        Long productId = chatRoom.getProductId();
 
-        productService.updateCompletedProduct(productId);
+        productService.updateCompletedProduct(productId, chatRoom);
 
         return new ResponseEntity(HttpStatus.OK);
     }

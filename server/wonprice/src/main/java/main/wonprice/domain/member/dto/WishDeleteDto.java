@@ -8,4 +8,6 @@ import java.util.List;
 public class WishDeleteDto {
 
     private List<Boolean> checkBox;
+
+    private int currentPage;
 }

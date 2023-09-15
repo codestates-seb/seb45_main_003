@@ -1,13 +1,13 @@
-import React, { useState, KeyboardEvent, ChangeEvent, FC } from "react";
+import React, { useState, KeyboardEvent, ChangeEvent, FC, useEffect } from "react";
 import styled from "styled-components"; // 수정된 부분
 import SendIcon from "@mui/icons-material/Send";
 import AddToPhotosIcon from "@mui/icons-material/AddToPhotos";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { COLOR } from "../../../constants/color";
-import { useRecoilState } from "recoil";
-import { chatState, MessageItem } from "../recoil/chatState";
-
-// import Button from "../../components/common/Button";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { chatState, currentChatRoomIdState, MessageItem, MessageData } from "../recoil/chatState";
+import ChatButtons from "./button/ChatButtons";
+import axios from "axios";
+import { getUserId } from "../../../util/auth";
 
 const Container = styled.div`
   margin-top: 1rem;
@@ -71,65 +71,43 @@ const Container = styled.div`
   } */
 `;
 
-const Button = styled.button`
-  width: calc(100% - 3rem);
-  max-width: 7.125rem;
-  display: inline-flex;
-  /* padding: 0.9375rem 0.75rem; */
-  justify-content: center;
-  align-items: center;
-  gap: 0.375rem;
-
-  border-radius: 0.375rem;
-  border: 0.0625rem solid #e0e0e0;
-  background: #fff;
-
-  color: #222;
-  font-family: Pretendard Variable;
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 1.25rem; /* 125% */
-
-  .text {
-    display: inline; /* 기본적으로 텍스트를 보이게 설정 */
-  }
-
-  /* 버튼 너비가 200px 이하로 줄어들면 텍스트를 숨김 */
-  @media (max-width: 6.25rem) {
-    .text {
-      display: none;
-    }
-  }
-
-  &:hover {
-    color: #ffffff; // 텍스트의 호버 색상 (필요하다면)
-    background-color: #ffb300;
-  }
-  @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
-  }
-`;
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
 }
-
-// Message 타입 정의
-// interface MessageData {
-//   body: {
-//     content: string;
-//     senderId: number | null;
-//     createdAt?: string;
-//   };
-// }
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
 }
 
 const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
+  const [initialStatus, setInitialStatus] = useState("ACTIVE"); // 초기 상태 설정
   const [message, setMessage] = useState<string>("");
   const [, setChatList] = useRecoilState<MessageItem[]>(chatState);
+  const chatRoomId = useRecoilValue(currentChatRoomIdState);
+  const memberId = getUserId();
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await axios.get<MessageData>(
+          `${process.env.REACT_APP_API_URL}/chat/${chatRoomId}`,
+          {
+            params: {
+              memberId: Number(memberId),
+            },
+          },
+        );
+        console.log(response.data);
+        if (response.data && response.data.status) {
+          setInitialStatus(response.data.status);
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+      }
+    };
+
+    fetchMessages();
+  }, [chatRoomId, memberId]);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
@@ -186,10 +164,7 @@ const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
           <SendIcon />
         </button>
       </div>
-      <Button>
-        <span className="text">거래 완료</span> {/* 이 부분 수정 */}
-        <CheckCircleOutlineIcon />
-      </Button>
+      <ChatButtons roomId={chatRoomId} initialStatus={initialStatus} />
     </Container>
   );
 };
