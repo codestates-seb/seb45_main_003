@@ -8,6 +8,7 @@ export type ChatList = {
   deletedAt: string;
   path: string | undefined;
   unReadMessage: number;
+  createdAt: string;
 
   chatRoom: {
     memberId: number;

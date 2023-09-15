@@ -1,17 +1,16 @@
 import React, { useEffect, useState, ChangeEvent } from "react";
-import axios from "axios";
-import { useRecoilState, useRecoilValue, RecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { loginState } from "../../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
-import { chatListState, totalUnreadMessagesState } from "../recoil/chatState";
+import { totalUnreadMessagesState } from "../recoil/chatState";
 import styled from "styled-components";
 import { currentChatRoomIdState } from "../recoil/chatState";
 import FormatTimeOrDate from "../hook/FormatTimeOrDate";
-import { useQuery } from "react-query";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-// import { webSocketConnectionState } from "../recoil/chatState";
+import useFetchChatList from "../hook/useFetchChatList"; // 커스텀 훅을 임포트합니다.
 
+// interface
 interface ChatList {
   chatRoomId: number;
   memberId: number;
@@ -19,6 +18,8 @@ interface ChatList {
   deletedAt: string | null;
   path: string | undefined;
   unReadMessage: number;
+  createdAt: string;
+
   chatRoom: {
     memberId: number;
     name: string;
@@ -31,11 +32,11 @@ interface ChatList {
     createdAt: string | null;
   } | null;
 }
-
 interface MyError {
   message: string;
   // 다른 필드들...
 }
+// 스타일
 const TotalUnread = styled.div`
   position: static;
   display: flex;
@@ -67,15 +68,6 @@ const ChatList = styled.div`
   &::-webkit-scrollbar {
     width: 0;
   }
-  /* &::-webkit-scrollbar-track {
-    background: #ffffff;
-    border-radius: 100vw;
-  }
-  &::-webkit-scrollbar-thumb {
-    background: #ffb300;
-    border-radius: 100vw;
-    border: 0.2rem solid #ffffff;
-  } */
 `;
 
 const Container = styled.button`
@@ -184,12 +176,14 @@ const Box = styled.div`
   }
 `;
 
+// 기능
 const ChattingListData: React.FC = () => {
   // const isConnected = useRecoilValue(webSocketConnectionState); // 웹소켓 연결 상태
-  const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
+  // const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [, setCurrentChatRoomId] = useRecoilState(currentChatRoomIdState);
   const isLoggedIn = useRecoilValue(loginState);
+  const { chatList, error, isLoading } = useFetchChatList(isLoggedIn); // 커스텀 훅을 사용합니다.
   const navigate = useNavigate();
   // State for storing the total number of unread messages.
   const [totalUnreadMessages, setTotalUnreadMessages] = useRecoilState(totalUnreadMessagesState);
@@ -202,61 +196,8 @@ const ChattingListData: React.FC = () => {
   }, [chatList]);
 
   useEffect(() => {
-    if (isLoggedIn) {
-      // 로그인 상태가 true일 때만 API 호출을 합니다.
-      const fetchData = async () => {
-        // 로컬 스토리지에서 토큰을 가져옵니다.
-        const accessToken = localStorage.getItem("accessToken");
-
-        if (!accessToken) {
-          console.log("No access token found");
-          return;
-        }
-
-        try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat`, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`, // 헤더에 토큰을 추가합니다.
-            },
-          });
-          // console.log(response.data);
-          setChatList(response.data);
-        } catch (error) {
-          console.log("Failed to fetch chat list:", error);
-        }
-      };
-      fetchData();
-    }
-  }, [isLoggedIn]); // 로그인 상태가 변경될 때마다 useEffect를 실행합니다.
-
-  useEffect(() => {
     console.log("Chat list has been updated:", chatList);
   }, [chatList]);
-
-  const fetchChatList = async () => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-      throw new Error("No access token found");
-    }
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/chat`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
-    return response.data;
-  };
-
-  const { error, isLoading } = useQuery("chatList", fetchChatList, {
-    refetchInterval: 5000, // Always refetch at an interval of 5 seconds
-    enabled: isLoggedIn, // Only enable query when logged in
-
-    onError: (err) => {
-      console.log("An error occurred:", err);
-    },
-    onSuccess: (data) => {
-      setChatList(data);
-    },
-  });
 
   // 채팅방 필터링
   const filteredChatList = chatList.filter((chat) => {
@@ -265,11 +206,33 @@ const ChattingListData: React.FC = () => {
     );
   });
 
-  // 최신 메시지 기준으로 채팅방 정렬
+  // // 최신 메시지 기준으로 채팅방 정렬
+  // const sortedChatList = filteredChatList.sort((a, b) => {
+  //   const timeA = a.message?.createdAt || "";
+  //   const timeB = b.message?.createdAt || "";
+  //   return new Date(timeB).getTime() - new Date(timeA).getTime();
+  // });
+
   const sortedChatList = filteredChatList.sort((a, b) => {
-    const timeA = a.message?.createdAt || "";
-    const timeB = b.message?.createdAt || "";
-    return new Date(timeB).getTime() - new Date(timeA).getTime();
+    const roomTimeA = new Date(a.createdAt).getTime();
+    const roomTimeB = new Date(b.createdAt).getTime();
+
+    const messageTimeA = a.message ? new Date(a.message.createdAt || "").getTime() : 0;
+    const messageTimeB = b.message ? new Date(b.message.createdAt || "").getTime() : 0;
+
+    if (messageTimeA === 0 && messageTimeB === 0) {
+      // 둘 다 메시지가 없을 경우, 채팅방의 createdAt으로 정렬하고 상단에 위치
+      return roomTimeB - roomTimeA;
+    } else if (messageTimeA === 0) {
+      // 첫 번째 채팅방에 메시지가 없을 경우
+      return -1;
+    } else if (messageTimeB === 0) {
+      // 두 번째 채팅방에 메시지가 없을 경우
+      return 1;
+    } else {
+      // 둘 다 새 메시지가 있을 경우, 메시지의 createdAt으로 정렬
+      return messageTimeB - messageTimeA;
+    }
   });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
