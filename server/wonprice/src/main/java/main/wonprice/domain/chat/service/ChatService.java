@@ -33,7 +33,6 @@ public class ChatService {
     private final ChatParticipantRepository chatParticipantRepository;
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
-    private final NotificationService notificationService;
 //    private final ReadSequenceRepository readSequenceRepository;
 
     @Transactional
@@ -45,7 +44,6 @@ public class ChatService {
         chatRoom.setCreatedAt(LocalDateTime.now());
 
         ChatRoom saveChatRoom = chatRoomRepository.save(chatRoom);
-        notificationService.createNotificationWithChatRoom(saveChatRoom);
 
         return saveChatRoom.getChatRoomId();
     }

@@ -8,6 +8,7 @@ import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.chat.service.ChatService;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.member.service.NotificationService;
 import main.wonprice.domain.picture.service.PictureService;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
@@ -39,6 +40,7 @@ public class ProductController {
     private final PictureService pictureService;
     private final ChatService chatService;
     private final JwtService jwtService;
+    private final NotificationService notificationService;
 
 
     // 상품 등록
@@ -207,6 +209,8 @@ public class ProductController {
 
         chatService.insertChatParticipant(chatRoomId, product.getSeller());
         chatService.insertChatParticipant(chatRoomId, buyer);
+
+        notificationService.createNotificationWithChatRoom(chatService.findChatRoom(chatRoomId));
 
         return new ResponseEntity(HttpStatus.OK);
     }
