@@ -231,7 +231,7 @@ public class ProductServiceImpl implements ProductService {
             - 제시한 입찰가는 현재 상품 입찰가보다 낮은 가격일 수 없다.
          */
         if (requestedBidPrice < currentProductBidPrice) {
-            throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_1);
+            throw new BusinessLogicException(ExceptionCode.BID_PRICE_LOW_INVALID);
         }
 
         /*
@@ -244,13 +244,28 @@ public class ProductServiceImpl implements ProductService {
          */
         if (product.getBuyerId() == null) {
             if (requestedBidPrice < currentProductBidPrice) {
-                throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_2);
+                throw new BusinessLogicException(ExceptionCode.BID_PRICE_LOW_INVALID);
             }
         } else {
             if (requestedBidPrice < (currentProductBidPrice * 1.05)) {
-                throw new BusinessLogicException(ExceptionCode.INVALID_BID_PRICE_2);
+                throw new BusinessLogicException(ExceptionCode.BID_PRICE_HIGH_INVALID);
             }
         }
+
+        /*
+            #3 입찰가 유효성 검사
+            - 입찰 가격 == 즉시구매 일 경우
+            -- 상품 상태 TRADE 변경
+            -- 채팅방 생성
+         */
+        if(requestedBidPrice.equals(currentProductBidPrice)){
+            product.setStatus(ProductStatus.TRADE);
+        }
+
+        /*
+            #4 입찰가 유효성 검사
+            - 상품 상태가 BEFORE가 아닐 경우 값 예외처리
+         */
 
         product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());
         product.setBuyerId(request.getMemberId());

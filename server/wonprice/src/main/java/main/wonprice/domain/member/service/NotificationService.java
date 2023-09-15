@@ -108,6 +108,7 @@ public class NotificationService {
 
         for (Notification notification : notificationList) {
             notification.setDeletedAt(LocalDateTime.now());
+            notification.setIsRead(true);
         }
 
         return notificationRepository.saveAll(notifications);

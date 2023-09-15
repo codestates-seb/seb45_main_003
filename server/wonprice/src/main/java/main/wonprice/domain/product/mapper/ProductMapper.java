@@ -64,6 +64,8 @@ public interface ProductMapper {
                 .sellerTradeCount(product.getSeller().getTradeCount()) // 판매자가 거래한 횟수
                 .wishCount(product.getWishCount()) // 상품의 찜 갯수
 //                .images(product.getProductPictures())
+                .sellerReview(product.getSellerReview())
+                .buyerReview(product.getBuyerReview())
                 .build();
     }
 
@@ -75,6 +77,7 @@ public interface ProductMapper {
         return ProductResponseDto.builder()
                 .productId(product.getProductId())
                 .memberId(product.getSeller().getMemberId())
+                .buyerId(product.getBuyerId())
                 .title(product.getTitle())
                 .description(product.getDescription())
                 .immediatelyBuyPrice(product.getImmediatelyBuyPrice())
@@ -98,6 +101,8 @@ public interface ProductMapper {
                 .loginMembersWish(product.getWishes()
                         .stream()
                         .anyMatch(wish -> wish.getMember() == loginMember))
+                .sellerReview(product.getSellerReview())
+                .buyerReview(product.getBuyerReview())
                 .build();
     }
 }

@@ -58,7 +58,7 @@ public interface NotificationMapper {
             notifications.add(
                     Notification.builder()
                             .content(product.getTitle() + "에 대한 채팅방이 열렸습니다.")
-                            .notificationType(NotificationType.CHATTING)
+                            .notificationType(NotificationType.CHAT)
                             .referenceId(chatRoom.getChatRoomId())
                             .createdAt(LocalDateTime.now())
                             .isRead(false)
