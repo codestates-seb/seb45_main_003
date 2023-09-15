@@ -17,6 +17,7 @@
     "@types/react-dom": "^18.2.7",
     "@types/swiper": "^6.0.0",
     "@types/uuid": "^9.0.3",
+    "aos": "^3.0.0-beta.6",
     "aws-sdk": "^2.1450.0",
     "axios": "^1.4.0",
     "event-source-polyfill": "^1.0.31",
@@ -64,6 +65,7 @@
     ]
   },
   "devDependencies": {
+    "@types/aos": "^3.0.4",
     "@types/event-source-polyfill": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",

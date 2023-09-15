@@ -23,7 +23,7 @@ public interface ProductService {
 
     Product deleteOneById(Long productId,Member loginMember);
 
-    Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member loginMember);
+    Product updateOneById(Long productId, ProductRequestDto productRequestDto);
 
     Page<Product> findMemberSold(Pageable pageable, Member member);
 
@@ -46,5 +46,7 @@ public interface ProductService {
     List<Product> getCompletedAuction();
 
     Product immediatelyBuy(Long productId, Member member);
+
+    Page<Product> findMembersBidProducts(Pageable pageable, Long memberId);
 }
 

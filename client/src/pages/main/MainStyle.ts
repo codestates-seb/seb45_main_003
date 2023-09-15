@@ -7,10 +7,11 @@ export const BackGround = styled.div`
   justify-content: center;
   align-items: center;
 `;
-export const StyledMain = styled.main`
+export const StyledMain = styled.section`
   max-width: 1440px;
   width: calc(100% - 3rem);
   margin: 0 auto;
+  overflow: hidden;
 `;
 
 export const ContentBox = styled.div`
@@ -24,9 +25,11 @@ export const ContentBox = styled.div`
   /* 순차 적으로 컨텐츠 배치 : 캐러셀 하단 이펙트카드 */
 
   .EffectCard {
+    padding: 150px 0 0;
     display: flex;
     justify-content: center;
-    /* background-color: red; */
+    gap: 2.5rem;
+
     .TextBox1 {
       display: flex;
       flex-direction: column;
@@ -43,10 +46,9 @@ export const ContentBox = styled.div`
 
         color: #222;
         font-family: Pretendard Variable;
-        font-size: 3.75rem;
+        font-size: 3rem;
         font-style: normal;
         font-weight: 800;
-        line-height: 5rem; /* 133.333% */
       }
 
       .Text2 {
@@ -56,10 +58,10 @@ export const ContentBox = styled.div`
 
         color: #616161;
         font-family: Pretendard Variable;
-        font-size: 2.25rem;
+        font-size: 1.5rem;
         font-style: normal;
         font-weight: 800;
-        line-height: 3.625rem; /* 161.111% */
+        line-height: 1.5;
       }
     }
   }
@@ -88,10 +90,9 @@ export const ContentBox = styled.div`
 
         color: #222;
         font-family: Pretendard Variable;
-        font-size: 3.75rem;
+        font-size: 3rem;
         font-style: normal;
         font-weight: 800;
-        line-height: 3.75rem; /* 100% */
       }
 
       .Text2 {
@@ -101,10 +102,10 @@ export const ContentBox = styled.div`
 
         color: #616161;
         font-family: Pretendard Variable;
-        font-size: 2.25rem;
+        font-size: 1.5rem;
         font-style: normal;
         font-weight: 800;
-        line-height: 3.625rem; /* 161.111% */
+        line-height: 1.5;
       }
     }
     .FunctionImg {

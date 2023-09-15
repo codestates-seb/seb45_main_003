@@ -5,6 +5,7 @@ import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.Review;
 import main.wonprice.domain.member.repository.ReviewRepository;
 import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ public class ReviewService {
     private final ReviewRepository repository;
     private final MemberService memberService;
     private final NotificationService notificationService;
+    private final ProductRepository productRepository;
 
     public Review createReview(Review review) {
 
@@ -126,5 +128,22 @@ public class ReviewService {
         }
 
         return verifiedReview.get();
+    }
+
+    public Member findReviewReceiver(Long productId) {
+
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+
+        if (optionalProduct.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.PRODUCT_NOT_FOUND);
+        }
+        Product product = optionalProduct.get();
+        Member loginMember = memberService.findLoginMember();
+
+        if (loginMember == product.getSeller()) {
+            return memberService.findMember(product.getBuyerId());
+        } else if (loginMember == memberService.findMember(product.getBuyerId())) {
+            return product.getSeller();
+        } else throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHORIZED);
     }
 }

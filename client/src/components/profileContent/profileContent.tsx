@@ -10,12 +10,12 @@ import Modal from "../common/Modal";
 import PostListTab from "./postListTab";
 // import { useRecoilValue } from "recoil";
 // import { loginState } from "../../atoms/atoms";
-import { authInstance, defaultInstance } from "../../interceptors/interceptors";
-import { useLocation } from "react-router-dom";
-import ProfileImgRegisterForm from "./profileImgForm";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import Loading from "../common/Loading";
+import { useLocation } from "react-router-dom";
+import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import Error from "../common/Error";
+import Loading from "../common/Loading";
+import ProfileImgRegisterForm from "./profileImgForm";
 
 interface image {
   imageId: number;
@@ -40,14 +40,15 @@ interface modifyProfileForm {
 }
 
 const ProfileContentContainer = styled.div`
-  padding: 2rem;
+  padding: 1rem 2rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
   min-width: calc(100% - 18rem);
+
   .topContainer {
-    padding: 1.25rem 1rem;
+    padding: 0 1rem 1.25rem 1rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

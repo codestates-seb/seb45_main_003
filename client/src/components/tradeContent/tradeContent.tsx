@@ -1,17 +1,17 @@
-import { styled } from "styled-components";
-import { COLOR } from "../../constants/color";
-import { FONT_SIZE } from "../../constants/font";
-import Button from "../common/Button";
-import { defaultInstance } from "../../interceptors/interceptors";
+import { useQuery } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
+import { styled } from "styled-components";
 import { profileTabState } from "../../atoms/atoms";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
+import { usePagination } from "../../hooks/usePagination";
+import { defaultInstance } from "../../interceptors/interceptors";
+import { translateProductStatus } from "../../util/productStatus";
+import Button from "../common/Button";
 import Empty from "../common/Empty";
-import { useQuery } from "react-query";
 import Error from "../common/Error";
 import Loading from "../common/Loading";
-import { translateProductStatus } from "../../util/productStatus";
-import { usePagination } from "../../hooks/usePagination";
 import Pagination from "../common/Pagination";
 
 interface image {
@@ -32,6 +32,8 @@ interface postContent {
   auction: boolean;
   immediatelyBuyPrice: number;
   currentAuctionPrice: number;
+  buyerReview: boolean;
+  sellerReview: boolean;
 }
 
 const TradeContentContainer = styled.div`
@@ -40,7 +42,7 @@ const TradeContentContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 18rem);
+  min-width: calc(100% - 14rem);
   min-height: calc(100% - 0.75rem);
   .topContainer {
     padding: 1.25rem 1rem;
@@ -48,6 +50,11 @@ const TradeContentContainer = styled.div`
     .menuTitle {
       font-size: ${FONT_SIZE.font_32};
       font-weight: bold;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
     }
   }
   .empty {
@@ -136,6 +143,7 @@ const TradeContent = (): JSX.Element => {
     currentPage,
     totalPages,
     setTotalPages,
+    setCurrentPage,
     pageChangeHandler,
     prevPageHandler,
     nextPageHandler,
@@ -162,10 +170,23 @@ const TradeContent = (): JSX.Element => {
     {
       onSuccess: (data) => {
         setTotalPages(data.totalPages);
+        setCurrentPage(Number(searchParams.get("page")) - 1);
       },
     },
   );
-
+  // const getReview = useQuery(["review"], async () => {
+  //   const res = await authInstance.get(`/members/${loginUserId}/reviews/post`);
+  // });
+  const navigateProduct = (productId: number) => {
+    navigate(`/product/${productId}`);
+  };
+  //리뷰 작성한적있으면 단건조회 페이지로 이동
+  const navigateBuyReview = (productData: postContent) => {
+    navigate(`/review/${Id}?productId=${productData.productId}`);
+  };
+  const navigateSellReview = (productData: postContent) => {
+    navigate(`/review/${Id}?productId=${productData.productId}`);
+  };
   return (
     <TradeContentContainer>
       <div className="topContainer">
@@ -180,7 +201,9 @@ const TradeContent = (): JSX.Element => {
               <div className="leftSection">
                 <img className="postImg" src={el.images[0].path}></img>
                 <div className="infoContainer">
-                  <div className="postTitle">{el.title}</div>
+                  <div className="postTitle" onClick={() => navigateProduct(el.productId)}>
+                    {el.title}
+                  </div>
                   <div>{`${translateProductStatus(el.productStatus)}`}</div>
                   {el.auction ? <div>{`경매종료: ${el.closedAt}`}</div> : <div>즉시 구매 상품</div>}
                 </div>
@@ -202,7 +225,14 @@ const TradeContent = (): JSX.Element => {
                     )} 원`}</span>
                   </div>
                 </div>
-                {Id === loginUserId && <Button type="button" $text="후기" $design="yellow" />}
+                {Id === loginUserId && !el.buyerReview && (
+                  <Button
+                    type="button"
+                    $text="후기 작성"
+                    $design="yellow"
+                    onClick={() => navigateBuyReview(el)}
+                  />
+                )}
               </div>
             </div>
           ))}
@@ -212,7 +242,9 @@ const TradeContent = (): JSX.Element => {
               <div className="leftSection">
                 <img className="postImg" src={el.images[0].path}></img>
                 <div className="infoContainer">
-                  <div className="postTitle">{el.title}</div>
+                  <div className="postTitle" onClick={() => navigateProduct(el.productId)}>
+                    {el.title}
+                  </div>
                   <div>{`${translateProductStatus(el.productStatus)}`}</div>
                   {el.auction ? <div>{`경매종료: ${el.closedAt}`}</div> : <div>즉시 구매 상품</div>}
                 </div>
@@ -234,7 +266,14 @@ const TradeContent = (): JSX.Element => {
                     )} 원`}</span>
                   </div>
                 </div>
-                {Id === loginUserId && <Button type="button" $text="후기" $design="yellow" />}
+                {Id === loginUserId && !el.sellerReview && (
+                  <Button
+                    type="button"
+                    $text="후기"
+                    $design="yellow"
+                    onClick={() => navigateSellReview(el)}
+                  />
+                )}
               </div>
             </div>
           ))}
