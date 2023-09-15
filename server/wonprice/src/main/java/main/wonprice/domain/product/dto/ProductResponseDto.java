@@ -18,6 +18,8 @@ public class ProductResponseDto {
 
     private Long memberId;
 
+    private Long buyerId;
+
     private String title;
 
     private String description;
