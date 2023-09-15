@@ -48,6 +48,11 @@ const TradeContentContainer = styled.div`
     .menuTitle {
       font-size: ${FONT_SIZE.font_32};
       font-weight: bold;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
     }
   }
   .empty {

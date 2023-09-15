@@ -101,10 +101,20 @@ const PostListContainer = styled.div`
         font-size: ${FONT_SIZE.font_20};
         color: ${COLOR.darkText};
         cursor: pointer;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
       }
       .productName {
         font-weight: bold;
         color: ${COLOR.darkText};
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
       }
       .authorContainer {
         display: flex;
@@ -114,6 +124,13 @@ const PostListContainer = styled.div`
           font-weight: bold;
           color: ${COLOR.darkText};
         }
+      }
+      .postContent {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
       }
     }
   }

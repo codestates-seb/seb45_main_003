@@ -130,6 +130,11 @@ const BookmarkContentContainer = styled.form`
           font-size: ${FONT_SIZE.font_20};
           font-weight: bold;
           cursor: pointer;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
         }
         .exceptTitle {
           display: flex;

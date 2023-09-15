@@ -66,6 +66,7 @@ const Notification = styled.div`
       overflow: scroll;
       cursor: default;
       .emptymessage {
+        padding: 1rem;
         color: ${COLOR.darkText};
       }
       .deleteButtonContainer {
@@ -87,6 +88,9 @@ const Notification = styled.div`
         border-bottom: 1px solid ${COLOR.border};
         padding: 1rem;
         cursor: pointer;
+        &:hover {
+          background-color: ${COLOR.gray_300};
+        }
         &:last-child {
           border-bottom: none;
         }
@@ -95,7 +99,7 @@ const Notification = styled.div`
           border-bottom: 1px solid ${COLOR.border};
         }
         &.isRead {
-          color: ${COLOR.mediumText};
+          color: ${COLOR.lightText};
         }
         &.notRead {
           color: ${COLOR.darkText};
@@ -123,19 +127,22 @@ const Notifications = (): JSX.Element => {
   const openNotification = () => {
     setOpen(!open);
   };
-  const { isLoading, data: notificationInfo } = useQuery<notificationData>(
-    ["notification"],
-    getNotifications,
-    {
-      staleTime: 30000,
-    },
-  );
+  const {
+    isLoading,
+    data: notificationInfo,
+    refetch,
+  } = useQuery<notificationData>(["notification"], getNotifications, {
+    staleTime: 30000,
+  });
   const notificationMutation = useMutation(
     async (notification: notification) => {
       await authInstance.patch(`/notifications/${notification.notificationId}`);
     },
     {
-      onSuccess: () => queryClient.invalidateQueries("notification"),
+      onSuccess: () => {
+        queryClient.invalidateQueries("notification");
+        queryClient.invalidateQueries("readCount");
+      },
     },
   );
   const navigatePost = async (notification: notification) => {
@@ -158,7 +165,7 @@ const Notifications = (): JSX.Element => {
   const getReadCount = useQuery(["readCount", { location }], getUnReadCount);
   const notificationsMutation = useMutation(removeReadNotifications, {
     onSuccess: () => {
-      queryClient.invalidateQueries("notificaion");
+      refetch();
     },
   });
   const handleDelete = async () => {
