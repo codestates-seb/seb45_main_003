@@ -3,7 +3,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "react-query";
 import { useLocation } from "react-router-dom";
 import { Client } from "webstomp-client";
-import { AUCTION, CONFIRM, MAX, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
+import { AUCTION, MAX, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
 import { getUserId } from "../../util/auth";
 import { allowOnlyNumber } from "../../util/number";
@@ -19,11 +19,12 @@ type BidProps = {
 
 const Bid = (props: BidProps) => {
   const { data, stompClient } = props;
+  const queryClient = useQueryClient();
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
-  const { register, handleSubmit, formState, reset } = useForm<FieldValues>();
+  const { register, handleSubmit, formState, reset, watch } = useForm<FieldValues>();
+  const currentAuctionPrice = watch("currentAuctionPrice");
   const userid = getUserId();
-  const queryClient = useQueryClient();
   const location = useLocation();
   const idArr = location.pathname.split("/");
   const productId = idArr[idArr.length - 1];
@@ -48,30 +49,33 @@ const Bid = (props: BidProps) => {
     };
 
     mutate(bidData);
-
-    if (error) {
-      setModalMessage({ title: "상품 입찰 실패", description: SUCCESS.bid });
-    } else {
-      setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bid });
-
-      const modifiedData = {
-        ...data,
-        productStatus: "TRADE",
-        buyerId: Number(userid),
-      };
-      queryClient.setQueryData(["productData", productId], modifiedData);
-      reset();
-    }
+    confirmSubmit();
   };
 
-  //데이터 확인
-  const confirmPrice = (formData: FieldValues) => {
-    if (Number(formData.currentAuctionPrice) === data.immediatelyBuyPrice) {
-      setModalMessage({ title: "상품 입찰 확인", description: CONFIRM.bid });
-      return;
-    }
+  const confirmSubmit = () => {
+    if (!error) {
+      let modifiedData = {};
+      console.log(Number(currentAuctionPrice) === data.immediatelyBuyPrice);
+      if (Number(currentAuctionPrice) === data.immediatelyBuyPrice) {
+        modifiedData = {
+          ...data,
+          buyerId: Number(userid),
+          productStatus: "TRADE",
+        };
+        setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bidimmediatelyBuyPrice });
+      } else {
+        modifiedData = {
+          buyerId: Number(userid),
+          ...data,
+        };
+        setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bid });
+      }
 
-    onSubmit(data);
+      queryClient.setQueryData(["productData", productId], modifiedData);
+      reset();
+    } else {
+      setModalMessage({ title: "상품 입찰 실패", description: SUCCESS.bid });
+    }
   };
 
   return (
@@ -111,28 +115,10 @@ const Bid = (props: BidProps) => {
                 defaultValue={data.minBidPrice.toString()}
                 formState={formState}
               />
-              <Button
-                $design="black"
-                $text="입찰"
-                type="button"
-                onClick={handleSubmit(confirmPrice)}
-              />
+              <Button $design="black" $text="입찰" type="button" onClick={handleSubmit(onSubmit)} />
             </>
           )}
-
-          {modalMessage.title === "상품 입찰 확인" && (
-            <div className="button">
-              <Button
-                $design="outline"
-                $text="취소"
-                type="button"
-                onClick={() => setIsOpen(false)}
-              />
-              <Button $design="black" $text="입찰" type="button" onClick={handleSubmit(onSubmit)} />
-            </div>
-          )}
-
-          {modalMessage.title !== "상품 입찰" && modalMessage.title !== "상품 입찰 확인" && (
+          {modalMessage.title !== "상품 입찰" && (
             <div className="button">
               <Button
                 $design="black"

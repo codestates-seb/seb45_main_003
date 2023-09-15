@@ -252,8 +252,6 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
     }
   }, []);
 
-  console.log(data);
-
   //소켓 구독
   useEffect(() => {
     if (stompClient && data) {

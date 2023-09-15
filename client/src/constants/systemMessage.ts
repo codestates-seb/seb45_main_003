@@ -14,7 +14,6 @@ export const REQUIRED = {
 
 export const CONFIRM = {
   delete: "상품을 삭제하시겠습니까?",
-  bid: "즉시구매가와 같은 가격으로 입찰할경우 경매가 종료되고 상품의 구매자가 됩니다.",
   buyItNow: "상품을 즉시 구매가에 구매하시겠습니까?",
 };
 
@@ -26,6 +25,7 @@ export const SUCCESS = {
   removeWishlist: "찜 목록에서 상품을 삭제했습니다",
   delete: "상품을 삭제하였습니다.",
   bid: "상품을 입찰하였습니다.",
+  bidimmediatelyBuyPrice: "즉시구매가와 같은 가격으로 입찰하여 경매가 종료되었습니다.",
   buyItNow: "상품을 즉시구매가에 구매하였습니다.",
 };
 
