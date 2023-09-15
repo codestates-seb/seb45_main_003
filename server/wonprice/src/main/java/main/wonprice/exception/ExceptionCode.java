@@ -30,6 +30,7 @@ public enum ExceptionCode {
     // 상품 등록
     PRODUCT_INVALID_PRICE(400, "상품의 등록 가격은 10억을 넘을 수 없습니다."),
     PRODUCT_AUCTION_IMMEDIATELY_CURRENT_INVALID_PRICE(400, "경매하려는 상품의 시작가는 즉시 구매가와 같거나 높은 가격일 수 없습니다."),
+
     // 상품 수정
     PRODUCT_AUCTION_INVALID_MODIFIED(400, "입찰자가 존재하는 경매 상품은 수정할 수 없습니다."),
     PRODUCT_SELLER_NOT_SAME(400, "게시글을 수정할 권한이 없습니다."),
