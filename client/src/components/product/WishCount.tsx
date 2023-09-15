@@ -23,11 +23,12 @@ const WishCount = (props: WishCountProps) => {
   const [loginMembersWish, setLoginMembersWish] = useState(data.loginMembersWish || false);
   const [wishCount, setwishCount] = useState(data.wishCount || 0);
 
-  const { mutate, error } = useMutation(async (id: number) => {
+  const submitData = async (id: number) => {
     loginMembersWish
       ? await authInstance.delete(API_PATHS.wishes.default(id))
       : await authInstance.post(API_PATHS.wishes.add, { productId: id });
-  });
+  };
+  const { mutate, error } = useMutation(submitData);
 
   const addWishlist = async (id: number) => {
     mutate(id);
