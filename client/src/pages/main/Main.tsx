@@ -13,8 +13,17 @@ const Main = (): JSX.Element => {
     <>
       <BackGround style={{ backgroundImage: `url(${background})` }}>
         <ContentBox>
-          <MainTitle>THE PRICE YOU WANT</MainTitle>
-          <SecondTitle>중고 경매 서비스 WonPrice</SecondTitle>
+          <MainTitle data-aos="flip-left" data-aos-offset="0" data-aos-duration="1000">
+            THE PRICE YOU WANT
+          </MainTitle>
+          <SecondTitle
+            data-aos="flip-left"
+            data-aos-offset="0"
+            data-aos-delay="700"
+            data-aos-duration="1200"
+          >
+            중고 경매 서비스 WonPrice
+          </SecondTitle>
           {/* 순차 적으로 컨텐츠 배치  : 캐러셀 슬라이드 */}
           <div className="Box">
             <Carousel />
@@ -23,13 +32,13 @@ const Main = (): JSX.Element => {
           <FirstScreen />
           {/* 순차 적으로 컨텐츠 배치 : 기능 소개 1*/}
           <SecondScreen
-            text1="기능 소개1"
-            text2="뭐라 적어야 하긴 하는데 <br /> 뭐라고 적어야 할지 생각이 안남 <br /> 뭔가 엄청난 소개 문구"
+            text1="실시간 경매"
+            text2="실시간으로 입찰가가 갱신되는<br>박진감 넘치는 경매를<br>체험해 보세요."
             imgSrc={Img1}
           />
           <ThirdScreen
-            text1="기능 소개2"
-            text2="뭐라 적어야 하긴 하는데 <br /> 뭐라고 적어야 할지 생각이 안남 <br /> 뭔가 엄청난 소개 문구"
+            text1="채팅"
+            text2="낙찰 또는 즉시구매에<br>성공한 구매자와 판매자가<br>실시간 채팅을 할 수 있습니다."
             imgSrc={Img1}
           />
           <SecondScreen

@@ -1,3 +1,5 @@
+import AOS from "aos";
+import "aos/dist/aos.css";
 import axios from "axios";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -10,6 +12,8 @@ axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+AOS.init();
+
 root.render(
   <>
     <GlobalFont />
