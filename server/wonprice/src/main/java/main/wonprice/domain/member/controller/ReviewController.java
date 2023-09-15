@@ -115,7 +115,7 @@ public class ReviewController {
     }
 
     //    리뷰 작성 페이지에서 필요한 상대방 정보 응답
-    @GetMapping("/reviews/{product-id}")
+    @GetMapping("/reviews/products/{product-id}")
     public ResponseEntity getReviewReceiver(@PathVariable("product-id") Long productId) {
 
         Member findMember = reviewService.findReviewReceiver(productId);
