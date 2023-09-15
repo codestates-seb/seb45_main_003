@@ -63,6 +63,8 @@ public interface ProductMapper {
                 .sellerTradeCount(product.getSeller().getTradeCount()) // 판매자가 거래한 횟수
                 .wishCount(product.getWishCount()) // 상품의 찜 갯수
 //                .images(product.getProductPictures())
+                .sellerReview(product.getSellerReview())
+                .buyerReview(product.getBuyerReview())
                 .build();
     }
 
@@ -97,6 +99,8 @@ public interface ProductMapper {
                 .loginMembersWish(product.getWishes()
                         .stream()
                         .anyMatch(wish -> wish.getMember() == loginMember))
+                .sellerReview(product.getSellerReview())
+                .buyerReview(product.getBuyerReview())
                 .build();
     }
 }

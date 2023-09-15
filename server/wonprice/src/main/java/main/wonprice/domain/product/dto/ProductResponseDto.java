@@ -61,4 +61,8 @@ public class ProductResponseDto {
     private Long wishCount; // 상품이 받은 총 wish 갯수
 
     private Boolean loginMembersWish; // 로그인한 회원이 해당 상품을 찜 했는지 여부 / 추후에 DTO 분리할게요
+
+    private Boolean buyerReview;
+
+    private Boolean sellerReview;
 }
