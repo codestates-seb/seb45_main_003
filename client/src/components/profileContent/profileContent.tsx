@@ -7,7 +7,7 @@ import { FONT_SIZE } from "../../constants/font";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import PostListTab from "./postListTab";
+import PostListTab from "./PostListTab";
 // import { useRecoilValue } from "recoil";
 // import { loginState } from "../../atoms/atoms";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -15,7 +15,7 @@ import { useLocation } from "react-router-dom";
 import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import Error from "../common/Error";
 import Loading from "../common/Loading";
-import ProfileImgRegisterForm from "./profileImgForm";
+import ProfileImgRegisterForm from "./ProfileImgForm";
 
 interface image {
   imageId: number;
@@ -76,6 +76,7 @@ const ProfileContentContainer = styled.div`
         border-radius: 6px;
         width: 9.375rem;
         height: 9.375rem;
+        object-fit: cover;
       }
     }
     .labelContainer {
@@ -162,7 +163,7 @@ const ProfileContent = (): JSX.Element => {
     isLoading,
     error,
     data: profile,
-  } = useQuery<Profile>("profile", async () => {
+  } = useQuery<Profile>(["profile"], async () => {
     const res = await defaultInstance.get(`/members/${Id}`, {
       headers: {
         "ngrok-skip-browser-warning": "69420",

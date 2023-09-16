@@ -1,11 +1,11 @@
 import { styled } from "styled-components";
 import { useRecoilValue } from "recoil";
 import { profileTabState } from "../atoms/atoms";
-import ProfileTab from "../components/profileTab/profileTab";
-import ProfileContent from "../components/profileContent/profileContent";
-import AuctionContent from "../components/auctionContent/auctionContent";
-import BookmarkContent from "../components/bookmarkContent/bookmarkContent";
-import TradeContent from "../components/tradeContent/tradeContent";
+import ProfileTab from "../components/profileTab/ProfileTab";
+import ProfileContent from "../components/profileContent/ProfileContent";
+import AuctionContent from "../components/auctionContent/AuctionContent";
+import BookmarkContent from "../components/bookmarkContent/BookmarkContent";
+import TradeContent from "../components/tradeContent/TradeContent";
 // import { useNavigate } from "react-router-dom";
 
 const ProfileContainer = styled.div`
