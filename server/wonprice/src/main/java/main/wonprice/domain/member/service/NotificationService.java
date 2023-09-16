@@ -2,6 +2,7 @@ package main.wonprice.domain.member.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import main.wonprice.domain.chat.entity.ChatParticipant;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.member.entity.Notification;
 import main.wonprice.domain.member.entity.NotificationType;
@@ -20,9 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -108,6 +109,7 @@ public class NotificationService {
 
         for (Notification notification : notificationList) {
             notification.setDeletedAt(LocalDateTime.now());
+            notification.setIsRead(true);
         }
 
         return notificationRepository.saveAll(notifications);
@@ -128,6 +130,26 @@ public class NotificationService {
         log.info("create notifications");
         List<Notification> notifications = mapper.wishProductToNotification(product);
 
+        return notificationRepository.saveAll(notifications);
+    }
+
+    public List<Notification> createNotificationWithChatParticipant(Product product, List<ChatParticipant> chatParticipants) {
+
+        List<Notification> notifications = new ArrayList<>();
+
+        for (ChatParticipant chatParticipant : chatParticipants) {
+
+            notifications.add(
+                    Notification.builder()
+                            .content(product.getTitle() + "에 대한 채팅방이 생성되었습니다")
+                            .createdAt(LocalDateTime.now())
+                            .notificationType(NotificationType.CHAT)
+                            .referenceId(chatParticipant.getChatRoom().getChatRoomId())
+                            .isRead(false)
+                            .member(chatParticipant.getMember())
+                            .build()
+            );
+        }
         return notificationRepository.saveAll(notifications);
     }
 }

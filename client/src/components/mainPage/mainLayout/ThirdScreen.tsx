@@ -10,7 +10,7 @@ const ThirdScreen = ({ text1, text2, imgSrc }: ThirdScreenProps): JSX.Element =>
   return (
     <>
       <StyledMain>
-        <div className="Function1">
+        <div className="Function1" data-aos="fade-left" data-aos-duration="1200">
           <img className="FunctionImg" src={imgSrc} alt="" />
           <div className="TextBox1">
             <div className="Text1">{text1}</div>

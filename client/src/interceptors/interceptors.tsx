@@ -32,11 +32,6 @@ const onErrorResponse = async (err: AxiosError | Error): Promise<AxiosError> => 
       if (res.status === 200) {
         localStorage.setItem("accessToken", res.headers["authorization"]);
         console.log("refresh success");
-        const newAccessToken = localStorage.getItem("accessToken");
-        if (originalConfig && originalConfig.headers) {
-          originalConfig.headers.Authorization = newAccessToken;
-          return await axios(originalConfig);
-        }
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -45,9 +40,14 @@ const onErrorResponse = async (err: AxiosError | Error): Promise<AxiosError> => 
           localStorage.removeItem("refreshToken");
           localStorage.removeItem("Id");
           alert("로그인 시간이 만료되었습니다.");
-          return Promise.reject(_err);
+          // return Promise.reject(_err);
         }
       }
+    }
+    const newAccessToken = localStorage.getItem("accessToken");
+    if (originalConfig && originalConfig.headers) {
+      originalConfig.headers.Authorization = newAccessToken;
+      return await axios(originalConfig);
     }
   } else if (response && response.status === 406) {
     localStorage.removeItem("accessToken");

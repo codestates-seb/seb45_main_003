@@ -1,5 +1,5 @@
 // useChatList.ts
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 interface ChatListData {
@@ -21,10 +21,10 @@ export const useChatList = () => {
   };
 
   const { data, error, isLoading, refetch } = useQuery<ChatListData[], Error>(
-    "chatList",
+    ["chatList"],
     fetchChatList,
     {
-      refetchInterval: 5000,
+      refetchInterval: 1000,
     },
   );
 

@@ -23,7 +23,7 @@ public interface ProductService {
 
     Product deleteOneById(Long productId,Member loginMember);
 
-    Product updateOneById(Long productId, ProductRequestDto productRequestDto, Member loginMember);
+    Product updateOneById(Long productId, ProductRequestDto productRequestDto);
 
     Page<Product> findMemberSold(Pageable pageable, Member member);
 

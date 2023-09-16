@@ -1,24 +1,17 @@
 //캐러셀 작업
-import SwiperCore from "swiper";
-import { EffectCoverflow, Navigation, Pagination } from "swiper/modules";
-import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/react";
-
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import styled from "styled-components";
-
-// 이미지 파일의 경로
-import image1 from "../../../assets/images/Carousel/unsplash1.jpg";
-import image2 from "../../../assets/images/Carousel/unsplash2.jpg";
-import image3 from "../../../assets/images/Carousel/unsplash3.jpg";
-import image4 from "../../../assets/images/Carousel/unsplash4.jpg";
-import image5 from "../../../assets/images/Carousel/unsplash5.jpg";
-import image6 from "../../../assets/images/Carousel/unsplash6.jpg";
-import image7 from "../../../assets/images/Carousel/unsplash7.jpg";
-
+import SwiperCore from "swiper";
 import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-
+import { EffectCoverflow, Navigation, Pagination } from "swiper/modules";
+import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/react";
+import { COLOR } from "../../../constants/color";
+import { API_PATHS } from "../../../constants/path";
+import { Data } from "../../productList/List";
 import "./styles.css";
 
 SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
@@ -26,7 +19,6 @@ SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
 const Layout = styled.div`
   display: flex;
   justify-content: center;
-  /* background-color: blue; */
   margin: 0 auto;
   width: 100%;
   margin-bottom: 6.25rem;
@@ -38,15 +30,77 @@ const Layout = styled.div`
     padding-right: 12%;
   }
   .swiper-slide {
+    position: relative;
     width: 100%;
     height: 33.875rem;
+    overflow: hidden;
+
+    .loading,
+    .error {
+      width: 100%;
+      height: 100%;
+      background: ${COLOR.primary};
+      position: relative;
+    }
+
+    .blur {
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      filter: blur(5px);
+      -webkit-filter: blur(5px);
+      width: 110%;
+      height: 110%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      .black {
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.05);
+      }
+    }
   }
-  .swiper-slide img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
+  .image_box {
+    width: 50%;
+    max-width: 18.75rem;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 1.25rem;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin: 0 0 0.5rem;
+    }
+
+    h2,
+    p {
+      color: #fff;
+    }
+
+    .title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 0.75rem 0 0.25rem;
+    }
+
+    .price {
+      font-size: 1rem;
+    }
   }
 `;
 export interface CustomSwiperProps extends ReactSwiperProps {
@@ -90,16 +144,57 @@ const Carousel = (): JSX.Element => {
     freeMode: true,
   };
 
-  const imgList = [image1, image2, image3, image4, image5, image6, image7];
+  const getData = async () => {
+    const params = { page: 1, size: 10 };
+
+    const response = await axios.get(API_PATHS.products.default(""), {
+      params: params,
+    });
+
+    return response.data;
+  };
+
+  const { isLoading, data, error } = useQuery<Data>(["CarouselProductList", { page: 1 }], getData);
+
   return (
     <>
       <Layout>
         <Swiper {...swiperProps}>
-          {imgList.map((imgUrl, index) => (
-            <SwiperSlide key={index}>
-              <img src={imgUrl} alt={`Slide ${index + 1}`} />
+          {isLoading && (
+            <SwiperSlide key={"lodaing"}>
+              <div className="loading"></div>
+              <div className="image_box">
+                <h2>Loading..</h2>
+                <p>슬라이드를 로딩 중입니다.</p>
+              </div>
             </SwiperSlide>
-          ))}
+          )}
+          {data && data.content?.length > 0 && (
+            <>
+              {data.content.map((el) => (
+                <SwiperSlide key={el.productId}>
+                  <div className="blur" style={{ backgroundImage: `url(${el.images[0].path})` }}>
+                    <div className="black"></div>
+                  </div>
+                  <div className="image_box">
+                    <img src={el.images[0].path} alt="슬라이드 이미지" />
+                    <p className="title">{el.title}</p>
+                    {el.auction && <p className="price">현재 입찰가 {el.currentAuctionPrice} 원</p>}
+                    <p className="price">즉시 구매가 {el.immediatelyBuyPrice} 원</p>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </>
+          )}
+          {(error as Error) && (
+            <SwiperSlide key={"error"}>
+              <div className="error"></div>
+              <div className="image_box">
+                <h2>Error</h2>
+                <p>에러가 발생했습니다.</p>
+              </div>
+            </SwiperSlide>
+          )}
         </Swiper>
       </Layout>
     </>

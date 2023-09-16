@@ -8,6 +8,7 @@ import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.chat.service.ChatService;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.member.service.NotificationService;
 import main.wonprice.domain.picture.service.PictureService;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
@@ -174,26 +175,14 @@ public class ProductController {
     // 상품 정보 수정
     @PatchMapping("/{productId}")
     public ResponseEntity patchOneProduct(@PathVariable Long productId, @RequestBody ProductRequestDto productRequestDto) {
-        Member loginMember = memberService.findLoginMember();
-        Product updateProduct = productService.updateOneById(productId, productRequestDto, loginMember);
-
-        Long productOwnerId = updateProduct.getSeller().getMemberId();
-        Long loginMemberId = loginMember.getMemberId();
-
-        // 상품 판매자와 로그인 한 사용자가 다를 경우, 권한이 없음을 응답
-        if (!productOwnerId.equals(loginMemberId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("게시글을 수정할 권한이 없습니다.");
+        try {
+            Product updateProduct = productService.updateOneById(productId, productRequestDto);
+            ProductResponseDto productResponseDto = productMapper.fromEntity(updateProduct);
+            return ResponseEntity.ok(productResponseDto);
+        } catch (BusinessLogicException ex) {
+            return ResponseEntity.badRequest().body(ex.getExceptionCode().getMessage());
         }
-
-        // 경매 중인 상품인 경우, buyer_id가 있는지 확인하여 수정 여부 결정
-        if (updateProduct.getAuction() && updateProduct.getBuyerId() != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("경매가 진행 중인 상품은 수정할 수 없습니다.");
-        }
-
-        ProductResponseDto productResponseDto = productMapper.fromEntity(updateProduct);
-        return ResponseEntity.ok(productResponseDto);
     }
-
 
     // 대표 - 즉시구매
     @PostMapping("/buy/{productId}")
@@ -203,10 +192,7 @@ public class ProductController {
         /* buyer == seller일 경우 구매 못하게 막는 로직 필요 */
 
         Product product = productService.immediatelyBuy(productId, buyer);
-        Long chatRoomId = chatService.createChatRoom(product.getProductId());
-
-        chatService.insertChatParticipant(chatRoomId, product.getSeller());
-        chatService.insertChatParticipant(chatRoomId, buyer);
+        chatService.createChatRoom(product);
 
         return new ResponseEntity(HttpStatus.OK);
     }

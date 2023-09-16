@@ -1,8 +1,8 @@
 //드롭다운 메뉴 아이템
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import AddButton from "../../../assets/images/Add.png";
-import { CATEGORY } from "../../../constants/category";
+import AddButton from "../../assets/images/Add.png";
+import { CATEGORY } from "../../constants/category";
 
 // import myImage from "../../../assets/images/Img1.png";
 
@@ -136,7 +136,13 @@ const MenuItem = () => {
         <ListBox>
           <Title>Product Category</Title>
           {Object.keys(CATEGORY).map((category) => {
-            return <Item key={category} categories={category} linkTo={CATEGORY[category].path} />;
+            return (
+              <Item
+                key={category}
+                categories={CATEGORY[category].value}
+                linkTo={CATEGORY[category].path}
+              />
+            );
           })}
         </ListBox>
       </ItemContainer>

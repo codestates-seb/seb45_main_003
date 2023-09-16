@@ -1,7 +1,7 @@
+import { useMutation } from "@tanstack/react-query";
 import { pickBy } from "lodash";
 import { useState } from "react";
 import { Controller, FieldValues, useForm } from "react-hook-form";
-import { useMutation } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import S3 from "../../aws-config";
@@ -20,7 +20,7 @@ import Modal from "../common/Modal";
 import SelectInput from "../common/SelectInput";
 import TextArea from "../common/TextArea";
 import TextInput from "../common/TextInput";
-import { ProductData } from "./List";
+import { ProductData } from "../productList/List";
 
 const StyledUploadForm = styled.section`
   padding: 2.5rem 0 4rem;

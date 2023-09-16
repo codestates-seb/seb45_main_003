@@ -43,7 +43,7 @@ export type MessageBubbleProps = {
   owner: "user" | "other";
   message: string;
   time: string;
-  isRead: boolean;
+  isRead?: boolean;
 };
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({ owner, message, time, isRead }) => {

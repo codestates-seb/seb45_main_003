@@ -24,12 +24,10 @@ const StyledItem = styled.li`
 
     h3 {
       margin: 0 0 0.5rem;
-
+      display: block;
       text-overflow: ellipsis;
       overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
+      white-space: nowrap;
     }
   }
 
