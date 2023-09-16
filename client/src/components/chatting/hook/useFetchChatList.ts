@@ -1,5 +1,3 @@
-// useFetchChatList.js
-// import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useRef } from "react";
@@ -36,9 +34,6 @@ const useFetchChatList = (isLoggedIn: boolean) => {
       console.log("An error occurred:", err);
     },
 
-    // onSuccess: (data) => {
-    //   setChatList(data);
-    // },
     onSuccess: (data) => {
       // 깊은 비교를 사용하여 이전 데이터와 현재 데이터가 다른지 확인
       if (JSON.stringify(previousChatList.current) !== JSON.stringify(data)) {
