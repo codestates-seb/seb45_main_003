@@ -1,5 +1,6 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useMutation } from "react-query";
+import { useLocation } from "react-router-dom";
 import { ReactComponent as HeartIcon } from "../../assets/images/Heart.svg";
 import { API_PATHS } from "../../constants/path";
 import { FAIL, SUCCESS } from "../../constants/systemMessage";
@@ -8,7 +9,7 @@ import { authInstance } from "../../interceptors/interceptors";
 import { getUserId } from "../../util/auth";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import { ProductData } from "./List";
+import { ProductData } from "../productList/List";
 
 type WishCountProps = {
   data: ProductData;
@@ -19,24 +20,33 @@ const WishCount = (props: WishCountProps) => {
   const { data, isLogin } = props;
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const userid = getUserId();
+  const queryClient = useQueryClient();
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
-  const [loginMembersWish, setLoginMembersWish] = useState(data.loginMembersWish || false);
-  const [wishCount, setwishCount] = useState(data.wishCount || 0);
-
-  const { mutate, error } = useMutation(async (id: number) => {
-    loginMembersWish
+  const submitData = async (id: number) => {
+    data.loginMembersWish
       ? await authInstance.delete(API_PATHS.wishes.default(id))
       : await authInstance.post(API_PATHS.wishes.add, { productId: id });
-  });
+  };
+  const { mutate, error } = useMutation(submitData);
+  const location = useLocation();
+  const idArr = location.pathname.split("/");
+  const productId = idArr[idArr.length - 1];
 
   const addWishlist = async (id: number) => {
     mutate(id);
-    setwishCount((prev) => prev + 1);
-    setLoginMembersWish(true);
 
     setIsOpen(true);
 
     if (!error) {
+      if (typeof data !== "undefined" && typeof data.wishCount !== "undefined") {
+        const modifiedData = {
+          ...data,
+          loginMembersWish: true,
+          wishCount: data.wishCount + 1,
+        };
+        queryClient.setQueryData(["productData", productId], modifiedData);
+      }
+
       setModalMessage({ title: "찜하기 성공", description: SUCCESS.addWishlist });
     } else {
       setModalMessage({ title: "찜하기 실패", description: FAIL.addWishlist });
@@ -45,12 +55,18 @@ const WishCount = (props: WishCountProps) => {
 
   const removeWishlist = async (id: number) => {
     mutate(id);
-    setwishCount((prev) => prev - 1);
-    setLoginMembersWish(false);
-
     setIsOpen(true);
 
     if (!error) {
+      if (typeof data !== "undefined" && typeof data.wishCount !== "undefined") {
+        const modifiedData = {
+          ...data,
+          loginMembersWish: false,
+          wishCount: data.wishCount - 1,
+        };
+        queryClient.setQueryData(["productData", productId], modifiedData);
+      }
+
       setModalMessage({ title: "찜 삭제 성공", description: SUCCESS.removeWishlist });
     } else {
       setModalMessage({ title: "찜 삭제 실패", description: FAIL.removeWishlist });
@@ -62,17 +78,17 @@ const WishCount = (props: WishCountProps) => {
       <div className="wishlist_box">
         <div className="gray icon_box">
           <HeartIcon />
-          <span>{wishCount}</span>
+          <span>{data.wishCount}</span>
         </div>
       </div>
       {isLogin && Number(userid) !== data.memberId && (
         <Button
           $icon={<HeartIcon />}
-          $text={loginMembersWish ? "찜 삭제" : "찜"}
+          $text={data.loginMembersWish ? "찜 삭제" : "찜"}
           $design="yellow"
           type="button"
           onClick={() => {
-            loginMembersWish ? removeWishlist(data.productId) : addWishlist(data.productId);
+            data.loginMembersWish ? removeWishlist(data.productId) : addWishlist(data.productId);
           }}
         />
       )}
@@ -80,7 +96,6 @@ const WishCount = (props: WishCountProps) => {
         <>
           <h4>{modalMessage.title}</h4>
           <p>{modalMessage.description}</p>
-
           <Button
             $design="black"
             $text="확인"

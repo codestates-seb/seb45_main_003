@@ -18,10 +18,9 @@ import "swiper/css";
 import "swiper/css/effect-cards";
 
 const Box = styled.div`
-  max-width: 28.125rem;
-  width: 50%;
+  max-width: 22.5rem;
+  width: 35%;
 
-  height: 37.5rem;
   border-radius: 0.375rem;
   .swiper-slide {
     display: flex;
@@ -31,7 +30,7 @@ const Box = styled.div`
     font-size: 1.375rem;
     font-weight: bold;
     color: #fff;
-    height: 37.5rem;
+    height: 31.25rem;
   }
 
   .swiper-slide img {
@@ -70,7 +69,7 @@ const EffectCard = (): JSX.Element => {
       <Box>
         <Swiper {...swiperProps}>
           {imgList.map((imgUrl, index) => (
-            <SwiperSlide key={index}>
+            <SwiperSlide key={index} className={index === 0 ? "first" : ""}>
               <img src={imgUrl} alt={`Slide ${index + 1}`} />
             </SwiperSlide>
           ))}

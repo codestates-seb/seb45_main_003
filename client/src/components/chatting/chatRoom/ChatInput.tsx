@@ -97,7 +97,7 @@ const ChatInput: FC<ChatInputProps> = ({ onSendMessage }) => {
             },
           },
         );
-        console.log(response.data);
+        // console.log(response.data);
         if (response.data && response.data.status) {
           setInitialStatus(response.data.status);
         }

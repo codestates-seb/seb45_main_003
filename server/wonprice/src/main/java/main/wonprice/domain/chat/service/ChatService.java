@@ -13,12 +13,15 @@ import main.wonprice.domain.chat.repository.ChatParticipantRepository;
 import main.wonprice.domain.chat.repository.ChatRoomRepository;
 import main.wonprice.domain.chat.repository.MessageRepository;
 import main.wonprice.domain.member.entity.Member;
+import main.wonprice.domain.member.entity.Notification;
 import main.wonprice.domain.member.repository.MemberRepository;
 import main.wonprice.domain.member.service.NotificationService;
+import main.wonprice.domain.product.entity.Product;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,17 +36,26 @@ public class ChatService {
     private final ChatParticipantRepository chatParticipantRepository;
     private final MessageRepository messageRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
 //    private final ReadSequenceRepository readSequenceRepository;
 
     @Transactional
-    public Long createChatRoom(Long productId) {
+    public Long createChatRoom(Product product) {
+
+        Member seller = product.getSeller();
+        Member buyer = memberRepository.findById(product.getBuyerId()).orElseThrow();
 
         /* 대표 아래 Mapper 수정 예정 */
         ChatRoom chatRoom = new ChatRoom();
-        chatRoom.setProductId(productId);
+        chatRoom.setProductId(product.getProductId());
         chatRoom.setCreatedAt(LocalDateTime.now());
 
         ChatRoom saveChatRoom = chatRoomRepository.save(chatRoom);
+
+        List<ChatParticipant> chatParticipants =
+                insertChatParticipant(chatRoom.getChatRoomId(), List.of(seller, buyer));
+
+        notificationService.createNotificationWithChatParticipant(product, chatParticipants);
 
         return saveChatRoom.getChatRoomId();
     }
@@ -121,5 +133,30 @@ public class ChatService {
         chatParticipant.setCurrentSequence(0L);
 
         chatParticipantRepository.save(chatParticipant);
+    }
+
+//    정욱 수정
+    @Transactional
+    public List<ChatParticipant> insertChatParticipant(Long chatRoomId, List<Member> members) {
+        ChatRoom findChatRoom = findChatRoom(chatRoomId);
+
+        List<ChatParticipant> chatParticipants = new ArrayList<>();
+
+        for (Member member : members) {
+            ChatParticipant participant = new ChatParticipant();
+            participant.setMember(member);
+            participant.setChatRoom(findChatRoom);
+            participant.setChatParticipantId(0L);
+
+            chatParticipants.add(participant);
+        }
+
+        log.info(chatParticipants
+                .stream()
+                .map(chatParticipant -> chatParticipant.getMember().getName())
+                .collect(Collectors.toList())
+                .toString());
+
+        return chatParticipantRepository.saveAll(chatParticipants);
     }
 }

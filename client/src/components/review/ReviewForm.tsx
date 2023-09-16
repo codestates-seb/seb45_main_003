@@ -1,20 +1,20 @@
 // import axios from "axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Controller, FieldValues, useForm } from "react-hook-form";
-import { useMutation, useQuery } from "react-query";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 // import { API_PATHS } from "../../constants/path";
+import { COLOR } from "../../constants/color";
+import { FONT_SIZE } from "../../constants/font";
 import { FAIL, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
+import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import TextInput from "../common/TextInput";
-import { authInstance, defaultInstance } from "../../interceptors/interceptors";
-import { FONT_SIZE } from "../../constants/font";
-import { COLOR } from "../../constants/color";
-import TextArea from "../common/TextArea";
 import SelectInput from "../common/SelectInput";
+import TextArea from "../common/TextArea";
+import TextInput from "../common/TextInput";
 
 interface image {
   imageId: number;
@@ -164,6 +164,7 @@ const ReviewForm = () => {
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const loginUserId = localStorage.getItem("Id");
   const productId = new URLSearchParams(location.search).get("productId");
   const reviewId = new URLSearchParams(location.search).get("reviewId");
   const getProductInfo = useQuery<productInfoForReview>(["productInfo"], async () => {
@@ -187,7 +188,7 @@ const ReviewForm = () => {
         score: Number(data.reputation),
       }),
     {
-      onSuccess: () => navigate(-1),
+      onSuccess: () => navigate(`/member/${loginUserId}?menu=profile&tabmenu=leaveReview&page=1`),
     },
   );
   const modifyMutation = useMutation(

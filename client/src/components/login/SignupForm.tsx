@@ -92,12 +92,19 @@ const SignupForm = (): JSX.Element => {
     formState: { errors, isSubmitting },
     setError,
     getValues,
+    clearErrors,
   } = useForm<SignupForm>();
   const { toggleModal, isOpen, closeModal } = useModal();
   const [success, setSuccess] = useState({
     req: false,
     confirm: false,
   });
+  const [lock, setLock] = useState(false);
+  const codeWait = () => {
+    setTimeout(() => {
+      setLock(false);
+    }, 30000);
+  };
   //폼에 작성된 데이터들을 서버로 전송하는 함수
   const submitSignup = async (data: SignupData) => {
     try {
@@ -119,6 +126,7 @@ const SignupForm = (): JSX.Element => {
   const reqConfirmCode = async (data: string) => {
     //새로고침 방지
     event?.preventDefault();
+    clearErrors("email");
     try {
       const response = await defaultInstance.post(`/email/auth/send`, {
         email: data,
@@ -126,6 +134,8 @@ const SignupForm = (): JSX.Element => {
       if (response.status === 200) {
         //인증코드 전송시 안내문 제공
         setSuccess({ ...success, req: true });
+        setLock(true);
+        codeWait();
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -141,6 +151,7 @@ const SignupForm = (): JSX.Element => {
   const testConfirmCode = async (data: SignupForm) => {
     //새로고침 방지
     event?.preventDefault();
+    clearErrors("confirmcode");
     try {
       const response = await defaultInstance.post(`/email/auth`, {
         email: data.email,
@@ -202,6 +213,7 @@ const SignupForm = (): JSX.Element => {
             $text="인증요청"
             onClick={() => reqConfirmCode(getValues("email"))}
             $design="yellow"
+            disabled={lock}
           />
         </div>
         {errors.email && <div className="errormessage">{errors.email?.message}</div>}

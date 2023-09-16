@@ -5,8 +5,8 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
 import { dropDownState, toSignup } from "../../atoms/atoms";
-import MenuItem from "../mainPage/dropdownMenu/MenuItem";
 import { DropdownState } from "./DropdownState";
+import MenuItem from "./MenuItem";
 
 // 헤더 하단으 경계 스타일
 const StyledBorder = styled.div`
@@ -20,8 +20,8 @@ const StyledHeader = styled.header`
     background: none;
   }
   .header-wrapper {
-    width: calc(100% - 3rem);
     padding: 1.25rem 0;
+    width: calc(100% - 3rem);
     max-width: 90rem;
     margin: 0 auto;
     display: flex;
@@ -44,7 +44,6 @@ const StyledHeader = styled.header`
     border-radius: 6px;
     margin: 0.375rem;
     max-width: 22rem;
-    width: 25%;
     display: flex;
     justify-content: center;
 
