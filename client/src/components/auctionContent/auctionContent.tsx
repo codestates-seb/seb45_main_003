@@ -1,13 +1,13 @@
+import { useQuery } from "@tanstack/react-query";
+import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
-import { defaultInstance } from "../../interceptors/interceptors";
 import { usePagination } from "../../hooks/usePagination";
+import { defaultInstance } from "../../interceptors/interceptors";
+import Empty from "../common/Empty";
 import Loading from "../common/Loading";
 import Pagination from "../common/Pagination";
-import Empty from "../common/Empty";
 
 type Data = {
   content: products[];

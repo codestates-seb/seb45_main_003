@@ -10,7 +10,7 @@ import Modal from "../common/Modal";
 import PostListTab from "./PostListTab";
 // import { useRecoilValue } from "recoil";
 // import { loginState } from "../../atoms/atoms";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import Error from "../common/Error";
@@ -177,7 +177,7 @@ const ProfileContent = (): JSX.Element => {
       alert("변경되었습니다.");
       resetModal();
     },
-    { onSuccess: () => queryClient.invalidateQueries("profile") },
+    { onSuccess: () => queryClient.invalidateQueries(["profile"]) },
   );
   const validateMutation = useMutation(async (body: string) => {
     try {
