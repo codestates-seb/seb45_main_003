@@ -164,6 +164,7 @@ const ReviewForm = () => {
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const loginUserId = localStorage.getItem("Id");
   const productId = new URLSearchParams(location.search).get("productId");
   const reviewId = new URLSearchParams(location.search).get("reviewId");
   const getProductInfo = useQuery<productInfoForReview>(["productInfo"], async () => {
@@ -187,7 +188,7 @@ const ReviewForm = () => {
         score: Number(data.reputation),
       }),
     {
-      onSuccess: () => navigate(-1),
+      onSuccess: () => navigate(`/member/${loginUserId}?menu=profile&tabmenu=leaveReview&page=1`),
     },
   );
   const modifyMutation = useMutation(

@@ -194,7 +194,7 @@ const TradeContent = (): JSX.Element => {
     <TradeContentContainer>
       <div className="topContainer">
         <p className="menuTitle">{mypageMode === "purchase" ? "구매내역" : "판매내역"}</p>
-        <p className="help">후기수정은 프로필의 작성한 리뷰 목록에서 가능합니다.</p>
+        <p className="help">후기수정은 프로필의 작성한 거래 후기 탭에서 가능합니다.</p>
       </div>
       <div className="tradeListContainer">
         {isLoading && <Loading />}
