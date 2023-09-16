@@ -1,12 +1,12 @@
-import { styled } from "styled-components";
-import Button from "../common/Button";
-import S3 from "../../aws-config";
-import ImageInput from "../common/ImageInput";
-import { useImageUpload } from "../../hooks/useImageUpload";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FieldValues, useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "react-query";
-import { authInstance } from "../../interceptors/interceptors";
+import { styled } from "styled-components";
+import S3 from "../../aws-config";
 import { REQUIRED } from "../../constants/systemMessage";
+import { useImageUpload } from "../../hooks/useImageUpload";
+import { authInstance } from "../../interceptors/interceptors";
+import Button from "../common/Button";
+import ImageInput from "../common/ImageInput";
 
 interface Props {
   setMode: React.Dispatch<React.SetStateAction<boolean>>;
@@ -49,7 +49,7 @@ const ProfileImgRegisterForm = (props: Props): JSX.Element => {
     async (data: FieldValues) => await authInstance.post(`/members/${Id}/image`, data),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("profile");
+        queryClient.invalidateQueries(["profile"]);
         props.setMode(false);
       },
     },
@@ -72,7 +72,6 @@ const ProfileImgRegisterForm = (props: Props): JSX.Element => {
         path: imagePaths[0],
       };
       mutation.mutateAsync(data);
-      console.log("실행되었음");
     } catch (error) {
       console.log(error);
     }

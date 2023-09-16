@@ -1,5 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useQuery } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
@@ -18,7 +18,7 @@ import ListItem from "./ListItem";
 
 export type Data = {
   content: ProductData[];
-  totalPages: number;
+  totalPages?: number;
 };
 
 export type ProductData = {
@@ -207,7 +207,9 @@ const List = (): JSX.Element => {
     getData,
     {
       onSuccess: (data) => {
-        setTotalPages(data.totalPages);
+        if (data.totalPages !== undefined) {
+          setTotalPages(data.totalPages);
+        }
         setCurrentPage(Number(searchParams.get("page")) - 1);
       },
     },
