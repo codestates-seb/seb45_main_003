@@ -179,6 +179,7 @@ public class ChatService {
         ChatSession findChatSession = chatSessionRepository.findByChatRoomAndMemberId(findChatRoom, memberId);
 
         return findChatSession;
+    }
 
 //    정욱 수정
     @Transactional
