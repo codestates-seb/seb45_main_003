@@ -1,19 +1,19 @@
+import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { defaultInstance } from "../../interceptors/interceptors";
-import { useLocation, useNavigate } from "react-router-dom";
 // import { findCategory } from "../../util/category";
+import { useQuery } from "@tanstack/react-query";
 import Empty from "../common/Empty";
-import { useQuery } from "react-query";
 import Loading from "../common/Loading";
 // import ErrorIndication from "../../pages/ErrorIndication";
-import Pagination from "../common/Pagination";
-import { usePagination } from "../../hooks/usePagination";
-import { translateProductStatus } from "../../util/productStatus";
 import { useRecoilState } from "recoil";
 import { postListTabState } from "../../atoms/atoms";
+import { usePagination } from "../../hooks/usePagination";
+import { translateProductStatus } from "../../util/productStatus";
 import Button from "../common/Button";
+import Pagination from "../common/Pagination";
 
 interface Data {
   content: postContent[];

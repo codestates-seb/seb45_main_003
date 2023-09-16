@@ -1,5 +1,5 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
 import { useLocation } from "react-router-dom";
 import { ReactComponent as HeartIcon } from "../../assets/images/Heart.svg";
 import { API_PATHS } from "../../constants/path";
