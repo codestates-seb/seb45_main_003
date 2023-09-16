@@ -99,7 +99,7 @@ const LogIn = (): JSX.Element => {
         <PageContentContainer>
           <h2>로그인</h2>
           <LogInForm />
-          <div className="labelContainer">
+          {/* <div className="labelContainer">
             <label htmlFor="socialButtonContainer" className="socialLabel">
               소셜 로그인
             </label>
@@ -107,7 +107,7 @@ const LogIn = (): JSX.Element => {
           <div id="socialButtonContainer">
             <Button type="button" $text={"구글 로그인"} $design={"yellow"} />
             <Button type="button" $text={"카카오 로그인"} $design={"yellow"} />
-          </div>
+          </div> */}
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">서비스를 처음 방문하셨나요?</div>

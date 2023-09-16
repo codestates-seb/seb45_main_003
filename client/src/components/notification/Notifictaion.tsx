@@ -1,22 +1,17 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { authInstance } from "../../interceptors/interceptors";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-// import ErrorIndication from "../../pages/ErrorIndication";
 import Loading from "../common/Loading";
-import { useRecoilState } from "recoil";
-import { profileTabState } from "../../atoms/atoms";
-import { postListTabState } from "../../atoms/atoms";
-// import { findCategory } from "../../util/category";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import { useRef } from "react";
-import Button from "../common/Button";
 import axios from "axios";
+import { useRef } from "react";
 import { useSetRecoilState } from "recoil";
 import { loginState } from "../../atoms/atoms";
+import Button from "../common/Button";
 
 interface notificationData {
   content: notification[];
@@ -120,8 +115,6 @@ const Notification = styled.div`
 
 const Notifications = (): JSX.Element => {
   const [open, setOpen] = useState(false);
-  const [tabState, setTabState] = useRecoilState(profileTabState);
-  const [menu, setMenu] = useRecoilState(postListTabState);
   const setlogin = useSetRecoilState(loginState);
   const ID = localStorage.getItem("Id");
   const navigate = useNavigate();
@@ -178,17 +171,14 @@ const Notifications = (): JSX.Element => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("notification");
-        queryClient.invalidateQueries("readCount");
+        queryClient.invalidateQueries(["notification"]);
+        queryClient.invalidateQueries(["readCount"]);
       },
     },
   );
   const navigatePost = async (notification: notification) => {
     if (notification.notificationType === "REVIEW") {
-      setTabState("profile");
-      setMenu("getReview");
-      const path = `/member/${ID}?menu=${tabState}&tabmenu=${menu}&page=1`;
-      console.log(path);
+      const path = `/member/${ID}?menu=profile&tabmenu=getReview&page=1`;
       navigate(path);
     } else if (notification.notificationType === "PRODUCT") {
       if (notification.categoryId !== null) {
@@ -200,7 +190,7 @@ const Notifications = (): JSX.Element => {
     notificationMutation.mutateAsync(notification);
   };
   const notificationRef = useRef<HTMLDivElement>(null);
-  const getReadCount = useQuery(["readCount", { location }], getUnReadCount);
+  const getReadCount = useQuery([["readCount"], { location }], getUnReadCount);
   const notificationsMutation = useMutation(removeReadNotifications, {
     onSuccess: () => {
       refetch();
