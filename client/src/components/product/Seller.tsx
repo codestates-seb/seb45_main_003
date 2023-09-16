@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import NoProfileImage from "../../assets/images/NoProfileImage.png";
-import { profileTabState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import Button from "../common/Button";
 import { ProductData } from "../productList/List";
@@ -75,7 +73,6 @@ const StyledSeller = styled.section`
 const Seller = (props: SellerProps): JSX.Element => {
   const { data } = props;
   const navigate = useNavigate();
-  const setTabState = useSetRecoilState(profileTabState);
 
   return (
     <StyledSeller>
@@ -102,8 +99,7 @@ const Seller = (props: SellerProps): JSX.Element => {
         </div>
         <Button
           onClick={() => {
-            setTabState("profile");
-            navigate(`/member/${data.memberId}`);
+            navigate(`/member/${data.memberId}?menu=profile&tabmenu=sell&page=1`);
           }}
           $text="프로필 방문하기"
           $design="outline"

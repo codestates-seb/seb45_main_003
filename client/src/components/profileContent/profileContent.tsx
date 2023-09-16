@@ -8,8 +8,6 @@ import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 import PostListTab from "./PostListTab";
-// import { useRecoilValue } from "recoil";
-// import { loginState } from "../../atoms/atoms";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import { authInstance, defaultInstance } from "../../interceptors/interceptors";

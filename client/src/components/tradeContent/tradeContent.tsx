@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useRecoilValue } from "recoil";
 import { styled } from "styled-components";
-import { profileTabState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { usePagination } from "../../hooks/usePagination";
@@ -132,12 +130,12 @@ const TradeContentContainer = styled.div`
 `;
 
 const TradeContent = (): JSX.Element => {
-  const mypageMode = useRecoilValue(profileTabState);
   const loginUserId = localStorage.getItem("Id");
   const location = useLocation();
   const Id = location.pathname.slice(8);
   const searchParams = new URLSearchParams(location.search);
   const navigate = useNavigate();
+  const mypageMode = searchParams.get("menu");
   const ITEMS_PER_VIEW = 10;
   const {
     currentPage,
@@ -174,9 +172,6 @@ const TradeContent = (): JSX.Element => {
       },
     },
   );
-  // const getReview = useQuery(["review"], async () => {
-  //   const res = await authInstance.get(`/members/${loginUserId}/reviews/post`);
-  // });
   const navigateProduct = (productId: number) => {
     navigate(`/product/${productId}`);
   };

@@ -4,7 +4,7 @@ import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { authInstance, defaultInstance } from "../../interceptors/interceptors";
-import { useQuery, useMutation } from "react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { usePagination } from "../../hooks/usePagination";
 import { translateProductStatus } from "../../util/productStatus";
 import Button from "../common/Button";

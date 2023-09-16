@@ -5,11 +5,7 @@ import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { authInstance } from "../../interceptors/interceptors";
-// import ErrorIndication from "../../pages/ErrorIndication";
-import { useRecoilState } from "recoil";
-import { postListTabState, profileTabState } from "../../atoms/atoms";
 import Loading from "../common/Loading";
-// import { findCategory } from "../../util/category";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import axios from "axios";
 import { useRef } from "react";
@@ -119,8 +115,6 @@ const Notification = styled.div`
 
 const Notifications = (): JSX.Element => {
   const [open, setOpen] = useState(false);
-  const [tabState, setTabState] = useRecoilState(profileTabState);
-  const [menu, setMenu] = useRecoilState(postListTabState);
   const setlogin = useSetRecoilState(loginState);
   const ID = localStorage.getItem("Id");
   const navigate = useNavigate();
@@ -184,10 +178,7 @@ const Notifications = (): JSX.Element => {
   );
   const navigatePost = async (notification: notification) => {
     if (notification.notificationType === "REVIEW") {
-      setTabState("profile");
-      setMenu("getReview");
-      const path = `/member/${ID}?menu=${tabState}&tabmenu=${menu}&page=1`;
-      console.log(path);
+      const path = `/member/${ID}?menu=profile&tabmenu=getReview&page=1`;
       navigate(path);
     } else if (notification.notificationType === "PRODUCT") {
       if (notification.categoryId !== null) {

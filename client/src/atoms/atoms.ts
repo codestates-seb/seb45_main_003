@@ -9,17 +9,6 @@ export const toSignup = atom<boolean>({
   default: true,
 });
 
-export const profileTabState = atom<string>({
-  key: "profileTabState",
-  default: "profile",
-  effects_UNSTABLE: [persistAtom],
-});
-
-export const postListTabState = atom<string>({
-  key: "postListTabState",
-  default: "cell",
-});
-
 export const loginState = atom<boolean>({
   key: "loginState",
   default: false,
