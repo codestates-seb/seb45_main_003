@@ -1,7 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useRecoilState } from "recoil";
 import { styled } from "styled-components";
-import { profileTabState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 
@@ -35,23 +33,23 @@ const ProfileTabContainer = styled.ul`
 
 const ProfileTab = (): JSX.Element => {
   const navigate = useNavigate();
-  const [tabState, setTabState] = useRecoilState(profileTabState);
-  const tabMenu = [
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const tabState = searchParams.get("menu");
+  const menu = [
     { value: "profile", text: "프로필" },
     { value: "auction", text: "경매 현황" },
     { value: "bookmark", text: "찜 목록" },
     { value: "purchase", text: "구매내역" },
     { value: "sales", text: "판매내역" },
   ];
-  const location = useLocation();
   const handleTab = (value: string): void => {
     window.scrollTo(0, 0);
 
     //같은곳 누르면 리렌더링 안되게
     if (value !== tabState) {
-      setTabState(value);
       if (value === "profile") {
-        navigate(`${location.pathname}?menu=${value}&tabmenu=cell&page=1`);
+        navigate(`${location.pathname}?menu=${value}&tabmenu=sell&page=1`);
       } else {
         navigate(`${location.pathname}?menu=${value}&page=1`);
       }
@@ -59,7 +57,7 @@ const ProfileTab = (): JSX.Element => {
   };
   return (
     <ProfileTabContainer>
-      {tabMenu.map((el) => (
+      {menu.map((el) => (
         <li
           key={el.value}
           className={tabState === el.value ? "tabMenu selected" : "tabMenu"}
