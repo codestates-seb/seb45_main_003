@@ -1,13 +1,14 @@
+// useFetchChatList.js
+// import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { chatListState, totalUnreadMessagesState } from "../recoil/chatState";
 
 const useFetchChatList = (isLoggedIn: boolean) => {
   const [chatList, setChatList] = useRecoilState(chatListState);
   const [totalUnreadMessages, setTotalUnreadMessages] = useRecoilState(totalUnreadMessagesState);
-  const previousChatList = useRef(null); // 이전 chatList를 저장할 ref
 
   const fetchChatList = async () => {
     const accessToken = localStorage.getItem("accessToken");
@@ -35,11 +36,7 @@ const useFetchChatList = (isLoggedIn: boolean) => {
     },
 
     onSuccess: (data) => {
-      // 깊은 비교를 사용하여 이전 데이터와 현재 데이터가 다른지 확인
-      if (JSON.stringify(previousChatList.current) !== JSON.stringify(data)) {
-        setChatList(data);
-        previousChatList.current = data; // 이전 데이터를 업데이트
-      }
+      setChatList(data);
     },
   });
 

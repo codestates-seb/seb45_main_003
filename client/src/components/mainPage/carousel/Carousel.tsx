@@ -1,7 +1,6 @@
 //캐러셀 작업
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -37,8 +36,7 @@ const Layout = styled.div`
     overflow: hidden;
 
     .loading,
-    .error,
-    .empty {
+    .error {
       width: 100%;
       height: 100%;
       background: ${COLOR.primary};
@@ -61,13 +59,13 @@ const Layout = styled.div`
       .black {
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.1);
+        background: rgba(0, 0, 0, 0.05);
       }
     }
   }
   .image_box {
     width: 50%;
-    max-width: 15rem;
+    max-width: 18.75rem;
     display: flex;
     flex-flow: column;
     align-items: center;
@@ -93,15 +91,7 @@ const Layout = styled.div`
       color: #fff;
     }
 
-    a {
-      overflow: hidden;
-    }
-
     .title {
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
       font-size: 1.25rem;
       font-weight: 700;
       text-align: center;
@@ -155,7 +145,7 @@ const Carousel = (): JSX.Element => {
   };
 
   const getData = async () => {
-    const params = { page: 0, size: 10 };
+    const params = { page: 1, size: 10 };
 
     const response = await axios.get(API_PATHS.products.default(""), {
       params: params,
@@ -186,32 +176,15 @@ const Carousel = (): JSX.Element => {
                   <div className="blur" style={{ backgroundImage: `url(${el.images[0].path})` }}>
                     <div className="black"></div>
                   </div>
-                  <Link to={`/product/${el.productId}`} className="image_box">
+                  <div className="image_box">
                     <img src={el.images[0].path} alt="슬라이드 이미지" />
                     <p className="title">{el.title}</p>
-                    {el.auction && (
-                      <p className="price">
-                        현재 입찰가 {el.currentAuctionPrice?.toLocaleString()} 원
-                      </p>
-                    )}
-                    {!el.auction && (
-                      <p className="price">
-                        즉시 구매가 {el.immediatelyBuyPrice.toLocaleString()} 원
-                      </p>
-                    )}
-                  </Link>
+                    {el.auction && <p className="price">현재 입찰가 {el.currentAuctionPrice} 원</p>}
+                    <p className="price">즉시 구매가 {el.immediatelyBuyPrice} 원</p>
+                  </div>
                 </SwiperSlide>
               ))}
             </>
-          )}
-          {data && data.content?.length === 0 && (
-            <SwiperSlide key={"empty"}>
-              <div className="empty"></div>
-              <div className="image_box">
-                <h2>Empty</h2>
-                <p>상품을 준비중입니다.</p>
-              </div>
-            </SwiperSlide>
           )}
           {(error as Error) && (
             <SwiperSlide key={"error"}>

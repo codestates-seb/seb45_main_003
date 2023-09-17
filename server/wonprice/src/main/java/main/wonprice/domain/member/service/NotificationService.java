@@ -43,11 +43,6 @@ public class NotificationService {
         return notificationRepository.save(notification);
     }
 
-    public List<Notification> saveNotifications(List<Notification> notifications) {
-
-        return notificationRepository.saveAll(notifications);
-    }
-
     //    안읽은 알림 개수
     public Long getUnreadCount() {
 

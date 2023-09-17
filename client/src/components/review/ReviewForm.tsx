@@ -279,7 +279,7 @@ const ReviewForm = () => {
             rules={{ required: REQUIRED.reputation }}
             render={({ field }) => (
               <SelectInput
-                title="평점"
+                title="평점 부여"
                 id="reputation"
                 field={field}
                 selectoptions={REPUTATION}

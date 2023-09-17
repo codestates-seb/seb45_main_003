@@ -1,5 +1,5 @@
 import { FieldValues, FormState } from "react-hook-form";
-import { CATEGORY, CategoryType } from "../../constants/category";
+import { CategoryType } from "../../constants/category";
 
 type SelectInputProps = {
   id: string;
@@ -21,16 +21,12 @@ const SelectInput = (props: SelectInputProps): JSX.Element => {
       <div className="input inline">
         <div className="custom_select">
           <select {...field}>
-            <option value="">{title} 선택</option>
+            <option value="">카테고리 선택</option>
             {Object.values(selectoptions).map((option) => {
               return (
-                <>
-                  {option.value !== CATEGORY.all.value && (
-                    <option key={option.id} value={option.id}>
-                      {option.value}
-                    </option>
-                  )}
-                </>
+                <option key={option.id} value={option.id}>
+                  {option.value}
+                </option>
               );
             })}
           </select>
