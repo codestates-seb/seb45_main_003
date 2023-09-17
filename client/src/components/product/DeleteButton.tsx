@@ -37,6 +37,7 @@ const DeleteButton = ({ data }: DeleteButtonProps) => {
   return (
     <>
       <DeleteIcon
+        className="delete_icon"
         onClick={() => {
           setIsOpen(true);
           setModalMessage({
