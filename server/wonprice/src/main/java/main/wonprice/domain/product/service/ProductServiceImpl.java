@@ -261,6 +261,10 @@ public class ProductServiceImpl implements ProductService {
             -- 상품 상태 TRADE 변경
             -- 채팅방 생성
          */
+
+        product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());
+        product.setBuyerId(request.getMemberId());
+
         if(requestedBidPrice.equals(currentProductBidPrice)){
             chatService.createChatRoom(product);
             product.setStatus(ProductStatus.TRADE);
@@ -272,8 +276,6 @@ public class ProductServiceImpl implements ProductService {
             - 상품 상태가 BEFORE가 아닐 경우 값 예외처리
          */
 
-        product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());
-        product.setBuyerId(request.getMemberId());
 
         return productRepository.save(product);
     }
