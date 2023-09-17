@@ -5,6 +5,7 @@ import main.wonprice.domain.category.entity.Category;
 import main.wonprice.domain.category.service.CategoryService;
 import main.wonprice.domain.chat.entity.ChatRoom;
 import main.wonprice.domain.chat.entity.RoomStatus;
+import main.wonprice.domain.chat.service.ChatService;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.domain.member.service.NotificationService;
@@ -39,6 +40,8 @@ public class ProductServiceImpl implements ProductService {
     private final MemberService memberService;
     private final NotificationService notificationService;
     private final BidRepository bidRepository;
+
+    private final ChatService chatService;
 
     // [예외처리 및 리팩토링 완료] 상품 등록
     @Override
@@ -259,8 +262,14 @@ public class ProductServiceImpl implements ProductService {
             -- 상품 상태 TRADE 변경
             -- 채팅방 생성 **
          */
+
+        product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());
+        product.setBuyerId(request.getMemberId());
+
+
         if (requestedBidPrice.equals(product.getImmediatelyBuyPrice())) {
             if (!product.getStatus().equals(ProductStatus.TRADE)) {
+                chatService.createChatRoom(product);
                 product.setStatus(ProductStatus.TRADE);
             }
         }
@@ -273,8 +282,6 @@ public class ProductServiceImpl implements ProductService {
         }
 
 
-        product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());
-        product.setBuyerId(request.getMemberId());
 
         return productRepository.save(product);
     }

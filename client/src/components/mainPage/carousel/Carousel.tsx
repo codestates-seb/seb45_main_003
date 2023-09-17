@@ -1,6 +1,7 @@
 //캐러셀 작업
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -60,13 +61,13 @@ const Layout = styled.div`
       .black {
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.05);
+        background: rgba(0, 0, 0, 0.1);
       }
     }
   }
   .image_box {
     width: 50%;
-    max-width: 18.75rem;
+    max-width: 15rem;
     display: flex;
     flex-flow: column;
     align-items: center;
@@ -92,7 +93,15 @@ const Layout = styled.div`
       color: #fff;
     }
 
+    a {
+      overflow: hidden;
+    }
+
     .title {
+      width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-size: 1.25rem;
       font-weight: 700;
       text-align: center;
@@ -101,6 +110,17 @@ const Layout = styled.div`
 
     .price {
       font-size: 1rem;
+    }
+  }
+
+  @media (max-width: 64rem) {
+    .swiper {
+      width: 100%;
+      padding: 0;
+    }
+
+    .swiper-slide {
+      height: 22.5rem;
     }
   }
 `;
@@ -177,7 +197,7 @@ const Carousel = (): JSX.Element => {
                   <div className="blur" style={{ backgroundImage: `url(${el.images[0].path})` }}>
                     <div className="black"></div>
                   </div>
-                  <div className="image_box">
+                  <Link to={`/product/${el.productId}`} className="image_box">
                     <img src={el.images[0].path} alt="슬라이드 이미지" />
                     <p className="title">{el.title}</p>
                     {el.auction && (
@@ -190,7 +210,7 @@ const Carousel = (): JSX.Element => {
                         즉시 구매가 {el.immediatelyBuyPrice.toLocaleString()} 원
                       </p>
                     )}
-                  </div>
+                  </Link>
                 </SwiperSlide>
               ))}
             </>
