@@ -1,14 +1,13 @@
-import React, { useEffect, useState, ChangeEvent } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { loginState } from "../../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
-import { totalUnreadMessagesState } from "../recoil/chatState";
-import styled from "styled-components";
-import { currentChatRoomIdState } from "../recoil/chatState";
-import FormatTimeOrDate from "../hook/FormatTimeOrDate";
-import SearchIcon from "@mui/icons-material/Search";
-import { useNavigate } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import SearchIcon from "@mui/icons-material/Search";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import styled from "styled-components";
+import { loginState } from "../../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
+import FormatTimeOrDate from "../hook/FormatTimeOrDate";
 import useFetchChatList from "../hook/useFetchChatList"; // 커스텀 훅을 임포트합니다.
+import { currentChatRoomIdState, totalUnreadMessagesState } from "../recoil/chatState";
 
 // interface
 interface ChatList {
@@ -72,7 +71,7 @@ const ChatList = styled.div`
 
 const Container = styled.button`
   width: 100%;
-  margin-bottom: 1.875rem;
+  margin-bottom: 1rem;
   padding: 0;
   border: none;
   border-radius: 0.375rem;

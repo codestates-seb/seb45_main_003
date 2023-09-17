@@ -206,16 +206,17 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllByBuyerIdAndStatus(memberId, ProductStatus.AFTER, pageable);
     }
 
-    /*
-        입찰하기 요청 들어올 시,
-        - product 의 현재 입찰가(currentAuctionPrice), 구매자(buyerId) 셋팅
-        - 그 밖의 예외처리
-     */
+    // [리팩토링 전] 입찰
     @Override
     public Product updateCurrentAuctionPrice(Long productId, BidRequestDto request) {
         // 존재하지 않는 상품일 경우 예외 처리
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product Not Found"));
+
+        // 거래가 성사된 상품에 대한 입찰하기 예외처리
+        if (product.getStatus().equals(ProductStatus.TRADE)) {
+            throw new BusinessLogicException(ExceptionCode.BID_CLOSE);
+        }
 
         // 판매자와 입찰자가 같을 경우 예외 처리
         if (product.getSeller().getMemberId() == request.getMemberId()) {
@@ -256,16 +257,21 @@ public class ProductServiceImpl implements ProductService {
             #3 입찰가 유효성 검사
             - 입찰 가격 == 즉시구매 일 경우
             -- 상품 상태 TRADE 변경
-            -- 채팅방 생성
+            -- 채팅방 생성 **
          */
-        if(requestedBidPrice.equals(currentProductBidPrice)){
-            product.setStatus(ProductStatus.TRADE);
+        if (requestedBidPrice.equals(product.getImmediatelyBuyPrice())) {
+            if (!product.getStatus().equals(ProductStatus.TRADE)) {
+                product.setStatus(ProductStatus.TRADE);
+            }
         }
 
-        /*
-            #4 입찰가 유효성 검사
-            - 상품 상태가 BEFORE가 아닐 경우 값 예외처리
-         */
+
+        // #5 입찰가 유효성 검사
+        // - 입찰가 > 즉시구매가 입력할 경우 예외처리
+        if (requestedBidPrice > product.getImmediatelyBuyPrice()) {
+            throw new BusinessLogicException(ExceptionCode.BID_PRICE_INVALID);
+        }
+
 
         product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());
         product.setBuyerId(request.getMemberId());
