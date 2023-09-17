@@ -6,7 +6,7 @@ import { useRecoilState } from "recoil";
 import styled from "styled-components";
 import { ReactComponent as Logo } from "../../assets/images/Logo.svg";
 import { dropDownState } from "../../atoms/atoms"; // loginState 추가
-import Notifications from "../notification/notifictaion";
+import Notifications from "../notification/Notifictaion";
 import { DropdownState } from "./DropdownState";
 import ProfileButton from "./LoginProfile";
 import MenuItem from "./MenuItem";

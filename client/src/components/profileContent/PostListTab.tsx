@@ -3,13 +3,9 @@ import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { defaultInstance } from "../../interceptors/interceptors";
-// import { findCategory } from "../../util/category";
 import { useQuery } from "@tanstack/react-query";
 import Empty from "../common/Empty";
 import Loading from "../common/Loading";
-// import ErrorIndication from "../../pages/ErrorIndication";
-import { useRecoilState } from "recoil";
-import { postListTabState } from "../../atoms/atoms";
 import { usePagination } from "../../hooks/usePagination";
 import { translateProductStatus } from "../../util/productStatus";
 import Button from "../common/Button";
@@ -145,20 +141,19 @@ const PostListContainer = styled.div`
 `;
 
 const PostListTab = (): JSX.Element => {
-  const tabmenu = [
-    { value: "cell", text: "판매글 목록" },
+  const tabmenus = [
+    { value: "sell", text: "판매글 목록" },
     { value: "leaveReview", text: "작성한 거래 후기" },
     { value: "getReview", text: "받은 거래 후기" },
   ];
-  const [menu, setMenu] = useRecoilState(postListTabState);
   const navigate = useNavigate();
   const location = useLocation();
   const loginuserId = localStorage.getItem("Id");
   const Id = location.pathname.slice(8);
   const searchParams = new URLSearchParams(location.search);
+  const tabmenu = searchParams.get("tabmenu");
   const handleMenu = (value: string): void => {
-    if (menu !== value) {
-      setMenu(value);
+    if (tabmenu !== value) {
       navigate(`${location.pathname}?menu=${searchParams.get("menu")}&tabmenu=${value}&page=1`);
     }
   };
@@ -172,33 +167,33 @@ const PostListTab = (): JSX.Element => {
     nextPageHandler,
   } = usePagination();
   const { isLoading, data: result } = useQuery<Data>(
-    ["postList", { menu, currentPage }],
+    ["postList", { tabmenu, currentPage }],
     async () => {
       const currentPageParam = parseInt(searchParams.get("page") || "1");
       const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
-      if (menu === "cell") {
+      if (tabmenu === "sell") {
         const res = await defaultInstance.get(`/members/${Id}/products?${pageQueryParam}`, {
           headers: {
             "ngrok-skip-browser-warning": "69420",
           },
         });
-        navigate(`?menu=profile&tabmenu=${menu}&page=${currentPageParam}`);
+        navigate(`?menu=profile&tabmenu=${tabmenu}&page=${currentPageParam}`);
         return res.data;
-      } else if (menu === "leaveReview") {
+      } else if (tabmenu === "leaveReview") {
         const res = await defaultInstance.get(`/members/${Id}/reviews/post?${pageQueryParam}`, {
           headers: {
             "ngrok-skip-browser-warning": "69420",
           },
         });
-        navigate(`?menu=profile&tabmenu=${menu}&page=${currentPageParam}`);
+        navigate(`?menu=profile&tabmenu=${tabmenu}&page=${currentPageParam}`);
         return res.data;
-      } else if (menu === "getReview") {
+      } else if (tabmenu === "getReview") {
         const res = await defaultInstance.get(`/members/${Id}/reviews?${pageQueryParam}`, {
           headers: {
             "ngrok-skip-browser-warning": "69420",
           },
         });
-        navigate(`?menu=profile&tabmenu=${menu}&page=${currentPageParam}`);
+        navigate(`?menu=profile&tabmenu=${tabmenu}&page=${currentPageParam}`);
         return res.data;
       }
     },
@@ -218,10 +213,10 @@ const PostListTab = (): JSX.Element => {
   return (
     <PostListContainer>
       <ul className="postlistMenuContainer">
-        {tabmenu.map((el) => (
+        {tabmenus.map((el) => (
           <li
             key={el.value}
-            className={menu === el.value ? "selected postlistTabMenu" : "postlistTabMenu"}
+            className={tabmenu === el.value ? "selected postlistTabMenu" : "postlistTabMenu"}
             onClick={() => handleMenu(el.value)}
           >
             {el.text}
@@ -230,7 +225,7 @@ const PostListTab = (): JSX.Element => {
       </ul>
       <div className="tabContent">
         {isLoading && <Loading />}
-        {menu === "cell" &&
+        {tabmenu === "sell" &&
           result?.content.map((el, idx) => (
             <div className="postContainer" key={idx}>
               <img className="postImg" src={el.images ? el.images[0].path : ""}></img>
@@ -243,7 +238,7 @@ const PostListTab = (): JSX.Element => {
               </div>
             </div>
           ))}
-        {menu === "leaveReview" &&
+        {tabmenu === "leaveReview" &&
           result?.content.map((el, idx) => (
             <div key={idx} className="postContainer">
               {el.productImages && <img className="postImg" src={el.productImages[0].path}></img>}
@@ -269,7 +264,7 @@ const PostListTab = (): JSX.Element => {
               )}
             </div>
           ))}
-        {menu === "getReview" &&
+        {tabmenu === "getReview" &&
           result?.content.map((el, idx) => (
             <div key={idx} className="postContainer">
               {el.productImages && <img className="postImg" src={el.productImages[0].path}></img>}

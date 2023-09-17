@@ -145,7 +145,7 @@ const Carousel = (): JSX.Element => {
   };
 
   const getData = async () => {
-    const params = { page: 1, size: 10 };
+    const params = { page: 0, size: 10 };
 
     const response = await axios.get(API_PATHS.products.default(""), {
       params: params,
@@ -179,8 +179,16 @@ const Carousel = (): JSX.Element => {
                   <div className="image_box">
                     <img src={el.images[0].path} alt="슬라이드 이미지" />
                     <p className="title">{el.title}</p>
-                    {el.auction && <p className="price">현재 입찰가 {el.currentAuctionPrice} 원</p>}
-                    <p className="price">즉시 구매가 {el.immediatelyBuyPrice} 원</p>
+                    {el.auction && (
+                      <p className="price">
+                        현재 입찰가 {el.currentAuctionPrice?.toLocaleString()} 원
+                      </p>
+                    )}
+                    {!el.auction && (
+                      <p className="price">
+                        즉시 구매가 {el.immediatelyBuyPrice.toLocaleString()} 원
+                      </p>
+                    )}
                   </div>
                 </SwiperSlide>
               ))}

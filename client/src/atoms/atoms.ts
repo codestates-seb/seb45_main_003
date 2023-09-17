@@ -7,17 +7,7 @@ const { persistAtom } = recoilPersist();
 export const toSignup = atom<boolean>({
   key: "toSignup",
   default: true,
-});
-
-export const profileTabState = atom<string>({
-  key: "profileTabState",
-  default: "profile",
   effects_UNSTABLE: [persistAtom],
-});
-
-export const postListTabState = atom<string>({
-  key: "postListTabState",
-  default: "cell",
 });
 
 export const loginState = atom<boolean>({
