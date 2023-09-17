@@ -39,8 +39,11 @@ public class MemberService {
 
     public Member joinMember(Member member) {
 
-        AuthEmail authEmail = emailAuthRepository.findByEmail(member.getEmail());
-        if (!authEmail.getAuthenticated()) {
+        Optional<AuthEmail> authEmail = emailAuthRepository.findByEmail(member.getEmail());
+
+        if (authEmail.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.EMAIL_NOT_AUTHENTICATED);
+        } else if (!authEmail.get().getAuthenticated()) {
             throw new BusinessLogicException(ExceptionCode.EMAIL_NOT_AUTHENTICATED);
         }
 
