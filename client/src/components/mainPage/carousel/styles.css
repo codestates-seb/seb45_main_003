@@ -41,3 +41,12 @@
   width: 3.75rem;
   height: 3.75rem;
 }
+
+@media (max-width: 64rem) {
+  .swiper-button-next,
+  .swiper-button-prev {
+    margin: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
