@@ -2,6 +2,9 @@ package main.wonprice.domain.member.service;
 
 import lombok.AllArgsConstructor;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
+import main.wonprice.domain.email.entity.AuthEmail;
+import main.wonprice.domain.email.repository.EmailAuthRepository;
+import main.wonprice.domain.email.service.EmailService;
 import main.wonprice.domain.member.dto.MemberResponseDto;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.repository.MemberRepository;
@@ -30,10 +33,16 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
     private final CustomAuthorityUtils authorityUtils;
+    private final EmailAuthRepository emailAuthRepository;
 
     private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
     public Member joinMember(Member member) {
+
+        AuthEmail authEmail = emailAuthRepository.findByEmail(member.getEmail());
+        if (!authEmail.getAuthenticated()) {
+            throw new BusinessLogicException(ExceptionCode.EMAIL_NOT_AUTHENTICATED);
+        }
 
         String encryptedPassword = passwordEncoder.encode(member.getPassword());
         member.setPassword(encryptedPassword);
@@ -53,7 +62,12 @@ public class MemberService {
 
 //    관리자용 전체 회원 목록
     public Page<Member> findMembers(Pageable pageable) {
+        isAdmin();
         return memberRepository.findAll(pageable);
+    }
+    public List<Member> findMembers() {
+        isAdmin();
+        return memberRepository.findAll();
     }
 
     public Member updateMember(Member member) {
