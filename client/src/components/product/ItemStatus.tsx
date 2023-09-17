@@ -11,8 +11,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import Webstomp, { Client } from "webstomp-client";
 import { ReactComponent as ViewsIcon } from "../../assets/images/Views.svg";
 import { loginState } from "../../atoms/atoms";
+import Modal from "../../components/common/Modal";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
+import { useModal } from "../../hooks/useModal";
 import { getUserId } from "../../util/auth";
 import { formatTime } from "../../util/date";
 import { plus5Percent } from "../../util/number";
@@ -228,6 +230,7 @@ const StyledItemStatus = styled.section`
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
   const navigate = useNavigate();
+  const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const isLogin = useRecoilValue(loginState);
   const userid = getUserId();
   const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -235,6 +238,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
   const location = useLocation();
   const idArr = location.pathname.split("/");
   const productId = idArr[idArr.length - 1];
+  const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
 
   useEffect(() => {
     //소켓 연결
@@ -257,6 +261,12 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
     if (stompClient && data) {
       stompClient.subscribe(`/topic/bid/${data.productId}`, (message) => {
         const socketData = JSON.parse(message.body).body;
+
+        if (socketData.status === 400) {
+          setIsOpen(true);
+          setModalMessage(socketData.message);
+          return;
+        }
 
         const modifiedData = {
           ...data,
@@ -337,8 +347,16 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                     {data.currentAuctionPrice?.toLocaleString() + "원"}
                   </span>
                 </div>
-                {isLogin && Number(userid) !== data.memberId && data.productStatus === "BEFORE" && (
-                  <Bid data={data} stompClient={stompClient} />
+                {Number(userid) === data.buyerId ? (
+                  <p>최고가 입찰 중</p>
+                ) : (
+                  <>
+                    {isLogin &&
+                      Number(userid) !== data.memberId &&
+                      data.productStatus === "BEFORE" && (
+                        <Bid data={data} stompClient={stompClient} />
+                      )}
+                  </>
                 )}
               </div>
               <div className="create_at">
@@ -358,6 +376,20 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
           <BuyNow data={data} />
         </div>
       </StyledItemStatus>
+      <Modal {...{ isOpen, closeModal, toggleModal }}>
+        <>
+          <h4>{modalMessage.title}</h4>
+          <p>{modalMessage.description}</p>
+          <Button
+            $design="black"
+            $text="확인"
+            type="button"
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
+          />
+        </>
+      </Modal>
     </>
   );
 };
