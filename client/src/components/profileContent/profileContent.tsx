@@ -292,6 +292,14 @@ const ProfileContent = (): JSX.Element => {
                 className={errors.newPassword ? "errorInput" : "input"}
                 {...register("newPassword", {
                   required: "새로운 비밀번호를 입력해주세요.",
+                  minLength: {
+                    value: 8,
+                    message: "8자리 이상의 비밀번호를 사용해주세요.",
+                  },
+                  pattern: {
+                    value: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9])/,
+                    message: "비밀번호는 숫자, 특수문자, 영문을 조합해주세요.",
+                  },
                 })}
               ></input>
               {errors.newPassword && (
