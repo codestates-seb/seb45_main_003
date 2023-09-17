@@ -1,14 +1,13 @@
-import React, { useEffect, useState, ChangeEvent } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { loginState } from "../../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
-import { totalUnreadMessagesState } from "../recoil/chatState";
-import styled from "styled-components";
-import { currentChatRoomIdState } from "../recoil/chatState";
-import FormatTimeOrDate from "../hook/FormatTimeOrDate";
-import SearchIcon from "@mui/icons-material/Search";
-import { useNavigate } from "react-router-dom";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import SearchIcon from "@mui/icons-material/Search";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import styled from "styled-components";
+import { loginState } from "../../../atoms/atoms"; // 필요한 Recoil 상태를 가져옵니다.
+import FormatTimeOrDate from "../hook/FormatTimeOrDate";
 import useFetchChatList from "../hook/useFetchChatList"; // 커스텀 훅을 임포트합니다.
+import { currentChatRoomIdState, totalUnreadMessagesState } from "../recoil/chatState";
 
 // interface
 interface ChatList {
@@ -72,7 +71,7 @@ const ChatList = styled.div`
 
 const Container = styled.button`
   width: 100%;
-  margin-bottom: 1.875rem;
+  margin-bottom: 1rem;
   padding: 0;
   border: none;
   border-radius: 0.375rem;
@@ -178,8 +177,6 @@ const Box = styled.div`
 
 // 기능
 const ChattingListData: React.FC = () => {
-  // const isConnected = useRecoilValue(webSocketConnectionState); // 웹소켓 연결 상태
-  // const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [, setCurrentChatRoomId] = useRecoilState(currentChatRoomIdState);
   const isLoggedIn = useRecoilValue(loginState);
@@ -205,13 +202,6 @@ const ChattingListData: React.FC = () => {
       chat.chatRoom?.name?.toString().includes(searchTerm) && chat.deletedAt === null // deletedAt이 null인 경우만 포함
     );
   });
-
-  // // 최신 메시지 기준으로 채팅방 정렬
-  // const sortedChatList = filteredChatList.sort((a, b) => {
-  //   const timeA = a.message?.createdAt || "";
-  //   const timeB = b.message?.createdAt || "";
-  //   return new Date(timeB).getTime() - new Date(timeA).getTime();
-  // });
 
   const sortedChatList = filteredChatList.sort((a, b) => {
     const roomTimeA = new Date(a.createdAt).getTime();

@@ -49,6 +49,24 @@ public interface NotificationMapper {
                 .build();
     }
 
+    default List<Notification> postDtosToNotifications(NotificationPostDto postDto, List<Member> receiveMember) {
+
+        List<Notification> notifications = new ArrayList<>();
+
+        for (Member member : receiveMember) {
+            notifications.add(
+                    Notification.builder()
+                            .content(postDto.getContent())
+                            .notificationType(NotificationType.ADMIN)
+                            .createdAt(LocalDateTime.now())
+                            .isRead(false)
+                            .member(member)
+                            .build()
+            );
+        }
+        return notifications;
+    }
+
     default List<Notification> chatRoomToNotification(ChatRoom chatRoom, Product product) {
 
         List<Notification> notifications = new ArrayList<>();
