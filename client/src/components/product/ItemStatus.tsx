@@ -52,7 +52,7 @@ const StyledItemStatus = styled.section`
     max-width: 27.5rem;
     width: 40%;
 
-    & > div:not(:first-child, .date_or_status, .chatting_link) {
+    & > div:not(:first-child, .date_or_status, .chatting_link, .result) {
       padding: 1.5rem 0;
       border-top: 1px solid ${COLOR.border};
     }
@@ -95,7 +95,8 @@ const StyledItemStatus = styled.section`
   .add_wishlist,
   .current_price,
   .create_at,
-  .buy_it_now_price {
+  .buy_it_now_price,
+  .result {
     display: flex;
     flex-flow: row;
     align-items: center;
@@ -356,6 +357,19 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             </div>
           )}
           <BuyNow data={data} />
+
+          {data.productStatus !== "BEFORE" && (
+            <div className="result">
+              <div className="price">
+                <span className="price_number_title gray">최종 거래가</span>
+                <span className="price_number">
+                  {data?.currentAuctionPrice && data.currentAuctionPrice < data.immediatelyBuyPrice
+                    ? data.currentAuctionPrice.toLocaleString() + "원"
+                    : data.immediatelyBuyPrice.toLocaleString() + "원"}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </StyledItemStatus>
     </>
