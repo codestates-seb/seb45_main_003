@@ -36,7 +36,8 @@ const Layout = styled.div`
     overflow: hidden;
 
     .loading,
-    .error {
+    .error,
+    .empty {
       width: 100%;
       height: 100%;
       background: ${COLOR.primary};
@@ -193,6 +194,15 @@ const Carousel = (): JSX.Element => {
                 </SwiperSlide>
               ))}
             </>
+          )}
+          {data && data.content?.length === 0 && (
+            <SwiperSlide key={"empty"}>
+              <div className="empty"></div>
+              <div className="image_box">
+                <h2>Empty</h2>
+                <p>상품을 준비중입니다.</p>
+              </div>
+            </SwiperSlide>
           )}
           {(error as Error) && (
             <SwiperSlide key={"error"}>
