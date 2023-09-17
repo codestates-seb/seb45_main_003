@@ -1,7 +1,6 @@
-import React from "react";
 import { styled } from "styled-components";
-import ChattingListData from "./ChattingListData";
 import { COLOR } from "../../../constants/color";
+import ChattingListData from "./ChattingListData";
 
 const Container = styled.div`
   display: flex;
@@ -33,7 +32,7 @@ const Container = styled.div`
       border-radius: 3rem;
       border: 1px solid var(--muted-color, #bdbdbd);
       background: lightgray 90% / cover no-repeat;
-      margin: 0 1.4375rem;
+      margin: 0 0.75rem;
     }
     .Icon {
       width: 1.5rem;
@@ -48,7 +47,7 @@ const Container = styled.div`
   }
   .SearchBar {
     margin-top: 0.625rem;
-    margin-bottom: 1.875rem;
+    margin-bottom: 1rem;
     display: flex;
     flex-direction: row;
     /* max-width: 11.875rem; */
