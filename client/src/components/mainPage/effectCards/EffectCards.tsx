@@ -6,13 +6,14 @@ import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/rea
 import styled from "styled-components";
 
 // 이미지 파일의 경로
-import image1 from "../../../assets/images/Carousel/unsplash1.jpg";
-import image2 from "../../../assets/images/Carousel/unsplash2.jpg";
-import image3 from "../../../assets/images/Carousel/unsplash3.jpg";
-import image4 from "../../../assets/images/Carousel/unsplash4.jpg";
-import image5 from "../../../assets/images/Carousel/unsplash5.jpg";
-import image6 from "../../../assets/images/Carousel/unsplash6.jpg";
-import image7 from "../../../assets/images/Carousel/unsplash7.jpg";
+import image1 from "../../../assets/images/main/Member/A.png";
+import image2 from "../../../assets/images/main/Member/B.png";
+import image3 from "../../../assets/images/main/Member/C.png";
+import image4 from "../../../assets/images/main/Member/D.png";
+import image5 from "../../../assets/images/main/Member/E.png";
+import image6 from "../../../assets/images/main/Member/F.png";
+import image7 from "../../../assets/images/main/Member/G.png";
+import image8 from "../../../assets/images/main/Member/H.png";
 
 import "swiper/css";
 import "swiper/css/effect-cards";
@@ -62,7 +63,7 @@ const EffectCard = (): JSX.Element => {
     cardsEffect: { perSlideOffset: 10 },
   };
 
-  const imgList = [image1, image2, image3, image4, image5, image6, image7];
+  const imgList = [image1, image2, image3, image4, image5, image6, image7, image8];
 
   return (
     <>

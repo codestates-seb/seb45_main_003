@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.chat.controller.dto.MessageSendRequest;
 import main.wonprice.domain.chat.dto.message.MessageResponseDto;
 import main.wonprice.domain.chat.entity.ChatRoom;
+import main.wonprice.domain.chat.entity.ChatSession;
 import main.wonprice.domain.chat.entity.Message;
 import main.wonprice.domain.chat.service.ChatService;
 import main.wonprice.domain.chat.service.MessageService;
@@ -18,6 +19,8 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.socket.WebSocketSession;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,12 +50,23 @@ public class MessageController {
 
         Long messageId = messageService.saveMessage(message);
 
+        List<ChatSession> chatSessionByChatRoom = chatService.findChatSessionByChatRoom(findChatRoom);
+
+        for (ChatSession chatSession : chatSessionByChatRoom) {
+            Member member = memberService.findMember(chatSession.getMemberId());
+
+            chatService.updateSequence(member, findChatRoom, messageId);
+        }
+
         /* 채팅 보낸 사용자 sequence 업데이트 */
 //        chatService.updateSequence(findMember, findChatRoom, messageId);
 
-        MessageResponseDto messageResponseDto = new MessageResponseDto(message);
+        MessageResponseDto messageResponseDto = new MessageResponseDto(message, chatSessionByChatRoom.size());
 
         return new ResponseEntity(messageResponseDto, HttpStatus.OK);
     }
 
+//    @MessageMapping("/chat/join/{room-id}")
+//    @SendTo("/topic/chat/{room-id}")
+//    public ResponseEntity sendMessage(@DestinationVariable("room-id") Long roomId, @RequestBody MessageSendRequest request)
 }

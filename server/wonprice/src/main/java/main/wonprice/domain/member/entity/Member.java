@@ -75,7 +75,7 @@ public class Member {
     private MemberPicture picture; // 프로필 이미지
 
     @OneToMany(mappedBy = "member")
-    private List<ChatParticipant> chatParticipant;
+    private List<ChatParticipant> chatParticipant = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Notification> notifications = new ArrayList<>();
