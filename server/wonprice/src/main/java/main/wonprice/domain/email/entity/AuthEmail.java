@@ -21,6 +21,9 @@ public class AuthEmail {
     @Column(nullable = false)
     private String authCode;
 
+    @Column(nullable = false)
+    private Boolean authenticated = false;
+
     public AuthEmail(String email, String authCode) {
         this.email = email;
         this.authCode = authCode;
