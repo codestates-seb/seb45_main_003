@@ -55,7 +55,7 @@ const Bid = (props: BidProps) => {
   const confirmSubmit = () => {
     if (!error) {
       let modifiedData = {};
-      console.log(Number(currentAuctionPrice) === data.immediatelyBuyPrice);
+
       if (Number(currentAuctionPrice) === data.immediatelyBuyPrice) {
         modifiedData = {
           ...data,
