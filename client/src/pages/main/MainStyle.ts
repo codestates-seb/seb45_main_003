@@ -49,6 +49,8 @@ export const ContentBox = styled.div`
         font-size: 3rem;
         font-style: normal;
         font-weight: 800;
+
+        text-align: center;
       }
 
       .Text2 {
