@@ -161,7 +161,7 @@ const ProfileContent = (): JSX.Element => {
     isLoading,
     error,
     data: profile,
-  } = useQuery<Profile>(["profile"], async () => {
+  } = useQuery<Profile>(["profile", { Id }], async () => {
     const res = await defaultInstance.get(`/members/${Id}`, {
       headers: {
         "ngrok-skip-browser-warning": "69420",
