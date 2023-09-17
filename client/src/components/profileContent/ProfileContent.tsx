@@ -7,15 +7,13 @@ import { FONT_SIZE } from "../../constants/font";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import PostListTab from "./postListTab";
-// import { useRecoilValue } from "recoil";
-// import { loginState } from "../../atoms/atoms";
-import { authInstance, defaultInstance } from "../../interceptors/interceptors";
+import PostListTab from "./PostListTab";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
-import ProfileImgRegisterForm from "./profileImgForm";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import Loading from "../common/Loading";
+import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import Error from "../common/Error";
+import Loading from "../common/Loading";
+import ProfileImgRegisterForm from "./ProfileImgForm";
 
 interface image {
   imageId: number;
@@ -40,14 +38,15 @@ interface modifyProfileForm {
 }
 
 const ProfileContentContainer = styled.div`
-  padding: 2rem;
+  padding: 1rem 2rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 14rem);
+  min-width: calc(100% - 18rem);
+
   .topContainer {
-    padding: 1.25rem 1rem;
+    padding: 0 1rem 1.25rem 1rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -75,6 +74,7 @@ const ProfileContentContainer = styled.div`
         border-radius: 6px;
         width: 9.375rem;
         height: 9.375rem;
+        object-fit: cover;
       }
     }
     .labelContainer {
@@ -161,7 +161,7 @@ const ProfileContent = (): JSX.Element => {
     isLoading,
     error,
     data: profile,
-  } = useQuery<Profile>("profile", async () => {
+  } = useQuery<Profile>(["profile"], async () => {
     const res = await defaultInstance.get(`/members/${Id}`, {
       headers: {
         "ngrok-skip-browser-warning": "69420",
@@ -175,7 +175,7 @@ const ProfileContent = (): JSX.Element => {
       alert("변경되었습니다.");
       resetModal();
     },
-    { onSuccess: () => queryClient.invalidateQueries("profile") },
+    { onSuccess: () => queryClient.invalidateQueries(["profile"]) },
   );
   const validateMutation = useMutation(async (body: string) => {
     try {

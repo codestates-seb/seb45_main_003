@@ -178,8 +178,6 @@ const Box = styled.div`
 
 // 기능
 const ChattingListData: React.FC = () => {
-  // const isConnected = useRecoilValue(webSocketConnectionState); // 웹소켓 연결 상태
-  // const [chatList, setChatList] = useRecoilState(chatListState as RecoilState<ChatList[]>);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [, setCurrentChatRoomId] = useRecoilState(currentChatRoomIdState);
   const isLoggedIn = useRecoilValue(loginState);
@@ -205,13 +203,6 @@ const ChattingListData: React.FC = () => {
       chat.chatRoom?.name?.toString().includes(searchTerm) && chat.deletedAt === null // deletedAt이 null인 경우만 포함
     );
   });
-
-  // // 최신 메시지 기준으로 채팅방 정렬
-  // const sortedChatList = filteredChatList.sort((a, b) => {
-  //   const timeA = a.message?.createdAt || "";
-  //   const timeB = b.message?.createdAt || "";
-  //   return new Date(timeB).getTime() - new Date(timeA).getTime();
-  // });
 
   const sortedChatList = filteredChatList.sort((a, b) => {
     const roomTimeA = new Date(a.createdAt).getTime();

@@ -27,8 +27,6 @@ export const useImageUpload = ({ setError, clearErrors, maxImageCount }: UseImag
         (image) => !images.some((existingImage) => existingImage.name === image.name),
       );
 
-      console.log(uniqueImages);
-
       //최대 이미지 업로드 수 제한
       if (uniqueImages?.length + images.length > MAX_IMAGE_COUNT) {
         setError("images", {

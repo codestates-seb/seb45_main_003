@@ -99,7 +99,7 @@ const Seller = (props: SellerProps): JSX.Element => {
         </div>
         <Button
           onClick={() => {
-            navigate(`/member/${data.memberId}`);
+            navigate(`/member/${data.memberId}?menu=profile&tabmenu=sell&page=1`);
           }}
           $text="프로필 방문하기"
           $design="outline"

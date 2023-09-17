@@ -1,5 +1,5 @@
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as DeleteIcon } from "../../assets/images/Close.svg";
 import { CATEGORY } from "../../constants/category";

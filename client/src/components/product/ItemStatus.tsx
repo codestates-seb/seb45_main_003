@@ -1,5 +1,6 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import styled from "styled-components";
 import SwiperCore from "swiper";
@@ -8,19 +9,21 @@ import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import Webstomp, { Client } from "webstomp-client";
-import { ReactComponent as EditIcon } from "../../assets/images/Edit.svg";
 import { ReactComponent as ViewsIcon } from "../../assets/images/Views.svg";
 import { loginState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { getUserId } from "../../util/auth";
 import { formatTime } from "../../util/date";
+import { plus5Percent } from "../../util/number";
+import Button from "../common/Button";
 import ProductStatus from "../common/ProductStatus";
 import { CustomSwiperProps } from "../mainPage/carousel/Carousel";
 import { ProductData } from "../productList/List";
 import Bid from "./Bid";
 import BuyNow from "./BuyNow";
 import DeleteButton from "./DeleteButton";
+import EditButton from "./EditButton";
 import WishCount from "./WishCount";
 
 type ItemStatusProps = {
@@ -49,7 +52,7 @@ const StyledItemStatus = styled.section`
     max-width: 27.5rem;
     width: 40%;
 
-    & > div:not(:first-child, .date_or_status) {
+    & > div:not(:first-child, .date_or_status, .chatting_link) {
       padding: 1.5rem 0;
       border-top: 1px solid ${COLOR.border};
     }
@@ -98,13 +101,37 @@ const StyledItemStatus = styled.section`
     align-items: center;
     justify-content: space-between;
 
-    &.current_price {
+    h4 {
       font-size: ${FONT_SIZE.font_20};
       font-weight: 600;
     }
 
     &.buy_it_now_price .price_number {
       font-weight: 600;
+    }
+  }
+
+  .chatting_link {
+    padding: 1.5rem 1rem;
+    border: 1px solid ${COLOR.border};
+    border-radius: 6px;
+
+    h4 {
+      font-size: 1.25rem;
+      margin: 0 0 0.25rem;
+    }
+
+    p {
+      margin: 0 0 0.9375rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem 0;
+    }
+
+    & + div {
+      border-top: none !important;
     }
   }
 
@@ -200,17 +227,17 @@ const StyledItemStatus = styled.section`
 `;
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
-  const [currentAuctionPrice, setCurrentAuctionPrice] = useState(0);
+  const navigate = useNavigate();
   const isLogin = useRecoilValue(loginState);
   const userid = getUserId();
   const [stompClient, setStompClient] = useState<Client | null>(null);
+  const queryClient = useQueryClient();
+  const location = useLocation();
+  const idArr = location.pathname.split("/");
+  const productId = idArr[idArr.length - 1];
 
-  //소켓 연결
   useEffect(() => {
-    if (data && data.currentAuctionPrice) {
-      setCurrentAuctionPrice(data.currentAuctionPrice);
-    }
-
+    //소켓 연결
     if (data) {
       const socket = new WebSocket(process.env.REACT_APP_WEB_SOCKET_URL as string);
       const stomp = Webstomp.over(socket);
@@ -229,8 +256,16 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
   useEffect(() => {
     if (stompClient && data) {
       stompClient.subscribe(`/topic/bid/${data.productId}`, (message) => {
-        const newCurrentAuctionPrice = JSON.parse(message.body).body.currentAuctionPrice;
-        setCurrentAuctionPrice(newCurrentAuctionPrice);
+        const socketData = JSON.parse(message.body).body;
+
+        const modifiedData = {
+          ...data,
+          buyerId: socketData.buyerId,
+          currentAuctionPrice: socketData.currentAuctionPrice,
+          minBidPrice: plus5Percent(socketData.currentAuctionPrice),
+        };
+
+        queryClient.setQueryData(["productData", productId], modifiedData);
       });
     }
   }, [stompClient, data]);
@@ -262,12 +297,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             <div className="icon_box">
               {isLogin && Number(userid) === data.memberId && (
                 <div className="gray">
-                  <Link
-                    to={{ pathname: "/create-post" }}
-                    state={{ isUpdateMode: true, updateModeData: data }}
-                  >
-                    <EditIcon />
-                  </Link>
+                  <EditButton data={data} />
                   <DeleteButton data={data} />
                 </div>
               )}
@@ -277,10 +307,24 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
               </div>
             </div>
           </div>
-
           <div className="gray date_or_status">
             <ProductStatus data={data} />
           </div>
+
+          {Number(userid) === data.buyerId && data.productStatus === "TRADE" && (
+            <div className="chatting_link">
+              <h4>{data.auction ? "상품 낙찰" : "구매 완료"}</h4>
+              <p>판매자에게 연락하여 상품을 수령하세요.</p>
+              <Button
+                onClick={() => {
+                  navigate(`/chat/${data.memberId}`);
+                }}
+                $design="yellow"
+                type="button"
+                $text="채팅하러 가기"
+              />
+            </div>
+          )}
           <div className="add_wishlist">
             <WishCount isLogin={isLogin} data={data} />
           </div>
@@ -290,16 +334,11 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                 <div className="price">
                   <span>현재 입찰가</span>
                   <span className="price_number">
-                    {currentAuctionPrice?.toLocaleString() + "원"}
+                    {data.currentAuctionPrice?.toLocaleString() + "원"}
                   </span>
                 </div>
                 {isLogin && Number(userid) !== data.memberId && data.productStatus === "BEFORE" && (
-                  <Bid
-                    data={data}
-                    stompClient={stompClient}
-                    currentAuctionPrice={currentAuctionPrice}
-                    setCurrentAuctionPrice={setCurrentAuctionPrice}
-                  />
+                  <Bid data={data} stompClient={stompClient} />
                 )}
               </div>
               <div className="create_at">
@@ -316,7 +355,6 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             </div> */}
             </div>
           )}
-
           <BuyNow data={data} />
         </div>
       </StyledItemStatus>
