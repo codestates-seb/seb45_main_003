@@ -9,7 +9,6 @@ export const BackGround = styled.div`
 `;
 export const StyledMain = styled.section`
   max-width: 1440px;
-  width: calc(100% - 3rem);
   margin: 0 auto;
   overflow: hidden;
 `;
@@ -49,6 +48,8 @@ export const ContentBox = styled.div`
         font-size: 3rem;
         font-style: normal;
         font-weight: 800;
+
+        text-align: center;
       }
 
       .Text2 {
@@ -119,7 +120,71 @@ export const ContentBox = styled.div`
     }
   }
   @media (max-width: 64rem) {
-    width: calc(100% - 2rem);
+    padding-bottom: 7.5rem;
+
+    .EffectCard {
+      padding: 0;
+      flex-flow: column;
+
+      & > div {
+        max-width: 16.25rem;
+        width: 100%;
+        margin: 0 auto;
+
+        .swiper-slide {
+          height: 22.5rem;
+        }
+      }
+
+      .TextBox1 {
+        max-width: unset;
+
+        .GrandTitle {
+          width: 100%;
+          margin: 0;
+        }
+
+        .Text2 {
+          margin: 0;
+          text-align: center;
+          word-break: keep-all;
+        }
+      }
+    }
+
+    .Function1 {
+      margin-top: 7.5rem;
+      flex-flow: column-reverse;
+      gap: 1.5rem;
+
+      &.reverse {
+        flex-flow: column;
+      }
+
+      .TextBox1 {
+        .Text1 {
+          margin: 0 0 1rem 0;
+          text-align: center;
+          color: #222;
+          font-size: 2rem;
+        }
+
+        .Text2 {
+          /* background-color: #db3636; */
+          margin: 0;
+          font-size: 1.25rem;
+          font-style: normal;
+          font-weight: 800;
+          line-height: 1.5;
+          text-align: center;
+          word-break: keep-all;
+        }
+      }
+      .FunctionImg {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
   }
 `;
 
@@ -132,6 +197,11 @@ export const MainTitle = styled.div`
   font-style: normal;
   font-weight: 800;
   line-height: 6.25rem; /* 108.696% */
+
+  @media (max-width: 64rem) {
+    font-size: 3rem;
+    line-height: 1.2;
+  }
 `;
 export const SecondTitle = styled.div`
   color: #222;
@@ -142,4 +212,9 @@ export const SecondTitle = styled.div`
   font-weight: 800;
   line-height: 5rem;
   margin-bottom: 3.125rem;
+
+  @media (max-width: 64rem) {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
 `;
