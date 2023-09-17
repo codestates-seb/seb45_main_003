@@ -3,8 +3,6 @@ package main.wonprice.domain.email.service;
 import main.wonprice.domain.email.entity.AuthEmail;
 import main.wonprice.domain.email.repository.EmailAuthRepository;
 import main.wonprice.domain.member.service.MemberService;
-import main.wonprice.exception.BusinessLogicException;
-import main.wonprice.exception.ExceptionCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -17,7 +15,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -62,9 +59,8 @@ public class EmailService {
 
         memberService.checkExistEmail(recipient);
 
-        Optional<AuthEmail> authEmail = emailAuthRepository.findByEmail(recipient);
-
-        if (authEmail.isPresent() && !authEmail.get().getAuthenticated()) {
+        AuthEmail authEmail = emailAuthRepository.findByEmail(recipient);
+        if (authEmail != null) {
             emailAuthRepository.deleteByEmail(recipient);
         }
 
@@ -92,16 +88,9 @@ public class EmailService {
 
     public boolean verifyAuthCode(AuthEmail email) {
 
-        Optional<AuthEmail> findEmail = emailAuthRepository.findByEmail(email.getEmail());
+        AuthEmail findEmail = emailAuthRepository.findByEmail(email.getEmail());
 
-        if (findEmail.isEmpty()) {
-            throw new BusinessLogicException(ExceptionCode.EMAIL_NOT_FOUND);
-        }
-
-        AuthEmail authEmail = findEmail.get();
-
-        if (authEmail.getAuthCode().equals(email.getAuthCode())) {
-            authEmail.setAuthenticated(true);
+        if (findEmail.getAuthCode().equals(email.getAuthCode())) {
             return true;
         } else return false;
     }
