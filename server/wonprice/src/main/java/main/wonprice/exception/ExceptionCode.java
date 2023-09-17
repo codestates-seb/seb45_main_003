@@ -16,6 +16,7 @@ public enum ExceptionCode {
     INVALID_TOKEN(406, "Invalid Token"),
     INVALID_PASSWORD(403, "Invalid Password"),
     EMAIL_NOT_AUTHENTICATED(401, "Email not Authenticated"),
+    EMAIL_NOT_FOUND(404, "Email not found"),
 
     WISH_NOT_FOUND(404, "Wish not found"),
     WISH_ALREADY_EXISTS(409, "Wish already exists"),
