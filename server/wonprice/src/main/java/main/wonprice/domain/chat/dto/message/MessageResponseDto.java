@@ -11,11 +11,13 @@ public class MessageResponseDto {
     private Long senderId;
     private String content;
     private LocalDateTime createdAt;
+    private Integer currentParticipants;
 
-    public MessageResponseDto(Message message) {
+    public MessageResponseDto(Message message, Integer currentParticipants) {
         this.messageId = message.getMessageId();
         this.senderId = message.getSenderId();
         this.content = message.getContent();
         this.createdAt = message.getCreatedAt();
+        this.currentParticipants = currentParticipants;
     }
 }

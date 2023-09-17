@@ -26,7 +26,7 @@ public class ChatParticipant {
     @JoinColumn(name = "chat_room_id")
     private ChatRoom chatRoom;
 
-    private Long currentSequence;
+    private Long currentSequence = 0L;
 
 
     public Integer getUnreadMessages() {
