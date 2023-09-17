@@ -91,6 +91,7 @@ public class EmailService {
         AuthEmail findEmail = emailAuthRepository.findByEmail(email.getEmail());
 
         if (findEmail.getAuthCode().equals(email.getAuthCode())) {
+            findEmail.setAuthenticated(true);
             return true;
         } else return false;
     }
