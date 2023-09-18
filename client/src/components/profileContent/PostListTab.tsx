@@ -153,6 +153,7 @@ const PostListTab = (): JSX.Element => {
   const searchParams = new URLSearchParams(location.search);
   const tabmenu = searchParams.get("tabmenu");
   const handleMenu = (value: string): void => {
+    window.scrollTo(0, 0);
     if (tabmenu !== value) {
       navigate(`${location.pathname}?menu=${searchParams.get("menu")}&tabmenu=${value}&page=1`);
     }
