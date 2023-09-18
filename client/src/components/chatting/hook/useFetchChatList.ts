@@ -43,12 +43,7 @@ const useFetchChatList = (isLoggedIn: boolean) => {
     },
   });
 
-  // Compute total number of unread messages
-  // useEffect(() => {
-  //   const total = chatList.reduce((acc, chat) => acc + (chat.unReadMessage || 0), 0);
-  //   setTotalUnreadMessages(total);
-  // }, [chatList]);
-  // Compute total number of unread messages
+  // 닫은 채팅방에서 온 알림은 카운팅 제외
   useEffect(() => {
     const total = chatList.reduce((acc, chat) => {
       // deletedAt이 null인 경우만 unReadMessage를 더함
