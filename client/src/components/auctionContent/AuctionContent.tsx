@@ -38,7 +38,7 @@ const AuctionContentContainer = styled.div`
   min-width: calc(100% - 12rem);
   min-height: calc(100% - 0.75rem);
   .topContainer {
-    padding: 1.25rem 1rem;
+    padding: 1.25rem 0;
     border-bottom: 3px solid ${COLOR.darkText};
     .menuTitle {
       font-size: ${FONT_SIZE.font_32};
@@ -68,7 +68,7 @@ const AuctionContentContainer = styled.div`
       padding: 1rem 0;
       .postImg {
         width: 6.25rem;
-        height: 6.25rem;
+        aspect-ratio: 1/1;
       }
       .leftSection {
         display: flex;
@@ -114,13 +114,32 @@ const AuctionContentContainer = styled.div`
       }
     }
   }
+
   @media (max-width: 64rem) {
+    padding: 0;
+    width: 100%;
+  }
+
+  @media (max-width: 48rem) {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    min-width: 41rem;
-    max-width: 100%;
+
+    .auctionListContainer .auctionContainer {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 16px;
+
+      .leftSection {
+        align-items: flex-start;
+        flex-direction: column;
+
+        img {
+          width: 100%;
+        }
+      }
+    }
   }
 `;
 

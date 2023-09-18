@@ -1,14 +1,14 @@
+import { useQuery } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
-import { defaultInstance } from "../../interceptors/interceptors";
-import { useQuery } from "@tanstack/react-query";
-import Empty from "../common/Empty";
-import Loading from "../common/Loading";
 import { usePagination } from "../../hooks/usePagination";
+import { defaultInstance } from "../../interceptors/interceptors";
 import { translateProductStatus } from "../../util/productStatus";
 import Button from "../common/Button";
+import Empty from "../common/Empty";
+import Loading from "../common/Loading";
 import Pagination from "../common/Pagination";
 
 interface Data {
@@ -48,6 +48,7 @@ const PostListContainer = styled.div`
     justify-content: flex-start;
     align-items: center;
     .postlistTabMenu {
+      cursor: pointer;
       width: calc(100% / 3);
       border: 1px solid ${COLOR.gray_300};
       border-radius: 6px 6px 0 0;
@@ -72,8 +73,9 @@ const PostListContainer = styled.div`
     justify-content: flex-start;
     align-items: stretch;
     .postImg {
-      width: 9.375rem;
-      height: 9.375rem;
+      border-radius: 6px;
+      width: 7.5rem;
+      height: 7.5rem;
       object-fit: cover;
     }
     .postContainer {
@@ -144,8 +146,8 @@ const PostListContainer = styled.div`
 const PostListTab = (): JSX.Element => {
   const tabmenus = [
     { value: "sell", text: "판매글 목록" },
-    { value: "leaveReview", text: "작성한 거래 후기" },
-    { value: "getReview", text: "받은 거래 후기" },
+    { value: "leaveReview", text: "작성한 후기" },
+    { value: "getReview", text: "받은 후기" },
   ];
   const navigate = useNavigate();
   const location = useLocation();

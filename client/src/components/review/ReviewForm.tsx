@@ -36,7 +36,7 @@ interface partner {
 }
 
 const StyledUploadForm = styled.section`
-  padding: 2.5rem 8rem;
+  padding: 2.5rem 0;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -52,6 +52,9 @@ const StyledUploadForm = styled.section`
     flex-direction: column;
     align-items: stretch;
     border: 1px solid ${COLOR.border};
+    border-radius: 6px;
+    min-height: 18.75rem;
+
     .formInfo {
       background-color: ${COLOR.gray_100};
       padding: 1rem;
@@ -91,14 +94,21 @@ const StyledUploadForm = styled.section`
       }
     }
     .field {
-      padding: 1rem;
+      padding: 1rem 1rem 0;
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
       align-items: flex-start;
       gap: 2rem;
+
+      & > p {
+        max-width: 10.125rem;
+        width: 25%;
+        font-size: 1.25rem;
+        font-weight: 700;
+      }
+
       .input {
-        min-width: calc(100% - 5.75rem);
         display: flex;
         flex-direction: column;
         align-items: stretch;
@@ -113,6 +123,11 @@ const StyledUploadForm = styled.section`
         flex-direction: column;
         align-items: stretch;
         gap: 0.5rem;
+        margin: 0 0 1rem;
+
+        textarea {
+          min-height: 18.75rem;
+        }
       }
     }
     .error {
@@ -127,7 +142,29 @@ const StyledUploadForm = styled.section`
     flex-direction: column;
     align-items: flex-end;
     padding: 1rem;
-    border: 1px solid ${COLOR.border};
+    border-top: 1px solid ${COLOR.border};
+  }
+
+  @media (max-width: 64rem) {
+    .reviewFormContent {
+      .field {
+        gap: 1rem;
+        flex-direction: column;
+
+        & > p {
+          width: 100%;
+        }
+
+        .textarea {
+          width: 100%;
+        }
+      }
+      .description {
+        gap: 1rem;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
   }
 `;
 const REPUTATION = {
@@ -261,17 +298,6 @@ const ReviewForm = () => {
             formState={formState}
             defaultValue={reviewInfo ? reviewInfo.reviewTitle : ""}
           />
-
-          <TextArea
-            register={register}
-            options={{
-              required: REQUIRED.review,
-            }}
-            title="후기 내용"
-            id="content"
-            formState={formState}
-            defaultValue={reviewInfo ? reviewInfo.content : ""}
-          />
           <Controller
             name="reputation"
             control={control}
@@ -287,6 +313,18 @@ const ReviewForm = () => {
               />
             )}
           />
+
+          <TextArea
+            register={register}
+            options={{
+              required: REQUIRED.review,
+            }}
+            title="후기 내용"
+            id="content"
+            formState={formState}
+            defaultValue={reviewInfo ? reviewInfo.content : ""}
+          />
+
           <div className="submitReviewButtonContainer">
             <Button
               $text={reviewId ? "후기 수정" : "후기 작성"}

@@ -91,6 +91,12 @@ const StyledList = styled.section`
       list-style: none;
       word-break: keep-all;
     }
+
+    .empty {
+      width: 100%;
+      position: relative;
+      min-height: 18.75rem;
+    }
   }
 
   .list_top_right {
@@ -272,20 +278,22 @@ const List = (): JSX.Element => {
               })}
             </>
           ) : (
-            <li className="no_border">
+            <li className="no_border empty">
               <Empty />
             </li>
           )}
         </ul>
-        <Pagination
-          {...{
-            currentPage,
-            totalPages,
-            pageChangeHandler,
-            prevPageHandler,
-            nextPageHandler,
-          }}
-        />
+        {data && data.content?.length > 0 && (
+          <Pagination
+            {...{
+              currentPage,
+              totalPages,
+              pageChangeHandler,
+              prevPageHandler,
+              nextPageHandler,
+            }}
+          />
+        )}
       </StyledList>
     </>
   );
