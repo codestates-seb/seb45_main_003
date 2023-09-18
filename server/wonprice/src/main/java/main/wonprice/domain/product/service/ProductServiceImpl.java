@@ -295,6 +295,8 @@ public class ProductServiceImpl implements ProductService {
 
         chatRoom.setStatus(RoomStatus.CLOSE);
 
+        findProduct.getSeller().setTradeCount(findProduct.getSeller().getTradeCount() + 1);
+
         findProduct.setStatus(ProductStatus.AFTER);
     }
 
@@ -311,6 +313,15 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public Product immediatelyBuy(Long productId, Member member) {
         Product findProduct = findExistsProduct(productId);
+
+        if(findProduct.getStatus().equals(ProductStatus.TRADE)){
+            throw new BusinessLogicException(ExceptionCode.BID_CLOSE);
+        }
+
+        /* buyer == seller일 경우 구매 못하게 막는 로직 필요 */
+        if(findProduct.getSeller().getMemberId() == member.getMemberId()){
+            throw new BusinessLogicException(ExceptionCode.IMMEDIATELY_INVALID);
+        }
 
         findProduct.setBuyerId(member.getMemberId());
         findProduct.setStatus(ProductStatus.TRADE);
@@ -332,5 +343,10 @@ public class ProductServiceImpl implements ProductService {
                         .collect(Collectors.toList());
 
         return new PageImpl<>(products, pageable, pageable.getPageSize());
+    }
+
+    @Override
+    public Long getMembersProductCount(Member member) {
+        return productRepository.countProductBySeller(member);
     }
 }

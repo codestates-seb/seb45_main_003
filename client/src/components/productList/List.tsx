@@ -51,6 +51,7 @@ export type ProductData = {
   sellerWrittenReviewsCount?: number;
   sellerReceivedReviewsCount?: number;
   loginMembersWish?: boolean;
+  path?: string;
 };
 
 const StyledList = styled.section`
@@ -89,6 +90,12 @@ const StyledList = styled.section`
       overflow: hidden;
       list-style: none;
       word-break: keep-all;
+    }
+
+    .empty {
+      width: 100%;
+      position: relative;
+      min-height: 18.75rem;
     }
   }
 
@@ -198,10 +205,7 @@ const List = (): JSX.Element => {
     [
       "productList",
       {
-        category: categoryId,
-        page: currentPage,
-        keyword,
-        size: ITEMS_PER_VIEW,
+        location,
       },
     ],
     getData,
@@ -212,6 +216,7 @@ const List = (): JSX.Element => {
         }
         setCurrentPage(Number(searchParams.get("page")) - 1);
       },
+      staleTime: Infinity,
     },
   );
 
@@ -273,20 +278,22 @@ const List = (): JSX.Element => {
               })}
             </>
           ) : (
-            <li className="no_border">
+            <li className="no_border empty">
               <Empty />
             </li>
           )}
         </ul>
-        <Pagination
-          {...{
-            currentPage,
-            totalPages,
-            pageChangeHandler,
-            prevPageHandler,
-            nextPageHandler,
-          }}
-        />
+        {data && data.content?.length > 0 && (
+          <Pagination
+            {...{
+              currentPage,
+              totalPages,
+              pageChangeHandler,
+              prevPageHandler,
+              nextPageHandler,
+            }}
+          />
+        )}
       </StyledList>
     </>
   );

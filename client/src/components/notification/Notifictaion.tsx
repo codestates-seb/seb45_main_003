@@ -1,17 +1,16 @@
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import axios from "axios";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import { styled } from "styled-components";
+import { loginState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { authInstance } from "../../interceptors/interceptors";
-import Loading from "../common/Loading";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import axios from "axios";
-import { useRef } from "react";
-import { useSetRecoilState } from "recoil";
-import { loginState } from "../../atoms/atoms";
 import Button from "../common/Button";
+import Loading from "../common/Loading";
 
 interface notificationData {
   content: notification[];
@@ -60,7 +59,7 @@ const Notification = styled.div`
       justify-content: flex-start;
       align-items: stretch;
       font-size: ${FONT_SIZE.font_16};
-      overflow: scroll;
+      overflow-y: scroll;
       cursor: default;
       .emptymessage {
         padding: 1rem;
@@ -130,7 +129,6 @@ const Notifications = (): JSX.Element => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 500) {
-          console.log(error);
           setlogin(false);
         }
       }
@@ -162,7 +160,7 @@ const Notifications = (): JSX.Element => {
     isLoading,
     data: notificationInfo,
     refetch,
-  } = useQuery<notificationData>(["notification"], getNotifications, {
+  } = useQuery<notificationData>(["notification", { location }], getNotifications, {
     staleTime: 30000,
   });
   const notificationMutation = useMutation(
@@ -190,7 +188,7 @@ const Notifications = (): JSX.Element => {
     notificationMutation.mutateAsync(notification);
   };
   const notificationRef = useRef<HTMLDivElement>(null);
-  const getReadCount = useQuery([["readCount"], { location }], getUnReadCount);
+  const getReadCount = useQuery(["readCount", { location }], getUnReadCount);
   const notificationsMutation = useMutation(removeReadNotifications, {
     onSuccess: () => {
       refetch();
@@ -210,9 +208,6 @@ const Notifications = (): JSX.Element => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [notificationRef]);
-  // if (getReadCount.isError) {
-  //   return <ErrorIndication error={Error} />;
-  // }
   return (
     <Notification ref={notificationRef}>
       <div className="icon">

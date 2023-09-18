@@ -175,7 +175,9 @@ const Carousel = (): JSX.Element => {
     return response.data;
   };
 
-  const { isLoading, data, error } = useQuery<Data>(["CarouselProductList", { page: 1 }], getData);
+  const { isLoading, data, error } = useQuery<Data>(["CarouselProductList", { page: 1 }], getData, {
+    staleTime: Infinity,
+  });
 
   return (
     <>

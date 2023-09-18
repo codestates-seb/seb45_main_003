@@ -4,11 +4,8 @@ import lombok.AllArgsConstructor;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.email.entity.AuthEmail;
 import main.wonprice.domain.email.repository.EmailAuthRepository;
-import main.wonprice.domain.email.service.EmailService;
-import main.wonprice.domain.member.dto.MemberResponseDto;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.repository.MemberRepository;
-import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
@@ -124,12 +121,12 @@ public class MemberService {
     }
 
 //    입력한 번호로 가입한 회원이 있는지 확인
-    public void checkExistPhone(String phone) {
-        Optional<Member> findByPhoneMember = memberRepository.findByPhone(phone);
-        if (findByPhoneMember.isPresent()) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_PHONE_EXISTS);
-        }
-    }
+//    public void checkExistPhone(String phone) {
+//        Optional<Member> findByPhoneMember = memberRepository.findByPhone(phone);
+//        if (findByPhoneMember.isPresent()) {
+//            throw new BusinessLogicException(ExceptionCode.MEMBER_PHONE_EXISTS);
+//        }
+//    }
 
 //    해당 id의 회원이 있는지 확인 후 리턴
     private Member findVerifyMember(Long memberId) {
@@ -192,17 +189,6 @@ public class MemberService {
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHENTICATED);
         }
     }
-
-    public MemberResponseDto putCounts(MemberResponseDto responseDto) {
-
-        Member member = findVerifyMember(responseDto.getMemberId());
-
-        responseDto.setPostCount(productRepository.countProductBySeller(member));
-        responseDto.setTradeCount(productRepository.countProductByBuyerIdAndStatus(member.getMemberId(), ProductStatus.AFTER));
-
-        return responseDto;
-    }
-
 
     /*
         경매 부분 product buyer_id 를 참고해서 해당 회원의 name을 가지고 오기 위한 메서드
