@@ -3,11 +3,14 @@ package main.wonprice.domain.email.service;
 import main.wonprice.domain.email.entity.AuthEmail;
 import main.wonprice.domain.email.repository.EmailAuthRepository;
 import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
@@ -17,6 +20,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,6 +69,7 @@ public class EmailService {
 
         Optional<AuthEmail> authEmail = emailAuthRepository.findByEmail(recipient);
 
+//        이메일 인증 요청이 왔을 때 기존 인증하지 않은 코드가 있는 경우 삭제 후 재발송
         if (authEmail.isPresent() && !authEmail.get().getAuthenticated()) {
             emailAuthRepository.deleteByEmail(recipient);
         }
@@ -104,5 +110,16 @@ public class EmailService {
             authEmail.setAuthenticated(true);
             return true;
         } else return false;
+    }
+
+    @Scheduled(fixedDelay = 5000)
+    public void getCompletedAuction() {
+        List<AuthEmail> timeOverMail = emailAuthRepository.findAllByCreatedAtIsBefore(LocalDateTime.now().minusMinutes(5));
+
+        if (!timeOverMail.isEmpty()){
+            for (AuthEmail mail : timeOverMail) {
+                emailAuthRepository.deleteByEmailId(mail.getEmailId());
+            }
+        }
     }
 }

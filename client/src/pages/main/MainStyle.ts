@@ -67,6 +67,7 @@ export const ContentBox = styled.div`
   .Function1 {
     display: flex;
     justify-content: center;
+    gap: 4rem;
     /* background-color: blue; */
 
     margin-top: 18.125rem;
@@ -81,7 +82,6 @@ export const ContentBox = styled.div`
         flex-direction: column;
         justify-content: start;
         flex-shrink: 0;
-        margin-left: 9.3125rem;
         color: #222;
         font-family: Pretendard Variable;
         font-size: 3rem;
@@ -92,8 +92,7 @@ export const ContentBox = styled.div`
       .Text2 {
         /* background-color: #db3636; */
         margin-top: 2.625rem;
-        margin-left: 11.25rem;
-
+        margin-left: 3rem;
         color: #616161;
         font-family: Pretendard Variable;
         font-size: 1.5rem;
@@ -103,7 +102,6 @@ export const ContentBox = styled.div`
       }
     }
     .FunctionImg {
-      margin-left: 1rem;
       width: 50%;
       flex-shrink: 0;
       border-radius: 0.375rem;
