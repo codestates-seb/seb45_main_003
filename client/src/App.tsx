@@ -55,15 +55,15 @@ function App() {
 
         // 5) 게시물 리스트, 검색결과 페이지
         {
-          path: ":search",
+          path: "/:search",
           element: <PostsList />,
         },
         {
-          path: ":category",
+          path: "/:category",
           element: <PostsList />,
         },
         {
-          path: ":available",
+          path: "/:available",
           element: <PostsList />,
         },
 

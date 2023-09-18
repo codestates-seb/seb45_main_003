@@ -42,6 +42,7 @@ export const FAIL = {
     trade: "구매자와 채팅중인 상품은 수정할 수 없습니다.",
     after: "거래가 완료된 상품은 수정할 수 없습니다.",
   },
+  deleted: "존재하지 않는 상품입니다.",
 };
 
 export const MAX = {
