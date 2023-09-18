@@ -35,7 +35,7 @@ interface postContent {
 }
 
 const TradeContentContainer = styled.div`
-  padding: 2rem;
+  padding: 0 2rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -47,7 +47,7 @@ const TradeContentContainer = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-end;
-    padding: 1.25rem 1rem;
+    padding: 1.25rem 0;
     border-bottom: 3px solid ${COLOR.darkText};
     .menuTitle {
       font-size: ${FONT_SIZE.font_32};
@@ -74,7 +74,7 @@ const TradeContentContainer = styled.div`
     align-items: stretch;
     .postImg {
       width: 6.25rem;
-      height: 6.25rem;
+      aspect-ratio: 1/1;
     }
     .tradeContainer {
       display: flex;
@@ -137,8 +137,29 @@ const TradeContentContainer = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    min-width: 41rem;
-    max-width: 100%;
+    width: 100%;
+  }
+  @media (max-width: 48rem) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    .tradeListContainer .tradeContainer {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 16px;
+
+      .leftSection {
+        align-items: flex-start;
+        flex-direction: column;
+        width: 100%;
+
+        img {
+          width: 100%;
+        }
+      }
+    }
   }
 `;
 

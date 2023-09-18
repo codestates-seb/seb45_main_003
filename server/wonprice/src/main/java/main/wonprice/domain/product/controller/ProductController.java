@@ -69,7 +69,7 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponseDto>> findAllProduct(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         // 삭제되지 않은 상품만 검색하도록 스펙을 적용
         Specification<Product> spec = ProductSpecification.notDeleted();
@@ -86,7 +86,7 @@ public class ProductController {
     public ResponseEntity<Page<ProductResponseDto>> getProductCategory(@PathVariable Long categoryId,
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Page<Product> products = productService.getProductsByCategory(categoryId, pageable);
 
@@ -187,13 +187,17 @@ public class ProductController {
     // 대표 - 즉시구매
     @PostMapping("/buy/{productId}")
     public ResponseEntity buyProduct(@PathVariable Long productId) {
-        Member buyer = memberService.findLoginMember();
+        try {
+            Member buyer = memberService.findLoginMember();
 
-        /* buyer == seller일 경우 구매 못하게 막는 로직 필요 */
+            /* buyer == seller일 경우 구매 못하게 막는 로직 필요 */ // 추가함
 
-        Product product = productService.immediatelyBuy(productId, buyer);
-        chatService.createChatRoom(product);
+            Product product = productService.immediatelyBuy(productId, buyer);
+            chatService.createChatRoom(product);
 
-        return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (BusinessLogicException ex) {
+            return ResponseEntity.badRequest().body(ex.getExceptionCode().getMessage());
+        }
     }
 }

@@ -49,7 +49,7 @@ type checkInputType = {
 };
 
 const BookmarkContentContainer = styled.form`
-  padding: 2rem;
+  padding: 0 2rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -58,7 +58,7 @@ const BookmarkContentContainer = styled.form`
   min-height: calc(100% - 0.75rem);
   .checkbox {
     width: 18px;
-    height: 18px;
+    aspect-ratio: 1/1;
   }
   .topContainer {
     display: flex;
@@ -99,7 +99,7 @@ const BookmarkContentContainer = styled.form`
       padding: 1rem 0;
       .postImg {
         width: 6.25rem;
-        height: 6.25rem;
+        aspect-ratio: 1/1;
         object-fit: cover;
       }
       .leftSection {
@@ -185,8 +185,28 @@ const BookmarkContentContainer = styled.form`
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    min-width: 46rem;
-    max-width: 100%;
+    width: 100%;
+  }
+  @media (max-width: 48rem) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    .bookmarkListContainer .bookmarkContainer {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 16px;
+
+      .leftSection {
+        align-items: flex-start;
+        flex-direction: column;
+
+        img {
+          width: 100%;
+        }
+      }
+    }
   }
 `;
 
