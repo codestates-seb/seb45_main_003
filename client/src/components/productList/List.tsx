@@ -179,8 +179,6 @@ const List = (): JSX.Element => {
   const type = searchParams.get("type");
   const keyword = searchParams.get("keyword");
 
-  console.log(categoryId, path);
-
   const {
     setTotalPages,
     setCurrentPage,
