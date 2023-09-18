@@ -2,6 +2,7 @@ package main.wonprice.websocket;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import main.wonprice.domain.chat.entity.ChatSession;
 import main.wonprice.domain.chat.service.ChatService;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -27,14 +28,18 @@ public class WebSocketConnectListener {
         GenericMessage generic = (GenericMessage) accessor.getHeader("simpConnectMessage");
         Map nativeHeaders = (Map) generic.getHeaders().get("nativeHeaders");
 
-        Long chatRoomId = Long.parseLong((String) ((List) nativeHeaders.get("chatRoomId")).get(0));
-        Long memberId = Long.parseLong((String) ((List) nativeHeaders.get("memberId")).get(0));
-        String sessionId = accessor.getSessionId();
+        if ((nativeHeaders.containsKey("chatRoomId")) && (nativeHeaders.containsKey("memberId"))) {
+            Long chatRoomId = Long.parseLong((String) ((List) nativeHeaders.get("chatRoomId")).get(0));
+            Long memberId = Long.parseLong((String) ((List) nativeHeaders.get("memberId")).get(0));
+            String sessionId = accessor.getSessionId();
+            chatService.insertChatSession(chatRoomId, memberId, sessionId);
+
+        }
+
 
 //        log.info("chatRoomId : " + chatRoomId);
 //        log.info("memberId : " + memberId);
 
-        chatService.insertChatSession(chatRoomId, memberId, sessionId);
     }
 
     @EventListener
@@ -43,18 +48,10 @@ public class WebSocketConnectListener {
 
         String sessionId = accessor.getSessionId();
 //        log.info("disconnectSessionId : " + accessor.getSessionId());
+        ChatSession chatSessionBySessionId = chatService.findChatSessionBySessionId(sessionId);
 
-        chatService.deleteChatSession(sessionId);
-    }
-
-    @EventListener
-    public void handleSubscriptionEventListener(SessionSubscribeEvent event) {
-        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-
-        String sessionId = accessor.getSessionId();
-        String destination = accessor.getDestination();
-
-        // 새로운 구독을 감지하고 원하는 작업을 수행
-        System.out.println("새로운 구독 - Session ID: " + sessionId + ", Destination: " + destination);
+        if (chatSessionBySessionId != null) {
+            chatService.deleteChatSession(sessionId);
+        }
     }
 }
