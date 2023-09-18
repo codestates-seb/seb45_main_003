@@ -3,8 +3,6 @@ import { ReactComponent as StartChat } from "../../../assets/images/chatting/NoM
 
 const Container = styled.div`
   display: flex;
-  width: 69rem;
-  height: 43.6875rem;
   padding: 1.5rem 1rem;
 
   justify-content: center;

@@ -35,7 +35,7 @@ interface postContent {
 }
 
 const TradeContentContainer = styled.div`
-  padding: 2rem;
+  padding: 0 2rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -47,7 +47,7 @@ const TradeContentContainer = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-end;
-    padding: 1.25rem 1rem;
+    padding: 1.25rem 0;
     border-bottom: 3px solid ${COLOR.darkText};
     .menuTitle {
       font-size: ${FONT_SIZE.font_32};
