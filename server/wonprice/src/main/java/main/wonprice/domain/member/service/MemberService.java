@@ -121,12 +121,12 @@ public class MemberService {
     }
 
 //    입력한 번호로 가입한 회원이 있는지 확인
-    public void checkExistPhone(String phone) {
-        Optional<Member> findByPhoneMember = memberRepository.findByPhone(phone);
-        if (findByPhoneMember.isPresent()) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_PHONE_EXISTS);
-        }
-    }
+//    public void checkExistPhone(String phone) {
+//        Optional<Member> findByPhoneMember = memberRepository.findByPhone(phone);
+//        if (findByPhoneMember.isPresent()) {
+//            throw new BusinessLogicException(ExceptionCode.MEMBER_PHONE_EXISTS);
+//        }
+//    }
 
 //    해당 id의 회원이 있는지 확인 후 리턴
     private Member findVerifyMember(Long memberId) {

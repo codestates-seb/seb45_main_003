@@ -21,7 +21,7 @@ public interface MemberMapper {
                 .memberId(member.getMemberId())
                 .name(member.getName())
                 .email(member.getEmail())
-                .phone(member.getPhone())
+//                .phone(member.getPhone())
                 .tradeCount(member.getTradeCount())
                 .picture(member.getPicture())
                 .build();
@@ -31,7 +31,7 @@ public interface MemberMapper {
                 .memberId(member.getMemberId())
                 .name(member.getName())
                 .email(member.getEmail())
-                .phone(member.getPhone())
+//                .phone(member.getPhone())
                 .postCount(productCount)
                 .tradeCount(member.getTradeCount())
                 .picture(member.getPicture())

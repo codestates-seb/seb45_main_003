@@ -93,14 +93,14 @@ const BookmarkContentContainer = styled.form`
     .bookmarkContainer {
       display: flex;
       flex-direction: row;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: flex-end;
       border-bottom: 1px solid ${COLOR.border};
       padding: 1rem 0;
-      gap: 1rem;
       .postImg {
         width: 6.25rem;
         height: 6.25rem;
+        object-fit: cover;
       }
       .leftSection {
         display: flex;
@@ -115,49 +115,32 @@ const BookmarkContentContainer = styled.form`
           align-items: flex-end;
           gap: 1rem;
         }
-      }
-      .rightSection {
-        min-width: calc(100% - 134px);
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: stretch;
-        gap: 1rem;
-        .postTitle {
-          color: ${COLOR.darkText};
-          font-size: ${FONT_SIZE.font_20};
-          font-weight: bold;
-          cursor: pointer;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          display: -webkit-box;
-          -webkit-line-clamp: 1;
-          -webkit-box-orient: vertical;
-        }
-        .exceptTitle {
+        .rightSection {
+          min-width: calc(100% - 134px);
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           justify-content: flex-start;
           align-items: stretch;
-          gap: 0.5rem;
-          .infoContainer {
-            width: 230px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 0.625rem;
-            font-size: ${FONT_SIZE.font_16};
-            color: ${COLOR.mediumText};
+          gap: 1rem;
+          .postTitle {
+            color: ${COLOR.darkText};
+            font-size: ${FONT_SIZE.font_20};
+            font-weight: bold;
+            cursor: pointer;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
           }
-          .exceptTitleRight {
-            width: calc(100% - 238px);
+          .exceptTitle {
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
-            align-items: flex-end;
-            .priceContainer {
-              max-width: calc(100% - 66.23px);
+            justify-content: flex-start;
+            align-items: stretch;
+            gap: 0.5rem;
+            .infoContainer {
+              width: 230px;
               display: flex;
               flex-direction: column;
               justify-content: center;
@@ -165,22 +148,46 @@ const BookmarkContentContainer = styled.form`
               gap: 0.625rem;
               font-size: ${FONT_SIZE.font_16};
               color: ${COLOR.mediumText};
-              .priceLabel {
+            }
+            .exceptTitleRight {
+              width: calc(100% - 238px);
+              display: flex;
+              flex-direction: row;
+              justify-content: space-between;
+              align-items: flex-end;
+              .priceContainer {
                 display: flex;
-                flex-direction: row;
-                justify-content: flex-end;
-                align-items: center;
-                gap: 0.5rem;
-              }
-              .price {
-                color: ${COLOR.darkText};
-                font-weight: bold;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                gap: 0.625rem;
+                font-size: ${FONT_SIZE.font_16};
+                color: ${COLOR.mediumText};
+                .priceLabel {
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: flex-end;
+                  align-items: center;
+                  gap: 0.5rem;
+                }
+                .price {
+                  color: ${COLOR.darkText};
+                  font-weight: bold;
+                }
               }
             }
           }
         }
       }
     }
+  }
+  @media (max-width: 64rem) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    min-width: 46rem;
+    max-width: 100%;
   }
 `;
 
@@ -310,48 +317,48 @@ const BookmarkContent = (): JSX.Element => {
               <div className="postInfo">
                 <img className="postImg" src={el.productResponseDto.images[0].path}></img>
               </div>
-            </div>
-            <div className="rightSection">
-              <div className="postTitle" onClick={() => navigate(`/product/${el.productId}`)}>
-                {el.productResponseDto.title}
-              </div>
-              <div className="exceptTitle">
-                <div className="infoContainer">
-                  <div>{translateProductStatus(el.productResponseDto.productStatus)}</div>
-                  {el.productResponseDto.auction ? (
-                    <div>{`거래 마감시간: ${el.productResponseDto.closedAt} `}</div>
-                  ) : (
-                    <div>즉시 구매 상품</div>
-                  )}
+              <div className="rightSection">
+                <div className="postTitle" onClick={() => navigate(`/product/${el.productId}`)}>
+                  {el.productResponseDto.title}
                 </div>
-                <div className="exceptTitleRight">
-                  <div className="priceContainer">
-                    {el.productResponseDto.auction && (
+                <div className="exceptTitle">
+                  <div className="infoContainer">
+                    <div>{translateProductStatus(el.productResponseDto.productStatus)}</div>
+                    {el.productResponseDto.auction ? (
+                      <div>{`거래 마감시간: ${el.productResponseDto.closedAt} `}</div>
+                    ) : (
+                      <div>즉시 구매 상품</div>
+                    )}
+                  </div>
+                  <div className="exceptTitleRight">
+                    <div className="priceContainer">
+                      {el.productResponseDto.auction && (
+                        <div className="priceLabel">
+                          {`현재 입찰가`}
+                          <span className="price">{`${el.productResponseDto.currentAuctionPrice.toLocaleString(
+                            "ko-KR",
+                          )} 원`}</span>
+                        </div>
+                      )}
                       <div className="priceLabel">
-                        {`현재 입찰가`}
-                        <span className="price">{`${el.productResponseDto.currentAuctionPrice.toLocaleString(
+                        {`즉시 구매가`}
+                        <span className="price">{`${el.productResponseDto.immediatelyBuyPrice.toLocaleString(
                           "ko-KR",
                         )} 원`}</span>
                       </div>
-                    )}
-                    <div className="priceLabel">
-                      {`즉시 구매가`}
-                      <span className="price">{`${el.productResponseDto.immediatelyBuyPrice.toLocaleString(
-                        "ko-KR",
-                      )} 원`}</span>
                     </div>
                   </div>
-                  {loginUserId === Id && (
-                    <Button
-                      type="button"
-                      $text="삭제"
-                      $design="yellow"
-                      onClick={() => bookmarkMutation(el.productId)}
-                    />
-                  )}
                 </div>
               </div>
             </div>
+            {loginUserId === Id && (
+              <Button
+                type="button"
+                $text="삭제"
+                $design="yellow"
+                onClick={() => bookmarkMutation(el.productId)}
+              />
+            )}
           </div>
         ))}
       </div>

@@ -15,12 +15,13 @@ import { useChatList } from "../hook/useChatList"; // Import custom hook
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 90%; // 상대적인 단위로 변경
+  width: 100%;
   padding: 1.5rem 1rem;
   min-height: 43.6875rem;
   padding: 1.5rem 1rem;
   height: 47.0625rem;
   justify-content: end;
+  align-items: center;
 
   border-radius: 0.375rem;
   border: 1px solid #e0e0e0;
@@ -43,17 +44,13 @@ const Container = styled.div`
 
   .chatBox {
     overflow-y: auto; /* 내용이 넘칠 경우 스크롤 표시 */
-
+    width: 100%;
     &::-webkit-scrollbar {
       width: 0px;
     }
-    /* &::-webkit-scrollbar-thumb {
-      border-radius: 6px;
-      background: #ccc;
-    } */
   }
   @media (max-width: 64rem) {
-    width: 95%; // 상대적인 단위로 변경
+    width: 100%; // 상대적인 단위로 변경
   }
 `;
 // console.log(MessageBubble);
