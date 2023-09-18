@@ -260,7 +260,11 @@ const ProfileContent = (): JSX.Element => {
           </ul>
         </div>
         <PostListTab />
-        <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={resetModal}>
+        <Modal
+          isOpen={isOpen}
+          closeModal={(event) => closeModal(event, reset)}
+          toggleModal={resetModal}
+        >
           <StyledModal onSubmit={handleSubmit(() => passwordMutation.mutateAsync(getValues()))}>
             <div className="modalInputContainer">
               <label htmlFor="passwordCheck">비밀번호</label>
