@@ -335,4 +335,9 @@ public class ProductServiceImpl implements ProductService {
 
         return new PageImpl<>(products, pageable, pageable.getPageSize());
     }
+
+    @Override
+    public Long getMembersProductCount(Member member) {
+        return productRepository.countProductBySeller(member);
+    }
 }
