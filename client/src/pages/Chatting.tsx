@@ -30,8 +30,10 @@ interface MobileChatListProps {
 // 수정된 코드
 const MobileChatList = styled.div<MobileChatListProps>`
   display: block;
+  width: 30%;
 
-  @media (max-width: 37.5rem) {
+  @media (max-width: 64rem) {
+    width: 100%;
     display: ${(props) => (props.showChatRoom ? "none" : "block")};
   }
 `;
@@ -42,10 +44,11 @@ interface MobileChatRoomProps {
 
 const MobileChatRoom = styled.div<MobileChatRoomProps>`
   display: block;
-  width: 100%; // 기본 너비
+  width: 65%; // 기본 너비
   height: 100%; // 기본 높이
   justify-content: center;
-  @media (max-width: 37.5rem) {
+  @media (max-width: 64rem) {
+    width: 100%;
     display: ${(props) => (props.showChatRoom ? "block" : "none")};
   }
 `;
