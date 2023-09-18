@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import NoProfileImage from "../../assets/images/NoProfileImage.png";
 import { COLOR } from "../../constants/color";
 import Button from "../common/Button";
 import { ProductData } from "../productList/List";
@@ -37,6 +36,13 @@ const StyledSeller = styled.section`
 
   .profile_image {
     display: flex;
+
+    img {
+      width: 100%;
+      max-width: 5rem;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+    }
   }
 
   .seller_name {
@@ -80,7 +86,7 @@ const Seller = (props: SellerProps): JSX.Element => {
       <div className="seller">
         <div>
           <div className="profile_image">
-            <img src={NoProfileImage} alt="프로필 이미지" />
+            <img src={data.path} alt="프로필 이미지" />
           </div>
           <div className="seller_info">
             <p className="seller_name">{data.sellerName}</p>

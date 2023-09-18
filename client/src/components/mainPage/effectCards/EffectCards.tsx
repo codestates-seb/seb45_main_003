@@ -20,7 +20,7 @@ import "swiper/css/effect-cards";
 
 const Box = styled.div`
   max-width: 22.5rem;
-  width: 35%;
+  width: 50%;
 
   border-radius: 0.375rem;
   .swiper-slide {
