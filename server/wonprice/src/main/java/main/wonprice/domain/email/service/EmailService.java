@@ -69,6 +69,7 @@ public class EmailService {
 
         Optional<AuthEmail> authEmail = emailAuthRepository.findByEmail(recipient);
 
+//        이메일 인증 요청이 왔을 때 기존 인증하지 않은 코드가 있는 경우 삭제 후 재발송
         if (authEmail.isPresent() && !authEmail.get().getAuthenticated()) {
             emailAuthRepository.deleteByEmail(recipient);
         }
@@ -113,6 +114,12 @@ public class EmailService {
 
     @Scheduled(fixedDelay = 5000)
     public void getCompletedAuction() {
-        emailAuthRepository.deleteAllByCreatedAtIsBefore(LocalDateTime.now().minusMinutes(5));
+        List<AuthEmail> timeOverMail = emailAuthRepository.findAllByCreatedAtIsBefore(LocalDateTime.now().minusMinutes(5));
+
+        if (!timeOverMail.isEmpty()){
+            for (AuthEmail mail : timeOverMail) {
+                emailAuthRepository.deleteByEmailId(mail.getEmailId());
+            }
+        }
     }
 }
