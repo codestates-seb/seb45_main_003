@@ -17,11 +17,11 @@ import java.util.List;
 
 public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {
 
-    Page<Product> findAllBySeller(Member seller, Pageable pageable);
+    Page<Product> findAllBySellerAndDeletedAt(Member seller, Pageable pageable, LocalDateTime deletedAt);
 
-    Page<Product> findAllBySellerAndStatus(Member member, ProductStatus status, Pageable pageable);
+    Page<Product> findAllBySellerAndStatusAndDeletedAt(Member member, ProductStatus status, Pageable pageable, LocalDateTime deletedAt);
 
-    Page<Product> findAllByBuyerIdAndStatus(Long memberId, ProductStatus status, Pageable pageable);
+    Page<Product> findAllByBuyerIdAndStatusAndDeletedAt(Long memberId, ProductStatus status, Pageable pageable, LocalDateTime deletedAt);
 
     Long countProductBySeller(Member member);
 

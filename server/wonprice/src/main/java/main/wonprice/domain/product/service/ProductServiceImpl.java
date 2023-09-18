@@ -193,19 +193,19 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<Product> findMembersProduct(Pageable pageable, Member member) {
 
-        return productRepository.findAllBySeller(member, pageable);
+        return productRepository.findAllBySellerAndDeletedAt(member, pageable, null);
     }
 
     //    회원이 판매 완료한 상품 목록
     public Page<Product> findMemberSold(Pageable pageable, Member member) {
 
-        return productRepository.findAllBySellerAndStatus(member, ProductStatus.AFTER, pageable);
+        return productRepository.findAllBySellerAndStatusAndDeletedAt(member, ProductStatus.AFTER, pageable, null);
     }
 
     //    회원이 구매 완료한 상품 목록
     @Override
     public Page<Product> findMemberBought(Pageable pageable, Long memberId) {
-        return productRepository.findAllByBuyerIdAndStatus(memberId, ProductStatus.AFTER, pageable);
+        return productRepository.findAllByBuyerIdAndStatusAndDeletedAt(memberId, ProductStatus.AFTER, pageable, null);
     }
 
     // [리팩토링 전] 입찰
