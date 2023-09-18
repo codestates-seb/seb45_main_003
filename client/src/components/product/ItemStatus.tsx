@@ -366,12 +366,6 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                   <span className="price_number  gray">{formatTime(data.createdAt)}</span>
                 </div>
               </div>
-              {/* <div className="price">
-              <span className="gray">시작가</span>
-              <span className="price_number  gray">
-                {data.auction ? data.currentAuctionPrice : "-"}
-              </span>
-            </div> */}
             </div>
           )}
           <BuyNow data={data} />
