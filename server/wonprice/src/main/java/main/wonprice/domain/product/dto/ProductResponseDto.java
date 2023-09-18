@@ -67,4 +67,5 @@ public class ProductResponseDto {
     private Boolean buyerReview;
 
     private Boolean sellerReview;
+    private String path;
 }
