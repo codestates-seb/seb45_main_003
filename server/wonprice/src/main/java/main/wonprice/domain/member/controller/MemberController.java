@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -54,7 +53,7 @@ public class MemberController {
     public ResponseEntity getProfile(@PathVariable("member-id") Long memberId) {
 
         Member member = memberService.findMember(memberId);
-        MemberResponseDto response = memberService.putCounts(mapper.memberToResponseDto(member));
+        MemberResponseDto response = mapper.memberToResponseDto(member, productService.getMembersProductCount(member));
 
         if (response.getPicture() == null) {
             MemberPicture picture = new MemberPicture();

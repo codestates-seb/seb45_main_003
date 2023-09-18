@@ -129,7 +129,6 @@ const Notifications = (): JSX.Element => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 500) {
-          console.log(error);
           setlogin(false);
         }
       }
@@ -161,7 +160,7 @@ const Notifications = (): JSX.Element => {
     isLoading,
     data: notificationInfo,
     refetch,
-  } = useQuery<notificationData>(["notification"], getNotifications, {
+  } = useQuery<notificationData>(["notification", { location }], getNotifications, {
     staleTime: 30000,
   });
   const notificationMutation = useMutation(
@@ -189,7 +188,7 @@ const Notifications = (): JSX.Element => {
     notificationMutation.mutateAsync(notification);
   };
   const notificationRef = useRef<HTMLDivElement>(null);
-  const getReadCount = useQuery([["readCount"], { location }], getUnReadCount);
+  const getReadCount = useQuery(["readCount", { location }], getUnReadCount);
   const notificationsMutation = useMutation(removeReadNotifications, {
     onSuccess: () => {
       refetch();
@@ -209,9 +208,6 @@ const Notifications = (): JSX.Element => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [notificationRef]);
-  // if (getReadCount.isError) {
-  //   return <ErrorIndication error={Error} />;
-  // }
   return (
     <Notification ref={notificationRef}>
       <div className="icon">

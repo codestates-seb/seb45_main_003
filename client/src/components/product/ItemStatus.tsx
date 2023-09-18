@@ -242,8 +242,6 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const queryClient = useQueryClient();
   const location = useLocation();
-  const idArr = location.pathname.split("/");
-  const productId = idArr[idArr.length - 1];
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
 
   useEffect(() => {
@@ -281,7 +279,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
           minBidPrice: plus5Percent(socketData.currentAuctionPrice),
         };
 
-        queryClient.setQueryData(["productData", productId], modifiedData);
+        queryClient.setQueryData(["productData", location], modifiedData);
       });
     }
   }, [stompClient, data]);
