@@ -1,10 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as DeleteIcon } from "../../assets/images/Close.svg";
 import { CATEGORY } from "../../constants/category";
 import { API_PATHS } from "../../constants/path";
-import { CONFIRM, FAIL, SUCCESS } from "../../constants/systemMessage";
+import { CONFIRM, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
 import { authInstance } from "../../interceptors/interceptors";
 import Button from "../common/Button";
@@ -19,7 +20,8 @@ const DeleteButton = ({ data }: DeleteButtonProps) => {
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const deleteData = async (id: number) => {
-    await authInstance.delete(API_PATHS.products.default(id));
+    const response = await authInstance.delete(API_PATHS.products.default(id));
+    return response.data;
   };
   const { mutate, error } = useMutation(deleteData);
   const navigate = useNavigate();
@@ -27,10 +29,14 @@ const DeleteButton = ({ data }: DeleteButtonProps) => {
   const handleDelete = async (id: number) => {
     mutate(id);
 
-    if (!error) {
-      setModalMessage({ title: "상품 삭제 성공", description: SUCCESS.delete });
+    const axiosError = error as AxiosError;
+    if (axiosError) {
+      setModalMessage({
+        title: "상품 삭제 실패",
+        description: String(axiosError.response?.data),
+      });
     } else {
-      setModalMessage({ title: "상품 삭제 실패", description: FAIL.delete });
+      setModalMessage({ title: "상품 삭제 성공", description: SUCCESS.delete });
     }
   };
 

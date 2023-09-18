@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
 import { API_PATHS } from "../../constants/path";
-import { CONFIRM, FAIL, SUCCESS } from "../../constants/systemMessage";
+import { CONFIRM, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
 import { authInstance } from "../../interceptors/interceptors";
 import { getUserId } from "../../util/auth";
@@ -37,7 +38,13 @@ const BuyNow = ({ data }: BuyNowProps) => {
   const handleBuyNow = async (id: number) => {
     mutate(id);
 
-    if (!error) {
+    const axiosError = error as AxiosError;
+    if (axiosError) {
+      setModalMessage({
+        title: "즉시 구매 실패",
+        description: String(axiosError.response?.data),
+      });
+    } else {
       setModalMessage({ title: "즉시 구매 성공", description: SUCCESS.buyItNow });
 
       const modifiedData = {
@@ -46,8 +53,6 @@ const BuyNow = ({ data }: BuyNowProps) => {
         buyerId: Number(userid),
       };
       queryClient.setQueryData(["productData", location], modifiedData);
-    } else {
-      setModalMessage({ title: "즉시 구매 실패", description: FAIL.buyItNow });
     }
   };
 
