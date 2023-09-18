@@ -4,8 +4,6 @@ import ChattingListData from "./ChattingListData";
 
 const Container = styled.div`
   display: flex;
-  width: 15.625rem;
-  width: 100%;
   height: 47.0625rem;
   min-height: 43.6875rem;
   padding: 1.5rem 1rem;
