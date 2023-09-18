@@ -14,10 +14,16 @@ const BackgroundContainer = styled.div`
   flex-direction: row;
   justify-content: center;
   align-items: stretch;
+  .signUp {
+    height: 50rem;
+  }
+  .login {
+    height: 30rem;
+  }
 `;
 
 const PageContentContainer = styled.div`
-  padding: 3rem 1.25rem 3rem 1.25rem;
+  padding: 2rem 1.25rem 2rem 1.25rem;
   border: 1px solid ${COLOR.gray_300};
   display: flex;
   flex-direction: column;
@@ -54,7 +60,11 @@ const LogIn = (): JSX.Element => {
   };
   return (
     <BackgroundContainer>
-      {loginPageForm ? <img src={login} /> : <img src={signup} />}
+      {loginPageForm ? (
+        <img src={login} className="login" />
+      ) : (
+        <img src={signup} className="signUp" />
+      )}
       {loginPageForm ? (
         <PageContentContainer>
           <h2>로그인</h2>

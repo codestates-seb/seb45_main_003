@@ -74,13 +74,14 @@ const PostListContainer = styled.div`
     .postImg {
       width: 9.375rem;
       height: 9.375rem;
-      padding: 1rem 0;
+      object-fit: cover;
     }
     .postContainer {
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
       align-items: stretch;
+      padding: 1rem 0;
       gap: 1rem;
       border-bottom: 1px solid ${COLOR.border};
     }
