@@ -241,7 +241,7 @@ const UploadForm = () => {
         };
       }
 
-      console.log(data);
+      data.closedAt ? "" : delete data.closedAt;
 
       //값이 없는 필드 제거
       const excludeEmptyData = pickBy(data, (value, key) => key === "auction" || value.length > 0);
