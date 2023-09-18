@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -90,7 +89,7 @@ public class ProductServiceImpl implements ProductService {
     // 삭제된 게시글은 조회되지 않게..
     @Override
     public Page<Product> getAvailableProducts(String type, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Specification<Product> specification = ProductSpecification.notDeletedAndStatus(ProductStatus.BEFORE);
 
@@ -107,7 +106,7 @@ public class ProductServiceImpl implements ProductService {
     // 삭제된 게시글은 조회되지 않게..
     @Override
     public Page<Product> getCompletedProducts(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Specification<Product> specification = ProductSpecification.notDeletedAndStatus(ProductStatus.AFTER);
 
@@ -117,7 +116,7 @@ public class ProductServiceImpl implements ProductService {
     // 상품 제목 키워드 별로 조회
     @Override
     public Page<Product> searchProductsByTitle(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("modifiedAt").nullsLast(), Sort.Order.desc("createdAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt")));
 
         Specification<Product> specification = Specification.where(ProductSpecification.notDeleted())
                 .and((root, query, criteriaBuilder) ->

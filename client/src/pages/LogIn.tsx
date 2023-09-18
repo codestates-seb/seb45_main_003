@@ -20,6 +20,16 @@ const BackgroundContainer = styled.div`
   .login {
     height: 30rem;
   }
+  @media (max-width: 64rem) {
+    width: 100%;
+    padding: 1rem 0;
+  }
+
+  @media (max-width: 48rem) {
+    img {
+      display: none;
+    }
+  }
 `;
 
 const PageContentContainer = styled.div`
@@ -50,6 +60,11 @@ const PageContentContainer = styled.div`
         text-align: center;
       }
     }
+  }
+  @media (max-width: 48rem) {
+    width: 100%;
+    padding: 0;
+    border: none;
   }
 `;
 
