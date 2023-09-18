@@ -48,7 +48,7 @@ const Item = (): JSX.Element => {
     return data;
   };
 
-  const { isLoading, error, data } = useQuery(["productData", productId], getData, {
+  const { isLoading, error, data } = useQuery(["productData", location], getData, {
     staleTime: Infinity,
   });
 
