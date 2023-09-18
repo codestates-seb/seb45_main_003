@@ -54,7 +54,7 @@ const BookmarkContentContainer = styled.form`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 14rem);
+  min-width: calc(100% - 12rem);
   min-height: calc(100% - 0.75rem);
   .checkbox {
     width: 18px;
@@ -200,7 +200,6 @@ const BookmarkContent = (): JSX.Element => {
     const checkedAll = checkedBoxes.every(Boolean);
     setValue("selectAll", checkedAll);
     setValue("checkboxes", checkedBoxes);
-    console.log("checkbox", checkboxes);
   };
   const navigate = useNavigate();
   const location = useLocation();
@@ -226,11 +225,7 @@ const BookmarkContent = (): JSX.Element => {
     async () => {
       const currentPageParam = parseInt(searchParams.get("page") || "1");
       const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
-      const res = await defaultInstance.get(`/members/${Id}/wishes?${pageQueryParam}`, {
-        headers: {
-          "ngrok-skip-browser-warning": "69420",
-        },
-      });
+      const res = await defaultInstance.get(`/members/${Id}/wishes?${pageQueryParam}`);
       navigate(`?menu=bookmark&page=${currentPageParam}`);
       return res.data;
     },
@@ -243,7 +238,6 @@ const BookmarkContent = (): JSX.Element => {
           setValue("checkboxes", Array(data.content.length).fill(false));
         }
         setTotalPages(data.totalPages);
-        console.log("fetching 후", checkboxes);
       },
     },
   );
@@ -266,7 +260,6 @@ const BookmarkContent = (): JSX.Element => {
   //선택한 찜목록 취소 요청함수
   const { mutate: sendBookmarkMutation } = useMutation(
     async (data: checkInputType) => {
-      console.log(data.checkboxes);
       await authInstance.patch(`/wishes`, { checkBox: data.checkboxes, currentPage: currentPage });
     },
     {

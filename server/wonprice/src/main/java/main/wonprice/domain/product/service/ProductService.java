@@ -48,5 +48,7 @@ public interface ProductService {
     Product immediatelyBuy(Long productId, Member member);
 
     Page<Product> findMembersBidProducts(Pageable pageable, Long memberId);
+
+    Long getMembersProductCount(Member member);
 }
 
