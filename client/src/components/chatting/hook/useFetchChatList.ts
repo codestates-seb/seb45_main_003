@@ -44,8 +44,19 @@ const useFetchChatList = (isLoggedIn: boolean) => {
   });
 
   // Compute total number of unread messages
+  // useEffect(() => {
+  //   const total = chatList.reduce((acc, chat) => acc + (chat.unReadMessage || 0), 0);
+  //   setTotalUnreadMessages(total);
+  // }, [chatList]);
+  // Compute total number of unread messages
   useEffect(() => {
-    const total = chatList.reduce((acc, chat) => acc + (chat.unReadMessage || 0), 0);
+    const total = chatList.reduce((acc, chat) => {
+      // deletedAt이 null인 경우만 unReadMessage를 더함
+      if (chat.deletedAt === null) {
+        return acc + (chat.unReadMessage || 0);
+      }
+      return acc;
+    }, 0);
     setTotalUnreadMessages(total);
   }, [chatList]);
 
