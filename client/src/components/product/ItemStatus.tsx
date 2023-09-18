@@ -227,6 +227,11 @@ const StyledItemStatus = styled.section`
       }
     }
   }
+
+  .login button {
+    padding: 0.75rem 0;
+    width: 100%;
+  }
 `;
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
@@ -369,6 +374,19 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             </div>
           )}
           <BuyNow data={data} />
+
+          {!isLogin && data.productStatus === "BEFORE" && (
+            <div className="login">
+              <Button
+                onClick={() => {
+                  navigate("/login");
+                }}
+                $text={data.auction ? "로그인하고 경매 참여하기" : "로그인하고 상품 구매하기"}
+                $design="black"
+                type="button"
+              ></Button>
+            </div>
+          )}
 
           {data.productStatus !== "BEFORE" && (
             <div className="result">
