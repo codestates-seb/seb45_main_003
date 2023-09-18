@@ -60,7 +60,7 @@ const Notification = styled.div`
       justify-content: flex-start;
       align-items: stretch;
       font-size: ${FONT_SIZE.font_16};
-      overflow: scroll;
+      overflow-y: scroll;
       cursor: default;
       .emptymessage {
         padding: 1rem;
