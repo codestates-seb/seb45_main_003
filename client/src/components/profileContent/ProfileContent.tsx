@@ -162,11 +162,7 @@ const ProfileContent = (): JSX.Element => {
     error,
     data: profile,
   } = useQuery<Profile>(["profile", { Id }], async () => {
-    const res = await defaultInstance.get(`/members/${Id}`, {
-      headers: {
-        "ngrok-skip-browser-warning": "69420",
-      },
-    });
+    const res = await defaultInstance.get(`/members/${Id}`);
     return res.data;
   });
   const passwordMutation = useMutation(

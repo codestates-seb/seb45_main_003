@@ -140,9 +140,10 @@ const AuctionContent = (): JSX.Element => {
   const navigateProduct = (productId: number) => {
     navigate(`/product/${productId}`);
   };
-  const { isLoading, data } = useQuery<Data>(["auctionList"], getAuctionlist, {
+  const { isLoading, data } = useQuery<Data>(["auctionList", { currentPage }], getAuctionlist, {
     onSuccess: (data) => setTotalPages(data.totalPages),
     refetchInterval: 30000,
+    refetchIntervalInBackground: true,
   });
   const auctionList = data?.content;
 
