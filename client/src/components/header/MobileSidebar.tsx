@@ -1,13 +1,14 @@
 import CloseIcon from "@mui/icons-material/Close";
 import PersonIcon from "@mui/icons-material/Person";
 import { Link } from "react-router-dom";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { loginState } from "../../atoms/atoms";
 import { CATEGORY } from "../../constants/category";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { getUserId } from "../../util/auth";
+import Notifications from "../notification/Notifictaion";
 
 type MobileSidebarProps = {
   onClose: React.Dispatch<React.SetStateAction<boolean>>;
@@ -40,8 +41,23 @@ const StyledMobileSidebar = styled.div`
     display: flex;
     flex-flow: row;
     align-items: center;
-    gap: 0.25rem;
+    justify-content: space-between;
     border-bottom: 1px solid rgba(66, 66, 66, 5);
+
+    & > div {
+      display: flex;
+      flex-flow: row;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .icon {
+      cursor: pointer;
+      .notificationListContainer {
+        left: unset;
+        right: 0;
+      }
+    }
   }
 
   .category_title {
@@ -63,7 +79,15 @@ const StyledMobileSidebar = styled.div`
 
 const MobileSidebar = ({ onClose }: MobileSidebarProps) => {
   const isLogin = useRecoilValue(loginState);
+  const setLogin = useSetRecoilState(loginState);
   const userId = getUserId();
+
+  const logout = () => {
+    localStorage.removeItem("Id");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    setLogin(false);
+  };
 
   const handleClose = () => {
     onClose(false);
@@ -78,22 +102,29 @@ const MobileSidebar = ({ onClose }: MobileSidebarProps) => {
         }}
       />
       <div className="user_status">
-        {isLogin ? (
-          <>
-            <PersonIcon />
-            <Link to={`/member/${userId}`} onClick={handleClose}>
-              프로필
+        <div>
+          {isLogin ? (
+            <>
+              <PersonIcon />
+              <Link to={`/member/${userId}`} onClick={handleClose}>
+                프로필
+              </Link>
+              |
+              <Link to={`/chat/${userId}`} onClick={handleClose}>
+                채팅
+              </Link>
+              |
+              <Link to={`/chat/${userId}`} onClick={() => logout()}>
+                로그아웃
+              </Link>
+            </>
+          ) : (
+            <Link to="/login" onClick={handleClose}>
+              로그인
             </Link>
-            |
-            <Link to={`/chat/${userId}`} onClick={handleClose}>
-              채팅
-            </Link>
-          </>
-        ) : (
-          <Link to="/login" onClick={handleClose}>
-            로그인
-          </Link>
-        )}
+          )}
+        </div>
+        {isLogin && <Notifications />}
       </div>
       <p className="category_title">Product Category</p>
       <ul>

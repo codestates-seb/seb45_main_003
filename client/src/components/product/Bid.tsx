@@ -1,43 +1,38 @@
-import { useEffect, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { FieldValues, useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import { useLocation } from "react-router-dom";
 import { Client } from "webstomp-client";
-import { AUCTION, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
+import { AUCTION, MAX, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
 import { getUserId } from "../../util/auth";
 import { allowOnlyNumber } from "../../util/number";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
 import TextInput from "../common/TextInput";
-import { ProductData } from "./List";
+import { ProductData } from "../productList/List";
 
 type BidProps = {
   data: ProductData;
   stompClient: Client | null;
-  currentAuctionPrice: number;
-  setCurrentAuctionPrice: React.Dispatch<React.SetStateAction<number>>;
 };
 
 const Bid = (props: BidProps) => {
-  const { data, stompClient, currentAuctionPrice, setCurrentAuctionPrice } = props;
+  const { data, stompClient } = props;
+  const queryClient = useQueryClient();
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
-  const [minValue, setMinValue] = useState(currentAuctionPrice);
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
-  const { register, handleSubmit, formState, reset } = useForm<FieldValues>();
+  const { register, handleSubmit, formState, reset, watch } = useForm<FieldValues>();
+  const currentAuctionPrice = watch("currentAuctionPrice");
   const userid = getUserId();
+  const location = useLocation();
 
   const sendWebSocketMessage = async (bidData: FieldValues) => {
     if (stompClient) {
       stompClient.send(`/app/bid/${data.productId}`, JSON.stringify(bidData));
     }
-    return data;
   };
   const { mutate, error } = useMutation(sendWebSocketMessage);
-
-  //최소가 변경
-  useEffect(() => {
-    setMinValue(currentAuctionPrice + Math.ceil((currentAuctionPrice * 0.05) / 10) * 10);
-  }, [currentAuctionPrice]);
 
   const openConfirmModal = (modalMessage: { title: string; description: string }) => {
     setIsOpen(true);
@@ -52,13 +47,32 @@ const Bid = (props: BidProps) => {
     };
 
     mutate(bidData);
+    confirmSubmit();
+  };
 
-    if (error) {
-      setModalMessage({ title: "상품 입찰 실패", description: SUCCESS.bid });
-    } else {
-      setCurrentAuctionPrice(bidData.currentAuctionPrice);
-      setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bid });
+  const confirmSubmit = () => {
+    if (!error) {
+      let modifiedData = {};
+
+      if (Number(currentAuctionPrice) === data.immediatelyBuyPrice) {
+        modifiedData = {
+          ...data,
+          buyerId: Number(userid),
+          productStatus: "TRADE",
+        };
+        setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bidimmediatelyBuyPrice });
+      } else {
+        modifiedData = {
+          buyerId: Number(userid),
+          ...data,
+        };
+        setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bid });
+      }
+
+      queryClient.setQueryData(["productData", location], modifiedData);
       reset();
+    } else {
+      setModalMessage({ title: "상품 입찰 실패", description: SUCCESS.bid });
     }
   };
 
@@ -88,17 +102,20 @@ const Bid = (props: BidProps) => {
                   required: REQUIRED.bid,
                   onChange: (event) => allowOnlyNumber(event),
                   min: {
-                    value: minValue,
+                    value: data.minBidPrice,
                     message: MIN.bid(5),
                   },
+                  max: {
+                    value: data.immediatelyBuyPrice,
+                    message: MAX.bid,
+                  },
                 }}
-                defaultValue={minValue.toString()}
+                defaultValue={data.minBidPrice.toString()}
                 formState={formState}
               />
               <Button $design="black" $text="입찰" type="button" onClick={handleSubmit(onSubmit)} />
             </>
           )}
-
           {modalMessage.title !== "상품 입찰" && (
             <div className="button">
               <Button

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export interface PaginationReturn {
@@ -13,14 +13,8 @@ export interface PaginationReturn {
 
 export const usePagination = (): PaginationReturn => {
   const navigate = useNavigate();
-  const searchParams = new URLSearchParams(location.search);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-
-  //카테고리 변경시 현재페이지 초기화
-  useEffect(() => {
-    setCurrentPage(Number(searchParams.get("page")) - 1);
-  }, [location.pathname]);
 
   //페이징 버튼 클릭시 화면 최상단으로 이동
   const scrollToTop = () => {

@@ -38,7 +38,9 @@ public class ChatController {
     public ResponseEntity postChatRoom(@RequestBody ChatPostRequest request) {
 //        log.info("chatPostDto : " + request.getProductId());
 
-        return new ResponseEntity(chatService.createChatRoom(request.getProductId()), HttpStatus.OK);
+        Product product = productService.findOneById(request.getProductId());
+
+        return new ResponseEntity(chatService.createChatRoom(product), HttpStatus.OK);
     }
 
     @GetMapping("/chat")

@@ -7,15 +7,13 @@ import { FONT_SIZE } from "../../constants/font";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import PostListTab from "./postListTab";
-// import { useRecoilValue } from "recoil";
-// import { loginState } from "../../atoms/atoms";
-import { authInstance, defaultInstance } from "../../interceptors/interceptors";
+import PostListTab from "./PostListTab";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
-import ProfileImgRegisterForm from "./profileImgForm";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import Loading from "../common/Loading";
+import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import Error from "../common/Error";
+import Loading from "../common/Loading";
+import ProfileImgRegisterForm from "./ProfileImgForm";
 
 interface image {
   imageId: number;
@@ -40,14 +38,15 @@ interface modifyProfileForm {
 }
 
 const ProfileContentContainer = styled.div`
-  padding: 2rem;
+  padding: 1rem 2rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 18rem);
+  min-width: calc(100% - 12rem);
+
   .topContainer {
-    padding: 1.25rem 1rem;
+    padding: 0 1rem 1.25rem 1rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -75,6 +74,7 @@ const ProfileContentContainer = styled.div`
         border-radius: 6px;
         width: 9.375rem;
         height: 9.375rem;
+        object-fit: cover;
       }
     }
     .labelContainer {
@@ -161,12 +161,8 @@ const ProfileContent = (): JSX.Element => {
     isLoading,
     error,
     data: profile,
-  } = useQuery<Profile>("profile", async () => {
-    const res = await defaultInstance.get(`/members/${Id}`, {
-      headers: {
-        "ngrok-skip-browser-warning": "69420",
-      },
-    });
+  } = useQuery<Profile>(["profile", { Id }], async () => {
+    const res = await defaultInstance.get(`/members/${Id}`);
     return res.data;
   });
   const passwordMutation = useMutation(
@@ -175,7 +171,7 @@ const ProfileContent = (): JSX.Element => {
       alert("변경되었습니다.");
       resetModal();
     },
-    { onSuccess: () => queryClient.invalidateQueries("profile") },
+    { onSuccess: () => queryClient.invalidateQueries(["profile"]) },
   );
   const validateMutation = useMutation(async (body: string) => {
     try {
@@ -248,13 +244,13 @@ const ProfileContent = (): JSX.Element => {
             <label className="infoLabel">성함</label>
             <label className="infoLabel">이메일</label>
             <label className="infoLabel">작성글 갯수</label>
-            <label className="infoLabel">거래완료 횟수</label>
+            <label className="infoLabel">판매한 상품</label>
           </div>
           <ul className="infoContainer">
             <li className="info">{profile.name}</li>
             <li className="info">{profile.email}</li>
             <li className="info">{profile.postCount} 개</li>
-            <li className="info">{profile.tradeCount} 회</li>
+            <li className="info">{profile.tradeCount} 개</li>
           </ul>
         </div>
         <PostListTab />
@@ -292,6 +288,14 @@ const ProfileContent = (): JSX.Element => {
                 className={errors.newPassword ? "errorInput" : "input"}
                 {...register("newPassword", {
                   required: "새로운 비밀번호를 입력해주세요.",
+                  minLength: {
+                    value: 8,
+                    message: "8자리 이상의 비밀번호를 사용해주세요.",
+                  },
+                  pattern: {
+                    value: /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9])/,
+                    message: "비밀번호는 숫자, 특수문자, 영문을 조합해주세요.",
+                  },
                 })}
               ></input>
               {errors.newPassword && (

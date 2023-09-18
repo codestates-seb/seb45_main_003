@@ -1,4 +1,4 @@
-import List from "../components/post/List";
+import List from "../components/productList/List";
 
 const PostsList = (): JSX.Element => {
   return (

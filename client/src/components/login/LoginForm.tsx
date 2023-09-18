@@ -7,6 +7,7 @@ import { loginState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import Button from "../common/Button";
 import { defaultInstance } from "../../interceptors/interceptors";
+import { useState } from "react";
 
 //폼에서 사용하는 데이터
 interface LoginForm {
@@ -39,11 +40,11 @@ const LogInForm = (): JSX.Element => {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
-    setError,
+    formState: { errors },
   } = useForm<LoginForm>();
   const navigate = useNavigate();
   const setLogin = useSetRecoilState(loginState);
+  const [errorMessage, setErrorMessage] = useState("");
   //로그인 시도 함수
   const submitLogin = async (body: LoginData) => {
     try {
@@ -62,9 +63,7 @@ const LogInForm = (): JSX.Element => {
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
-          setError("formError", {
-            message: "이메일 또는 비밀번호가 잘못 작성되었습니다.",
-          });
+          setErrorMessage("등록된 회원이 아닙니다.");
         }
       }
     }
@@ -94,8 +93,8 @@ const LogInForm = (): JSX.Element => {
         })}
       />
       {errors.password && <div className="errormessage">{errors.password?.message}</div>}
-      {errors.formError && <div className="errormessage">{errors.formError?.message}</div>}
-      <Button type="submit" disabled={isSubmitting} $text="로그인" $design="black" />
+      {errorMessage.length !== 0 && <div className="errormessage">{errorMessage}</div>}
+      <Button type="submit" $text="로그인" $design="black" />
     </StyledLoginForm>
   );
 };

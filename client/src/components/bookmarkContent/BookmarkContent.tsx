@@ -1,18 +1,16 @@
-// import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
-import Button from "../common/Button";
 import { authInstance, defaultInstance } from "../../interceptors/interceptors";
-import { useLocation, useNavigate } from "react-router-dom";
-import { findCategory } from "../../util/category";
-import Empty from "../common/Empty";
-import Loading from "../common/Loading";
-import Error from "../common/Error";
-import { useQuery, useQueryClient, useMutation } from "react-query";
-import { translateProductStatus } from "../../util/productStatus";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { usePagination } from "../../hooks/usePagination";
+import { translateProductStatus } from "../../util/productStatus";
+import Button from "../common/Button";
+import Empty from "../common/Empty";
+import Error from "../common/Error";
+import Loading from "../common/Loading";
 import Pagination from "../common/Pagination";
 //dto 정해지면 추가
 type Data = {
@@ -56,7 +54,7 @@ const BookmarkContentContainer = styled.form`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 18rem);
+  min-width: calc(100% - 12rem);
   min-height: calc(100% - 0.75rem);
   .checkbox {
     width: 18px;
@@ -130,6 +128,11 @@ const BookmarkContentContainer = styled.form`
           font-size: ${FONT_SIZE.font_20};
           font-weight: bold;
           cursor: pointer;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
         }
         .exceptTitle {
           display: flex;
@@ -179,13 +182,10 @@ const BookmarkContentContainer = styled.form`
       }
     }
   }
-  .pagenation {
-    padding: 1.5rem 0;
-  }
 `;
 
 const BookmarkContent = (): JSX.Element => {
-  const { register, handleSubmit, watch, setValue, getValues } = useForm<checkInputType>();
+  const { register, handleSubmit, watch, setValue, getValues, reset } = useForm<checkInputType>();
   const checkboxes = watch("checkboxes", []);
   // const selectAll = watch("selectAll", false);
   //전체 선택 함수
@@ -196,8 +196,6 @@ const BookmarkContent = (): JSX.Element => {
   //체크박스 관리 함수
   const handleCheckBox = (index: number, checked: boolean) => {
     const checkedBoxes = [...checkboxes];
-    console.log("checkedBoxes:", checkedBoxes);
-    console.log("checkbox", checkboxes);
     checkedBoxes[index] = checked;
     const checkedAll = checkedBoxes.every(Boolean);
     setValue("selectAll", checkedAll);
@@ -207,9 +205,6 @@ const BookmarkContent = (): JSX.Element => {
   const location = useLocation();
   const Id = location.pathname.slice(8);
   const loginUserId = localStorage.getItem("Id");
-  //체크박스를 사용항 찜취소시에 체크박스 상태들을 저장해둘 상태
-  // const [changedCheckboxes, setChangedCheckboxes] = useState<boolean[]>([]);
-  const queryClient = useQueryClient();
   const searchParams = new URLSearchParams(location.search);
   const ITEMS_PER_VIEW = 10;
   const {
@@ -224,16 +219,13 @@ const BookmarkContent = (): JSX.Element => {
     isLoading,
     isError,
     data: bookmarkList,
+    refetch: refetchBookmarkList,
   } = useQuery<Data>(
     ["bookmark", { currentPage }],
     async () => {
       const currentPageParam = parseInt(searchParams.get("page") || "1");
       const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
-      const res = await defaultInstance.get(`/members/${Id}/wishes?${pageQueryParam}`, {
-        headers: {
-          "ngrok-skip-browser-warning": "69420",
-        },
-      });
+      const res = await defaultInstance.get(`/members/${Id}/wishes?${pageQueryParam}`);
       navigate(`?menu=bookmark&page=${currentPageParam}`);
       return res.data;
     },
@@ -241,21 +233,11 @@ const BookmarkContent = (): JSX.Element => {
       refetchInterval: 30000,
       refetchIntervalInBackground: true,
       onSuccess: (data) => {
-        // if (changedCheckboxes.length !== 0) {
-        //   setValue("checkboxes", changedCheckboxes);
-        //   setChangedCheckboxes([]);
-        // }
-        if (checkboxes.length !== data.content.length) {
-          setValue("checkboxes", Array(data.content.length).fill(false));
-        }
-        if (checkboxes.some((el) => el === true)) {
-          setValue("checkboxes", checkboxes);
-        }
+        reset();
         if (checkboxes.length === 0) {
           setValue("checkboxes", Array(data.content.length).fill(false));
         }
         setTotalPages(data.totalPages);
-        console.log(checkboxes);
       },
     },
   );
@@ -264,40 +246,31 @@ const BookmarkContent = (): JSX.Element => {
   // 체크박스는 찜 개별취소버튼 클릭시 풀립니다.
   // 못고침
   // 찜취소버튼으로 취소요청하는 함수
-  const bookmarkMutation = useMutation(
+  const { mutate: bookmarkMutation } = useMutation(
     async (productId: number) => {
-      // const deletedIndex = bookmarkList?.content.findIndex((el) => el.productId === productId);
-      // const checkedlist = checkboxes.filter((el, idx) => idx !== deletedIndex);
-      // setChangedCheckboxes(checkedlist);
-      // console.log(`changedcheckboxes : ${checkedlist}`);
       await authInstance.delete(`/wishes/${productId}`);
     },
     {
       onSuccess: () => {
-        // setValue("checkboxes", changedCheckboxes);
-        queryClient.invalidateQueries("bookmark");
+        reset();
+        refetchBookmarkList();
       },
     },
   );
   //선택한 찜목록 취소 요청함수
-  const sendBookmarkMutation = useMutation(
+  const { mutate: sendBookmarkMutation } = useMutation(
     async (data: checkInputType) => {
-      console.log(data.checkboxes);
       await authInstance.patch(`/wishes`, { checkBox: data.checkboxes, currentPage: currentPage });
     },
     {
       onSuccess: () => {
-        // setChangedCheckboxes([]);
-        // setValue("checkboxes", []);
-        // queryClient.invalidateQueries("bookmark");
-        window.location.reload();
+        reset();
+        refetchBookmarkList();
       },
     },
   );
   return (
-    <BookmarkContentContainer
-      onSubmit={handleSubmit(() => sendBookmarkMutation.mutateAsync(getValues()))}
-    >
+    <BookmarkContentContainer onSubmit={handleSubmit(() => sendBookmarkMutation(getValues()))}>
       <div className="topContainer">
         <p className="menuTitle">찜 목록</p>
         {loginUserId === Id && (
@@ -311,7 +284,7 @@ const BookmarkContent = (): JSX.Element => {
               })}
             ></input>
             <p className="optionName">전체 선택</p>
-            <Button type="submit" $text="선택 취소" $design="yellow" />
+            <Button type="submit" $text="선택한 찜 삭제" $design="yellow" />
           </div>
         )}
       </div>
@@ -329,8 +302,6 @@ const BookmarkContent = (): JSX.Element => {
                   {...register(`checkboxes.${index}`, {
                     onChange: (e) => {
                       handleCheckBox(index, e.currentTarget.checked);
-                      console.log(e.target.value);
-                      console.log(checkboxes);
                     },
                   })}
                   key={el.productId}
@@ -341,14 +312,7 @@ const BookmarkContent = (): JSX.Element => {
               </div>
             </div>
             <div className="rightSection">
-              <div
-                className="postTitle"
-                onClick={() =>
-                  navigate(
-                    `/product/${findCategory(el.productResponseDto.categoryId)}/${el.productId}`,
-                  )
-                }
-              >
+              <div className="postTitle" onClick={() => navigate(`/product/${el.productId}`)}>
                 {el.productResponseDto.title}
               </div>
               <div className="exceptTitle">
@@ -380,9 +344,9 @@ const BookmarkContent = (): JSX.Element => {
                   {loginUserId === Id && (
                     <Button
                       type="button"
-                      $text="취소"
+                      $text="삭제"
                       $design="yellow"
-                      onClick={() => bookmarkMutation.mutateAsync(el.productId)}
+                      onClick={() => bookmarkMutation(el.productId)}
                     />
                   )}
                 </div>

@@ -1,12 +1,13 @@
 //드롭다운 메뉴 아이템
-import styled from "styled-components";
-import { Link, useNavigate } from "react-router-dom";
-import PersonIcon from "@mui/icons-material/Person";
+import { Logout } from "@mui/icons-material";
 import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
+import PersonIcon from "@mui/icons-material/Person";
 import React from "react";
-import { totalUnreadMessagesState } from "../chatting/recoil/chatState";
+import { Link } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { postListTabState, profileTabState } from "../../atoms/atoms";
+import styled from "styled-components";
+import { loginState } from "../../atoms/atoms";
+import { totalUnreadMessagesState } from "../chatting/recoil/chatState";
 
 const ItemBox = styled.div`
   align-self: stretch;
@@ -54,13 +55,16 @@ interface ProfileListProps {
 }
 
 const ProfileList: React.FC<ProfileListProps> = ({ icon, text, count, linkTo, onClickfunc }) => {
+  const totalUnreadMessages = useRecoilValue(totalUnreadMessagesState);
+
   return (
     <>
       <ItemBox>
         <StyledLink className="Button" onClick={onClickfunc} to={linkTo}>
           <div className="IconImg">{icon}</div> {/* 아이콘 렌더링 */}
           <div className="Text">{text}</div> {/* 텍스트 렌더링 */}
-          <div className="count">{count}</div> {/* 카운트 렌더링 */}
+          {totalUnreadMessages > 0 && <div className="count">{count}</div>}
+          {/* 카운트 렌더링 */}
         </StyledLink>{" "}
       </ItemBox>
     </>
@@ -69,14 +73,14 @@ const ProfileList: React.FC<ProfileListProps> = ({ icon, text, count, linkTo, on
 
 // 사용 예시
 const ProfileButton = () => {
+  const setLogin = useSetRecoilState(loginState);
+  const profilePath = `/member/${localStorage.getItem("Id")}?menu=profile&tabmenu=sell&page=1`;
   const totalUnreadMessages = useRecoilValue(totalUnreadMessagesState);
-  const setDefaultProfileState = useSetRecoilState(profileTabState);
-  const setDefaultProfileMenuState = useSetRecoilState(postListTabState);
-  const navigate = useNavigate();
-  const navigateProfile = () => {
-    setDefaultProfileState("profile");
-    setDefaultProfileMenuState("cell");
-    navigate(`/member/${localStorage.getItem("Id")}?menu=profile&tabmenu=cell&page=1`);
+  const logout = () => {
+    localStorage.removeItem("Id");
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    setLogin(false);
   };
   return (
     <Container>
@@ -84,14 +88,20 @@ const ProfileButton = () => {
         icon={<PersonIcon />} // 아이콘 컴포넌트
         text="Profile" // 텍스트
         count={""} // 카운트
-        linkTo={`/member/${localStorage.getItem("Id")}?menu=profile&tabmenu=cell&page=1`}
-        onClickfunc={() => navigateProfile()}
+        linkTo={profilePath}
       />
       <ProfileList
         icon={<ChatBubbleIcon />} // 아이콘 컴포넌트
         text="Messages" // 텍스트
         count={totalUnreadMessages} // 카운트
         linkTo={`/chat/${localStorage.getItem("Id")}`}
+      />
+      <ProfileList
+        icon={<Logout />}
+        text="Log out"
+        count={""}
+        linkTo={"/"}
+        onClickfunc={() => logout()}
       />
     </Container>
   );

@@ -27,21 +27,19 @@ export const useImageUpload = ({ setError, clearErrors, maxImageCount }: UseImag
         (image) => !images.some((existingImage) => existingImage.name === image.name),
       );
 
-      console.log(uniqueImages);
-
       //최대 이미지 업로드 수 제한
       if (uniqueImages?.length + images.length > MAX_IMAGE_COUNT) {
         setError("images", {
           type: "maxImageCount",
           message: MAX.imageSelect(MAX_IMAGE_COUNT),
         });
-        setImages((prev) => [...uniqueImages.slice(0, MAX_IMAGE_COUNT - prev.length), ...prev]);
+        setImages((prev) => [...prev, ...uniqueImages.slice(0, MAX_IMAGE_COUNT - prev.length)]);
 
         return;
       }
 
       clearErrors("images");
-      setImages((prev) => [...uniqueImages, ...prev]);
+      setImages((prev) => [...prev, ...uniqueImages]);
     }
   };
 

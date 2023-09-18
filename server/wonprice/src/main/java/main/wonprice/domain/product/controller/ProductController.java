@@ -40,7 +40,6 @@ public class ProductController {
     private final PictureService pictureService;
     private final ChatService chatService;
     private final JwtService jwtService;
-    private final NotificationService notificationService;
 
 
     // 상품 등록
@@ -193,12 +192,7 @@ public class ProductController {
         /* buyer == seller일 경우 구매 못하게 막는 로직 필요 */
 
         Product product = productService.immediatelyBuy(productId, buyer);
-        Long chatRoomId = chatService.createChatRoom(product.getProductId());
-
-        chatService.insertChatParticipant(chatRoomId, product.getSeller());
-        chatService.insertChatParticipant(chatRoomId, buyer);
-
-        notificationService.createNotificationWithChatRoom(chatService.findChatRoom(chatRoomId));
+        chatService.createChatRoom(product);
 
         return new ResponseEntity(HttpStatus.OK);
     }

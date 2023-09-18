@@ -1,9 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import NoProfileImage from "../../assets/images/NoProfileImage.png";
-import Button from "../../components/common/Button";
 import { COLOR } from "../../constants/color";
-import { ProductData } from "./List";
+import Button from "../common/Button";
+import { ProductData } from "../productList/List";
 
 type SellerProps = {
   data: ProductData;
@@ -37,6 +36,14 @@ const StyledSeller = styled.section`
 
   .profile_image {
     display: flex;
+
+    img {
+      width: 100%;
+      max-width: 5rem;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border-radius: 50%;
+    }
   }
 
   .seller_name {
@@ -80,7 +87,7 @@ const Seller = (props: SellerProps): JSX.Element => {
       <div className="seller">
         <div>
           <div className="profile_image">
-            <img src={NoProfileImage} alt="프로필 이미지" />
+            <img src={data.path} alt="프로필 이미지" />
           </div>
           <div className="seller_info">
             <p className="seller_name">{data.sellerName}</p>
@@ -99,7 +106,7 @@ const Seller = (props: SellerProps): JSX.Element => {
         </div>
         <Button
           onClick={() => {
-            navigate(`/member/${data.memberId}`);
+            navigate(`/member/${data.memberId}?menu=profile&tabmenu=sell&page=1`);
           }}
           $text="프로필 방문하기"
           $design="outline"

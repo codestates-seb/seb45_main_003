@@ -54,7 +54,7 @@ public class ProductResponseDto {
 
     private Long sellerReputation; // 판매자 평판
 
-    private int sellerTradeCount; // 판매자 거래 횟수
+    private Long sellerTradeCount; // 판매자 거래 횟수
 
     private Long sellerWrittenReviewsCount; // 판매자가 작성한 리뷰 개수
 
@@ -67,4 +67,5 @@ public class ProductResponseDto {
     private Boolean buyerReview;
 
     private Boolean sellerReview;
+    private String path;
 }

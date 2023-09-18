@@ -7,6 +7,7 @@ import React, { useState, useEffect } from "react";
 import MessageBubble from "./MessageBubble";
 import FormatTimeOrDate from "../hook/FormatTimeOrDate";
 import { getUserId } from "../../../util/auth";
+import moment from "moment";
 
 const Container = styled.div`
   display: flex;
@@ -17,8 +18,8 @@ const Container = styled.div`
 const ChatRoomHttp: React.FC = () => {
   const chatRoomId = useRecoilValue(currentChatRoomIdState);
   const [messages, setMessages] = useState<MessageData>({ messageList: [], sequence: 0, status });
-
   const memberId = getUserId();
+  const currentTime = moment(messages.createdAt).format("YYYY년 MM월 DD일 a hh시 mm분");
 
   // 로컬 스토리지에서 userId 값을 가져옵니다.
   const userIdFromLocalStorage = localStorage.getItem("Id");
@@ -44,7 +45,7 @@ const ChatRoomHttp: React.FC = () => {
             },
           },
         );
-        console.log(response.data);
+        // console.log(response.data);
         if (response.data && Array.isArray(response.data.messageList)) {
           setMessages(response.data);
         } else {
@@ -62,6 +63,11 @@ const ChatRoomHttp: React.FC = () => {
   return (
     <div>
       <Container>
+        <div className="startText">
+          {" 어서오세요! \n 채팅을 시작해 보세요 "}
+          <div className="date"> {`- 현재 시간은 ${currentTime} 입니다. -`}</div>
+        </div>
+
         {!messages || messages.messageList.length === 0 ? (
           <div>{/* <NoMessages /> */}</div>
         ) : (

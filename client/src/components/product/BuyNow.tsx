@@ -1,5 +1,6 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { useMutation } from "react-query";
+import { useLocation } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { loginState } from "../../atoms/atoms";
 import { API_PATHS } from "../../constants/path";
@@ -9,7 +10,7 @@ import { authInstance } from "../../interceptors/interceptors";
 import { getUserId } from "../../util/auth";
 import Button from "../common/Button";
 import Modal from "../common/Modal";
-import { ProductData } from "./List";
+import { ProductData } from "../productList/List";
 
 type BuyNowProps = {
   data: ProductData;
@@ -17,22 +18,34 @@ type BuyNowProps = {
 
 const BuyNow = ({ data }: BuyNowProps) => {
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
-  const { mutate, error } = useMutation(async (id: number) => {
+
+  const postData = async (id: number) => {
     await authInstance.post(API_PATHS.products.buyItNow(id));
-  });
+  };
+
+  const { mutate, error } = useMutation(postData);
   const isLogin = useRecoilValue(loginState);
   const userid = getUserId();
+  const queryClient = useQueryClient();
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const openConfirmModal = (modalMessage: { title: string; description: string }) => {
     setIsOpen(true);
     setModalMessage(modalMessage);
   };
+  const location = useLocation();
 
   const handleBuyNow = async (id: number) => {
     mutate(id);
 
     if (!error) {
       setModalMessage({ title: "즉시 구매 성공", description: SUCCESS.buyItNow });
+
+      const modifiedData = {
+        ...data,
+        productStatus: "TRADE",
+        buyerId: Number(userid),
+      };
+      queryClient.setQueryData(["productData", location], modifiedData);
     } else {
       setModalMessage({ title: "즉시 구매 실패", description: FAIL.buyItNow });
     }

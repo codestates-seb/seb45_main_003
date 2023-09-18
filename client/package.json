@@ -7,6 +7,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.7",
     "@mui/material": "^5.14.7",
+    "@tanstack/react-query": "^4.35.3",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -17,6 +18,7 @@
     "@types/react-dom": "^18.2.7",
     "@types/swiper": "^6.0.0",
     "@types/uuid": "^9.0.3",
+    "aos": "^3.0.0-beta.6",
     "aws-sdk": "^2.1450.0",
     "axios": "^1.4.0",
     "event-source-polyfill": "^1.0.31",
@@ -26,7 +28,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.45.4",
-    "react-query": "^3.39.3",
     "react-router-dom": "^6.14.2",
     "react-scripts": "5.0.1",
     "recoil": "^0.7.7",
@@ -64,6 +65,7 @@
     ]
   },
   "devDependencies": {
+    "@types/aos": "^3.0.4",
     "@types/event-source-polyfill": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^6.3.0",
     "@typescript-eslint/parser": "^6.3.0",

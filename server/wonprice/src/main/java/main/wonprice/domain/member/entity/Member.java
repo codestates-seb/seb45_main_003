@@ -50,9 +50,6 @@ public class Member {
     @Column(nullable = false)
     private Long reputation = 0L;
 
-    @Column(nullable = true, name = "profile_image")
-    private String image = null;
-
     @OneToMany(mappedBy = "receiveMember")
     private List<Review> receiveReviews = new ArrayList<>();
 
@@ -75,7 +72,7 @@ public class Member {
     private MemberPicture picture; // 프로필 이미지
 
     @OneToMany(mappedBy = "member")
-    private List<ChatParticipant> chatParticipant;
+    private List<ChatParticipant> chatParticipant = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Notification> notifications = new ArrayList<>();
@@ -94,5 +91,6 @@ public class Member {
     @Column(nullable = false)
     private Long receivedReviewsCount = 0L; // 사용자가 받은 리뷰 개수
 
-    private int tradeCount; // 거래 완료 횟수
+    @Column(nullable = false)
+    private Long tradeCount = 0L; // 거래 완료 횟수
 }

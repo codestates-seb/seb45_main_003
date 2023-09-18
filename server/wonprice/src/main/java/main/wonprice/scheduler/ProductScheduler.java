@@ -35,21 +35,14 @@ public class ProductScheduler {
             completedAuction.stream()
                     .forEach(product -> {
                         if (product.getBuyerId() != null) {
-                            Member seller = product.getSeller();
-                            Member buyer = memberService.findMember(product.getBuyerId());
 
-                            Long chatRoomId = chatService.createChatRoom(product.getProductId());
-
-                            chatService.insertChatParticipant(chatRoomId, seller);
-                            chatService.insertChatParticipant(chatRoomId, buyer);
-
+                            chatService.createChatRoom(product);
                             product.setStatus(ProductStatus.TRADE);
+
                         } else {
                             product.setStatus(ProductStatus.AFTER);
                         }
                     });
-
-
 
         }
     }
