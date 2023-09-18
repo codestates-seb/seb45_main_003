@@ -263,6 +263,10 @@ public class ProductServiceImpl implements ProductService {
             -- 채팅방 생성 **
          */
 
+        product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());
+        product.setBuyerId(request.getMemberId());
+
+
         if (requestedBidPrice.equals(product.getImmediatelyBuyPrice())) {
             if (!product.getStatus().equals(ProductStatus.TRADE)) {
                 chatService.createChatRoom(product);
@@ -278,8 +282,6 @@ public class ProductServiceImpl implements ProductService {
         }
 
 
-        product.setCurrentAuctionPrice(request.getCurrentAuctionPrice());
-        product.setBuyerId(request.getMemberId());
 
         return productRepository.save(product);
     }
@@ -292,6 +294,8 @@ public class ProductServiceImpl implements ProductService {
         Product findProduct = productRepository.findById(productId).orElseThrow();
 
         chatRoom.setStatus(RoomStatus.CLOSE);
+
+        findProduct.getSeller().setTradeCount(findProduct.getSeller().getTradeCount() + 1);
 
         findProduct.setStatus(ProductStatus.AFTER);
     }

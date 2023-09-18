@@ -3,11 +3,12 @@ import React, { useState, useEffect } from "react";
 // import ChatEnd from "./ChatEnd";
 import styled from "styled-components"; // 수정된 부분
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import { getAuthToken } from "../../../../util/auth";
+import { getAuthToken, getUserId } from "../../../../util/auth";
 import { useModal } from "../../../../hooks/useModal";
 import { ReactComponent as Sun } from "../../../../assets/images/chatting/Sun.svg";
 import { ReactComponent as CloseButton } from "../../../../assets/images/chatting/Close.svg";
 import { useChatList } from "../../hook/useChatList";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -168,6 +169,26 @@ const ChatButtons: React.FC<ChatButtonsProps> = ({ roomId, initialStatus }) => {
   const [isAnotherModalOpen, setAnotherModalOpen] = useState(false);
   const [isChatEndModalOpen, setChatEndModalOpen] = useState(false);
   const [isTradeCancelledModalOpen, setTradeCancelledModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const productId = queryParams.get("productId");
+
+  const Id = getUserId();
+
+  const closeModal = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/chat/completed/${roomId}`,
+      );
+      setStatus(response.data.status);
+      setAnotherModalOpen(false); // 다른 모달을 닫습니다.
+      navigate(`/review/${Id}?productId=${productId}`); // 페이지 이동
+    } catch (error) {
+      console.error("An error occurred:", error);
+      refetch(); // 데이터를 리패치
+    }
+  };
 
   const ModalButton = async () => {
     toggleModal(); // 기존 모달을 닫습니다.
@@ -185,17 +206,6 @@ const ChatButtons: React.FC<ChatButtonsProps> = ({ roomId, initialStatus }) => {
       refetch(); // 데이터를 리패치
     }
   };
-
-  // const handleTradeComplete = async () => {
-  //   try {
-  //     const response = await axios.post(
-  //       `${process.env.REACT_APP_API_URL}/chat/completed/${roomId}`,
-  //     );
-  //     setStatus(response.data.status);
-  //   } catch (error) {
-  //     console.error("An error occurred:", error);
-  //   }
-  // };
 
   const handleTradeComplete = async () => {
     try {
@@ -290,7 +300,7 @@ const ChatButtons: React.FC<ChatButtonsProps> = ({ roomId, initialStatus }) => {
           <Button className="ButtonModal" onClick={closeAnotherModal}>
             나중에 하기
           </Button>
-          <Button className="ButtonModal" onClick={closeAnotherModal}>
+          <Button className="ButtonModal" onClick={closeModal}>
             확인
           </Button>
         </div>

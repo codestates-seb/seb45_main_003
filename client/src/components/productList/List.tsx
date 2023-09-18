@@ -51,6 +51,7 @@ export type ProductData = {
   sellerWrittenReviewsCount?: number;
   sellerReceivedReviewsCount?: number;
   loginMembersWish?: boolean;
+  path?: string;
 };
 
 const StyledList = styled.section`

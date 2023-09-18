@@ -6,6 +6,8 @@ import main.wonprice.domain.member.dto.*;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.mapper.MemberMapper;
 import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.picture.entity.MemberPicture;
+import main.wonprice.domain.picture.entity.Picture;
 import main.wonprice.domain.picture.service.PictureService;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
@@ -53,6 +55,12 @@ public class MemberController {
 
         Member member = memberService.findMember(memberId);
         MemberResponseDto response = memberService.putCounts(mapper.memberToResponseDto(member));
+
+        if (response.getPicture() == null) {
+            MemberPicture picture = new MemberPicture();
+            picture.setPath("https://wonprice-test1.s3.ap-northeast-2.amazonaws.com/default_profile.png");
+            response.setPicture(picture);
+        }
 
         return new ResponseEntity(response, HttpStatus.OK);
     }
