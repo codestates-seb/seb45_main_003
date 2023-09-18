@@ -3,7 +3,7 @@ import { ReactComponent as StartChat } from "../../../assets/images/chatting/NoM
 
 const Container = styled.div`
   display: flex;
-  width: 90%; // 상대적인 단위로 변경
+  width: 69rem;
   height: 43.6875rem;
   padding: 1.5rem 1rem;
 

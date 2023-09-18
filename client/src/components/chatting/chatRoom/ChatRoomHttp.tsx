@@ -13,6 +13,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: end;
+  width: 100%;
 `;
 
 const ChatRoomHttp: React.FC = () => {
