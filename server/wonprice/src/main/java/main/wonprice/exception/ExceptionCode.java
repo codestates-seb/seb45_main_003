@@ -50,6 +50,9 @@ public enum ExceptionCode {
     BID_PRICE_INVALID(400, "즉시구매가보다 높은 금액을 입찰할 수 없습니다."),
     BID_CLOSE(400, "구매가 성사된 상품은 입찰할 수 없습니다."),
 
+    // 즉시 구매
+    IMMEDIATELY_INVALID(400, "판매자는 상품을 구매할 수 없습니다."),
+
 
 
     INVALID_BID_PRICE_NULL_BUYER(400, "입찰자가 없을 경우에는 입찰가");
