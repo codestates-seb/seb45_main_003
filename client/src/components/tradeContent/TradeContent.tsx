@@ -132,8 +132,13 @@ const TradeContentContainer = styled.div`
       }
     }
   }
-  .pagenation {
-    padding: 1.5rem 0;
+  @media (max-width: 64rem) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    min-width: 41rem;
+    max-width: 100%;
   }
 `;
 

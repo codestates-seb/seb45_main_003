@@ -81,7 +81,7 @@ const LogInForm = (): JSX.Element => {
           required: "이메일을 입력해주세요.",
         })}
       />
-      {errors.email && <div>{errors.email?.message}</div>}
+      {errors.email && <div className="errormessage">{errors.email?.message}</div>}
       <label htmlFor="password">Password</label>
       <input
         id="password"
