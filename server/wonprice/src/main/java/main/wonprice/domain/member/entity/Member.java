@@ -94,5 +94,6 @@ public class Member {
     @Column(nullable = false)
     private Long receivedReviewsCount = 0L; // 사용자가 받은 리뷰 개수
 
-    private int tradeCount; // 거래 완료 횟수
+    @Column(nullable = false)
+    private Long tradeCount = 0L; // 거래 완료 횟수
 }

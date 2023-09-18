@@ -17,9 +17,9 @@ public class MemberResponseDto {
 
     private String phone;
 
-    private int postCount;
+    private Long postCount;
 
-    private int tradeCount;
+    private Long tradeCount;
 
     private MemberPicture picture;
 }
