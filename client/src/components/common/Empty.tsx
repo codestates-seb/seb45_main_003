@@ -1,19 +1,28 @@
 import styled from "styled-components";
-import { ReactComponent as EmptyImage } from "../../assets/images/Empty.svg";
+import EmptyImage from "../../assets/images/Empty.svg";
 
-const StyledEmpty = styled.section`
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
+const StyledEmpty = styled.div`
+  .border {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    height: 10rem;
+
+    img {
+      width: 10rem;
+    }
+  }
 `;
 
 const Empty = () => {
   return (
     <StyledEmpty>
-      <EmptyImage />
-      <p className="empty_message">목록이 없습니다.</p>
+      <div className="border">
+        <img src={EmptyImage} />
+        <p className="empty_message">목록이 없습니다.</p>
+      </div>
     </StyledEmpty>
   );
 };

@@ -1,18 +1,18 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useLocation } from "react-router-dom";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { useModal } from "../../hooks/useModal";
-import Button from "../common/Button";
-import Modal from "../common/Modal";
-import PostListTab from "./PostListTab";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useLocation } from "react-router-dom";
 import { authInstance, defaultInstance } from "../../interceptors/interceptors";
+import Button from "../common/Button";
 import Error from "../common/Error";
 import Loading from "../common/Loading";
+import Modal from "../common/Modal";
+import PostListTab from "./PostListTab";
 import ProfileImgRegisterForm from "./ProfileImgForm";
 
 interface image {
@@ -57,6 +57,12 @@ const ProfileContentContainer = styled.div`
       font-weight: bold;
     }
   }
+
+  .profileBox {
+    display: flex;
+    flex-flow: row;
+  }
+
   .profileInfoContainer {
     padding: 1rem 0;
     display: flex;
@@ -73,7 +79,7 @@ const ProfileContentContainer = styled.div`
       .profileImg {
         border-radius: 6px;
         width: 9.375rem;
-        height: 9.375rem;
+        aspect-ratio: 1/1;
         object-fit: cover;
       }
     }
@@ -106,6 +112,23 @@ const ProfileContentContainer = styled.div`
     justify-content: flex-start;
     align-items: stretch;
     width: 100%;
+
+    padding: 1rem 0;
+  }
+
+  @media (max-width: 30rem) {
+    .profileInfoContainer {
+      flex-direction: column;
+      gap: 1rem;
+
+      .imgContainer {
+        width: 100%;
+
+        .profileImg {
+          width: 100%;
+        }
+      }
+    }
   }
 `;
 const StyledModal = styled.form`
@@ -246,18 +269,20 @@ const ProfileContent = (): JSX.Element => {
               </>
             )}
           </div>
-          <div className="labelContainer">
-            <label className="infoLabel">성함</label>
-            <label className="infoLabel">이메일</label>
-            <label className="infoLabel">작성글 갯수</label>
-            <label className="infoLabel">판매한 상품</label>
+          <div className="profileBox">
+            <div className="labelContainer">
+              <label className="infoLabel">성함</label>
+              <label className="infoLabel">이메일</label>
+              <label className="infoLabel">작성글 갯수</label>
+              <label className="infoLabel">판매한 상품</label>
+            </div>
+            <ul className="infoContainer">
+              <li className="info">{profile.name}</li>
+              <li className="info">{profile.email}</li>
+              <li className="info">{profile.postCount} 개</li>
+              <li className="info">{profile.tradeCount} 개</li>
+            </ul>
           </div>
-          <ul className="infoContainer">
-            <li className="info">{profile.name}</li>
-            <li className="info">{profile.email}</li>
-            <li className="info">{profile.postCount} 개</li>
-            <li className="info">{profile.tradeCount} 개</li>
-          </ul>
         </div>
         <PostListTab />
         <Modal
