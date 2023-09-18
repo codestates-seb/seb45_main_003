@@ -50,9 +50,6 @@ public class Member {
     @Column(nullable = false)
     private Long reputation = 0L;
 
-    @Column(nullable = true, name = "profile_image")
-    private String image = null;
-
     @OneToMany(mappedBy = "receiveMember")
     private List<Review> receiveReviews = new ArrayList<>();
 
