@@ -16,6 +16,7 @@ const Container = styled.div`
   gap: 0.75rem;
   max-height: 3.75rem;
   padding: 0 1.875rem;
+  width: 100%;
 
   .chat-input-container {
     display: flex;

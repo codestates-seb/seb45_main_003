@@ -25,7 +25,7 @@ const BubbleWrapper = styled.div<{ owner: "user" | "other" }>`
 `;
 
 const Bubble = styled.div<{ owner: "user" | "other" }>`
-  max-width: 60%;
+  max-width: 100%;
   padding: 0.75rem;
   border-radius: 0.5rem;
   background-color: ${({ owner }) => (owner === "user" ? "#FFCD57" : "#FFCD57")};
