@@ -42,6 +42,7 @@ const StyledSeller = styled.section`
       max-width: 5rem;
       aspect-ratio: 1/1;
       object-fit: cover;
+      border-radius: 50%;
     }
   }
 

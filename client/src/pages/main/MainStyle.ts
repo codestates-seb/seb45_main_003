@@ -135,6 +135,8 @@ export const ContentBox = styled.div`
         .GrandTitle {
           width: 100%;
           margin: 0;
+          text-align: center;
+          margin: 0 0 1rem;
         }
 
         .Text2 {

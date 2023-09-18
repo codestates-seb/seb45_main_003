@@ -33,8 +33,6 @@ const BuyNow = ({ data }: BuyNowProps) => {
     setModalMessage(modalMessage);
   };
   const location = useLocation();
-  const idArr = location.pathname.split("/");
-  const productId = idArr[idArr.length - 1];
 
   const handleBuyNow = async (id: number) => {
     mutate(id);
@@ -47,7 +45,7 @@ const BuyNow = ({ data }: BuyNowProps) => {
         productStatus: "TRADE",
         buyerId: Number(userid),
       };
-      queryClient.setQueryData(["productData", productId], modifiedData);
+      queryClient.setQueryData(["productData", location], modifiedData);
     } else {
       setModalMessage({ title: "즉시 구매 실패", description: FAIL.buyItNow });
     }
