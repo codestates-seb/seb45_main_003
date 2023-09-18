@@ -176,7 +176,10 @@ const List = (): JSX.Element => {
 
   const categoryId = getCategoryId(location.pathname);
   const path = getAPIPath(categoryId);
+  const type = searchParams.get("type");
   const keyword = searchParams.get("keyword");
+
+  console.log(categoryId, path);
 
   const {
     setTotalPages,
@@ -190,6 +193,15 @@ const List = (): JSX.Element => {
 
   const getData = async () => {
     const params = { page: Number(searchParams.get("page")) - 1, size: ITEMS_PER_VIEW };
+
+    if (type) {
+      const response = await axios.get(`/products/available`, {
+        params: { ...params, type: type },
+      });
+
+      return response.data;
+    }
+
     const response = keyword
       ? await axios.get(`/products/search`, {
           params: { ...params, keyword: keyword },
@@ -223,6 +235,18 @@ const List = (): JSX.Element => {
   const isLogin = useRecoilValue(loginState);
 
   const printTitle = (path: string) => {
+    if (type === "all") {
+      return "거래 가능";
+    }
+
+    if (type === "auction") {
+      return "경매 중";
+    }
+
+    if (type === "immediatelyBuy") {
+      return "즉시 구매";
+    }
+
     if (path.includes("/all")) {
       return "전체 상품";
     }

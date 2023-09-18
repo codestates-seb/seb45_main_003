@@ -2,7 +2,6 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import AddButton from "../../assets/images/Add.png";
-import { CATEGORY } from "../../constants/category";
 
 // import myImage from "../../../assets/images/Img1.png";
 
@@ -13,8 +12,7 @@ const ItemContainer = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 0.9375rem;
-  max-width: 18.75rem;
-  min-width: 15rem; // 여기만
+  width: 12.5rem;
   display: flex;
   justify-content: center;
   box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
@@ -60,10 +58,7 @@ const ItemBox = styled.div`
 
   .category {
     justify-content: start;
-    width: 90%;
-    padding-left: 0.9375rem;
-    /* background-color: #237979; */
-
+    padding-left: 0.5rem;
     color: var(--second-text-color, #737373);
     font-family: Pretendard Variable;
     font-size: 1.125rem;
@@ -78,6 +73,7 @@ const ItemBox = styled.div`
 `;
 
 const ListBox = styled.div`
+  width: 100%;
   gap: 0.75rem;
   display: flex;
   flex-direction: column;
@@ -134,16 +130,14 @@ const MenuItem = () => {
     <>
       <ItemContainer>
         <ListBox>
-          <Title>Product Category</Title>
-          {Object.keys(CATEGORY).map((category) => {
-            return (
-              <Item
-                key={category}
-                categories={CATEGORY[category].value}
-                linkTo={CATEGORY[category].path}
-              />
-            );
-          })}
+          <Title>상품 조회</Title>
+          <Item key="거래 가능" categories="거래 가능" linkTo={`/available?type=all&page=1`} />
+          <Item key="경매 중" categories="경매중" linkTo={`/available?type=auction&page=1`} />
+          <Item
+            key="즉시 구매"
+            categories="즉시 구매"
+            linkTo={`/available?type=immediatelyBuy&page=1`}
+          />
         </ListBox>
       </ItemContainer>
     </>

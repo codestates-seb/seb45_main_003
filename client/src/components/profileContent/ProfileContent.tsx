@@ -46,7 +46,7 @@ const ProfileContentContainer = styled.div`
   min-width: calc(100% - 12rem);
 
   .topContainer {
-    padding: 0 1rem 1.25rem 1rem;
+    padding: 0 0 1.25rem;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

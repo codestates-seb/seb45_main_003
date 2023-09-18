@@ -2,6 +2,7 @@ import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { loginState } from "./atoms/atoms";
+import useFetchChatList from "./components/chatting/hook/useFetchChatList";
 import Chatting from "./pages/Chatting";
 import CreatePost from "./pages/CreatePost";
 import ErrorIndication from "./pages/ErrorIndication";
@@ -12,7 +13,6 @@ import PostsList from "./pages/PostsList";
 import Profile from "./pages/Profile";
 import Review from "./pages/Review";
 import Root from "./pages/Root";
-import useFetchChatList from "./components/chatting/hook/useFetchChatList";
 
 function App() {
   const isLogin = useRecoilValue(loginState);
@@ -55,11 +55,15 @@ function App() {
 
         // 5) 게시물 리스트, 검색결과 페이지
         {
-          path: "search",
+          path: ":search",
           element: <PostsList />,
         },
         {
           path: ":category",
+          element: <PostsList />,
+        },
+        {
+          path: ":available",
           element: <PostsList />,
         },
 
