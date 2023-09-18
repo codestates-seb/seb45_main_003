@@ -43,7 +43,7 @@ const ProfileContentContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 18rem);
+  min-width: calc(100% - 12rem);
 
   .topContainer {
     padding: 0 1rem 1.25rem 1rem;
@@ -248,13 +248,13 @@ const ProfileContent = (): JSX.Element => {
             <label className="infoLabel">성함</label>
             <label className="infoLabel">이메일</label>
             <label className="infoLabel">작성글 갯수</label>
-            <label className="infoLabel">거래완료 횟수</label>
+            <label className="infoLabel">판매한 상품</label>
           </div>
           <ul className="infoContainer">
             <li className="info">{profile.name}</li>
             <li className="info">{profile.email}</li>
             <li className="info">{profile.postCount} 개</li>
-            <li className="info">{profile.tradeCount} 회</li>
+            <li className="info">{profile.tradeCount} 개</li>
           </ul>
         </div>
         <PostListTab />
