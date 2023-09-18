@@ -295,6 +295,9 @@ public class ProductServiceImpl implements ProductService {
 
         chatRoom.setStatus(RoomStatus.CLOSE);
 
+        findProduct.getSeller().setTradeCount(findProduct.getSeller().getTradeCount() + 1);
+        memberService.findMember(findProduct.getBuyerId()).setTradeCount(memberService.findMember(findProduct.getBuyerId()).getTradeCount() + 1);
+
         findProduct.setStatus(ProductStatus.AFTER);
     }
 
