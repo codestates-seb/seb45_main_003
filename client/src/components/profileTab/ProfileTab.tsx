@@ -29,6 +29,11 @@ const ProfileTabContainer = styled.ul`
       background-color: ${COLOR.secondary};
     }
   }
+  @media (max-width: 64rem) {
+    display: flex;
+    flex-direction: row;
+    height: 3.75rem;
+  }
 `;
 
 const ProfileTab = (): JSX.Element => {

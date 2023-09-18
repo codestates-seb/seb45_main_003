@@ -100,6 +100,13 @@ const ProfileContentContainer = styled.div`
       }
     }
   }
+  @media (max-width: 64rem) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: 100%;
+  }
 `;
 const StyledModal = styled.form`
   width: 25rem;
@@ -150,8 +157,8 @@ const ProfileContent = (): JSX.Element => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
-    setValue,
     getValues,
+    reset,
   } = useForm<modifyProfileForm>();
   // const isLogin = useRecoilValue(loginState);
   const { toggleModal, closeModal, isOpen } = useModal();
@@ -195,8 +202,7 @@ const ProfileContent = (): JSX.Element => {
     setModifyImgMode(!modifyImgMode);
   };
   const resetModal = () => {
-    setValue("newPassword", "");
-    setValue("passwordCheck", "");
+    reset();
     setPass(false);
     toggleModal();
   };
