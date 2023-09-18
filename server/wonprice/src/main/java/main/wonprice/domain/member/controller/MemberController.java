@@ -169,14 +169,14 @@ public class MemberController {
     }
 
 //    중복 번호 검증
-    @PostMapping("/auth/phone")
-    public ResponseEntity checkPhone(@RequestBody Map<String, String> phone) {
-
-        String inputPhone = phone.get("phone");
-        memberService.checkExistPhone(inputPhone);
-
-        return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
-    }
+//    @PostMapping("/auth/phone")
+//    public ResponseEntity checkPhone(@RequestBody Map<String, String> phone) {
+//
+//        String inputPhone = phone.get("phone");
+//        memberService.checkExistPhone(inputPhone);
+//
+//        return ResponseEntity.ok("🌟🌟🌟 Success 🌟🌟🌟");
+//    }
 
     @PostMapping("/{member-id}/image")
     public ResponseEntity createImage(@PathVariable(name = "member-id") Long memberId, @RequestBody Map<String, String> imageUrl) {
