@@ -17,7 +17,7 @@ const BackgroundContainer = styled.div`
 `;
 
 const PageContentContainer = styled.div`
-  padding: 3rem 1.25rem 3rem 1.25rem;
+  padding: 2rem 1.25rem 2rem 1.25rem;
   border: 1px solid ${COLOR.gray_300};
   display: flex;
   flex-direction: column;

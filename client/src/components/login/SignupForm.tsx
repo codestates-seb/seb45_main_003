@@ -18,7 +18,6 @@ interface SignupForm {
   confirmcode: string;
   password: string;
   checkpassword: string;
-  phone: string;
   formError: string;
 }
 //실제로 보내는 데이터
@@ -26,7 +25,6 @@ interface SignupData {
   name: string;
   email: string;
   password: string;
-  phone: string;
 }
 
 const StyledSignupForm = styled.form`
@@ -281,22 +279,6 @@ const SignupForm = (): JSX.Element => {
         {errors.checkpassword && (
           <div className="errormessage">{errors.checkpassword?.message}</div>
         )}
-        <label htmlFor="phone">핸드폰 번호</label>
-        <input
-          id="phone"
-          type="text"
-          placeholder="-를 제외한 번호를 입력해주세요."
-          className={errors.phone ? "errorInput" : "input"}
-          {...register("phone", {
-            required: "핸드폰 번호를 작성해주세요.",
-            pattern: {
-              value: /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
-              message: "휴대폰 번호로 적어주세요.",
-            },
-          })}
-        />
-        {errors.phone && <div className="errormessage">{errors.phone?.message}</div>}
-        {errors.formError && <div className="errormessage">{errors.formError?.message}</div>}
         <Button type="submit" disabled={isSubmitting} $text="회원가입" $design="black" />
       </StyledSignupForm>
       <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
