@@ -15,6 +15,7 @@ const ProfileTabContainer = styled.ul`
   align-items: stretch;
   position: sticky;
   top: 7.5rem;
+  overflow: hidden;
 
   .tabMenu {
     height: 3.75rem;

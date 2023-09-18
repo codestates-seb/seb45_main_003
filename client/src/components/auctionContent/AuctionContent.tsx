@@ -119,7 +119,8 @@ const AuctionContentContainer = styled.div`
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    width: 100%;
+    min-width: 41rem;
+    max-width: 100%;
   }
 `;
 
