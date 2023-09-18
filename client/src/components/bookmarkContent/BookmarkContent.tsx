@@ -1,11 +1,11 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useLocation, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
-import { authInstance, defaultInstance } from "../../interceptors/interceptors";
-import { useQuery, useMutation } from "@tanstack/react-query";
 import { usePagination } from "../../hooks/usePagination";
+import { authInstance, defaultInstance } from "../../interceptors/interceptors";
 import { translateProductStatus } from "../../util/productStatus";
 import Button from "../common/Button";
 import Empty from "../common/Empty";
@@ -58,14 +58,14 @@ const BookmarkContentContainer = styled.form`
   min-height: calc(100% - 0.75rem);
   .checkbox {
     width: 18px;
-    height: 18px;
+    aspect-ratio: 1/1;
   }
   .topContainer {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding: 1.25rem 1rem;
+    padding: 1.25rem 0;
     border-bottom: 3px solid ${COLOR.darkText};
     .menuTitle {
       font-size: ${FONT_SIZE.font_32};
@@ -99,7 +99,7 @@ const BookmarkContentContainer = styled.form`
       padding: 1rem 0;
       .postImg {
         width: 6.25rem;
-        height: 6.25rem;
+        aspect-ratio: 1/1;
         object-fit: cover;
       }
       .leftSection {
@@ -116,7 +116,6 @@ const BookmarkContentContainer = styled.form`
           gap: 1rem;
         }
         .rightSection {
-          min-width: calc(100% - 134px);
           display: flex;
           flex-direction: column;
           justify-content: flex-start;
@@ -186,8 +185,28 @@ const BookmarkContentContainer = styled.form`
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    min-width: 46rem;
-    max-width: 100%;
+    width: 100%;
+  }
+  @media (max-width: 48rem) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    .bookmarkListContainer .bookmarkContainer {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 16px;
+
+      .leftSection {
+        align-items: flex-start;
+        flex-direction: column;
+
+        img {
+          width: 100%;
+        }
+      }
+    }
   }
 `;
 

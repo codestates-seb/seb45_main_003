@@ -1,17 +1,16 @@
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import axios from "axios";
+import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useSetRecoilState } from "recoil";
 import { styled } from "styled-components";
+import { loginState } from "../../atoms/atoms";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { authInstance } from "../../interceptors/interceptors";
-import Loading from "../common/Loading";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import axios from "axios";
-import { useRef } from "react";
-import { useSetRecoilState } from "recoil";
-import { loginState } from "../../atoms/atoms";
 import Button from "../common/Button";
+import Loading from "../common/Loading";
 
 interface notificationData {
   content: notification[];

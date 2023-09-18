@@ -40,6 +40,14 @@ public interface ProductMapper {
 
     // Entity -> DTO
     default ProductResponseDto fromEntity(Product product) {
+
+        String path;
+        if (product.getSeller().getPicture() == null) {
+            path = "https://wonprice-test1.s3.ap-northeast-2.amazonaws.com/default_profile.png";
+        } else {
+            path = product.getSeller().getPicture().getPath();
+        }
+
         return ProductResponseDto.builder()
                 .productId(product.getProductId())
                 .memberId(product.getSeller().getMemberId())
@@ -66,6 +74,7 @@ public interface ProductMapper {
 //                .images(product.getProductPictures())
                 .sellerReview(product.getSellerReview())
                 .buyerReview(product.getBuyerReview())
+                .path(path)
                 .build();
     }
 
@@ -74,6 +83,13 @@ public interface ProductMapper {
     Entity -> DTO
     */
     default ProductResponseDto fromEntity(Product product, Member loginMember) {
+        String path;
+        if (product.getSeller().getPicture() == null) {
+            path = "https://wonprice-test1.s3.ap-northeast-2.amazonaws.com/default_profile.png";
+        } else {
+            path = product.getSeller().getPicture().getPath();
+        }
+
         return ProductResponseDto.builder()
                 .productId(product.getProductId())
                 .memberId(product.getSeller().getMemberId())
@@ -103,6 +119,7 @@ public interface ProductMapper {
                         .anyMatch(wish -> wish.getMember() == loginMember))
                 .sellerReview(product.getSellerReview())
                 .buyerReview(product.getBuyerReview())
+                .path(path)
                 .build();
     }
 }

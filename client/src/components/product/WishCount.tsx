@@ -29,8 +29,6 @@ const WishCount = (props: WishCountProps) => {
   };
   const { mutate, error } = useMutation(submitData);
   const location = useLocation();
-  const idArr = location.pathname.split("/");
-  const productId = idArr[idArr.length - 1];
 
   const addWishlist = async (id: number) => {
     mutate(id);
@@ -44,7 +42,7 @@ const WishCount = (props: WishCountProps) => {
           loginMembersWish: true,
           wishCount: data.wishCount + 1,
         };
-        queryClient.setQueryData(["productData", productId], modifiedData);
+        queryClient.setQueryData(["productData", location], modifiedData);
       }
 
       setModalMessage({ title: "찜하기 성공", description: SUCCESS.addWishlist });
@@ -64,7 +62,7 @@ const WishCount = (props: WishCountProps) => {
           loginMembersWish: false,
           wishCount: data.wishCount - 1,
         };
-        queryClient.setQueryData(["productData", productId], modifiedData);
+        queryClient.setQueryData(["productData", location], modifiedData);
       }
 
       setModalMessage({ title: "찜 삭제 성공", description: SUCCESS.removeWishlist });

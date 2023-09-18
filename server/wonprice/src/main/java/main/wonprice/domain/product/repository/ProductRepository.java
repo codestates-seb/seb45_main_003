@@ -23,9 +23,9 @@ public interface ProductRepository extends JpaRepository<Product, Long>, JpaSpec
 
     Page<Product> findAllByBuyerIdAndStatus(Long memberId, ProductStatus status, Pageable pageable);
 
-    int countProductBySeller(Member member);
+    Long countProductBySeller(Member member);
 
-    int countProductByBuyerIdAndStatus(Long memberId, ProductStatus status);
+    Long countProductByBuyerIdAndStatus(Long memberId, ProductStatus status);
 
     // 카테고리 ID를 기반으로 상품 목록 조회
 //    @Query("SELECT p FROM Product p WHERE p.category.categoryId = :categoryId")

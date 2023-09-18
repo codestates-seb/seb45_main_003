@@ -9,10 +9,11 @@ import { CATEGORY } from "../../constants/category";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { API_PATHS } from "../../constants/path";
-import { FAIL, REQUIRED, SUCCESS } from "../../constants/systemMessage";
+import { FAIL, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { useModal } from "../../hooks/useModal";
 import { authInstance } from "../../interceptors/interceptors";
+import { formatTime, getCurrentDateTime } from "../../util/date";
 import { allowOnlyNumber } from "../../util/number";
 import Button from "../common/Button";
 import ImageInput from "../common/ImageInput";
@@ -236,12 +237,11 @@ const UploadForm = () => {
           ...data,
           auction: isAuction,
           images: imagePaths,
-          closedAt:
-            data.closingDate && data.closingTime ? `${data.closingDate} ${data.closingTime}` : "",
+          closedAt: formatTime(data.closedAt),
         };
-        delete data.closingDate;
-        delete data.closingTime;
       }
+
+      data.closedAt ? "" : delete data.closedAt;
 
       //값이 없는 필드 제거
       const excludeEmptyData = pickBy(data, (value, key) => key === "auction" || value.length > 0);
@@ -387,29 +387,21 @@ const UploadForm = () => {
                     <div className="input">
                       <div className="select_date">
                         <input
-                          className={formState.errors.closingDate?.message ? "error" : ""}
-                          {...register("closingDate", {
-                            required: REQUIRED.closingDate,
+                          className={formState.errors.closedAt?.message ? "error" : ""}
+                          {...register("closedAt", {
+                            required: REQUIRED.closedAt,
+                            min: {
+                              value: getCurrentDateTime(),
+                              message: MIN.date,
+                            },
                           })}
-                          type="date"
-                        />
-                        <input
-                          className={formState.errors.closingTime?.message ? "error" : ""}
-                          {...register("closingTime", {
-                            required: REQUIRED.closingTime,
-                          })}
-                          type="time"
+                          type="datetime-local"
                         />
                       </div>
                       <div className="date_error">
-                        {formState.errors.closingDate?.message && (
+                        {formState.errors.closedAt?.message && (
                           <p className="error_message">
-                            {formState.errors.closingDate.message.toString()}
-                          </p>
-                        )}
-                        {formState.errors.closingTime?.message && (
-                          <p className="error_message">
-                            {formState.errors.closingTime.message.toString()}
+                            {formState.errors.closedAt.message.toString()}
                           </p>
                         )}
                       </div>

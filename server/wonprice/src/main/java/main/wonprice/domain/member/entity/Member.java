@@ -33,8 +33,8 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, unique = true)
-    private String phone;
+//    @Column(nullable = false, unique = true)
+//    private String phone;
 
     @Column(nullable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
@@ -49,9 +49,6 @@ public class Member {
 
     @Column(nullable = false)
     private Long reputation = 0L;
-
-    @Column(nullable = true, name = "profile_image")
-    private String image = null;
 
     @OneToMany(mappedBy = "receiveMember")
     private List<Review> receiveReviews = new ArrayList<>();
@@ -94,5 +91,6 @@ public class Member {
     @Column(nullable = false)
     private Long receivedReviewsCount = 0L; // 사용자가 받은 리뷰 개수
 
-    private int tradeCount; // 거래 완료 횟수
+    @Column(nullable = false)
+    private Long tradeCount = 0L; // 거래 완료 횟수
 }

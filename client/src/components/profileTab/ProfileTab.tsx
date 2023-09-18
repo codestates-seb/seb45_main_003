@@ -5,7 +5,6 @@ import { FONT_SIZE } from "../../constants/font";
 
 const ProfileTabContainer = styled.ul`
   min-width: 8rem;
-  height: 18.75rem;
   border-radius: 6px;
   border: 1px solid ${COLOR.gray_300};
   background-color: white;
@@ -18,7 +17,7 @@ const ProfileTabContainer = styled.ul`
   overflow: hidden;
 
   .tabMenu {
-    height: 3.75rem;
+    cursor: pointer;
     font-size: ${FONT_SIZE.font_20};
     padding: 1.25rem 1.5rem;
     text-align: left;
@@ -31,9 +30,17 @@ const ProfileTabContainer = styled.ul`
     }
   }
   @media (max-width: 64rem) {
+    width: 100%;
     display: flex;
     flex-direction: row;
-    height: 3.75rem;
+
+    .tabMenu {
+      font-size: 1rem;
+      line-height: 1;
+      text-align: center;
+      width: 20%;
+      padding: 1rem 0;
+    }
   }
 `;
 

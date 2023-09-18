@@ -26,8 +26,6 @@ const Bid = (props: BidProps) => {
   const currentAuctionPrice = watch("currentAuctionPrice");
   const userid = getUserId();
   const location = useLocation();
-  const idArr = location.pathname.split("/");
-  const productId = idArr[idArr.length - 1];
 
   const sendWebSocketMessage = async (bidData: FieldValues) => {
     if (stompClient) {
@@ -71,7 +69,7 @@ const Bid = (props: BidProps) => {
         setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bid });
       }
 
-      queryClient.setQueryData(["productData", productId], modifiedData);
+      queryClient.setQueryData(["productData", location], modifiedData);
       reset();
     } else {
       setModalMessage({ title: "상품 입찰 실패", description: SUCCESS.bid });

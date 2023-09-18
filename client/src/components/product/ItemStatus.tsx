@@ -11,8 +11,10 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import Webstomp, { Client } from "webstomp-client";
 import { ReactComponent as ViewsIcon } from "../../assets/images/Views.svg";
 import { loginState } from "../../atoms/atoms";
+import Modal from "../../components/common/Modal";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
+import { useModal } from "../../hooks/useModal";
 import { getUserId } from "../../util/auth";
 import { formatTime } from "../../util/date";
 import { plus5Percent } from "../../util/number";
@@ -225,17 +227,22 @@ const StyledItemStatus = styled.section`
       }
     }
   }
+
+  .login button {
+    padding: 0.75rem 0;
+    width: 100%;
+  }
 `;
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
   const navigate = useNavigate();
+  const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const isLogin = useRecoilValue(loginState);
   const userid = getUserId();
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const queryClient = useQueryClient();
   const location = useLocation();
-  const idArr = location.pathname.split("/");
-  const productId = idArr[idArr.length - 1];
+  const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
 
   useEffect(() => {
     //소켓 연결
@@ -259,6 +266,12 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
       stompClient.subscribe(`/topic/bid/${data.productId}`, (message) => {
         const socketData = JSON.parse(message.body).body;
 
+        if (socketData.status === 400) {
+          setIsOpen(true);
+          setModalMessage(socketData.message);
+          return;
+        }
+
         const modifiedData = {
           ...data,
           buyerId: socketData.buyerId,
@@ -266,7 +279,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
           minBidPrice: plus5Percent(socketData.currentAuctionPrice),
         };
 
-        queryClient.setQueryData(["productData", productId], modifiedData);
+        queryClient.setQueryData(["productData", location], modifiedData);
       });
     }
   }, [stompClient, data]);
@@ -338,8 +351,16 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                     {data.currentAuctionPrice?.toLocaleString() + "원"}
                   </span>
                 </div>
-                {isLogin && Number(userid) !== data.memberId && data.productStatus === "BEFORE" && (
-                  <Bid data={data} stompClient={stompClient} />
+                {Number(userid) === data.buyerId ? (
+                  <p>최고가 입찰 중</p>
+                ) : (
+                  <>
+                    {isLogin &&
+                      Number(userid) !== data.memberId &&
+                      data.productStatus === "BEFORE" && (
+                        <Bid data={data} stompClient={stompClient} />
+                      )}
+                  </>
                 )}
               </div>
               <div className="create_at">
@@ -348,15 +369,22 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
                   <span className="price_number  gray">{formatTime(data.createdAt)}</span>
                 </div>
               </div>
-              {/* <div className="price">
-              <span className="gray">시작가</span>
-              <span className="price_number  gray">
-                {data.auction ? data.currentAuctionPrice : "-"}
-              </span>
-            </div> */}
             </div>
           )}
           <BuyNow data={data} />
+
+          {!isLogin && data.productStatus === "BEFORE" && (
+            <div className="login">
+              <Button
+                onClick={() => {
+                  navigate("/login");
+                }}
+                $text={data.auction ? "로그인하고 경매 참여하기" : "로그인하고 상품 구매하기"}
+                $design="black"
+                type="button"
+              ></Button>
+            </div>
+          )}
 
           {data.productStatus !== "BEFORE" && (
             <div className="result">
@@ -372,6 +400,20 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
           )}
         </div>
       </StyledItemStatus>
+      <Modal {...{ isOpen, closeModal, toggleModal }}>
+        <>
+          <h4>{modalMessage.title}</h4>
+          <p>{modalMessage.description}</p>
+          <Button
+            $design="black"
+            $text="확인"
+            type="button"
+            onClick={() => {
+              setIsOpen(!isOpen);
+            }}
+          />
+        </>
+      </Modal>
     </>
   );
 };
