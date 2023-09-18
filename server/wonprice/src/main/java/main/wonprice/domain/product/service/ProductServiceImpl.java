@@ -314,6 +314,15 @@ public class ProductServiceImpl implements ProductService {
     public Product immediatelyBuy(Long productId, Member member) {
         Product findProduct = findExistsProduct(productId);
 
+        if(findProduct.getStatus().equals(ProductStatus.TRADE)){
+            throw new BusinessLogicException(ExceptionCode.BID_CLOSE);
+        }
+
+        /* buyer == seller일 경우 구매 못하게 막는 로직 필요 */
+        if(findProduct.getSeller().getMemberId() == member.getMemberId()){
+            throw new BusinessLogicException(ExceptionCode.IMMEDIATELY_INVALID);
+        }
+
         findProduct.setBuyerId(member.getMemberId());
         findProduct.setStatus(ProductStatus.TRADE);
 
