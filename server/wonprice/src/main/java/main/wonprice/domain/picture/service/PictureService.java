@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.picture.entity.MemberPicture;
+import main.wonprice.domain.picture.entity.Picture;
 import main.wonprice.domain.picture.entity.ProductPicture;
+import main.wonprice.domain.picture.repository.MemberPictureRepository;
 import main.wonprice.domain.picture.repository.PictureRepository;
 import main.wonprice.domain.product.entity.Product;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 public class PictureService {
 
     private final PictureRepository pictureRepository;
+    private final MemberPictureRepository memberPictureRepository;
 
     public void createPicture(String imageUrl, Product product) {
         ProductPicture productPicture = new ProductPicture();
@@ -25,6 +28,13 @@ public class PictureService {
     }
 
     public void createPicture(String imageUrl, Member member) {
+
+        MemberPicture findPicture = memberPictureRepository.findByMember(member);
+
+        if (findPicture != null) {
+            memberPictureRepository.delete(findPicture);
+        }
+
         MemberPicture memberPicture = new MemberPicture();
         memberPicture.setMember(member);
         memberPicture.setPath(imageUrl);
