@@ -1,9 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRecoilState } from "recoil";
 import { styled } from "styled-components";
-import { toSignup } from "../../atoms/atoms";
+import { useNavigate } from "react-router-dom";
 import { COLOR } from "../../constants/color";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
@@ -108,6 +107,10 @@ const SignupForm = (): JSX.Element => {
   });
   const [sendMessage, setSendMessage] = useState("");
   const [lock, setLock] = useState(false);
+  const navigate = useNavigate();
+  const navigateLogin = () => {
+    navigate(`/login?mode=login`);
+  };
   const codeWait = () => {
     setTimeout(() => {
       setLock(false);
@@ -191,11 +194,9 @@ const SignupForm = (): JSX.Element => {
       }
     }
   };
-
-  const [loginPageForm, setloginPageForm] = useRecoilState(toSignup);
-  //로그인 컴포넌트로 변환하는 함수
-  const changeform = () => {
-    setloginPageForm(!loginPageForm);
+  const successSignup = () => {
+    toggleModal();
+    navigateLogin();
   };
   return (
     <>
@@ -299,7 +300,11 @@ const SignupForm = (): JSX.Element => {
         )}
         <Button type="submit" disabled={isSubmitting} $text="회원가입" $design="black" />
       </StyledSignupForm>
-      <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
+      <Modal
+        isOpen={isOpen}
+        closeModal={(event) => closeModal(event, navigateLogin)}
+        toggleModal={successSignup}
+      >
         <StyledModal>
           <div className="modalTitleContainer">
             <p className="modalTitle">회원가입 성공</p>
@@ -308,7 +313,7 @@ const SignupForm = (): JSX.Element => {
             <p className="modalText">새로운 회원이 되신것을 환영합니다.</p>
           </div>
           <div className="modalButtonContainer">
-            <Button type="button" $text="확인" onClick={() => changeform()} $design="black" />
+            <Button type="button" $text="확인" onClick={navigateLogin} $design="black" />
           </div>
         </StyledModal>
       </Modal>

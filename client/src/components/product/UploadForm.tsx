@@ -199,11 +199,25 @@ const UploadForm = () => {
   const [isAuction, setIsAuction] = useState(true);
   const [submitResult, setSubmitResult] = useState(false);
   const navigate = useNavigate();
-  const mutation = useMutation(async (data: FieldValues) => {
+
+  const postData = async (data: FieldValues) => {
     const response = isUpdateMode
       ? await authInstance.patch(API_PATHS.products.default(updateModeData.productId), data)
       : await authInstance.post(API_PATHS.products.default(""), data);
     return response.data;
+  };
+
+  const { mutate } = useMutation(postData, {
+    onSuccess: (data) => {
+      setResData(data);
+      setSubmitResult(true);
+    },
+    onError: () => {
+      setSubmitResult(false);
+    },
+    onSettled: () => {
+      setIsOpen(true);
+    },
   });
 
   //Link를 통해 update mode state를 전달했을때 사용
@@ -214,48 +228,39 @@ const UploadForm = () => {
   const [resData, setResData] = useState<ProductData>();
 
   const onSubmit = async (data: FieldValues) => {
-    try {
-      if (!isUpdateMode) {
-        //s3로 보낼 이미지 준비
-        const imagePaths: string[] = [];
+    if (!isUpdateMode) {
+      //s3로 보낼 이미지 준비
+      const imagePaths: string[] = [];
 
-        for (const image of images) {
-          const params: AWS.S3.PutObjectRequest = {
-            Bucket: "wonprice-test1",
-            Key: `${new Date().toISOString() + "-" + image.name}`,
-            Body: image,
-            ContentType: image.type,
-          };
-
-          //s3으로 이미지 업로드
-          const result = await S3.upload(params).promise();
-          imagePaths.push(result.Location);
-        }
-
-        //백엔드로 보낼 데이터 준비
-        data = {
-          ...data,
-          auction: isAuction,
-          images: imagePaths,
-          closedAt: formatTime(data.closedAt),
+      for (const image of images) {
+        const params: AWS.S3.PutObjectRequest = {
+          Bucket: "wonprice-test1",
+          Key: `${new Date().toISOString() + "-" + image.name}`,
+          Body: image,
+          ContentType: image.type,
         };
+
+        //s3으로 이미지 업로드
+        const result = await S3.upload(params).promise();
+        imagePaths.push(result.Location);
       }
 
-      data.closedAt ? "" : delete data.closedAt;
-
-      //값이 없는 필드 제거
-      const excludeEmptyData = pickBy(data, (value, key) => key === "auction" || value.length > 0);
-
-      //백엔드로 이미지 전송
-      const response = await mutation.mutateAsync(excludeEmptyData);
-      setResData(response);
-      setSubmitResult(true);
-    } catch (error) {
-      setSubmitResult(false);
-    } finally {
-      //상품 등록을 누르면 작업 결과를 알려주는 모달 출현
-      setIsOpen(true);
+      //백엔드로 보낼 데이터 준비
+      data = {
+        ...data,
+        auction: isAuction,
+        images: imagePaths,
+        closedAt: formatTime(data.closedAt),
+      };
     }
+
+    data.closedAt ? "" : delete data.closedAt;
+
+    //값이 없는 필드 제거
+    const excludeEmptyData = pickBy(data, (value, key) => key === "auction" || value.length > 0);
+
+    //백엔드로 이미지 전송
+    mutate(excludeEmptyData);
   };
 
   return (
