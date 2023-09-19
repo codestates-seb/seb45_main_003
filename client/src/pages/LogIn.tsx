@@ -1,12 +1,11 @@
-import { useRecoilState } from "recoil";
 import { styled } from "styled-components";
 import login from "../assets/images/Login/login.png";
 import signup from "../assets/images/Login/signup.png";
-import { toSignup } from "../atoms/atoms";
 import Button from "../components/common/Button";
 import LogInForm from "../components/login/LoginForm";
 import SignupForm from "../components/login/SignupForm";
 import { COLOR } from "../constants/color";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const BackgroundContainer = styled.div`
   padding: 3rem 0;
@@ -70,36 +69,45 @@ const PageContentContainer = styled.div`
 `;
 
 const LogIn = (): JSX.Element => {
-  const [loginPageForm, setloginPageForm] = useRecoilState(toSignup);
-  const changeform = () => {
-    setloginPageForm(!loginPageForm);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const loginPageForm = new URLSearchParams(location.search).get("mode");
+  const navigateSignup = () => {
+    navigate(`/login?mode=signup`);
   };
+  const navigateLogin = () => {
+    navigate(`/login?mode=login`);
+  };
+
   return (
     <BackgroundContainer>
-      {loginPageForm ? (
-        <img src={login} className="login" />
-      ) : (
-        <img src={signup} className="signUp" />
-      )}
-      {loginPageForm ? (
+      {loginPageForm === "login" && <img src={login} className="login" />}
+      {loginPageForm === "signup" && <img src={signup} className="signUp" />}
+      {loginPageForm === "login" && (
         <PageContentContainer>
           <h2>로그인</h2>
           <LogInForm />
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">서비스를 처음 방문하셨나요?</div>
-              <Button type={"button"} $text={"회원가입"} onClick={changeform} $design={"black"} />
+              <Button
+                type={"button"}
+                $text={"회원가입"}
+                onClick={navigateSignup}
+                $design={"black"}
+              />
             </div>
           </div>
         </PageContentContainer>
-      ) : (
+      )}
+      {loginPageForm === "signup" && (
         <PageContentContainer>
           <h2>회원가입</h2>
           <SignupForm />
           <div className="bottomContainer">
             <div className="guide">
               <div className="guideTitle">이미 계정이 있으신가요?</div>
-              <Button type={"button"} $text={"로그인"} onClick={changeform} $design={"black"} />
+              <Button type={"button"} $text={"로그인"} onClick={navigateLogin} $design={"black"} />
             </div>
           </div>
         </PageContentContainer>
