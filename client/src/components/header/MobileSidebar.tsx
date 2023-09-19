@@ -119,9 +119,15 @@ const MobileSidebar = ({ onClose }: MobileSidebarProps) => {
               </Link>
             </>
           ) : (
-            <Link to="/login" onClick={handleClose}>
-              로그인
-            </Link>
+            <>
+              <Link to="/login?mode=login" onClick={handleClose}>
+                로그인
+              </Link>
+              |
+              <Link to="/login?mode=signup" onClick={handleClose}>
+                회원가입
+              </Link>
+            </>
           )}
         </div>
         {isLogin && <Notifications />}
