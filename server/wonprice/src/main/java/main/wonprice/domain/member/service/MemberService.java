@@ -6,14 +6,12 @@ import main.wonprice.domain.email.entity.AuthEmail;
 import main.wonprice.domain.email.repository.EmailAuthRepository;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.repository.MemberRepository;
-import main.wonprice.domain.product.repository.ProductRepository;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,11 +26,9 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final ProductRepository productRepository;
     private final CustomAuthorityUtils authorityUtils;
     private final EmailAuthRepository emailAuthRepository;
-
-    private final PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
     public Member joinMember(Member member) {
 
@@ -57,6 +53,12 @@ public class MemberService {
     public Member findMember(Long memberId) {
 
         Member findMember = findVerifyMember(memberId);
+        return findMember;
+    }
+
+    public Member findMember(String email) {
+
+        Member findMember = findVerifyMember(email);
         return findMember;
     }
 
@@ -133,6 +135,21 @@ public class MemberService {
 
 //        Member loginMember = findLoginMember();
         Optional<Member> findMember = memberRepository.findById(memberId);
+
+        if (findMember.isEmpty())
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+//        if (loginMember.getRoles().contains("ADMIN"))
+//            return findMember.get();
+        if (findMember.get().getDeletedAt() != null)
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+
+        return findMember.get();
+    }
+
+    public Member findVerifyMember(String email) {
+
+//        Member loginMember = findLoginMember();
+        Optional<Member> findMember = memberRepository.findByEmail(email);
 
         if (findMember.isEmpty())
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
