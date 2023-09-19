@@ -1,7 +1,7 @@
 //캐러셀 작업
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import SwiperCore from "swiper";
 import "swiper/css";
@@ -165,6 +165,8 @@ const Carousel = (): JSX.Element => {
     freeMode: true,
   };
 
+  const location = useLocation();
+
   const getData = async () => {
     const params = { page: 0, size: 10 };
 
@@ -175,9 +177,7 @@ const Carousel = (): JSX.Element => {
     return response.data;
   };
 
-  const { isLoading, data, error } = useQuery<Data>(["CarouselProductList", { page: 1 }], getData, {
-    staleTime: Infinity,
-  });
+  const { isLoading, data, error } = useQuery<Data>(["CarouselProductList", location], getData);
 
   return (
     <>
