@@ -10,7 +10,6 @@ import main.wonprice.auth.handler.CustomAuthenticationSuccessHandler;
 import main.wonprice.auth.jwt.service.JwtService;
 import main.wonprice.auth.utils.CustomAuthorityUtils;
 import main.wonprice.domain.member.repository.MemberRepository;
-import main.wonprice.domain.member.service.MemberService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
