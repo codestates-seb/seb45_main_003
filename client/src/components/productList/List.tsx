@@ -219,7 +219,6 @@ const List = (): JSX.Element => {
       }
       setCurrentPage(page);
     },
-    staleTime: Infinity,
   });
 
   const isLogin = useRecoilValue(loginState);
