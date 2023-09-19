@@ -64,9 +64,9 @@ public class JwtService {
         String refreshToken = request.getHeader("Refresh");
 
 //        refresh 토큰 검증
-        getClaims(refreshToken, encodeBase64SecretKey(getSecretKey())).getBody().getExpiration();
+        String email = getClaims(refreshToken, encodeBase64SecretKey(getSecretKey())).getBody().getSubject();
 
-        Optional<RefreshToken> findToken = refreshTokenRepository.findByMemberMemberId(memberService.findLoginMember().getMemberId());
+        Optional<RefreshToken> findToken = refreshTokenRepository.findByMember(memberService.findMember(email));
         if (findToken.isEmpty()) {
             throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
         }
@@ -107,7 +107,7 @@ public class JwtService {
 
         RefreshToken refreshToken = optionalRefreshToken.get();
 
-        if (passwordEncoder.matches(requestRefresh, refreshToken.getToken())) {
+        if (!passwordEncoder.matches(requestRefresh, refreshToken.getToken())) {
             throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
         }
     }
