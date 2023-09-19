@@ -271,8 +271,8 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
           if (socketData.buyerId === userid) {
             setIsOpen(true);
             setModalMessage({ title: "상품 입찰 실패", description: socketData.message });
-            return;
           }
+          return;
         }
 
         setIsOpen(true);
@@ -435,9 +435,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
               <div className="price">
                 <span className="price_number_title gray">최종 거래가</span>
                 <span className="price_number">
-                  {data?.currentAuctionPrice && data.currentAuctionPrice < data.immediatelyBuyPrice
-                    ? data.currentAuctionPrice.toLocaleString() + "원"
-                    : data.immediatelyBuyPrice.toLocaleString() + "원"}
+                  {data.currentAuctionPrice?.toLocaleString() + "원"}
                 </span>
               </div>
             </div>
