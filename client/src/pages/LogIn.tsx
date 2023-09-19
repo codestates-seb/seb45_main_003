@@ -26,6 +26,7 @@ const BackgroundContainer = styled.div`
   }
 
   @media (max-width: 48rem) {
+    width: 100%;
     img {
       display: none;
     }
@@ -62,7 +63,7 @@ const PageContentContainer = styled.div`
     }
   }
   @media (max-width: 48rem) {
-    width: 100%;
+    min-width: 20rem;
     padding: 0;
     border: none;
   }

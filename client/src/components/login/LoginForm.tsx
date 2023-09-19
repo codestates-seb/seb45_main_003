@@ -34,6 +34,10 @@ const StyledLoginForm = styled.form`
   .errorInput {
     border-color: ${COLOR.invalid};
   }
+  @media (max-width: 48rem) {
+    padding: 0;
+    width: 100%;
+  }
 `;
 
 const LogInForm = (): JSX.Element => {
