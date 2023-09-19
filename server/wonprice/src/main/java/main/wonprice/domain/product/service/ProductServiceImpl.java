@@ -323,6 +323,7 @@ public class ProductServiceImpl implements ProductService {
             throw new BusinessLogicException(ExceptionCode.IMMEDIATELY_INVALID);
         }
 
+        findProduct.setCurrentAuctionPrice(findProduct.getImmediatelyBuyPrice());
         findProduct.setBuyerId(member.getMemberId());
         findProduct.setStatus(ProductStatus.TRADE);
 
