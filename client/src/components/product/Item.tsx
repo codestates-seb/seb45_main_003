@@ -44,7 +44,6 @@ const Item = (): JSX.Element => {
     const currentAuctionPrice = response.data.currentAuctionPrice;
     const data = {
       ...response.data,
-      productStatus: "BEFORE",
       minBidPrice: plus5Percent(currentAuctionPrice),
     };
 
