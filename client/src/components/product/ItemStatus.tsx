@@ -64,6 +64,10 @@ const StyledItemStatus = styled.section`
       display: flex;
       flex-flow: column;
       gap: 0.5rem;
+
+      h1 {
+        word-break: keep-all;
+      }
     }
 
     .icon_box {
