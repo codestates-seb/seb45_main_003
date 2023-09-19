@@ -13,7 +13,7 @@ import main.wonprice.domain.member.service.MemberService;
 import main.wonprice.exception.BusinessLogicException;
 import main.wonprice.exception.ExceptionCode;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,22 +40,22 @@ public class JwtService {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberService memberService;
+    private final PasswordEncoder passwordEncoder;
 
-    public JwtService(RefreshTokenRepository refreshTokenRepository, MemberService memberService) {
+    public JwtService(RefreshTokenRepository refreshTokenRepository, MemberService memberService, PasswordEncoder passwordEncoder) {
         this.refreshTokenRepository = refreshTokenRepository;
         this.memberService = memberService;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
 //    refresh 토큰 처음 발급 시 DB에 저장
     public void saveRefreshToken(Member member, String stringToken) {
 
-        RefreshToken findToken = refreshTokenRepository.findByMemberMemberId(member.getMemberId());
+        Optional<RefreshToken> findToken = refreshTokenRepository.findByMemberMemberId(member.getMemberId());
 
-        if (findToken != null) {
-            refreshTokenRepository.deleteByTokenId(findToken.getTokenId());
-        }
-        refreshTokenRepository.save(new RefreshToken(member, stringToken));
+        findToken.ifPresent(refreshToken -> refreshTokenRepository.deleteByTokenId(refreshToken.getTokenId()));
+        refreshTokenRepository.save(new RefreshToken(member, passwordEncoder.encode(stringToken)));
     }
 
 //    refresh 토큰으로 access 토큰 재발급
@@ -66,7 +66,7 @@ public class JwtService {
 //        refresh 토큰 검증
         getClaims(refreshToken, encodeBase64SecretKey(getSecretKey())).getBody().getExpiration();
 
-        Optional<RefreshToken> findToken = refreshTokenRepository.findByToken(refreshToken);
+        Optional<RefreshToken> findToken = refreshTokenRepository.findByMemberMemberId(memberService.findLoginMember().getMemberId());
         if (findToken.isEmpty()) {
             throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
         }
@@ -99,7 +99,15 @@ public class JwtService {
         Member loginMember = memberService.findLoginMember();
 
 //        refresh 검증
-        if (!requestRefresh.equals(refreshTokenRepository.findByMemberMemberId(loginMember.getMemberId()).getToken())) {
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByMemberMemberId(loginMember.getMemberId());
+
+        if (optionalRefreshToken.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
+        }
+
+        RefreshToken refreshToken = optionalRefreshToken.get();
+
+        if (passwordEncoder.matches(requestRefresh, refreshToken.getToken())) {
             throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
         }
     }
