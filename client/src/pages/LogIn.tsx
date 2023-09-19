@@ -81,9 +81,23 @@ const LogIn = (): JSX.Element => {
 
   return (
     <BackgroundContainer>
-      {loginPageForm === "login" && <img src={login} className="login" />}
-      {loginPageForm === "signup" && <img src={signup} className="signUp" />}
-      {loginPageForm === "login" && (
+      {loginPageForm === "signup" ? (
+        <img src={signup} className="signUp" />
+      ) : (
+        <img src={login} className="login" />
+      )}
+      {loginPageForm === "signup" ? (
+        <PageContentContainer>
+          <h2>회원가입</h2>
+          <SignupForm />
+          <div className="bottomContainer">
+            <div className="guide">
+              <div className="guideTitle">이미 계정이 있으신가요?</div>
+              <Button type={"button"} $text={"로그인"} onClick={navigateLogin} $design={"black"} />
+            </div>
+          </div>
+        </PageContentContainer>
+      ) : (
         <PageContentContainer>
           <h2>로그인</h2>
           <LogInForm />
@@ -96,18 +110,6 @@ const LogIn = (): JSX.Element => {
                 onClick={navigateSignup}
                 $design={"black"}
               />
-            </div>
-          </div>
-        </PageContentContainer>
-      )}
-      {loginPageForm === "signup" && (
-        <PageContentContainer>
-          <h2>회원가입</h2>
-          <SignupForm />
-          <div className="bottomContainer">
-            <div className="guide">
-              <div className="guideTitle">이미 계정이 있으신가요?</div>
-              <Button type={"button"} $text={"로그인"} onClick={navigateLogin} $design={"black"} />
             </div>
           </div>
         </PageContentContainer>
