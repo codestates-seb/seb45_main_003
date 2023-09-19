@@ -55,7 +55,7 @@ public class WishService {
     @Transactional(readOnly = true)
     public Page<Wish> findMemberWish(Pageable pageable, Member member) {
 
-        return wishRepository.findByMember(pageable, member);
+        return wishRepository.findByMemberAndProductDeletedAt(pageable, member, null);
     }
 
     public void removeWish(Long productId) {
@@ -89,7 +89,7 @@ public class WishService {
 
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Order.desc("createdAt")));
 
-        List<Wish> wishes = findMemberWish(pageable, loginMember).getContent();
+        List<Wish> wishes = wishRepository.findByMemberAndProductDeletedAt(pageable, loginMember, null).getContent();
 
         for (int i = 0; i < checkBox.size(); i++) {
             if (checkBox.get(i)) {

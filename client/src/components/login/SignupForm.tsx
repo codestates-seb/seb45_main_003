@@ -61,12 +61,17 @@ const StyledSignupForm = styled.form`
     width: 100%;
 
     #confirmcode {
-      width: calc(100% - 5.6531rem - 0.6875rem);
+      width: calc(100% - 7rem);
       flex: none;
     }
     #email {
-      width: calc(100% - 5.6531rem - 0.6875rem);
+      width: calc(100% - 7rem);
       flex: none;
+    }
+    .withButton {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
     }
   }
 `;
