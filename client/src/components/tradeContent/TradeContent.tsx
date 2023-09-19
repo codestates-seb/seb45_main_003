@@ -32,6 +32,7 @@ interface postContent {
   currentAuctionPrice: number;
   buyerReview: boolean;
   sellerReview: boolean;
+  deletedAt: null | string;
 }
 
 const TradeContentContainer = styled.div`
