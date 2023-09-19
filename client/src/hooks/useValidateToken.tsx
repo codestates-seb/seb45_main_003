@@ -11,7 +11,6 @@ export const useValidateToken = () => {
     try {
       const res = await authInstance.get(`/access`, {
         headers: {
-          "ngrok-skip-browser-warning": "69420",
           Refresh: refreshToken,
         },
       });
