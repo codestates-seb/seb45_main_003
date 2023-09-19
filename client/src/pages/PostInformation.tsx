@@ -1,7 +1,9 @@
+import Item from "../components/product/Item";
+
 const PostInformation = (): JSX.Element => {
   return (
     <>
-      <h1>PostInformation</h1>
+      <Item />
     </>
   );
 };

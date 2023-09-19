@@ -1,7 +1,9 @@
+import List from "../components/productList/List";
+
 const PostsList = (): JSX.Element => {
   return (
     <>
-      <h1>PostsList</h1>
+      <List />
     </>
   );
 };
