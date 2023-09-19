@@ -176,10 +176,9 @@ const List = (): JSX.Element => {
 
   const categoryId = getCategoryId(location.pathname);
   const path = getAPIPath(categoryId);
+  const page = Number(searchParams.get("page")) - 1;
   const type = searchParams.get("type");
   const keyword = searchParams.get("keyword");
-
-  console.log(categoryId, path);
 
   const {
     setTotalPages,
@@ -192,7 +191,7 @@ const List = (): JSX.Element => {
   } = usePagination();
 
   const getData = async () => {
-    const params = { page: Number(searchParams.get("page")) - 1, size: ITEMS_PER_VIEW };
+    const params = { page: page, size: ITEMS_PER_VIEW };
 
     if (type) {
       const response = await axios.get(`/products/available`, {
@@ -213,24 +212,15 @@ const List = (): JSX.Element => {
     return response.data;
   };
 
-  const { isLoading, error, data } = useQuery<Data>(
-    [
-      "productList",
-      {
-        location,
-      },
-    ],
-    getData,
-    {
-      onSuccess: (data) => {
-        if (data.totalPages !== undefined) {
-          setTotalPages(data.totalPages);
-        }
-        setCurrentPage(Number(searchParams.get("page")) - 1);
-      },
-      staleTime: Infinity,
+  const { isLoading, error, data } = useQuery<Data>(["productList", location], getData, {
+    onSuccess: (data) => {
+      if (data.totalPages !== undefined) {
+        setTotalPages(data.totalPages);
+      }
+      setCurrentPage(page);
     },
-  );
+    staleTime: Infinity,
+  });
 
   const isLogin = useRecoilValue(loginState);
 

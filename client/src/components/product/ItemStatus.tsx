@@ -14,6 +14,7 @@ import { loginState } from "../../atoms/atoms";
 import Modal from "../../components/common/Modal";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
+import { SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
 import { getUserId } from "../../util/auth";
 import { formatTime } from "../../util/date";
@@ -266,13 +267,29 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
       stompClient.subscribe(`/topic/bid/${data.productId}`, (message) => {
         const socketData = JSON.parse(message.body).body;
 
-        if (socketData.status === 400) {
-          setIsOpen(true);
-          setModalMessage(socketData.message);
+        setIsOpen(true);
+
+        if (JSON.parse(message.body).statusCodeValue === 400) {
+          setModalMessage({ title: "상품 입찰 실패", description: socketData });
           return;
         }
 
-        const modifiedData = {
+        let modifiedData = {};
+
+        if (socketData.currentAuctionPrice === data.immediatelyBuyPrice) {
+          modifiedData = {
+            ...data,
+            productStatus: "TRADE",
+          };
+          setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bidimmediatelyBuyPrice });
+        } else {
+          modifiedData = {
+            ...data,
+          };
+          setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bid });
+        }
+
+        modifiedData = {
           ...data,
           buyerId: socketData.buyerId,
           currentAuctionPrice: socketData.currentAuctionPrice,

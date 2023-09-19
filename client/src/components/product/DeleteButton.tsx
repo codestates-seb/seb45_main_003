@@ -1,10 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as DeleteIcon } from "../../assets/images/Close.svg";
 import { CATEGORY } from "../../constants/category";
 import { API_PATHS } from "../../constants/path";
-import { CONFIRM, FAIL, SUCCESS } from "../../constants/systemMessage";
+import { CONFIRM, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
 import { authInstance } from "../../interceptors/interceptors";
 import Button from "../common/Button";
@@ -19,19 +20,25 @@ const DeleteButton = ({ data }: DeleteButtonProps) => {
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   const deleteData = async (id: number) => {
-    await authInstance.delete(API_PATHS.products.default(id));
+    const response = await authInstance.delete(API_PATHS.products.default(id));
+    return response.data;
   };
-  const { mutate, error } = useMutation(deleteData);
+  const { mutate, error } = useMutation(deleteData, {
+    onSuccess: () => {
+      setModalMessage({ title: "상품 삭제 성공", description: SUCCESS.delete });
+    },
+    onError: (error) => {
+      const axiosError = error as AxiosError;
+      setModalMessage({
+        title: "상품 삭제 실패",
+        description: String(axiosError.response?.data),
+      });
+    },
+  });
   const navigate = useNavigate();
 
   const handleDelete = async (id: number) => {
     mutate(id);
-
-    if (!error) {
-      setModalMessage({ title: "상품 삭제 성공", description: SUCCESS.delete });
-    } else {
-      setModalMessage({ title: "상품 삭제 실패", description: FAIL.delete });
-    }
   };
 
   return (
@@ -76,7 +83,7 @@ const DeleteButton = ({ data }: DeleteButtonProps) => {
               $text="확인"
               type="button"
               onClick={() => {
-                navigate(CATEGORY["all"].path);
+                error ? setIsOpen(false) : navigate(CATEGORY["all"].path);
               }}
             />
           )}
