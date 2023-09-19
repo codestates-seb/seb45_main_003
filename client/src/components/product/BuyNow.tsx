@@ -30,6 +30,7 @@ const BuyNow = ({ data }: BuyNowProps) => {
 
       const modifiedData = {
         ...data,
+        currentAuctionPrice: data.immediatelyBuyPrice,
         productStatus: "TRADE",
         buyerId: Number(userid),
       };
