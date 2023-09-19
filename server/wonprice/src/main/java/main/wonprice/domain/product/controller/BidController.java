@@ -1,8 +1,10 @@
 package main.wonprice.domain.product.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import main.wonprice.domain.member.service.NotificationService;
+import main.wonprice.domain.product.dto.BidErrorResponse;
 import main.wonprice.domain.product.entity.Bid;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.service.MemberService;
@@ -68,7 +70,9 @@ public class BidController {
 
             return new ResponseEntity(bidResponseDto, HttpStatus.OK);
         } catch (BusinessLogicException ex) {
-            return ResponseEntity.badRequest().body(ex.getExceptionCode().getMessage());
+            BidErrorResponse bidErrorResponse = new BidErrorResponse(ex.getExceptionCode().getMessage(), request.getMemberId());
+
+            return ResponseEntity.badRequest().body(bidErrorResponse);
         }
     }
 }
