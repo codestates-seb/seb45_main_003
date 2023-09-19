@@ -44,7 +44,7 @@ function App() {
         // 3) 프로필 페이지
         {
           path: "/member/:id",
-          element: isLogin ? <Profile /> : <LogIn />,
+          element: <Profile />,
         },
 
         // 4) 게시물 작성
