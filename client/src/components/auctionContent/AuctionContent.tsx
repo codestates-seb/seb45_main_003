@@ -30,7 +30,7 @@ interface products {
 }
 
 const AuctionContentContainer = styled.div`
-  padding: 2rem;
+  padding: 0 2rem 2rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

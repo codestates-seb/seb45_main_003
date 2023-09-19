@@ -192,7 +192,7 @@ const ChattingListData: React.FC = () => {
   }, [chatList]);
 
   useEffect(() => {
-    console.log("Chat list has been updated:", chatList);
+    // console.log("Chat list has been updated:", chatList);
   }, [chatList]);
 
   // 채팅방 필터링

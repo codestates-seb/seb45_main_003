@@ -56,6 +56,19 @@ const StyledSignupForm = styled.form`
   .errorInput {
     border-color: ${COLOR.invalid};
   }
+  @media (max-width: 48rem) {
+    padding: 0;
+    width: 100%;
+
+    #confirmcode {
+      width: calc(100% - 5.6531rem - 0.6875rem);
+      flex: none;
+    }
+    #email {
+      width: calc(100% - 5.6531rem - 0.6875rem);
+      flex: none;
+    }
+  }
 `;
 const StyledModal = styled.div`
   width: 22.0625rem;
