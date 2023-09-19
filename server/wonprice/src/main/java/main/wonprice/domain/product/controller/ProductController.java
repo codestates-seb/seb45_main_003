@@ -187,13 +187,17 @@ public class ProductController {
     // 대표 - 즉시구매
     @PostMapping("/buy/{productId}")
     public ResponseEntity buyProduct(@PathVariable Long productId) {
-        Member buyer = memberService.findLoginMember();
+        try {
+            Member buyer = memberService.findLoginMember();
 
-        /* buyer == seller일 경우 구매 못하게 막는 로직 필요 */
+            /* buyer == seller일 경우 구매 못하게 막는 로직 필요 */ // 추가함
 
-        Product product = productService.immediatelyBuy(productId, buyer);
-        chatService.createChatRoom(product);
+            Product product = productService.immediatelyBuy(productId, buyer);
+            chatService.createChatRoom(product);
 
-        return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
+        } catch (BusinessLogicException ex) {
+            return ResponseEntity.badRequest().body(ex.getExceptionCode().getMessage());
+        }
     }
 }

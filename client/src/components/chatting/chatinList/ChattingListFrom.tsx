@@ -5,6 +5,7 @@ import ChattingListData from "./ChattingListData";
 const Container = styled.div`
   display: flex;
   width: 15.625rem;
+  width: 100%;
   height: 47.0625rem;
   min-height: 43.6875rem;
   padding: 1.5rem 1rem;
@@ -26,13 +27,14 @@ const Container = styled.div`
     justify-content: space-between;
     align-items: center;
     .ProfileImg {
-      width: 3rem;
-      height: 3rem;
+      height: 4rem;
+      width: 4rem;
       flex-shrink: 0;
       border-radius: 3rem;
       border: 1px solid var(--muted-color, #bdbdbd);
       background: lightgray 90% / cover no-repeat;
       margin: 0 0.75rem;
+      object-fit: cover;
     }
     .Icon {
       width: 1.5rem;

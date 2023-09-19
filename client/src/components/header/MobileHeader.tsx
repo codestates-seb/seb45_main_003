@@ -27,7 +27,7 @@ const StyledHeader = styled.header`
     right: 1rem;
   }
 
-  button {
+  .menu_button {
     background: none;
     border: none;
     padding: 0;
@@ -43,7 +43,7 @@ const MobileHeader = () => {
       <Link to="/">
         <Logo className="logo" />
       </Link>
-      <button>
+      <button className="menu_button">
         <MenuIcon
           className="menu_icon"
           onClick={() => {

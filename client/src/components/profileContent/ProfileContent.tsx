@@ -43,7 +43,7 @@ const ProfileContentContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 18rem);
+  min-width: calc(100% - 12rem);
 
   .topContainer {
     padding: 0 1rem 1.25rem 1rem;
@@ -100,6 +100,13 @@ const ProfileContentContainer = styled.div`
       }
     }
   }
+  @media (max-width: 64rem) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: 100%;
+  }
 `;
 const StyledModal = styled.form`
   width: 25rem;
@@ -150,8 +157,8 @@ const ProfileContent = (): JSX.Element => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
-    setValue,
     getValues,
+    reset,
   } = useForm<modifyProfileForm>();
   // const isLogin = useRecoilValue(loginState);
   const { toggleModal, closeModal, isOpen } = useModal();
@@ -162,11 +169,7 @@ const ProfileContent = (): JSX.Element => {
     error,
     data: profile,
   } = useQuery<Profile>(["profile", { Id }], async () => {
-    const res = await defaultInstance.get(`/members/${Id}`, {
-      headers: {
-        "ngrok-skip-browser-warning": "69420",
-      },
-    });
+    const res = await defaultInstance.get(`/members/${Id}`);
     return res.data;
   });
   const passwordMutation = useMutation(
@@ -199,8 +202,7 @@ const ProfileContent = (): JSX.Element => {
     setModifyImgMode(!modifyImgMode);
   };
   const resetModal = () => {
-    setValue("newPassword", "");
-    setValue("passwordCheck", "");
+    reset();
     setPass(false);
     toggleModal();
   };
@@ -248,17 +250,21 @@ const ProfileContent = (): JSX.Element => {
             <label className="infoLabel">성함</label>
             <label className="infoLabel">이메일</label>
             <label className="infoLabel">작성글 갯수</label>
-            <label className="infoLabel">거래완료 횟수</label>
+            <label className="infoLabel">판매한 상품</label>
           </div>
           <ul className="infoContainer">
             <li className="info">{profile.name}</li>
             <li className="info">{profile.email}</li>
             <li className="info">{profile.postCount} 개</li>
-            <li className="info">{profile.tradeCount} 회</li>
+            <li className="info">{profile.tradeCount} 개</li>
           </ul>
         </div>
         <PostListTab />
-        <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={resetModal}>
+        <Modal
+          isOpen={isOpen}
+          closeModal={(event) => closeModal(event, reset)}
+          toggleModal={resetModal}
+        >
           <StyledModal onSubmit={handleSubmit(() => passwordMutation.mutateAsync(getValues()))}>
             <div className="modalInputContainer">
               <label htmlFor="passwordCheck">비밀번호</label>

@@ -40,7 +40,7 @@ const TradeContentContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 14rem);
+  min-width: calc(100% - 12rem);
   min-height: calc(100% - 0.75rem);
   .topContainer {
     display: flex;
@@ -132,8 +132,13 @@ const TradeContentContainer = styled.div`
       }
     }
   }
-  .pagenation {
-    padding: 1.5rem 0;
+  @media (max-width: 64rem) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    min-width: 41rem;
+    max-width: 100%;
   }
 `;
 

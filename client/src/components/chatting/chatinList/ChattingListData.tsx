@@ -82,8 +82,9 @@ const Container = styled.button`
 
   .ProfileImg {
     border-radius: 24.556px;
-    height: 1.5rem;
-    width: 1.5rem;
+    height: 1.5625rem;
+    width: 1.5625rem;
+    object-fit: cover;
   }
 
   /* hover 상태일 때의 스타일 */
@@ -185,8 +186,6 @@ const ChattingListData: React.FC = () => {
   // State for storing the total number of unread messages.
   const [totalUnreadMessages, setTotalUnreadMessages] = useRecoilState(totalUnreadMessagesState);
   // 새로운 채팅이 추가된 채팅방의 ID를 저장하는 상태 변수
-
-  // 모든 알림 갯수
   useEffect(() => {
     const total = chatList.reduce((acc, chat) => acc + (chat.unReadMessage || 0), 0);
     setTotalUnreadMessages(total);
@@ -229,9 +228,9 @@ const ChattingListData: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleRoomClick = (chatRoomId: number) => {
+  const handleRoomClick = (chatRoomId: number, productId: number) => {
     setCurrentChatRoomId(chatRoomId);
-    navigate(`/chat/${chatRoomId}`);
+    navigate(`/chat/${chatRoomId}/?productId=${productId}`);
   };
 
   if (isLoading) return <div>Loading...</div>;
@@ -263,7 +262,7 @@ const ChattingListData: React.FC = () => {
           <input
             className="input"
             type="text"
-            placeholder="Search for chat rooms..."
+            placeholder="채팅방을 찾아보세요"
             value={searchTerm}
             onChange={handleInputChange}
           />
@@ -273,7 +272,10 @@ const ChattingListData: React.FC = () => {
         {/* 채팅방 리스트 항목 */}
         <ChatList>
           {sortedChatList.map((chat) => (
-            <Container key={chat.chatRoomId} onClick={() => handleRoomClick(chat.chatRoomId)}>
+            <Container
+              key={chat.chatRoomId}
+              onClick={() => handleRoomClick(chat.chatRoomId, chat.productId)}
+            >
               <li key={chat.chatRoomId}>
                 <div className="chatRoom">
                   <div className="idDate">

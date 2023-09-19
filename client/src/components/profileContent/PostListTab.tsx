@@ -74,13 +74,14 @@ const PostListContainer = styled.div`
     .postImg {
       width: 9.375rem;
       height: 9.375rem;
-      padding: 1rem 0;
+      object-fit: cover;
     }
     .postContainer {
       display: flex;
       flex-direction: row;
       justify-content: flex-start;
       align-items: stretch;
+      padding: 1rem 0;
       gap: 1rem;
       border-bottom: 1px solid ${COLOR.border};
     }
@@ -153,6 +154,7 @@ const PostListTab = (): JSX.Element => {
   const searchParams = new URLSearchParams(location.search);
   const tabmenu = searchParams.get("tabmenu");
   const handleMenu = (value: string): void => {
+    window.scrollTo(0, 0);
     if (tabmenu !== value) {
       navigate(`${location.pathname}?menu=${searchParams.get("menu")}&tabmenu=${value}&page=1`);
     }
@@ -172,27 +174,15 @@ const PostListTab = (): JSX.Element => {
       const currentPageParam = parseInt(searchParams.get("page") || "1");
       const pageQueryParam = `page=${currentPageParam - 1}&size=${ITEMS_PER_VIEW}`;
       if (tabmenu === "sell") {
-        const res = await defaultInstance.get(`/members/${Id}/products?${pageQueryParam}`, {
-          headers: {
-            "ngrok-skip-browser-warning": "69420",
-          },
-        });
+        const res = await defaultInstance.get(`/members/${Id}/products?${pageQueryParam}`);
         navigate(`?menu=profile&tabmenu=${tabmenu}&page=${currentPageParam}`);
         return res.data;
       } else if (tabmenu === "leaveReview") {
-        const res = await defaultInstance.get(`/members/${Id}/reviews/post?${pageQueryParam}`, {
-          headers: {
-            "ngrok-skip-browser-warning": "69420",
-          },
-        });
+        const res = await defaultInstance.get(`/members/${Id}/reviews/post?${pageQueryParam}`);
         navigate(`?menu=profile&tabmenu=${tabmenu}&page=${currentPageParam}`);
         return res.data;
       } else if (tabmenu === "getReview") {
-        const res = await defaultInstance.get(`/members/${Id}/reviews?${pageQueryParam}`, {
-          headers: {
-            "ngrok-skip-browser-warning": "69420",
-          },
-        });
+        const res = await defaultInstance.get(`/members/${Id}/reviews?${pageQueryParam}`);
         navigate(`?menu=profile&tabmenu=${tabmenu}&page=${currentPageParam}`);
         return res.data;
       }
@@ -200,12 +190,10 @@ const PostListTab = (): JSX.Element => {
     {
       onSuccess: (data) => {
         setTotalPages(data.totalPages);
-        console.log(data);
       },
     },
   );
   const navigateModifyReview = (review: postContent) => {
-    console.log(review);
     navigate(`/review/${Id}?productId=${review.productId}&reviewId=${review.reviewId}`);
   };
   //refetch되기전 화면에 그리는 과정에서 리뷰에서는 판매글에 없는 데이터가 있어서 오류 발생

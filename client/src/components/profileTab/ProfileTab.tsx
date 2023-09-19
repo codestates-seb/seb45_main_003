@@ -4,7 +4,7 @@ import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 
 const ProfileTabContainer = styled.ul`
-  width: 10rem;
+  min-width: 8rem;
   height: 18.75rem;
   border-radius: 6px;
   border: 1px solid ${COLOR.gray_300};
@@ -15,6 +15,7 @@ const ProfileTabContainer = styled.ul`
   align-items: stretch;
   position: sticky;
   top: 7.5rem;
+  overflow: hidden;
 
   .tabMenu {
     height: 3.75rem;
@@ -28,6 +29,11 @@ const ProfileTabContainer = styled.ul`
       font-weight: bold;
       background-color: ${COLOR.secondary};
     }
+  }
+  @media (max-width: 64rem) {
+    display: flex;
+    flex-direction: row;
+    height: 3.75rem;
   }
 `;
 

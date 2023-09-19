@@ -35,7 +35,7 @@ const AuctionContentContainer = styled.div`
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
-  min-width: calc(100% - 14rem);
+  min-width: calc(100% - 12rem);
   min-height: calc(100% - 0.75rem);
   .topContainer {
     padding: 1.25rem 1rem;
@@ -114,6 +114,14 @@ const AuctionContentContainer = styled.div`
       }
     }
   }
+  @media (max-width: 64rem) {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    min-width: 41rem;
+    max-width: 100%;
+  }
 `;
 
 const AuctionContent = (): JSX.Element => {
@@ -140,9 +148,10 @@ const AuctionContent = (): JSX.Element => {
   const navigateProduct = (productId: number) => {
     navigate(`/product/${productId}`);
   };
-  const { isLoading, data } = useQuery<Data>(["auctionList"], getAuctionlist, {
+  const { isLoading, data } = useQuery<Data>(["auctionList", { currentPage }], getAuctionlist, {
     onSuccess: (data) => setTotalPages(data.totalPages),
     refetchInterval: 30000,
+    refetchIntervalInBackground: true,
   });
   const auctionList = data?.content;
 

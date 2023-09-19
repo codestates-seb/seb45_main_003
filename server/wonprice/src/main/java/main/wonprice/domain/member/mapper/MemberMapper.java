@@ -15,5 +15,26 @@ public interface MemberMapper {
 
     Member patchDtoToMember(MemberPatchDto patchDto);
 
-    MemberResponseDto memberToResponseDto(Member member);
+
+    default MemberResponseDto memberToResponseDto(Member member) {
+        return MemberResponseDto.builder()
+                .memberId(member.getMemberId())
+                .name(member.getName())
+                .email(member.getEmail())
+//                .phone(member.getPhone())
+                .tradeCount(member.getTradeCount())
+                .picture(member.getPicture())
+                .build();
+    }
+    default MemberResponseDto memberToResponseDto(Member member, Long productCount) {
+        return MemberResponseDto.builder()
+                .memberId(member.getMemberId())
+                .name(member.getName())
+                .email(member.getEmail())
+//                .phone(member.getPhone())
+                .postCount(productCount)
+                .tradeCount(member.getTradeCount())
+                .picture(member.getPicture())
+                .build();
+    }
 }

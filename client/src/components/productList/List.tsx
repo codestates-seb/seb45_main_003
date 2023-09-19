@@ -51,6 +51,7 @@ export type ProductData = {
   sellerWrittenReviewsCount?: number;
   sellerReceivedReviewsCount?: number;
   loginMembersWish?: boolean;
+  path?: string;
 };
 
 const StyledList = styled.section`
@@ -198,10 +199,7 @@ const List = (): JSX.Element => {
     [
       "productList",
       {
-        category: categoryId,
-        page: currentPage,
-        keyword,
-        size: ITEMS_PER_VIEW,
+        location,
       },
     ],
     getData,
@@ -212,6 +210,7 @@ const List = (): JSX.Element => {
         }
         setCurrentPage(Number(searchParams.get("page")) - 1);
       },
+      staleTime: Infinity,
     },
   );
 

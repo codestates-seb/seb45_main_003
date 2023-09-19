@@ -112,6 +112,17 @@ const Layout = styled.div`
       font-size: 1rem;
     }
   }
+
+  @media (max-width: 64rem) {
+    .swiper {
+      width: 100%;
+      padding: 0;
+    }
+
+    .swiper-slide {
+      height: 22.5rem;
+    }
+  }
 `;
 export interface CustomSwiperProps extends ReactSwiperProps {
   slidesPerView?: number;
@@ -164,7 +175,9 @@ const Carousel = (): JSX.Element => {
     return response.data;
   };
 
-  const { isLoading, data, error } = useQuery<Data>(["CarouselProductList", { page: 1 }], getData);
+  const { isLoading, data, error } = useQuery<Data>(["CarouselProductList", { page: 1 }], getData, {
+    staleTime: Infinity,
+  });
 
   return (
     <>
