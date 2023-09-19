@@ -23,21 +23,22 @@ const DeleteButton = ({ data }: DeleteButtonProps) => {
     const response = await authInstance.delete(API_PATHS.products.default(id));
     return response.data;
   };
-  const { mutate, error } = useMutation(deleteData);
-  const navigate = useNavigate();
-
-  const handleDelete = async (id: number) => {
-    mutate(id);
-
-    const axiosError = error as AxiosError;
-    if (axiosError) {
+  const { mutate, error } = useMutation(deleteData, {
+    onSuccess: () => {
+      setModalMessage({ title: "상품 삭제 성공", description: SUCCESS.delete });
+    },
+    onError: (error) => {
+      const axiosError = error as AxiosError;
       setModalMessage({
         title: "상품 삭제 실패",
         description: String(axiosError.response?.data),
       });
-    } else {
-      setModalMessage({ title: "상품 삭제 성공", description: SUCCESS.delete });
-    }
+    },
+  });
+  const navigate = useNavigate();
+
+  const handleDelete = async (id: number) => {
+    mutate(id);
   };
 
   return (
@@ -82,7 +83,7 @@ const DeleteButton = ({ data }: DeleteButtonProps) => {
               $text="확인"
               type="button"
               onClick={() => {
-                navigate(CATEGORY["all"].path);
+                error ? setIsOpen(false) : navigate(CATEGORY["all"].path);
               }}
             />
           )}

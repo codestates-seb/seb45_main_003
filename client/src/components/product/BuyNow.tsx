@@ -24,7 +24,26 @@ const BuyNow = ({ data }: BuyNowProps) => {
     await authInstance.post(API_PATHS.products.buyItNow(id));
   };
 
-  const { mutate, error } = useMutation(postData);
+  const { mutate } = useMutation(postData, {
+    onSuccess: () => {
+      setModalMessage({ title: "즉시 구매 성공", description: SUCCESS.buyItNow });
+
+      const modifiedData = {
+        ...data,
+        productStatus: "TRADE",
+        buyerId: Number(userid),
+      };
+      queryClient.setQueryData(["productData", location], modifiedData);
+    },
+
+    onError: (error) => {
+      const axiosError = error as AxiosError;
+      setModalMessage({
+        title: "즉시 구매 실패",
+        description: String(axiosError.response?.data),
+      });
+    },
+  });
   const isLogin = useRecoilValue(loginState);
   const userid = getUserId();
   const queryClient = useQueryClient();
@@ -37,23 +56,6 @@ const BuyNow = ({ data }: BuyNowProps) => {
 
   const handleBuyNow = async (id: number) => {
     mutate(id);
-
-    const axiosError = error as AxiosError;
-    if (axiosError) {
-      setModalMessage({
-        title: "즉시 구매 실패",
-        description: String(axiosError.response?.data),
-      });
-    } else {
-      setModalMessage({ title: "즉시 구매 성공", description: SUCCESS.buyItNow });
-
-      const modifiedData = {
-        ...data,
-        productStatus: "TRADE",
-        buyerId: Number(userid),
-      };
-      queryClient.setQueryData(["productData", location], modifiedData);
-    }
   };
 
   return (
