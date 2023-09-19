@@ -9,7 +9,7 @@ import { CATEGORY } from "../../constants/category";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
 import { API_PATHS } from "../../constants/path";
-import { FAIL, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
+import { FAIL, MAX, MIN, REQUIRED, SUCCESS } from "../../constants/systemMessage";
 import { useImageUpload } from "../../hooks/useImageUpload";
 import { useModal } from "../../hooks/useModal";
 import { authInstance } from "../../interceptors/interceptors";
@@ -293,6 +293,10 @@ const UploadForm = () => {
               register={register}
               options={{
                 required: REQUIRED.title,
+                maxLength: {
+                  value: 40,
+                  message: MAX.title(40),
+                },
               }}
               title="제목"
               id="title"
@@ -360,7 +364,7 @@ const UploadForm = () => {
                       onChange: (event) => allowOnlyNumber(event),
                       max: {
                         value: 1000000000,
-                        message: "10억 이하의 금액만 입력할 수 있습니다.",
+                        message: MAX.price("10억"),
                       },
                     }}
                     title="경매시작가"
@@ -377,7 +381,7 @@ const UploadForm = () => {
                     onChange: (event) => allowOnlyNumber(event),
                     max: {
                       value: 1000000000,
-                      message: "10억 이하의 금액만 입력할 수 있습니다.",
+                      message: MAX.price("10억"),
                     },
                   }}
                   title="즉시구매가"

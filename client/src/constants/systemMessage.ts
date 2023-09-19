@@ -48,6 +48,8 @@ export const FAIL = {
 export const MAX = {
   imageSelect: (max: number) => `이미지는 최대 ${max}장까지 선택 가능합니다.`,
   bid: `즉시구매가를 초과하여 입찰할 수 없습니다.`,
+  title: (max: number) => `제목은 ${max}자 이하로 입력할 수 있습니다.`,
+  price: (max: string) => `${max} 이하의 금액만 입력할 수 있습니다.`,
 };
 
 export const MIN = {
@@ -59,4 +61,6 @@ export const AUCTION = {
   bid: "입찰가를 입력해 주세요.",
   isnot: "즉시 구매만 가능한 상품입니다.",
   end: "거래가 종료된 상품입니다.",
+  updateAndEnd: "누군가가 상품을 즉시구매가에 입찰하여 경매가 종료되었습니다.",
+  update: "누군가가 상품을 입찰하여 가격이 갱신되었습니다.",
 };

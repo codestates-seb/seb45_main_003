@@ -37,7 +37,7 @@ function App() {
 
         // 2) 로그인 페이지
         {
-          path: "/login",
+          path: "login",
           element: <LogIn />,
         },
 
@@ -49,39 +49,39 @@ function App() {
 
         // 4) 게시물 작성
         {
-          path: "/write",
+          path: "write",
           element: isLogin ? <CreatePost /> : <LogIn />,
         },
 
         // 5) 게시물 리스트, 검색결과 페이지
         {
-          path: "/:search",
+          path: "search",
           element: <PostsList />,
         },
         {
-          path: "/:category",
+          path: "category/:category",
           element: <PostsList />,
         },
         {
-          path: "/:available",
+          path: "available",
           element: <PostsList />,
         },
 
         // 6) 게시글 상세 페이지
         {
-          path: "/product/:item",
+          path: "product/:item",
           element: <PostInformation />,
         },
 
         // 7) 채팅 페이지
         {
-          path: "/chat/:id",
+          path: "chat/:id",
           element: isLogin ? <Chatting /> : <LogIn />,
         },
 
         // 8) 후기,리뷰 페이지
         {
-          path: "/review/:id",
+          path: "review/:id",
           element: isLogin ? <Review /> : <LogIn />,
         },
 

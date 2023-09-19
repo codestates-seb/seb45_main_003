@@ -20,6 +20,7 @@ const StyledItem = styled.article`
   .bottom_item {
     display: flex;
     flex-flow: row;
+    justify-content: space-between;
     gap: 1.5rem;
   }
 
@@ -43,6 +44,7 @@ const Item = (): JSX.Element => {
     const currentAuctionPrice = response.data.currentAuctionPrice;
     const data = {
       ...response.data,
+      productStatus: "BEFORE",
       minBidPrice: plus5Percent(currentAuctionPrice),
     };
 

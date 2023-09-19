@@ -95,7 +95,7 @@ const StyledList = styled.section`
     .empty {
       width: 100%;
       position: relative;
-      min-height: 18.75rem;
+      min-height: 30vh;
     }
   }
 
