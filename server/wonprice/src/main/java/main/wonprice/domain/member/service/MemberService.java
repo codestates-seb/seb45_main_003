@@ -56,6 +56,12 @@ public class MemberService {
         return findMember;
     }
 
+    public Member findMember(String email) {
+
+        Member findMember = findVerifyMember(email);
+        return findMember;
+    }
+
 //    관리자용 전체 회원 목록
     public Page<Member> findMembers(Pageable pageable) {
         isAdmin();
@@ -129,6 +135,21 @@ public class MemberService {
 
 //        Member loginMember = findLoginMember();
         Optional<Member> findMember = memberRepository.findById(memberId);
+
+        if (findMember.isEmpty())
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+//        if (loginMember.getRoles().contains("ADMIN"))
+//            return findMember.get();
+        if (findMember.get().getDeletedAt() != null)
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+
+        return findMember.get();
+    }
+
+    public Member findVerifyMember(String email) {
+
+//        Member loginMember = findLoginMember();
+        Optional<Member> findMember = memberRepository.findByEmail(email);
 
         if (findMember.isEmpty())
             throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
