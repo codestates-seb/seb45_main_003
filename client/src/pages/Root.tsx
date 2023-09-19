@@ -19,6 +19,12 @@ const StyledMain = styled.main<HeightProps>`
   min-height: calc(100vh - ${(props) => props.$header_footer_height}px);
   position: relative;
 
+  &.flex_center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   @media (max-width: 64rem) {
     width: calc(100% - 2rem);
   }
@@ -41,6 +47,7 @@ const Root = (): JSX.Element => {
     <>
       <Header />
       <StyledMain
+        className={location.pathname === "/login" ? "flex_center" : ""}
         $ismain={location.pathname === "/" ? true : false}
         $header_footer_height={headerfooterHeight}
       >
