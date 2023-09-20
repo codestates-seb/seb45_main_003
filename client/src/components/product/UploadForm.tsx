@@ -362,6 +362,10 @@ const UploadForm = () => {
                     options={{
                       required: REQUIRED.currentAuctionPrice,
                       onChange: (event) => allowOnlyNumber(event),
+                      min: {
+                        value: 500,
+                        message: MIN.price("500원"),
+                      },
                       max: {
                         value: 1000000000,
                         message: MAX.price("10억"),
@@ -379,6 +383,10 @@ const UploadForm = () => {
                   options={{
                     required: REQUIRED.immediatelyBuyPrice,
                     onChange: (event) => allowOnlyNumber(event),
+                    min: {
+                      value: 1000,
+                      message: MIN.price("1000원"),
+                    },
                     max: {
                       value: 1000000000,
                       message: MAX.price("10억"),

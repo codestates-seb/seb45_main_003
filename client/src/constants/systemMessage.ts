@@ -55,6 +55,7 @@ export const MAX = {
 export const MIN = {
   date: "과거 시간은 선택할 수 없습니다.",
   bid: (min: number) => `현재 입찰가의 ${min}% 이상 금액부터 입찰할 수 있습니다.`,
+  price: (max: string) => `${max} 이상의 금액만 입력할 수 있습니다.`,
 };
 
 export const AUCTION = {
