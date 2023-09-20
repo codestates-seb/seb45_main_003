@@ -14,6 +14,11 @@ const ProfileContainer = styled.div`
   align-items: flex-start;
   min-height: calc(100% - 1.5rem);
   width: 100%;
+  @media (max-width: 64rem) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 `;
 
 const Profile = (): JSX.Element => {

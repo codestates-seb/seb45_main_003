@@ -4,7 +4,7 @@ import { COLOR } from "../../constants/color";
 
 interface ModalProp {
   isOpen: boolean;
-  closeModal?: (event: React.MouseEvent<HTMLElement>) => void;
+  closeModal?: (event: React.MouseEvent<HTMLElement>, callback?: () => void) => void;
   toggleModal?: () => void;
   children: JSX.Element;
 }

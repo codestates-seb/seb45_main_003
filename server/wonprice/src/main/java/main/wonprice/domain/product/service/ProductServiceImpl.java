@@ -94,9 +94,19 @@ public class ProductServiceImpl implements ProductService {
         Specification<Product> specification = ProductSpecification.notDeletedAndStatus(ProductStatus.BEFORE);
 
         if ("immediatelyBuy".equalsIgnoreCase(type)) {
-            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("auction"), false));
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.and(
+                            criteriaBuilder.equal(root.get("auction"), false),
+                            criteriaBuilder.equal(root.get("status"), ProductStatus.BEFORE)
+                    )
+            );
         } else if ("auction".equalsIgnoreCase(type)) {
-            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("auction"), true));
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.and(
+                            criteriaBuilder.equal(root.get("auction"), true),
+                            criteriaBuilder.equal(root.get("status"), ProductStatus.BEFORE)
+                    )
+            );
         }
 
         return productRepository.findAll(specification, pageable);
@@ -193,19 +203,19 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public Page<Product> findMembersProduct(Pageable pageable, Member member) {
 
-        return productRepository.findAllBySeller(member, pageable);
+        return productRepository.findAllBySellerAndDeletedAt(member, pageable, null);
     }
 
     //    회원이 판매 완료한 상품 목록
     public Page<Product> findMemberSold(Pageable pageable, Member member) {
 
-        return productRepository.findAllBySellerAndStatus(member, ProductStatus.AFTER, pageable);
+        return productRepository.findAllBySellerAndStatusAndDeletedAt(member, ProductStatus.AFTER, pageable, null);
     }
 
     //    회원이 구매 완료한 상품 목록
     @Override
     public Page<Product> findMemberBought(Pageable pageable, Long memberId) {
-        return productRepository.findAllByBuyerIdAndStatus(memberId, ProductStatus.AFTER, pageable);
+        return productRepository.findAllByBuyerIdAndStatusAndDeletedAt(memberId, ProductStatus.AFTER, pageable, null);
     }
 
     // [리팩토링 전] 입찰
@@ -322,6 +332,7 @@ public class ProductServiceImpl implements ProductService {
             throw new BusinessLogicException(ExceptionCode.IMMEDIATELY_INVALID);
         }
 
+        findProduct.setCurrentAuctionPrice(findProduct.getImmediatelyBuyPrice());
         findProduct.setBuyerId(member.getMemberId());
         findProduct.setStatus(ProductStatus.TRADE);
 

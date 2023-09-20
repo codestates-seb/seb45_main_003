@@ -4,12 +4,6 @@ import { DropdownState } from "../components/header/DropdownState";
 
 const { persistAtom } = recoilPersist();
 
-export const toSignup = atom<boolean>({
-  key: "toSignup",
-  default: true,
-  effects_UNSTABLE: [persistAtom],
-});
-
 export const loginState = atom<boolean>({
   key: "loginState",
   default: false,

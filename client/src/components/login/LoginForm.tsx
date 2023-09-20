@@ -34,6 +34,10 @@ const StyledLoginForm = styled.form`
   .errorInput {
     border-color: ${COLOR.invalid};
   }
+  @media (max-width: 48rem) {
+    padding: 0;
+    width: 100%;
+  }
 `;
 
 const LogInForm = (): JSX.Element => {
@@ -81,7 +85,7 @@ const LogInForm = (): JSX.Element => {
           required: "이메일을 입력해주세요.",
         })}
       />
-      {errors.email && <div>{errors.email?.message}</div>}
+      {errors.email && <div className="errormessage">{errors.email?.message}</div>}
       <label htmlFor="password">Password</label>
       <input
         id="password"

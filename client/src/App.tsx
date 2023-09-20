@@ -2,6 +2,7 @@ import type { RouteObject } from "react-router-dom";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { useRecoilValue } from "recoil";
 import { loginState } from "./atoms/atoms";
+import useFetchChatList from "./components/chatting/hook/useFetchChatList";
 import Chatting from "./pages/Chatting";
 import CreatePost from "./pages/CreatePost";
 import ErrorIndication from "./pages/ErrorIndication";
@@ -12,7 +13,6 @@ import PostsList from "./pages/PostsList";
 import Profile from "./pages/Profile";
 import Review from "./pages/Review";
 import Root from "./pages/Root";
-import useFetchChatList from "./components/chatting/hook/useFetchChatList";
 
 function App() {
   const isLogin = useRecoilValue(loginState);
@@ -37,19 +37,19 @@ function App() {
 
         // 2) 로그인 페이지
         {
-          path: "/login",
+          path: "login",
           element: <LogIn />,
         },
 
         // 3) 프로필 페이지
         {
           path: "/member/:id",
-          element: isLogin ? <Profile /> : <LogIn />,
+          element: <Profile />,
         },
 
         // 4) 게시물 작성
         {
-          path: "/write",
+          path: "write",
           element: isLogin ? <CreatePost /> : <LogIn />,
         },
 
@@ -59,25 +59,29 @@ function App() {
           element: <PostsList />,
         },
         {
-          path: ":category",
+          path: "category/:category",
+          element: <PostsList />,
+        },
+        {
+          path: "available",
           element: <PostsList />,
         },
 
         // 6) 게시글 상세 페이지
         {
-          path: "/product/:item",
+          path: "product/:item",
           element: <PostInformation />,
         },
 
         // 7) 채팅 페이지
         {
-          path: "/chat/:id",
+          path: "chat/:id",
           element: isLogin ? <Chatting /> : <LogIn />,
         },
 
         // 8) 후기,리뷰 페이지
         {
-          path: "/review/:id",
+          path: "review/:id",
           element: isLogin ? <Review /> : <LogIn />,
         },
 

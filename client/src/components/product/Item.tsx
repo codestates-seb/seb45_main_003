@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { API_PATHS } from "../../constants/path";
+import { FAIL } from "../../constants/systemMessage";
 import { authInstance } from "../../interceptors/interceptors";
 import ErrorIndication from "../../pages/ErrorIndication";
 import { plus5Percent } from "../../util/number";
@@ -19,6 +20,7 @@ const StyledItem = styled.article`
   .bottom_item {
     display: flex;
     flex-flow: row;
+    justify-content: space-between;
     gap: 1.5rem;
   }
 
@@ -44,6 +46,10 @@ const Item = (): JSX.Element => {
       ...response.data,
       minBidPrice: plus5Percent(currentAuctionPrice),
     };
+
+    if (data.deletedAt) {
+      throw new Error(FAIL.deleted);
+    }
 
     return data;
   };

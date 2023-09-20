@@ -91,6 +91,12 @@ const StyledList = styled.section`
       list-style: none;
       word-break: keep-all;
     }
+
+    .empty {
+      width: 100%;
+      position: relative;
+      min-height: 30vh;
+    }
   }
 
   .list_top_right {
@@ -170,6 +176,8 @@ const List = (): JSX.Element => {
 
   const categoryId = getCategoryId(location.pathname);
   const path = getAPIPath(categoryId);
+  const page = Number(searchParams.get("page")) - 1;
+  const type = searchParams.get("type");
   const keyword = searchParams.get("keyword");
 
   const {
@@ -183,7 +191,16 @@ const List = (): JSX.Element => {
   } = usePagination();
 
   const getData = async () => {
-    const params = { page: Number(searchParams.get("page")) - 1, size: ITEMS_PER_VIEW };
+    const params = { page: page, size: ITEMS_PER_VIEW };
+
+    if (type) {
+      const response = await axios.get(`/products/available`, {
+        params: { ...params, type: type },
+      });
+
+      return response.data;
+    }
+
     const response = keyword
       ? await axios.get(`/products/search`, {
           params: { ...params, keyword: keyword },
@@ -195,28 +212,31 @@ const List = (): JSX.Element => {
     return response.data;
   };
 
-  const { isLoading, error, data } = useQuery<Data>(
-    [
-      "productList",
-      {
-        location,
-      },
-    ],
-    getData,
-    {
-      onSuccess: (data) => {
-        if (data.totalPages !== undefined) {
-          setTotalPages(data.totalPages);
-        }
-        setCurrentPage(Number(searchParams.get("page")) - 1);
-      },
-      staleTime: Infinity,
+  const { isLoading, error, data } = useQuery<Data>(["productList", location], getData, {
+    onSuccess: (data) => {
+      if (data.totalPages !== undefined) {
+        setTotalPages(data.totalPages);
+      }
+      setCurrentPage(page);
     },
-  );
+    staleTime: Infinity,
+  });
 
   const isLogin = useRecoilValue(loginState);
 
   const printTitle = (path: string) => {
+    if (type === "all") {
+      return "거래 가능";
+    }
+
+    if (type === "auction") {
+      return "경매 중";
+    }
+
+    if (type === "immediatelyBuy") {
+      return "즉시 구매";
+    }
+
     if (path.includes("/all")) {
       return "전체 상품";
     }
@@ -272,20 +292,22 @@ const List = (): JSX.Element => {
               })}
             </>
           ) : (
-            <li className="no_border">
+            <li className="no_border empty">
               <Empty />
             </li>
           )}
         </ul>
-        <Pagination
-          {...{
-            currentPage,
-            totalPages,
-            pageChangeHandler,
-            prevPageHandler,
-            nextPageHandler,
-          }}
-        />
+        {data && data.content?.length > 0 && (
+          <Pagination
+            {...{
+              currentPage,
+              totalPages,
+              pageChangeHandler,
+              prevPageHandler,
+              nextPageHandler,
+            }}
+          />
+        )}
       </StyledList>
     </>
   );

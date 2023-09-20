@@ -82,8 +82,9 @@ const Container = styled.button`
 
   .ProfileImg {
     border-radius: 24.556px;
-    height: 1.5rem;
-    width: 1.5rem;
+    height: 1.5625rem;
+    width: 1.5625rem;
+    object-fit: cover;
   }
 
   /* hover 상태일 때의 스타일 */
@@ -191,7 +192,7 @@ const ChattingListData: React.FC = () => {
   }, [chatList]);
 
   useEffect(() => {
-    console.log("Chat list has been updated:", chatList);
+    // console.log("Chat list has been updated:", chatList);
   }, [chatList]);
 
   // 채팅방 필터링
@@ -261,7 +262,7 @@ const ChattingListData: React.FC = () => {
           <input
             className="input"
             type="text"
-            placeholder="Search for chat rooms..."
+            placeholder="채팅방을 찾아보세요"
             value={searchTerm}
             onChange={handleInputChange}
           />

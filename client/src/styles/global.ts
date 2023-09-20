@@ -5,6 +5,9 @@ import { FONT_SIZE } from "../constants/font";
 import "./font.ts";
 
 export const GlobalStyle = createGlobalStyle`
+body {
+  overflow-x: hidden;
+}
 body,
 textarea, input {
   color: ${COLOR.darkText};

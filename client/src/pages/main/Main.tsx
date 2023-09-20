@@ -4,8 +4,10 @@ import FirstScreen from "../../components/mainPage/mainLayout/FirstScreen";
 import SecondScreen from "../../components/mainPage/mainLayout/SecondScreen";
 import { BackGround, ContentBox, MainTitle, SecondTitle } from "./MainStyle";
 
+import Auction from "../../assets/images/main/Auction.gif";
+import Chat from "../../assets/images/main/Chat.gif";
+import Profile from "../../assets/images/main/Profile.gif";
 import background from "../../assets/images/main/background.png";
-import Img1 from "../../assets/images/main/image-3.png";
 import ThirdScreen from "../../components/mainPage/mainLayout/ThirdScreen";
 
 const Main = (): JSX.Element => {
@@ -34,17 +36,17 @@ const Main = (): JSX.Element => {
           <SecondScreen
             text1="실시간 경매"
             text2="실시간으로 입찰가가 갱신되는<br>박진감 넘치는 경매를<br>체험해 보세요."
-            imgSrc={Img1}
+            imgSrc={Auction}
           />
           <ThirdScreen
-            text1="채팅"
+            text1="실시간 채팅"
             text2="낙찰 또는 즉시구매에<br>성공한 구매자와 판매자가<br>실시간 채팅을 할 수 있습니다."
-            imgSrc={Img1}
+            imgSrc={Chat}
           />
           <SecondScreen
-            text1="기능 소개3"
-            text2="뭐라 적어야 하긴 하는데 <br /> 뭐라고 적어야 할지 생각이 안남 <br /> 뭔가 엄청난 소개 문구"
-            imgSrc={Img1}
+            text1="프로필 페이지"
+            text2="경매 현황, 찜 목록 등<br>서비스를 이용하면서 필요한<br>다양한 상황을 조회할 수 있습니다."
+            imgSrc={Profile}
           />
         </ContentBox>
       </BackGround>

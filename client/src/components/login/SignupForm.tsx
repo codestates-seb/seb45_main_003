@@ -1,9 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRecoilState } from "recoil";
 import { styled } from "styled-components";
-import { toSignup } from "../../atoms/atoms";
+import { useNavigate } from "react-router-dom";
 import { COLOR } from "../../constants/color";
 import { useModal } from "../../hooks/useModal";
 import Button from "../common/Button";
@@ -18,7 +17,6 @@ interface SignupForm {
   confirmcode: string;
   password: string;
   checkpassword: string;
-  phone: string;
   formError: string;
 }
 //실제로 보내는 데이터
@@ -26,7 +24,6 @@ interface SignupData {
   name: string;
   email: string;
   password: string;
-  phone: string;
 }
 
 const StyledSignupForm = styled.form`
@@ -57,6 +54,24 @@ const StyledSignupForm = styled.form`
   }
   .errorInput {
     border-color: ${COLOR.invalid};
+  }
+  @media (max-width: 48rem) {
+    padding: 0;
+    width: 100%;
+
+    #confirmcode {
+      width: calc(100% - 7rem);
+      flex: none;
+    }
+    #email {
+      width: calc(100% - 7rem);
+      flex: none;
+    }
+    .withButton {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
   }
 `;
 const StyledModal = styled.div`
@@ -92,6 +107,10 @@ const SignupForm = (): JSX.Element => {
   });
   const [sendMessage, setSendMessage] = useState("");
   const [lock, setLock] = useState(false);
+  const navigate = useNavigate();
+  const navigateLogin = () => {
+    navigate(`/login?mode=login`);
+  };
   const codeWait = () => {
     setTimeout(() => {
       setLock(false);
@@ -175,11 +194,9 @@ const SignupForm = (): JSX.Element => {
       }
     }
   };
-
-  const [loginPageForm, setloginPageForm] = useRecoilState(toSignup);
-  //로그인 컴포넌트로 변환하는 함수
-  const changeform = () => {
-    setloginPageForm(!loginPageForm);
+  const successSignup = () => {
+    toggleModal();
+    navigateLogin();
   };
   return (
     <>
@@ -281,25 +298,13 @@ const SignupForm = (): JSX.Element => {
         {errors.checkpassword && (
           <div className="errormessage">{errors.checkpassword?.message}</div>
         )}
-        <label htmlFor="phone">핸드폰 번호</label>
-        <input
-          id="phone"
-          type="text"
-          placeholder="-를 제외한 번호를 입력해주세요."
-          className={errors.phone ? "errorInput" : "input"}
-          {...register("phone", {
-            required: "핸드폰 번호를 작성해주세요.",
-            pattern: {
-              value: /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
-              message: "휴대폰 번호로 적어주세요.",
-            },
-          })}
-        />
-        {errors.phone && <div className="errormessage">{errors.phone?.message}</div>}
-        {errors.formError && <div className="errormessage">{errors.formError?.message}</div>}
         <Button type="submit" disabled={isSubmitting} $text="회원가입" $design="black" />
       </StyledSignupForm>
-      <Modal isOpen={isOpen} closeModal={closeModal} toggleModal={toggleModal}>
+      <Modal
+        isOpen={isOpen}
+        closeModal={(event) => closeModal(event, navigateLogin)}
+        toggleModal={successSignup}
+      >
         <StyledModal>
           <div className="modalTitleContainer">
             <p className="modalTitle">회원가입 성공</p>
@@ -308,7 +313,7 @@ const SignupForm = (): JSX.Element => {
             <p className="modalText">새로운 회원이 되신것을 환영합니다.</p>
           </div>
           <div className="modalButtonContainer">
-            <Button type="button" $text="확인" onClick={() => changeform()} $design="black" />
+            <Button type="button" $text="확인" onClick={navigateLogin} $design="black" />
           </div>
         </StyledModal>
       </Modal>

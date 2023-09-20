@@ -13,6 +13,7 @@ import main.wonprice.domain.picture.service.PictureService;
 import main.wonprice.domain.product.dto.ProductRequestDto;
 import main.wonprice.domain.product.dto.ProductResponseDto;
 import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.entity.ProductStatus;
 import main.wonprice.domain.product.mapper.ProductMapper;
 import main.wonprice.domain.product.repository.ProductSpecification;
 import main.wonprice.exception.BusinessLogicException;
@@ -162,7 +163,7 @@ public class ProductController {
         }
 
         // 경매 상품인 경우, buyer_id가 있는지 확인하여 삭제 여부 결정
-        if (product.getAuction() && product.getBuyerId() != null) {
+        if (product.getAuction() && product.getBuyerId() != null && product.getStatus() != ProductStatus.AFTER) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("경매가 진행 중인 상품은 삭제할 수 없습니다.");
         }
 

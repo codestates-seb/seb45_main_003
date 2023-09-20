@@ -14,6 +14,7 @@ import { loginState } from "../../atoms/atoms";
 import Modal from "../../components/common/Modal";
 import { COLOR } from "../../constants/color";
 import { FONT_SIZE } from "../../constants/font";
+import { AUCTION, SUCCESS } from "../../constants/systemMessage";
 import { useModal } from "../../hooks/useModal";
 import { getUserId } from "../../util/auth";
 import { formatTime } from "../../util/date";
@@ -227,18 +228,21 @@ const StyledItemStatus = styled.section`
       }
     }
   }
+
+  .login button {
+    padding: 0.75rem 0;
+    width: 100%;
+  }
 `;
 
 const ItemStatus = ({ data }: ItemStatusProps) => {
   const navigate = useNavigate();
   const [modalMessage, setModalMessage] = useState({ title: "", description: "" });
   const isLogin = useRecoilValue(loginState);
-  const userid = getUserId();
+  const userid = Number(getUserId());
   const [stompClient, setStompClient] = useState<Client | null>(null);
   const queryClient = useQueryClient();
   const location = useLocation();
-  const idArr = location.pathname.split("/");
-  const productId = idArr[idArr.length - 1];
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
 
   useEffect(() => {
@@ -263,20 +267,63 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
       stompClient.subscribe(`/topic/bid/${data.productId}`, (message) => {
         const socketData = JSON.parse(message.body).body;
 
-        if (socketData.status === 400) {
-          setIsOpen(true);
-          setModalMessage(socketData.message);
+        if (JSON.parse(message.body).statusCodeValue === 400) {
+          if (socketData.buyerId === userid) {
+            setIsOpen(true);
+            setModalMessage({ title: "상품 입찰 실패", description: socketData.message });
+          }
           return;
         }
 
-        const modifiedData = {
+        setIsOpen(true);
+        let modifiedData = {};
+
+        //즉시 구매가로 입찰했을때
+        if (socketData.currentAuctionPrice === data.immediatelyBuyPrice) {
+          modifiedData = {
+            ...data,
+            productStatus: "TRADE",
+          };
+
+          //입찰한 사람이 내가 아닐때
+          if (socketData.buyerId !== userid) {
+            setModalMessage({
+              title: "경매 종료",
+              description: AUCTION.updateAndEnd,
+            });
+          } else {
+            //입찰한 사람이 나일때
+            setModalMessage({
+              title: "상품 입찰 성공",
+              description: SUCCESS.bidimmediatelyBuyPrice,
+            });
+          }
+        } else {
+          //즉시 구매가가 아닌 가격으로 입찰했을때
+          modifiedData = {
+            ...data,
+          };
+
+          //입찰한 사람이 내가 아닐때
+          if (socketData.buyerId !== userid) {
+            setModalMessage({
+              title: "입찰 가격 갱신",
+              description: AUCTION.update,
+            });
+          } else {
+            //입찰한 사람이 나일때
+            setModalMessage({ title: "상품 입찰 성공", description: SUCCESS.bid });
+          }
+        }
+
+        modifiedData = {
           ...data,
           buyerId: socketData.buyerId,
           currentAuctionPrice: socketData.currentAuctionPrice,
           minBidPrice: plus5Percent(socketData.currentAuctionPrice),
         };
 
-        queryClient.setQueryData(["productData", productId], modifiedData);
+        queryClient.setQueryData(["productData", location], modifiedData);
       });
     }
   }, [stompClient, data]);
@@ -370,14 +417,25 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
           )}
           <BuyNow data={data} />
 
+          {!isLogin && data.productStatus === "BEFORE" && (
+            <div className="login">
+              <Button
+                onClick={() => {
+                  navigate("/login");
+                }}
+                $text={data.auction ? "로그인하고 경매 참여하기" : "로그인하고 상품 구매하기"}
+                $design="black"
+                type="button"
+              ></Button>
+            </div>
+          )}
+
           {data.productStatus !== "BEFORE" && (
             <div className="result">
               <div className="price">
                 <span className="price_number_title gray">최종 거래가</span>
                 <span className="price_number">
-                  {data?.currentAuctionPrice && data.currentAuctionPrice < data.immediatelyBuyPrice
-                    ? data.currentAuctionPrice.toLocaleString() + "원"
-                    : data.immediatelyBuyPrice.toLocaleString() + "원"}
+                  {data.currentAuctionPrice?.toLocaleString() + "원"}
                 </span>
               </div>
             </div>

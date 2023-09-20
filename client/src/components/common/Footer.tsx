@@ -88,7 +88,7 @@ export const Footer = (): JSX.Element => {
         <div className="footer_wrapper">
           <div className="part">
             <p className="title">Team Name</p>
-            <p className="margin">동년배들 다 코딩한다.</p>
+            <p className="margin">내 동년배들 다 코딩한다.</p>
             <p className="title">Project Term</p>
             <p className="margin">2023-08-24 ~ 09-22</p>
           </div>
