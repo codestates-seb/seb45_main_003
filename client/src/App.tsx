@@ -59,6 +59,10 @@ function App() {
           element: <PostsList />,
         },
         {
+          path: "completed",
+          element: <PostsList />,
+        },
+        {
           path: "category/:category",
           element: <PostsList />,
         },

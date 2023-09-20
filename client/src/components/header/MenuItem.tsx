@@ -138,6 +138,7 @@ const MenuItem = () => {
             categories="즉시 구매"
             linkTo={`/available?type=immediatelyBuy&page=1`}
           />
+          <Item key="거래 완료" categories="거래 완료" linkTo={`/completed?page=1`} />
         </ListBox>
       </ItemContainer>
     </>
