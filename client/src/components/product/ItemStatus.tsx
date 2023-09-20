@@ -64,6 +64,10 @@ const StyledItemStatus = styled.section`
       display: flex;
       flex-flow: column;
       gap: 0.5rem;
+
+      h1 {
+        word-break: keep-all;
+      }
     }
 
     .icon_box {
@@ -430,7 +434,7 @@ const ItemStatus = ({ data }: ItemStatusProps) => {
             </div>
           )}
 
-          {data.productStatus !== "BEFORE" && (
+          {data.productStatus !== "BEFORE" && data.auction && (
             <div className="result">
               <div className="price">
                 <span className="price_number_title gray">최종 거래가</span>
