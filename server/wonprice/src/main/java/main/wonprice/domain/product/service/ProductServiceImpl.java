@@ -94,9 +94,19 @@ public class ProductServiceImpl implements ProductService {
         Specification<Product> specification = ProductSpecification.notDeletedAndStatus(ProductStatus.BEFORE);
 
         if ("immediatelyBuy".equalsIgnoreCase(type)) {
-            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("auction"), false));
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.and(
+                            criteriaBuilder.equal(root.get("auction"), false),
+                            criteriaBuilder.equal(root.get("status"), ProductStatus.BEFORE)
+                    )
+            );
         } else if ("auction".equalsIgnoreCase(type)) {
-            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("auction"), true));
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.and(
+                            criteriaBuilder.equal(root.get("auction"), true),
+                            criteriaBuilder.equal(root.get("status"), ProductStatus.BEFORE)
+                    )
+            );
         }
 
         return productRepository.findAll(specification, pageable);
