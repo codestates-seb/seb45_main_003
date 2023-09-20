@@ -193,6 +193,14 @@ const List = (): JSX.Element => {
   const getData = async () => {
     const params = { page: page, size: ITEMS_PER_VIEW };
 
+    if (location.pathname === "/completed") {
+      const response = await axios.get(`/products/completed`, {
+        params: params,
+      });
+
+      return response.data;
+    }
+
     if (type) {
       const response = await axios.get(`/products/available`, {
         params: { ...params, type: type },
@@ -219,7 +227,6 @@ const List = (): JSX.Element => {
       }
       setCurrentPage(page);
     },
-    staleTime: Infinity,
   });
 
   const isLogin = useRecoilValue(loginState);
@@ -235,6 +242,10 @@ const List = (): JSX.Element => {
 
     if (type === "immediatelyBuy") {
       return "즉시 구매";
+    }
+
+    if (location.pathname === "/completed") {
+      return "거래 완료 상품";
     }
 
     if (path.includes("/all")) {
