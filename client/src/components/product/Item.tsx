@@ -39,6 +39,7 @@ const Item = (): JSX.Element => {
   const productId = idArr[idArr.length - 1];
 
   const getData = async () => {
+    window.scrollTo(0, 0);
     const response = await authInstance.get(API_PATHS.products.default(productId));
 
     const currentAuctionPrice = response.data.currentAuctionPrice;
