@@ -15,6 +15,11 @@ export const usePagination = (): PaginationReturn => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const searchParams = new URLSearchParams(location.search);
+  const type = searchParams.get("type");
+  const keyword = searchParams.get("keyword");
+  const typeQuery = type ? `&type=${type}` : "";
+  const keywordQuery = keyword ? `&keyword=${searchParams.get("keyword")}` : "";
 
   //페이징 버튼 클릭시 화면 최상단으로 이동
   const scrollToTop = () => {
@@ -28,14 +33,20 @@ export const usePagination = (): PaginationReturn => {
       return;
     }
     setCurrentPage(pageNumber);
-    navigate(`?page=${pageNumber + 1}`);
+    navigate({
+      pathname: "",
+      search: `page=${pageNumber + 1}${typeQuery}${keywordQuery}`,
+    });
     scrollToTop();
   };
 
   const prevPageHandler = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
-      navigate(`?page=${currentPage}`);
+      navigate({
+        pathname: "",
+        search: `page=${currentPage}${typeQuery}${keywordQuery}`,
+      });
       scrollToTop();
     }
   };
@@ -43,7 +54,10 @@ export const usePagination = (): PaginationReturn => {
   const nextPageHandler = () => {
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
-      navigate(`?page=${currentPage + 2}`);
+      navigate({
+        pathname: "",
+        search: `page=${currentPage + 2}${typeQuery}${keywordQuery}`,
+      });
       scrollToTop();
     }
   };
