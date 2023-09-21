@@ -1,6 +1,6 @@
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { CATEGORY } from "../../constants/category";
 import { COLOR } from "../../constants/color";
@@ -54,7 +54,11 @@ const CategorySelect = () => {
       <div className="select_wrapper">
         <p>
           <StorefrontIcon />
-          {isMobile ? "" : "경매중인 상품을 확인해보세요"}
+          {isMobile ? (
+            ""
+          ) : (
+            <Link to="/available?type=auction&page=1">경매중인 상품을 확인해보세요</Link>
+          )}
         </p>
         <div className="custom_select">
           <select
