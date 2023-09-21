@@ -8,14 +8,13 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { EffectCoverflow, Navigation, Pagination } from "swiper/modules";
+import { Autoplay, EffectCoverflow, Navigation, Pagination } from "swiper/modules";
 import { SwiperProps as ReactSwiperProps, Swiper, SwiperSlide } from "swiper/react";
 import { COLOR } from "../../../constants/color";
-import { API_PATHS } from "../../../constants/path";
 import { Data } from "../../productList/List";
 import "./styles.css";
 
-SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
+SwiperCore.use([Autoplay, Pagination, Navigation, EffectCoverflow]);
 
 const Layout = styled.div`
   display: flex;
@@ -141,6 +140,10 @@ export interface CustomSwiperProps extends ReactSwiperProps {
   centeredSlides?: boolean;
   autoHeight?: boolean;
   freeMode?: boolean;
+  autoplay?: {
+    delay: number;
+    disableOnInteraction: boolean;
+  };
 }
 
 const Carousel = (): JSX.Element => {
@@ -159,8 +162,10 @@ const Carousel = (): JSX.Element => {
       modifier: 5,
       slideShadows: true,
     },
-    initialSlide: 2,
-    centeredSlides: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
     autoHeight: true,
     freeMode: true,
   };
@@ -168,9 +173,9 @@ const Carousel = (): JSX.Element => {
   const location = useLocation();
 
   const getData = async () => {
-    const params = { page: 0, size: 10 };
+    const params = { page: 0, size: 10, type: "all" };
 
-    const response = await axios.get(API_PATHS.products.default(""), {
+    const response = await axios.get(`/products/available`, {
       params: params,
     });
 

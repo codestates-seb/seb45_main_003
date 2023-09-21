@@ -187,7 +187,7 @@ const StyledUploadForm = styled.section`
 
 const UploadForm = () => {
   const MAX_IMAGE_COUNT = 4;
-  const { control, register, handleSubmit, setError, clearErrors, formState } =
+  const { watch, control, register, handleSubmit, setError, clearErrors, formState } =
     useForm<FieldValues>();
   const { isOpen, setIsOpen, closeModal, toggleModal } = useModal();
   //이미지 업로드 개수를 제한하는 커스텀 훅
@@ -220,12 +220,15 @@ const UploadForm = () => {
     },
   });
 
+  const immediatelyBuyPrice = watch("immediatelyBuyPrice");
+
   //Link를 통해 update mode state를 전달했을때 사용
   const location = useLocation();
   const isUpdateMode = location.state ? location.state.isUpdateMode : null;
   const updateModeData = location.state ? location.state.updateModeData : null;
   const ACTION = !isUpdateMode ? "등록" : "수정";
   const [resData, setResData] = useState<ProductData>();
+  const bucket = process.env.REACT_APP_IMAGE_BUCKET_NAME;
 
   const onSubmit = async (data: FieldValues) => {
     if (!isUpdateMode) {
@@ -234,7 +237,7 @@ const UploadForm = () => {
 
       for (const image of images) {
         const params: AWS.S3.PutObjectRequest = {
-          Bucket: "wonprice-test1",
+          Bucket: bucket ? bucket : "",
           Key: `${new Date().toISOString() + "-" + image.name}`,
           Body: image,
           ContentType: image.type,
@@ -367,8 +370,8 @@ const UploadForm = () => {
                         message: MIN.price("500원"),
                       },
                       max: {
-                        value: 1000000000,
-                        message: MAX.price("10억"),
+                        value: immediatelyBuyPrice - 1,
+                        message: MAX.auctionPrice,
                       },
                     }}
                     title="경매시작가"
