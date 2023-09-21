@@ -228,6 +228,7 @@ const UploadForm = () => {
   const updateModeData = location.state ? location.state.updateModeData : null;
   const ACTION = !isUpdateMode ? "등록" : "수정";
   const [resData, setResData] = useState<ProductData>();
+  const bucket = process.env.REACT_APP_IMAGE_BUCKET_NAME;
 
   const onSubmit = async (data: FieldValues) => {
     if (!isUpdateMode) {
@@ -236,7 +237,7 @@ const UploadForm = () => {
 
       for (const image of images) {
         const params: AWS.S3.PutObjectRequest = {
-          Bucket: "wonprice-test1",
+          Bucket: bucket ? bucket : "",
           Key: `${new Date().toISOString() + "-" + image.name}`,
           Body: image,
           ContentType: image.type,

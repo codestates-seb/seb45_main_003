@@ -107,6 +107,11 @@ public class ProductServiceImpl implements ProductService {
                             criteriaBuilder.equal(root.get("status"), ProductStatus.BEFORE)
                     )
             );
+        }else {
+            // "all" 이나 다른 유효하지 않은 값의 경우에도 "before" 상태만 고려
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.equal(root.get("status"), ProductStatus.BEFORE)
+            );
         }
 
         return productRepository.findAll(specification, pageable);
