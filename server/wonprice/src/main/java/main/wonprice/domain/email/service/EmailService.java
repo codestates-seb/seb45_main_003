@@ -60,6 +60,7 @@ public class EmailService {
         return sb.toString();
     }
 
+//    인증 이메일 전송
     public void sendAuthEmail(AuthEmail email) throws MessagingException, UnsupportedEncodingException {
 
         String authCode = generateRandomCode();
@@ -96,6 +97,7 @@ public class EmailService {
         emailSender.send(mimeMessage);
     }
 
+//    이메일 인증 코드 검증
     public boolean verifyAuthCode(AuthEmail email) {
 
         Optional<AuthEmail> findEmail = emailAuthRepository.findByEmail(email.getEmail());
@@ -112,8 +114,9 @@ public class EmailService {
         } else return false;
     }
 
+//    생성된지 5분이 지난 인증코드 삭제
     @Scheduled(fixedDelay = 5000)
-    public void getCompletedAuction() {
+    public void deleteTimeOverEmail() {
         List<AuthEmail> timeOverMail = emailAuthRepository.findAllByCreatedAtIsBefore(LocalDateTime.now().minusMinutes(5));
 
         if (!timeOverMail.isEmpty()){
