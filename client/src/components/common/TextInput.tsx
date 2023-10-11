@@ -1,10 +1,4 @@
-import {
-  DeepMap,
-  FieldError,
-  FieldValues,
-  RegisterOptions,
-  UseFormRegister,
-} from "react-hook-form";
+import { FieldValues, FormState, RegisterOptions, UseFormRegister } from "react-hook-form";
 
 type TextInputProps = {
   register: UseFormRegister<FieldValues>;
@@ -12,20 +6,34 @@ type TextInputProps = {
   title: string;
   type?: string;
   options?: RegisterOptions;
-  errors?: DeepMap<FieldValues, FieldError>;
+  defaultValue?: string;
+  formState?: FormState<FieldValues>;
+  placeholder?: string;
 };
 
 const TextInput = (props: TextInputProps) => {
-  return (
-    <div>
-      <h4>{props.title}</h4>
+  const { register, id, title, type, options, formState, placeholder, defaultValue } = props;
 
-      {props.id === "content" ? (
-        <textarea {...props.register(props.id, props.options)} id={props.id}></textarea>
-      ) : (
-        <input {...props.register(props.id, props.options)} id={props.id} type={props.type} />
-      )}
-      {props.errors && props.errors[props.id]?.message && <p>{props.errors[props.id].message}</p>}
+  return (
+    <div className="field">
+      <p>{title}</p>
+
+      <div className="input">
+        <input
+          className={formState?.errors[id]?.message ? "error" : ""}
+          {...register(id, options)}
+          id={id}
+          type={type}
+          placeholder={placeholder}
+          defaultValue={defaultValue}
+        />
+
+        {id === "immediatelyBuyPrice" || id === "currentAuctionPrice" ? <span>원</span> : null}
+
+        {formState?.errors && formState.errors[id]?.message && (
+          <p className="error_message">{formState?.errors[id]?.message?.toString()}</p>
+        )}
+      </div>
     </div>
   );
 };

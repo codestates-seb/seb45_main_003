@@ -1,12 +1,15 @@
+/*
 package main.wonprice.auth.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.Getter;
+import main.wonprice.auth.jwt.repository.RefreshTokenRepository;
+import main.wonprice.exception.BusinessLogicException;
+import main.wonprice.exception.ExceptionCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -31,7 +34,7 @@ public class JwtTokenizer {
     @Value("${jwt.refresh-token-expiration-minutes}")
     private int refreshTokenExpirationMinutes;
 
-//    Plain Text 형태인 Secret Key의 byte[]를 Base64 형식의 문자열로 인코딩
+    //    Plain Text 형태인 Secret Key의 byte[]를 Base64 형식의 문자열로 인코딩
     public String encodeBase64SecretKey(String secretKey) {
         return Encoders.BASE64.encode(secretKey.getBytes(StandardCharsets.UTF_8));
     }
@@ -67,14 +70,28 @@ public class JwtTokenizer {
                 .compact();
     }
 
+//    시그니처 파싱 및 상황별 예외처리
     public Jws<Claims> getClaims(String jws, String base64EncodedSecretKey) {
 
         Key key = getKeyFromBase64EncodedKey(base64EncodedSecretKey);
 
-        Jws<Claims> claims = Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(jws);
+        Jws<Claims> claims = null;
+        try {
+            claims = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(jws);
+        } catch (ExpiredJwtException e) {
+            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_AUTHENTICATED);
+        } catch (UnsupportedJwtException e) {
+            throw new RuntimeException(e);
+        } catch (MalformedJwtException e) {
+            throw new RuntimeException(e);
+        } catch (SignatureException e) {
+            throw new BusinessLogicException(ExceptionCode.INVALID_TOKEN);
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException(e);
+        }
         return claims;
     }
 
@@ -104,3 +121,4 @@ public class JwtTokenizer {
     }
 
 }
+*/

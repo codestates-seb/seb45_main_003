@@ -3,9 +3,14 @@ package main.wonprice.domain.email.service;
 import main.wonprice.domain.email.entity.AuthEmail;
 import main.wonprice.domain.email.repository.EmailAuthRepository;
 import main.wonprice.domain.member.service.MemberService;
+import main.wonprice.domain.product.entity.Product;
+import main.wonprice.domain.product.entity.ProductStatus;
+import main.wonprice.exception.BusinessLogicException;
+import main.wonprice.exception.ExceptionCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.TemplateEngine;
@@ -15,6 +20,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -52,6 +60,7 @@ public class EmailService {
         return sb.toString();
     }
 
+//    인증 이메일 전송
     public void sendAuthEmail(AuthEmail email) throws MessagingException, UnsupportedEncodingException {
 
         String authCode = generateRandomCode();
@@ -59,8 +68,10 @@ public class EmailService {
 
         memberService.checkExistEmail(recipient);
 
-        AuthEmail authEmail = emailAuthRepository.findByEmail(recipient);
-        if (authEmail != null) {
+        Optional<AuthEmail> authEmail = emailAuthRepository.findByEmail(recipient);
+
+//        이메일 인증 요청이 왔을 때 기존 인증하지 않은 코드가 있는 경우 삭제 후 재발송
+        if (authEmail.isPresent() && !authEmail.get().getAuthenticated()) {
             emailAuthRepository.deleteByEmail(recipient);
         }
 
@@ -86,12 +97,32 @@ public class EmailService {
         emailSender.send(mimeMessage);
     }
 
+//    이메일 인증 코드 검증
     public boolean verifyAuthCode(AuthEmail email) {
 
-        AuthEmail findEmail = emailAuthRepository.findByEmail(email.getEmail());
+        Optional<AuthEmail> findEmail = emailAuthRepository.findByEmail(email.getEmail());
 
-        if (findEmail.getAuthCode().equals(email.getAuthCode())) {
+        if (findEmail.isEmpty()) {
+            throw new BusinessLogicException(ExceptionCode.EMAIL_NOT_FOUND);
+        }
+
+        AuthEmail authEmail = findEmail.get();
+
+        if (authEmail.getAuthCode().equals(email.getAuthCode())) {
+            authEmail.setAuthenticated(true);
             return true;
         } else return false;
+    }
+
+//    생성된지 5분이 지난 인증코드 삭제
+    @Scheduled(fixedDelay = 5000)
+    public void deleteTimeOverEmail() {
+        List<AuthEmail> timeOverMail = emailAuthRepository.findAllByCreatedAtIsBefore(LocalDateTime.now().minusMinutes(5));
+
+        if (!timeOverMail.isEmpty()){
+            for (AuthEmail mail : timeOverMail) {
+                emailAuthRepository.deleteByEmailId(mail.getEmailId());
+            }
+        }
     }
 }

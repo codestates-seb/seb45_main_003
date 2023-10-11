@@ -1,7 +1,9 @@
 package main.wonprice.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
+import main.wonprice.domain.product.entity.Product;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,7 +17,7 @@ public class Review {
     private Long reviewId;
 
     @Column(nullable = false)
-    private Long postMemberId;
+    private String title;
 
     @Lob
     @Column(nullable = false)
@@ -25,12 +27,18 @@ public class Review {
     private Long score;
 
     @Column(nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    @Column(nullable = true)
-    private LocalDateTime deletedAt;
+    
+    @ManyToOne
+    @JoinColumn(name = "receive_member_id")
+    private Member receiveMember;
 
     @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
+    @JoinColumn(name = "post_member_id")
+    private Member postMember;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private Product product;
 }

@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
@@ -20,6 +21,12 @@ public class AuthEmail {
 
     @Column(nullable = false)
     private String authCode;
+
+    @Column(nullable = false)
+    private Boolean authenticated = false;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public AuthEmail(String email, String authCode) {
         this.email = email;

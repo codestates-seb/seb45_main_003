@@ -1,6 +1,6 @@
-import PostForm from "../components/post/PostForm";
+import UploadForm from "../components/product/UploadForm";
 
 const CreatePost = (): JSX.Element => {
-  return <PostForm />;
+  return <UploadForm />;
 };
 export default CreatePost;

@@ -1,6 +1,5 @@
 package main.wonprice.domain.member.mapper;
 
-import main.wonprice.domain.member.dto.WishPostDto;
 import main.wonprice.domain.member.dto.WishResponseDto;
 import main.wonprice.domain.member.entity.Member;
 import main.wonprice.domain.member.entity.Wish;
@@ -8,7 +7,6 @@ import main.wonprice.domain.product.entity.Product;
 import org.mapstruct.Mapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface WishMapper {
@@ -32,5 +30,4 @@ public interface WishMapper {
 
         return responseDto;
     }
-    List<WishResponseDto> toResponseDtos(List<Wish> wishes);
 }

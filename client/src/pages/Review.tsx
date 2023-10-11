@@ -1,7 +1,9 @@
+import ReviewForm from "../components/review/ReviewForm";
+
 const Review = (): JSX.Element => {
   return (
     <>
-      <h1>Review</h1>
+      <ReviewForm />
     </>
   );
 };

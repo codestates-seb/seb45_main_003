@@ -12,55 +12,55 @@ import PretendardBlack from "./../fonts/Pretendard-Black.woff";
 export const GlobalFont = createGlobalStyle`
   @font-face {
     font-family: "Pretendard";
-    src: url(${PretendardThin}) format("woff");
+    src: local("Pretendard"), url(${PretendardThin}) format("woff");
     font-weight: 100;
     font-display: swap;
   }
   @font-face {
     font-family: "Pretendard";
-    src: url(${PretendardExtraLight}) format("woff");
+    src: local("Pretendard"),url(${PretendardExtraLight}) format("woff");
     font-weight: 200;
     font-display: swap;
   }
   @font-face {
     font-family: "Pretendard";
-    src: url(${PretendardLight}) format("woff");
+    src: local("Pretendard"),url(${PretendardLight}) format("woff");
     font-weight: 300;
     font-display: swap;
   }
   @font-face {
     font-family: "Pretendard";
-    src: url(${PretendardRegular}) format("woff");
+    src: local("Pretendard"),url(${PretendardRegular}) format("woff");
     font-weight: 400;
     font-display: swap;
   }
   @font-face {
     font-family: "Pretendard";
-    src: url(${PretendardMedium}) format("woff");
+    src: local("Pretendard"),url(${PretendardMedium}) format("woff");
     font-weight: 500;
     font-display: swap;
   }
   @font-face {
     font-family: "Pretendard";
-    src: url(${PretendardSemiBold}) format("woff");
+    src: local("Pretendard"),url(${PretendardSemiBold}) format("woff");
     font-weight: 600;
     font-display: swap;
   }
   @font-face {
     font-family: "Pretendard";
-    src: url(${PretendardBold}) format("woff");
+    src: local("Pretendard"),url(${PretendardBold}) format("woff");
     font-weight: 700;
     font-display: swap;
   }
   @font-face {
     font-family: "Pretendard";
-    src: url(${PretendardExtraBold}) format("woff");
+    src: local("Pretendard"),url(${PretendardExtraBold}) format("woff");
     font-weight: 800;
     font-display: swap;
   }
   @font-face {
     font-family: "Pretendard";
-    src: url(${PretendardBlack}) format("woff");
+    src: local("Pretendard"),url(${PretendardBlack}) format("woff");
     font-weight: 900;
     font-display: swap;
   }
